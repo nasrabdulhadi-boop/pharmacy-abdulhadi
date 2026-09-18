@@ -64,3 +64,14 @@ html{scroll-behavior:smooth}body{font-family:system-ui,-apple-system,"Segoe UI",
 @keyframes cartIn{from{transform:translateX(-35px);opacity:.7}to{transform:none;opacity:1}}
 @media(max-width:560px){.cartDrawer{width:100vw;padding:0 14px 18px}.cartDrawerHead{padding-top:14px}.cartDrawerHead b{font-size:19px}}
 .lastOrderInfo{display:flex;flex-direction:column;gap:10px;min-width:0}.lastOrderInfo>div:first-child{display:flex;flex-direction:column;gap:4px}.lastOrderInfo span{font-size:.9rem;color:#5c7067}.lastOrderInfo strong{color:#16845a}.lastOrderItems{display:flex;flex-wrap:wrap;gap:6px 14px}.lastOrderItems span{background:#f0f8f4;border:1px solid #d8eee2;border-radius:10px;padding:6px 9px;color:#285b47}.lastOrderActions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.trackItems{margin-top:12px;display:grid;gap:6px}.trackItems .line{padding:8px 0;border-bottom:1px solid #e8eee9}.lastOrderBar{gap:16px;align-items:flex-start}.lastOrderActions button{white-space:nowrap}@media(max-width:700px){.lastOrderBar{flex-direction:column}.lastOrderActions{width:100%}.lastOrderActions button{flex:1}}
+/* v4.3 POS refinements */
+.posLine{align-items:center;gap:10px}
+.posLine>span{display:flex;flex-direction:column;gap:3px;min-width:0}
+.posLine>span small{font-size:9px;color:#7b9188}
+.posLineActions{display:flex;align-items:center;gap:5px;flex-wrap:wrap;justify-content:flex-end}
+.posLineActions strong{min-width:72px;text-align:left;color:#087443}
+.lastOrderInfo{min-width:0}
+.lastOrderItems{display:flex;flex-wrap:wrap;gap:7px;margin-top:7px}
+.lastOrderItems>b{font-size:10px;color:#547366}
+.lastOrderItems span{background:#f1f8f4;border:1px solid #d9ebe1;border-radius:8px;padding:5px 7px;font-size:10px;color:#365e4d}
+@media(max-width:560px){.posLineActions{width:100%;justify-content:flex-start}.posLineActions strong{margin-right:auto}.lastOrderBar{align-items:flex-start}.lastOrderItems{width:100%}}
