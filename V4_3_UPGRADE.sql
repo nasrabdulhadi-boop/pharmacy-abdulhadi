@@ -114,7 +114,7 @@ DECLARE
   need numeric;
   take numeric;
   sub numeric := 0;
-  total numeric;
+  v_total numeric;
   v_product_id uuid;
   v_unit_price numeric;
 BEGIN
@@ -156,10 +156,10 @@ BEGIN
     IF need>0 THEN RAISE EXCEPTION 'Insufficient non-expired stock for product %', v_product_id; END IF;
   END LOOP;
 
-  total := greatest(sub-greatest(coalesce(p_discount,0),0),0);
-  UPDATE public.sales SET subtotal=sub,total=total WHERE id=sale_id;
+  v_total := greatest(sub-greatest(coalesce(p_discount,0),0),0);
+  UPDATE public.sales SET subtotal=sub,total=v_total WHERE id=sale_id;
   INSERT INTO public.audit_logs(user_id,action,entity_type,entity_id,details)
-  VALUES(auth.uid(),'complete_sale','sale',sale_id,jsonb_build_object('subtotal',sub,'discount',p_discount,'total',total));
+  VALUES(auth.uid(),'complete_sale','sale',sale_id,jsonb_build_object('subtotal',sub,'discount',p_discount,'total',v_total));
   RETURN sale_id;
 END;
 $$;

@@ -9,3 +9,7 @@
 2. ارفع ملفات المشروع إلى GitHub.
 3. انتظر Vercel حتى تصبح Production = Ready.
 4. اختبر لوحة التحكم → الموردون.
+
+
+## v4.3.2 POS hotfix
+Fixed PostgreSQL ambiguous `total` variable/column reference in `complete_sale_atomic`.
