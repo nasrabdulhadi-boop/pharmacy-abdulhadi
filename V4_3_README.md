@@ -1,19 +1,11 @@
-# Pharmacy Abdelhadi v4.3
+# Pharmacy Abdelhadi v4.3.1
 
-## What changed
-- POS upgraded with quantity + / - controls and item removal.
-- POS sale transaction uses a secure atomic function (run `V4_3_UPGRADE.sql`).
-- Supplier page rebuilt: working Add Supplier modal, phone/address/notes, edit/delete, error feedback, and RPC-based writes.
-- Customer "آخر طلب" now shows order number, customer details, address, status, total, date, and item quantities.
-- Admin branding updated to v4.3.
+## إصلاح الموردين
+- إصلاح ظهور المورد بعد الإضافة: أصبحت قائمة الموردين تُقرأ عبر `admin_list_suppliers()` بصلاحيات إدارية آمنة، بدلاً من القراءة المباشرة التي قد تمنعها RLS.
+- لا يوجد حذف أو تعديل لأي بيانات موجودة.
 
-## Deployment
-1. Replace the GitHub project files with this package.
-2. In Supabase SQL Editor run **V4_3_UPGRADE.sql once**.
-3. Wait for Vercel Production to become Ready.
-4. Hard refresh the Production site.
-
-## Test order
-- Admin > الموردون > إضافة مورد.
-- Admin > نقطة البيع > search product > add > adjust quantity > complete sale.
-- Customer > آخر طلب / تتبع الطلب.
+## التحديث
+1. شغّل `V4_3_UPGRADE.sql` في Supabase مرة واحدة.
+2. ارفع ملفات المشروع إلى GitHub.
+3. انتظر Vercel حتى تصبح Production = Ready.
+4. اختبر لوحة التحكم → الموردون.

@@ -117,7 +117,7 @@ function ReportList({title,rows}){return <div className="card"><h2>{title}</h2>{
 function Suppliers(){
  const empty={name:'',phone:'',address:'',notes:''};
  const [rows,setRows]=useState([]),[show,setShow]=useState(false),[editId,setEditId]=useState(null),[form,setForm]=useState(empty),[busy,setBusy]=useState(false),[err,setErr]=useState('');
- const load=async()=>{setErr('');const {data,error}=await supabase.from('suppliers').select('*').order('name');if(error){setErr(error.message);throw error}setRows(data||[])};
+ const load=async()=>{setErr('');const {data,error}=await supabase.rpc('admin_list_suppliers');if(error){setErr(error.message);throw error}setRows(Array.isArray(data)?data:[])};
  useEffect(()=>{load().catch(()=>{})},[]);
  const save=async()=>{if(!form.name.trim())return alert('أدخل اسم المورد');setBusy(true);setErr('');try{const rpc=editId?'admin_update_supplier':'admin_create_supplier';const args=editId?{p_id:editId,p_name:form.name.trim(),p_phone:form.phone.trim()||null,p_address:form.address.trim()||null,p_notes:form.notes.trim()||null}:{p_name:form.name.trim(),p_phone:form.phone.trim()||null,p_address:form.address.trim()||null,p_notes:form.notes.trim()||null};const {error}=await supabase.rpc(rpc,args);if(error)throw error;setShow(false);setEditId(null);setForm(empty);await load()}catch(e){alert(e?.message||'تعذر حفظ المورد')}finally{setBusy(false)}};
  const remove=async(r)=>{if(!confirm(`حذف المورد «${r.name}»؟`))return;const {data,error}=await supabase.rpc('admin_delete_supplier',{p_id:r.id});if(error)alert(error.message);else if(!data)alert('لم يتم العثور على المورد');else load().catch(()=>{})};

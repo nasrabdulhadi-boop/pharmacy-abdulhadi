@@ -67,6 +67,35 @@ $$;
 REVOKE ALL ON FUNCTION public.admin_delete_supplier(uuid) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION public.admin_delete_supplier(uuid) TO authenticated;
 
+
+
+-- Supplier list: use a SECURITY DEFINER RPC so admin supplier records are
+-- readable even when the base table has restrictive RLS policies.
+CREATE OR REPLACE FUNCTION public.admin_list_suppliers()
+RETURNS TABLE(
+  id uuid,
+  name text,
+  phone text,
+  address text,
+  notes text,
+  created_at timestamptz
+)
+LANGUAGE plpgsql SECURITY DEFINER
+SET search_path = public, auth
+AS $$
+BEGIN
+  IF NOT public.is_admin() THEN
+    RAISE EXCEPTION 'Admin authorization required';
+  END IF;
+  RETURN QUERY
+  SELECT s.id, s.name, s.phone, s.address, s.notes, s.created_at
+  FROM public.suppliers s
+  ORDER BY s.name ASC, s.created_at DESC;
+END;
+$$;
+REVOKE ALL ON FUNCTION public.admin_list_suppliers() FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION public.admin_list_suppliers() TO authenticated;
+
 -- Replace the POS function with a SECURITY DEFINER implementation so the
 -- transaction can safely touch batches/stock_movements while still requiring admin auth.
 CREATE OR REPLACE FUNCTION public.complete_sale_atomic(
