@@ -1,3 +1,7 @@
+-- Pharmacy Abdelhadi v4.3.6
+-- Run in Supabase SQL Editor.
+-- Fixes POS ambiguous b.id and keeps audit/security improvements.
+
 -- Pharmacy Abdelhadi v4.3.5
 -- Fix batch deletion locking error + audit details for batch additions and sales.
 
