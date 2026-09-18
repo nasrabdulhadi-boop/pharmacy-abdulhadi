@@ -6,7 +6,7 @@ RETURNS TABLE(
 LANGUAGE plpgsql SECURITY DEFINER SET search_path = public, auth
 AS $$
 BEGIN
- IF NOT EXISTS (SELECT 1 FROM auth.users u WHERE u.id=auth.uid() AND COALESCE(u.raw_app_meta_data->>'role','')='admin') THEN
+ IF NOT EXISTS (SELECT 1 FROM auth.users u WHERE u.id=auth.uid() AND (COALESCE(u.raw_app_meta_data->>'role','')='admin' OR u.email='drnaser@pharmahadi.com')) THEN
    RAISE EXCEPTION 'Admin authorization required';
  END IF;
  RETURN QUERY
