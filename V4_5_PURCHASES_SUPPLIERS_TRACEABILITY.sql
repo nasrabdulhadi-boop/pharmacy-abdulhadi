@@ -137,8 +137,8 @@ BEGIN
 
   UPDATE public.purchases SET total=v_total WHERE id=v_purchase_id;
 
-  INSERT INTO public.audit_logs(action,entity_type,entity_id,details,created_by)
-  VALUES('admin_create_purchase','purchase',v_purchase_id,jsonb_build_object('supplier_id',p_supplier_id,'invoice_number',v_invoice,'total',v_total,'items_count',jsonb_array_length(p_items)),auth.uid());
+  INSERT INTO public.audit_logs(user_id,action,entity_type,entity_id,details)
+  VALUES(auth.uid(),'admin_create_purchase','purchase',v_purchase_id,jsonb_build_object('supplier_id',p_supplier_id,'invoice_number',v_invoice,'total',v_total,'items_count',jsonb_array_length(p_items)));
 
   RETURN jsonb_build_object('id',v_purchase_id,'public_code',v_invoice,'total',v_total);
 END;
