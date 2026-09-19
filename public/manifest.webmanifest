@@ -1,0 +1,11 @@
+{
+  "name":"صيدلية عبدالهادي",
+  "short_name":"صيدلية عبدالهادي",
+  "start_url":"/",
+  "display":"standalone",
+  "dir":"rtl",
+  "lang":"ar",
+  "background_color":"#ffffff",
+  "theme_color":"#0f8a5f",
+  "icons":[{"src":"/favicon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}]
+}
