@@ -148,7 +148,7 @@ CREATE OR REPLACE FUNCTION public.complete_sale_accounting(
 )
 RETURNS jsonb LANGUAGE plpgsql SECURITY DEFINER SET search_path=public,auth AS $$
 DECLARE
- v_sale_id uuid:=gen_random_uuid(); it jsonb; b record; need numeric; take numeric; sub numeric:=0; total numeric; v_paid numeric:=0; v_due numeric:=0; v_debtor_name text;
+ v_sale_id uuid:=gen_random_uuid(); it jsonb; b record; need numeric; take numeric; sub numeric:=0; v_total numeric:=0; v_paid numeric:=0; v_due numeric:=0; v_debtor_name text;
 BEGIN
  IF NOT public.is_admin() THEN RAISE EXCEPTION 'Admin authorization required'; END IF;
  IF jsonb_array_length(coalesce(p_items,'[]'::jsonb))=0 THEN RAISE EXCEPTION 'Sale must contain items'; END IF;
@@ -168,16 +168,16 @@ BEGIN
    END LOOP;
    IF need>0 THEN RAISE EXCEPTION 'Insufficient non-expired stock for product %',(it->>'product_id'); END IF;
  END LOOP;
- total:=greatest(sub-greatest(coalesce(p_discount,0),0),0);
- IF p_payment_method='cash' THEN v_paid:=total; v_due:=0; ELSE v_paid:=0; v_due:=total; END IF;
- UPDATE public.sales SET subtotal=sub,total=total,paid_amount=v_paid,due_amount=v_due WHERE id=v_sale_id;
+ v_total:=greatest(sub-greatest(coalesce(p_discount,0),0),0);
+ IF p_payment_method='cash' THEN v_paid:=v_total; v_due:=0; ELSE v_paid:=0; v_due:=v_total; END IF;
+ UPDATE public.sales SET subtotal=sub,total=v_total,paid_amount=v_paid,due_amount=v_due WHERE id=v_sale_id;
  IF p_payment_method='credit' THEN
-   INSERT INTO public.debtor_transactions(debtor_id,transaction_type,sale_id,amount,debit,credit,payment_method,notes,created_by) VALUES(p_debtor_id,'sale',v_sale_id,total,total,0,'credit',p_notes,auth.uid());
+   INSERT INTO public.debtor_transactions(debtor_id,transaction_type,sale_id,amount,debit,credit,payment_method,notes,created_by) VALUES(p_debtor_id,'sale',v_sale_id,v_total,v_total,0,'credit',p_notes,auth.uid());
  ELSE
-   INSERT INTO public.cashbox_entries(entry_type,amount,description,sale_id,created_by) VALUES('sale_cash',total,'بيع نقدي',v_sale_id,auth.uid());
+   INSERT INTO public.cashbox_entries(entry_type,amount,description,sale_id,created_by) VALUES('sale_cash',v_total,'بيع نقدي',v_sale_id,auth.uid());
  END IF;
- INSERT INTO public.audit_logs(user_id,action,entity_type,entity_id,details) VALUES(auth.uid(),'complete_sale','sale',v_sale_id,jsonb_build_object('subtotal',sub,'discount',p_discount,'total',total,'payment_method',p_payment_method,'debtor_id',p_debtor_id,'debtor_name',v_debtor_name,'paid_amount',v_paid,'due_amount',v_due,'notes',p_notes));
- RETURN jsonb_build_object('sale_id',v_sale_id,'total',total,'payment_method',p_payment_method,'debtor_id',p_debtor_id,'paid_amount',v_paid,'due_amount',v_due);
+ INSERT INTO public.audit_logs(user_id,action,entity_type,entity_id,details) VALUES(auth.uid(),'complete_sale','sale',v_sale_id,jsonb_build_object('subtotal',sub,'discount',p_discount,'total',v_total,'payment_method',p_payment_method,'debtor_id',p_debtor_id,'debtor_name',v_debtor_name,'paid_amount',v_paid,'due_amount',v_due,'notes',p_notes));
+ RETURN jsonb_build_object('sale_id',v_sale_id,'total',v_total,'payment_method',p_payment_method,'debtor_id',p_debtor_id,'paid_amount',v_paid,'due_amount',v_due);
 EXCEPTION WHEN OTHERS THEN RAISE;
 END; $$;
 REVOKE ALL ON FUNCTION public.complete_sale_accounting(jsonb,numeric,text,uuid,text) FROM PUBLIC;
