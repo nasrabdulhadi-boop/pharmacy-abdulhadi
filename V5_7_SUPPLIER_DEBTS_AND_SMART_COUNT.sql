@@ -212,7 +212,7 @@ LANGUAGE sql STABLE SECURITY DEFINER SET search_path=public,auth AS $$
     (SELECT MAX(p.created_at) FROM public.purchases p WHERE p.supplier_id=s.id)
   FROM public.suppliers s
   WHERE public.is_admin()
-  ORDER BY balance DESC,s.name;
+  ORDER BY 7 DESC,s.name;
 $$;
 REVOKE ALL ON FUNCTION public.admin_supplier_debt_list() FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION public.admin_supplier_debt_list() TO authenticated;
