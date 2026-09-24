@@ -158,3 +158,6 @@ html{scroll-behavior:smooth}body{font-family:system-ui,-apple-system,"Segoe UI",
 .posInvoice .posProductName{font-size:15px!important;font-weight:900!important;line-height:1.45!important}
 .posInvoice .posProductName span{font-size:12px!important}
 .posInvoice .posProductName+small{font-size:10px!important}
+
+/* v5.11 inventory */
+.inventoryQtyReadOnly{display:inline-block;min-width:58px;padding:6px 9px;border-radius:8px;background:#f5f8f6;border:1px solid #e0ebe5;font-weight:900;color:#244f3e;text-align:center}.productCardModal .tableWrap input[type=date],.productCardModal .tableWrap input[type=number]{border:1px solid #d7e7df;border-radius:7px;padding:6px;background:#fff;font-family:inherit}.productCardModal .tableWrap td{vertical-align:middle}.productCardModal .tableWrap .miniBtn{margin:2px}
