@@ -140,3 +140,14 @@ html{scroll-behavior:smooth}body{font-family:system-ui,-apple-system,"Segoe UI",
 .posPopupMain,.posPopupMeta{display:flex;flex-direction:column;gap:4px;min-width:0}.posPopupMain b{font-size:12px;color:#174d3a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.posPopupMain b em{font-style:normal;color:#087443;font-weight:800;margin-right:5px}.posPopupMain small,.posPopupMeta small{font-size:9px;color:#789087;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.posPopupMeta{border-right:1px solid #e2eee7;padding-right:11px}.posPopupPrice{font-weight:900;color:#087443;font-size:12px;text-align:center}.posPopupPrice small{display:block;font-size:8px;color:#789087}.posPopupActions{display:flex;align-items:center;gap:5px}.posPopupActions .miniBtn{white-space:nowrap}.posInvoice{position:relative;z-index:1}.posProductName{max-width:300px;text-align:right}.posProductName span{color:#087443;font-weight:800;font-size:10px;margin-right:5px;white-space:nowrap}.posProductName+small{max-width:320px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#789087}.posSearchInput .scanBtn{flex-shrink:0}
 @media(max-width:900px){.posPopupItem{grid-template-columns:26px minmax(150px,1fr) 100px auto}.posPopupMeta{display:none}.posPopupPrice{display:none}}
 @media(max-width:650px){.posPopupItem{grid-template-columns:26px 1fr auto}.posPopupActions .secondaryAction{display:none}.posInvoiceHeadActions>svg{display:none}.posPopupHead span{display:none}}
+/* V5.9 Pharmacy Products */
+.productScanIcon{margin-right:auto;width:38px;height:38px;border-radius:10px;background:#eaf8ef;color:#087443;display:grid;place-items:center;flex:0 0 auto}
+.productScanIcon:hover{background:#dff3e7}
+.suggestField{position:relative;min-width:0}
+.suggestField>label{display:block}
+.ingredientSuggestions{position:absolute;z-index:40;top:76px;right:0;left:0;background:#fff;border:1px solid #d9e9df;border-radius:13px;box-shadow:0 14px 35px #10233a20;padding:6px;display:grid;gap:4px;max-height:230px;overflow:auto}
+.ingredientSuggestions button{display:flex;align-items:center;gap:9px;width:100%;padding:10px 11px;border:0;background:#f8fbf9;border-radius:9px;color:#174d3a;text-align:right;cursor:pointer}
+.ingredientSuggestions button:hover{background:#eaf8ef}
+.ingredientSuggestions span{font-size:14px}.ingredientSuggestions b{font-size:12px}
+.productsTable td:nth-child(2) b{display:block;white-space:nowrap}.productsTable td:nth-child(2) small{font-size:10px;color:#789087;margin-top:4px}
+@media(max-width:700px){.ingredientSuggestions{top:78px}.productsTable{min-width:1100px}}
