@@ -151,3 +151,10 @@ html{scroll-behavior:smooth}body{font-family:system-ui,-apple-system,"Segoe UI",
 .ingredientSuggestions span{font-size:14px}.ingredientSuggestions b{font-size:12px}
 .productsTable td:nth-child(2) b{display:block;white-space:nowrap}.productsTable td:nth-child(2) small{font-size:10px;color:#789087;margin-top:4px}
 @media(max-width:700px){.ingredientSuggestions{top:78px}.productsTable{min-width:1100px}}
+
+/* v5.10 POS: material card must always appear above the search popup */
+.adminMain .modal{z-index:2000!important}
+/* v5.10 POS: clearer medicine names in invoice */
+.posInvoice .posProductName{font-size:15px!important;font-weight:900!important;line-height:1.45!important}
+.posInvoice .posProductName span{font-size:12px!important}
+.posInvoice .posProductName+small{font-size:10px!important}

@@ -1,6 +1,19 @@
 -- Pharmacy Abdelhadi v5.9 - Pharmacy Products fixes
 -- Safe product create/update/delete helpers + validation.
 
+-- Compatibility: some existing databases were created without products.active.
+-- Add it safely so product archive/delete logic and the pharmacy list can use it.
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_schema='public' AND table_name='products' AND column_name='active'
+  ) THEN
+    ALTER TABLE public.products ADD COLUMN active boolean NOT NULL DEFAULT true;
+  END IF;
+END $$;
+
+
 CREATE OR REPLACE FUNCTION public.admin_save_pharmacy_product(
   p_product_id uuid DEFAULT NULL,
   p_payload jsonb DEFAULT '{}'::jsonb
