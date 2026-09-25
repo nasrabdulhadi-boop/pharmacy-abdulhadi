@@ -91,13 +91,22 @@ function Customer(){
  </div>
 }
 function Modal({onClose,title,children}){return <div className="modal" onMouseDown={e=>{if(e.target===e.currentTarget)onClose()}}><div className="modalBox wide"><button className="x" onClick={onClose}>×</button><h2>{title}</h2>{children}</div></div>}
+function PageHead({title,sub,refresh,actions}){
+ return <div className="pageHead">
+  <div><h1>{title}</h1>{sub&&<p>{sub}</p>}</div>
+  <div style={{display:'flex',alignItems:'center',gap:8,flexWrap:'wrap'}}>
+   {actions}
+   {refresh&&<button type="button" className="secondaryAction refreshBtn" onClick={refresh} title="تحديث"><RefreshCw size={16}/> تحديث</button>}
+  </div>
+ </div>
+}
 function PillIcon(){return <span className="pillIcon" aria-hidden="true"><i></i></span>}
 function SystemClock(){const [now,setNow]=useState(new Date());useEffect(()=>{const id=setInterval(()=>setNow(new Date()),1000);return()=>clearInterval(id)},[]);return <div className="systemClock">🕒 توقيت الجهاز: {localDateTime(now)}</div>}
 function Admin({onLogout}){
  const [tab,setTab]=useState('dashboard'),[mobile,setMobile]=useState(false),[focus,setFocus]=useState(null);
  const go=(next, target=null)=>{setFocus(target);setTab(next);setMobile(false)};
  const nav=[['dashboard','لوحة التحكم',Home],['pos','نقطة البيع',ShoppingCart],['pharmacyProducts','منتجات الصيدلية',Package],['siteProducts','منتجات الموقع',ExternalLink],['inventory','المخزون',BarChart3],['smart','المخزون الذكي',Sparkles],['orders','الطلبات',ClipboardList],['prescriptions','الوصفات',Upload],['requests','طلبات الأدوية',SearchCheck],['offers','العروض',Tag],['reports','التقارير',TrendingUp],['cashbox','الصندوق',Receipt],['debtors','المتدينين',Users],['purchases','المشتريات',Receipt],['supplierDebts','ديون الموردين',WalletCards],['suppliers','الموردون',Truck],['customers','العملاء',Users],['returns','المرتجعات',Receipt],['security','الأمان',ShieldCheck]];
- return <div className="adminShell"><aside className={mobile?'open':''}><div className="sideBrand"><div className="logo">ص</div><div><b>صيدلية عبدالهادي</b><span>لوحة الإدارة • v5.7</span></div></div>{nav.map(([id,label,I])=><button className={tab===id?'active':''} onClick={()=>go(id)} key={id}><I/>{label}</button>)}<button className="logout" onClick={onLogout}><LogOut/> تسجيل الخروج</button></aside><main className="adminMain"><SystemClock/><div className="mobileBar"><button onClick={()=>setMobile(!mobile)}><Menu/></button><b>{nav.find(x=>x[0]===tab)?.[1]}</b></div>{tab==='dashboard'&&<Dashboard go={go}/>} {tab==='pos'&&<POS/>}{tab==='pharmacyProducts'&&<ProductManager mode="pharmacy"/>}{tab==='siteProducts'&&<ProductManager mode="site"/>}{tab==='inventory'&&<Inventory focus={focus}/>}{tab==='smart'&&<SmartInventory/>}{tab==='orders'&&<Orders/>}{tab==='prescriptions'&&<Prescriptions/>}{tab==='requests'&&<Requests/>}{tab==='offers'&&<Offers/>}{tab==='reports'&&<Reports/>}{tab==='cashbox'&&<Cashbox/>}{tab==='debtors'&&<Debtors/>}{tab==='purchases'&&<Purchases/>}{tab==='supplierDebts'&&<SupplierDebts/>}{tab==='suppliers'&&<Suppliers/>}{tab==='customers'&&<Customers/>}{tab==='returns'&&<Returns/>}{tab==='security'&&<Security/>}</main></div>
+ return <div className="adminShell"><aside className={mobile?'open':''}><div className="sideBrand"><div className="logo">ص</div><div><b>صيدلية عبدالهادي</b><span>لوحة الإدارة • v5.12.2</span></div></div>{nav.map(([id,label,I])=><button className={tab===id?'active':''} onClick={()=>go(id)} key={id}><I/>{label}</button>)}<button className="logout" onClick={onLogout}><LogOut/> تسجيل الخروج</button></aside><main className="adminMain"><SystemClock/><div className="mobileBar"><button onClick={()=>setMobile(!mobile)}><Menu/></button><b>{nav.find(x=>x[0]===tab)?.[1]}</b></div>{tab==='dashboard'&&<Dashboard go={go}/>} {tab==='pos'&&<POS/>}{tab==='pharmacyProducts'&&<ProductManager mode="pharmacy"/>}{tab==='siteProducts'&&<ProductManager mode="site"/>}{tab==='inventory'&&<Inventory focus={focus}/>}{tab==='smart'&&<SmartInventory/>}{tab==='orders'&&<Orders/>}{tab==='prescriptions'&&<Prescriptions/>}{tab==='requests'&&<Requests/>}{tab==='offers'&&<Offers/>}{tab==='reports'&&<Reports/>}{tab==='cashbox'&&<Cashbox/>}{tab==='debtors'&&<Debtors/>}{tab==='purchases'&&<Purchases/>}{tab==='supplierDebts'&&<SupplierDebts/>}{tab==='suppliers'&&<Suppliers/>}{tab==='customers'&&<Customers/>}{tab==='returns'&&<Returns/>}{tab==='security'&&<Security/>}</main></div>
 }
 function Card({title,value,icon:I,meta,alert}){return <div className={`kpi ${alert?'alertKpi':''}`}><div><span>{title}</span><strong>{value}</strong>{meta&&<small>{meta}</small>}</div><I/></div>}
 function Dashboard({go}){
