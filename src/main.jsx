@@ -45,6 +45,10 @@ function useUsbBarcodeCapture(enabled,onCode){
 
 const readCart=()=>{try{const v=JSON.parse(localStorage.getItem('pharma_cart')||'[]');return Array.isArray(v)?v.filter(x=>x&&x.id):[]}catch{return[]}};
 const writeCart=v=>{try{localStorage.setItem('pharma_cart',JSON.stringify(v));}catch(e){console.warn('cart storage',e)}};
+const POS_DRAFT_KEY='pharma_pos_draft_v1';
+const readPosDraft=()=>{try{const v=JSON.parse(localStorage.getItem(POS_DRAFT_KEY)||'null');return v&&typeof v==='object'&&Array.isArray(v.cart)?v:null}catch{return null}};
+const writePosDraft=v=>{try{localStorage.setItem(POS_DRAFT_KEY,JSON.stringify(v))}catch(e){console.warn('pos draft storage',e)}};
+const clearPosDraft=()=>{try{localStorage.removeItem(POS_DRAFT_KEY)}catch(e){console.warn('pos draft clear',e)}};
 function App(){const [session,setSession]=useState(null); const [admin,setAdmin]=useState(false); const [loading,setLoading]=useState(true);
  useEffect(()=>{if('serviceWorker' in navigator){navigator.serviceWorker.register('/sw.js').catch(()=>{})}},[]);
  useEffect(()=>{if(!supabase){setLoading(false);return} supabase.auth.getSession().then(({data})=>{setSession(data.session);setAdmin(data.session?.user?.app_metadata?.role==='admin');setLoading(false)}); const {data:{subscription}}=supabase.auth.onAuthStateChange((_e,s)=>{setSession(s);setAdmin(s?.user?.app_metadata?.role==='admin')});return()=>subscription.unsubscribe()},[]);
