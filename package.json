@@ -1,7 +1,7 @@
 {
   "name": "pharmacy-abdelhadi-final",
   "private": true,
-  "version": "5.16.2",
+  "version": "5.16.3",
   "type": "module",
   "scripts": {
     "dev": "vite",
