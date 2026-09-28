@@ -246,3 +246,13 @@ html{scroll-behavior:smooth}body{font-family:system-ui,-apple-system,"Segoe UI",
  .smartCountResultTable table{min-width:900px}
  .smartCountResultCard .cardHead{gap:10px}
 }
+
+.purchaseLines .tableWrap{overflow:auto}.purchaseLines table{min-width:1050px}.purchaseLines table input,.purchaseLines table select{width:100%;min-width:90px}.purchaseLines table td,.purchaseLines table th{vertical-align:middle}.purchaseLines table td:nth-child(3){min-width:150px}.purchaseLines table td:nth-child(2){min-width:180px}.purchaseLines table input[type=number]{max-width:120px}
+
+/* V5.16.6 — purchases/supplier-debt polish */
+.supplierChooser{display:grid;gap:8px}.supplierChooserTop{display:flex;gap:8px;align-items:center}.supplierChooserTop input{flex:1;min-width:0}.supplierChooser select{width:100%}.supplierChooser small{line-height:1.6}
+.paymentAmountRow{display:flex;gap:8px;align-items:center}.paymentAmountRow input{flex:1;min-width:0}.paymentAmountRow button{white-space:nowrap}
+.purchaseAuditNote,.supplierDebtHint{margin-top:12px;padding:12px 14px;border-radius:12px;background:#f8fbf9;border:1px solid #dfe8e3;color:#52635b;line-height:1.7}
+.supplierDebtHint{margin:14px 0}
+@media(max-width:650px){.supplierChooserTop,.paymentAmountRow{flex-direction:column;align-items:stretch}.supplierChooserTop button,.paymentAmountRow button{width:100%}}
+.purchaseProductPicker{display:grid;gap:6px;min-width:210px}.purchaseProductPicker input,.purchaseProductPicker select{width:100%;min-width:0}.miniLinkBtn{border:0;background:transparent;color:#147a55;font-weight:800;cursor:pointer;text-align:right;padding:2px 0}.checkLabel{display:flex!important;align-items:center;gap:8px}.checkLabel input{width:auto!important}
