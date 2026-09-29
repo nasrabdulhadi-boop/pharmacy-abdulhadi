@@ -6,6 +6,6 @@
   "dir":"rtl",
   "lang":"ar",
   "background_color":"#ffffff",
-  "theme_color":"#0d5b3d",
+  "theme_color":"#177a57",
   "icons":[{"src":"/logo.png","sizes":"1024x1024","type":"image/png","purpose":"any maskable"}]
 }
