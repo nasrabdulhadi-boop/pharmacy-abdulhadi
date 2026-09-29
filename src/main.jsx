@@ -156,7 +156,7 @@ function Admin({onLogout}){
  useEffect(()=>{const onKey=e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='k'){e.preventDefault();document.querySelector('.globalSearch input')?.focus()}};window.addEventListener('keydown',onKey);return()=>window.removeEventListener('keydown',onKey)},[]);
  return <div className="adminShell" dir="rtl">
   <aside className={mobile?'open':''}>
-   <div className="sideBrand"><img className="sideLogo" src="/logo.png" alt="شعار صيدلية عبدالهادي"/><div><b>صيدلية عبدالهادي</b><span>نظام إدارة الصيدلية • V6</span></div></div>
+   <div className="sideBrand"><img className="sideLogo" src="/logo.png" alt="شعار صيدلية عبدالهادي"/><div><b>صيدلية عبدالهادي</b><span>نظام إدارة الصيدلية • V6.2</span></div></div>
    <div className="sideMiniProfile"><span className="onlineDot"></span><div><b>الإدارة</b><small>النظام يعمل بشكل طبيعي</small></div></div>
    {navGroups.map(group=><div className="navGroup" key={group.title}><div className="sideCaption">{group.title}</div>{group.items.map(([id,label,I])=><button className={tab===id?'active':''} onClick={()=>go(id)} key={id}><I/><span>{label}</span>{tab===id&&<i className="navActiveDot"/>}</button>)}</div>)}
    <div className="sideFooter"><div className="sideStatus"><i></i><span>متصل بـ Supabase</span></div><button className="logout" onClick={onLogout}><LogOut/> تسجيل الخروج</button></div>
