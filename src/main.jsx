@@ -3,6 +3,7 @@ import {createRoot} from 'react-dom/client';
 import {createClient} from '@supabase/supabase-js';
 import {Search,LogIn,LogOut,Package,ShoppingCart,ClipboardList,Users,Truck,BarChart3,ShieldCheck,Plus,Trash2,RefreshCw,Menu,Home,Upload,Eye,Minus,Phone,Mail,MapPin,Clock,Send,FileImage,MessageCircle,Heart,Sparkles,ChevronLeft,AlertTriangle,AlertCircle,CalendarClock,TrendingUp,Download,SearchCheck,ScanLine,Receipt,Tag,Activity,FileDown,ChevronDown,ExternalLink,FileText,WalletCards,Pencil} from 'lucide-react';
 import './style.css';
+import './REDESIGN_V6_3.css';
 
 const url=import.meta.env.VITE_SUPABASE_URL; const key=import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 const supabase=url&&key?createClient(url,key):null;
