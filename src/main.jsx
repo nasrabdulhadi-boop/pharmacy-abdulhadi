@@ -209,6 +209,7 @@ function Dashboard({go}){
  const points=d.chart.map(x=>{const val=Number(x.value)||0;return {...x,val,height:Math.max(4,(val/max)*100)}});
  const today=new Date();
  return <div className="v6Dashboard">
+  {d.error&&<div className="error dashboardLoadError">تعذر تحميل بعض بيانات لوحة التحكم: {d.error}</div>}
   <section className="v6Welcome"><div className="v6WelcomeContent"><span className="eyebrow">نظام إدارة صيدلية عبدالهادي • لوحة المتابعة اليومية</span><h1>مرحباً بك، د. نصر 👋</h1><p>كل ما تحتاجه لإدارة صيدليتك في مكان واحد — المبيعات، المخزون، المشتريات، العملاء والتقارير.</p></div><img className="v6WelcomeLogo" src="/logo.png" alt="شعار صيدلية عبدالهادي"/><div className="v6WelcomeDate">{today.toLocaleDateString('ar-SY',{weekday:'long',year:'numeric',month:'long',day:'numeric'})} • {today.toLocaleTimeString('ar-SY',{hour:'2-digit',minute:'2-digit'})}</div></section>
   <section className="v6PrimaryKpis">
    <div className="v6Kpi"><div className="v6KpiTop"><label>مبيعات اليوم</label><span className="v6KpiIcon"><TrendingUp size={17}/></span></div><strong>{money(d.sales)} <small style={{display:'inline',fontSize:9}}>ل.س</small></strong><small>إجمالي مبيعات اليوم</small></div>
@@ -231,32 +232,64 @@ function Dashboard({go}){
  </div>
 }
 function useDashboardData(){
- const [d,setD]=useState({sales:0,netSales:0,profit:0,dead:0,orders:0,rx:0,products:0,low:0,expired:0,expiring:0,chart:[],notifications:[]});
+ const [d,setD]=useState({sales:0,netSales:0,profit:0,dead:0,orders:0,rx:0,products:0,low:0,expired:0,expiring:0,chart:[],notifications:[],error:''});
  const load=async()=>{
   const now=new Date(), today=localDateKey(now), monthStart=new Date(now.getFullYear(),now.getMonth(),1);
   const soon=new Date(now); soon.setDate(soon.getDate()+30); const soonKey=localDateKey(soon);
   const dayStart=new Date(now.getFullYear(),now.getMonth(),now.getDate()).toISOString(),dayEnd=new Date(now.getFullYear(),now.getMonth(),now.getDate()+1).toISOString();
+  const errors=[];
+
+  // Load each dashboard source independently. One broken auxiliary query must not blank the whole dashboard.
   const [p,b,o,r,s,smart,todayDetails]=await Promise.all([
-   supabase.from('products').select('id,reorder_level'),
-   supabase.from('batches').select('id,quantity,expiry_date,product_id,products(name,reorder_level)').gt('quantity',0),
+   supabase.rpc('admin_get_products'),
+   supabase.rpc('admin_get_inventory'),
    supabase.from('orders').select('id,status,created_at').gte('created_at',dayStart).lt('created_at',dayEnd),
    supabase.from('prescriptions').select('id,status,created_at').gte('created_at',dayStart).lt('created_at',dayEnd),
    supabase.rpc('admin_list_sales',{p_start:monthStart.toISOString()}),
    supabase.rpc('admin_smart_summary'),
    supabase.rpc('admin_dashboard_day_details',{p_start:dayStart,p_end:dayEnd})
   ]);
+
   const sevenDayRanges=Array.from({length:7},(_,i)=>{const st=new Date(now.getFullYear(),now.getMonth(),now.getDate()-6+i);const en=new Date(st.getFullYear(),st.getMonth(),st.getDate()+1);return {st,en}});
   const sevenDayResults=await Promise.all(sevenDayRanges.map(({st,en})=>supabase.rpc('admin_dashboard_sales_day',{p_start:st.toISOString(),p_end:en.toISOString()})));
-  const sevenDayUsable=sevenDayResults.every(x=>!x.error);
-  if(s.error)throw s.error;if(todayDetails.error)throw todayDetails.error;if(smart.error)throw smart.error;
-  const batches=b.data||[],sales=s.data||[];
-  const low=batches.filter(x=>Number(x.quantity)<=Number(x.products?.reorder_level||0)&&Number(x.quantity)>0),expired=batches.filter(x=>x.expiry_date&&x.expiry_date<today),expiring=batches.filter(x=>x.expiry_date&&x.expiry_date>=today&&x.expiry_date<=soonKey);
+
+  const check=(result,label)=>{if(result?.error){errors.push(`${label}: ${result.error.message||'خطأ غير معروف'}`);return null}return result?.data};
+  const productsData=check(p,'المنتجات');
+  const inventoryData=check(b,'المخزون');
+  const ordersData=check(o,'الطلبات');
+  const rxData=check(r,'الوصفات');
+  const salesData=check(s,'المبيعات');
+  const smartData=check(smart,'الملخص الذكي')||{};
+  const todayData=check(todayDetails,'تفاصيل اليوم')||{};
+  const sevenDayUsable=sevenDayResults.some(x=>!x.error);
+
+  const products=Array.isArray(productsData)?productsData:(productsData?.rows||productsData?.items||[]);
+  const batches=Array.isArray(inventoryData)?inventoryData:(inventoryData?.rows||inventoryData?.items||[]);
+  const sales=Array.isArray(salesData)?salesData:(salesData?.rows||[]);
+  const orders=Array.isArray(ordersData)?ordersData:[];
+  const rx=Array.isArray(rxData)?rxData:[];
+  const low=batches.filter(x=>Number(x.quantity)<=Number(x.reorder_level??x.products?.reorder_level??0)&&Number(x.quantity)>0);
+  const expired=batches.filter(x=>x.expiry_date&&x.expiry_date<today);
+  const expiring=batches.filter(x=>x.expiry_date&&x.expiry_date>=today&&x.expiry_date<=soonKey);
   const daily={};sales.forEach(x=>{const k=localDateKey(x.created_at);const v=Number(x.total);if(Number.isFinite(v))daily[k]=(daily[k]||0)+v});
-  const chart=Array.from({length:7},(_,i)=>{const dt=new Date(now.getFullYear(),now.getMonth(),now.getDate()-6+i);const k=localDateKey(dt);const rpcValue=sevenDayUsable?Number(sevenDayResults[i]?.data?.summary?.sales):NaN;const value=Number.isFinite(rpcValue)?rpcValue:(Number.isFinite(daily[k])?daily[k]:0);return {label:dt.toLocaleDateString('ar-SY',{weekday:'short'}),dateKey:k,value}});
-  const notes=[...low.slice(0,7).map(x=>({type:'low',text:`${x.products?.name||'دواء'}: الكمية ${x.quantity} / حد إعادة الطلب ${x.products?.reorder_level||0}`,date:`تاريخ الفحص: ${localDateTime(now)}`,go:'inventory',target:{batchId:x.id,productId:x.product_id,kind:'low'}})),...expired.slice(0,5).map(x=>({type:'expired',text:`${x.products?.name||'دواء'} — منتهية`,date:`انتهت في: ${x.expiry_date}`,go:'inventory',target:{batchId:x.id,productId:x.product_id,kind:'expired'}})),...expiring.slice(0,5).map(x=>({type:'expiring',text:`${x.products?.name||'دواء'} — ستنتهي قريباً`,date:`تاريخ الانتهاء: ${x.expiry_date}`,go:'inventory',target:{batchId:x.id,productId:x.product_id,kind:'expiring'}})),...(o.data||[]).filter(x=>x.status==='new').slice(0,5).map(x=>({type:'order',text:`طلب جديد ${x.id.slice(0,8)}`,date:`وصل: ${localDateTime(x.created_at)}`,go:'orders',target:{orderId:x.id}})),...(r.data||[]).filter(x=>!['completed','rejected'].includes(x.status||'new')).slice(0,5).map(x=>({type:'rx',text:'وصفة جديدة بحاجة للمراجعة',date:`وصلت: ${localDateTime(x.created_at)}`,go:'prescriptions',target:{prescriptionId:x.id}}))];
-  const ss=smart.data||{},td=todayDetails.data||{};const finite=v=>Number.isFinite(Number(v))?Number(v):0;setD({sales:finite(td.summary?.sales),netSales:finite(td.summary?.net_sales),profit:finite(td.summary?.profit),dead:finite(ss.dead_stock),orders:(o.data||[]).filter(x=>x.status==='new').length,rx:(r.data||[]).filter(x=>!['completed','rejected'].includes(x.status||'new')).length,products:(p.data||[]).length,low:finite(ss.low_stock||low.length),expired:finite(ss.expired||expired.length),expiring:finite(ss.expiring_30||expiring.length),chart,notifications:notes});
+  const chart=Array.from({length:7},(_,i)=>{const dt=new Date(now.getFullYear(),now.getMonth(),now.getDate()-6+i);const k=localDateKey(dt);const rpcValue=Number(sevenDayResults[i]?.data?.summary?.sales);const value=Number.isFinite(rpcValue)?rpcValue:(Number.isFinite(daily[k])?daily[k]:0);return {label:dt.toLocaleDateString('ar-SY',{weekday:'short'}),dateKey:k,value}});
+  const notes=[
+   ...low.slice(0,7).map(x=>({type:'low',text:`${x.product_name||x.products?.name||'دواء'}: الكمية ${x.quantity} / حد إعادة الطلب ${x.reorder_level??x.products?.reorder_level??0}`,date:`تاريخ الفحص: ${localDateTime(now)}`,go:'inventory',target:{batchId:x.id,productId:x.product_id,kind:'low'}})),
+   ...expired.slice(0,5).map(x=>({type:'expired',text:`${x.product_name||x.products?.name||'دواء'} — منتهية`,date:`انتهت في: ${x.expiry_date}`,go:'inventory',target:{batchId:x.id,productId:x.product_id,kind:'expired'}})),
+   ...expiring.slice(0,5).map(x=>({type:'expiring',text:`${x.product_name||x.products?.name||'دواء'} — ستنتهي قريباً`,date:`تاريخ الانتهاء: ${x.expiry_date}`,go:'inventory',target:{batchId:x.id,productId:x.product_id,kind:'expiring'}})),
+   ...orders.filter(x=>x.status==='new').slice(0,5).map(x=>({type:'order',text:`طلب جديد ${String(x.id).slice(0,8)}`,date:`وصل: ${localDateTime(x.created_at)}`,go:'orders',target:{orderId:x.id}})),
+   ...rx.filter(x=>!['completed','rejected'].includes(x.status||'new')).slice(0,5).map(x=>({type:'rx',text:'وصفة جديدة بحاجة للمراجعة',date:`وصلت: ${localDateTime(x.created_at)}`,go:'prescriptions',target:{prescriptionId:x.id}}))
+  ];
+  const finite=v=>Number.isFinite(Number(v))?Number(v):0;
+  const summary=todayData.summary||{};
+  setD({
+   sales:finite(summary.sales),netSales:finite(summary.net_sales),profit:finite(summary.profit),dead:finite(smartData.dead_stock),
+   orders:orders.filter(x=>x.status==='new').length,rx:rx.filter(x=>!['completed','rejected'].includes(x.status||'new')).length,
+   products:products.length,low:finite(smartData.low_stock||low.length),expired:finite(smartData.expired||expired.length),expiring:finite(smartData.expiring_30||expiring.length),chart,notifications:notes,error:errors.length?errors.join(' | '):''
+  });
  };
- useEffect(()=>{load().catch(console.warn)},[]);return[d,load]
+ useEffect(()=>{load().catch(e=>setD(x=>({...x,error:e?.message||'تعذر تحميل لوحة التحكم'})))},[]);
+ return[d,load]
 }
 function ProductManager({mode='pharmacy'}){
  const empty={name:'',barcode:'',active_ingredient:'',strength:'',dosage_form:'',manufacturer:'',category:'',unit:'piece',reorder_level:1,purchase_price:0,sale_price:0,parts_per_unit:1,customer_visible:true};
