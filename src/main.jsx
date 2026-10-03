@@ -272,7 +272,7 @@ function useDashboardData(){
   const expired=batches.filter(x=>x.expiry_date&&x.expiry_date<today);
   const expiring=batches.filter(x=>x.expiry_date&&x.expiry_date>=today&&x.expiry_date<=soonKey);
   const daily={};sales.forEach(x=>{const k=localDateKey(x.created_at);const v=Number(x.total);if(Number.isFinite(v))daily[k]=(daily[k]||0)+v});
-  const chart=Array.from({length:7},(_,i)=>{const dt=new Date(now.getFullYear(),now.getMonth(),now.getDate()-6+i);const k=localDateKey(dt);const rpcValue=Number(sevenDayResults[i]?.data?.summary?.sales);const value=Number.isFinite(rpcValue)?rpcValue:(Number.isFinite(daily[k])?daily[k]:0);return {label:dt.toLocaleDateString('ar-SY',{weekday:'short'}),dateKey:k,value}});
+  const chart=Array.from({length:7},(_,i)=>{const dt=new Date(now.getFullYear(),now.getMonth(),now.getDate()-6+i);const k=localDateKey(dt);const rpcValue=Number(sevenDayResults[i]?.data?.summary?.net_sales);const value=Number.isFinite(rpcValue)?rpcValue:(Number.isFinite(daily[k])?daily[k]:0);return {label:dt.toLocaleDateString('ar-SY',{weekday:'short'}),dateKey:k,value}});
   const notes=[
    ...low.slice(0,7).map(x=>({type:'low',text:`${x.product_name||x.products?.name||'دواء'}: الكمية ${x.quantity} / حد إعادة الطلب ${x.reorder_level??x.products?.reorder_level??0}`,date:`تاريخ الفحص: ${localDateTime(now)}`,go:'inventory',target:{batchId:x.id,productId:x.product_id,kind:'low'}})),
    ...expired.slice(0,5).map(x=>({type:'expired',text:`${x.product_name||x.products?.name||'دواء'} — منتهية`,date:`انتهت في: ${x.expiry_date}`,go:'inventory',target:{batchId:x.id,productId:x.product_id,kind:'expired'}})),
@@ -483,7 +483,7 @@ function ReportList({title,rows}){return <div className="card reportList"><div c
 function ReportVisuals({data,sm}){
  const salesRows=data?.sales_rows||[];
  const [selectedDay,setSelectedDay]=useState(null);
- const dayMap={}; salesRows.forEach(r=>{const k=localDateKey(r.created_at);dayMap[k]=(dayMap[k]||0)+Number(r.total||0)});
+ const dayMap={}; salesRows.forEach(r=>{const k=localDateKey(r.created_at);dayMap[k]=(dayMap[k]||0)+Number(r.total||0)}); const returnMap={}; (data?.return_rows||[]).filter(r=>r.type==='customer').forEach(r=>{const k=localDateKey(r.created_at);returnMap[k]=(returnMap[k]||0)+Number(r.amount||0)}); Object.keys(returnMap).forEach(k=>{dayMap[k]=Math.max(0,(dayMap[k]||0)-returnMap[k])});
  const days=Object.entries(dayMap).sort((a,b)=>a[0].localeCompare(b[0])).slice(-14);
  const values=days.map(x=>x[1]); const max=Math.max(1,...values); const width=760,height=230,padX=34,padY=24;
  const points=days.map(([k,v],i)=>{const x=padX+(days.length===1?0:i*(width-padX*2)/(days.length-1));const y=height-padY-(v/max)*(height-padY*2);return {k,v,x,y}});
