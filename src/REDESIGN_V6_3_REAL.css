@@ -399,7 +399,7 @@ button,input,select,textarea{font-family:inherit;}
 /* V6.3.6 — dashboard day details: direct half-screen panel, no page/modal scrolling */
 .dashboardDayOverlay{position:fixed!important;inset:0!important;z-index:100000!important;pointer-events:none!important}
 .dashboardDayBackdrop{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;background:rgba(5,28,20,.28)!important;pointer-events:auto!important;cursor:default!important}
-.dashboardDayPanel{position:absolute!important;top:0!important;right:0!important;width:min(58vw,900px)!important;height:100dvh!important;background:#f7faf8!important;border-left:1px solid #d7e8e0!important;box-shadow:-25px 0 70px rgba(4,40,26,.20)!important;display:flex!important;flex-direction:column!important;pointer-events:auto!important;overflow:hidden!important;animation:dashboardDayPanelIn .22s ease-out!important}
+.dashboardDayPanel{position:absolute!important;top:0!important;right:0!important;width:min(68vw,1050px)!important;height:100dvh!important;background:#f7faf8!important;border-left:1px solid #d7e8e0!important;box-shadow:-25px 0 70px rgba(4,40,26,.20)!important;display:flex!important;flex-direction:column!important;pointer-events:auto!important;overflow:hidden!important;animation:dashboardDayPanelIn .22s ease-out!important}
 @keyframes dashboardDayPanelIn{from{transform:translateX(100%);opacity:.75}to{transform:translateX(0);opacity:1}}
 .dashboardDayPanelHead{flex:0 0 auto!important;display:flex!important;align-items:flex-start!important;justify-content:space-between!important;gap:14px!important;padding:18px 20px 14px!important;background:#fff!important;border-bottom:1px solid #dfeae5!important}
 .dashboardDayPanelHead span{font-size:10px!important;font-weight:900!important;color:#087443!important}.dashboardDayPanelHead h2{margin:2px 0 3px!important;font-size:20px!important;color:#173b30!important}.dashboardDayPanelHead small{color:#73887f!important;font-size:9px!important}.dashboardDayClose{width:36px!important;height:36px!important;border-radius:10px!important;background:#eef5f1!important;color:#214a3b!important;font-size:25px!important;line-height:1!important;flex:0 0 auto!important}
@@ -414,3 +414,5 @@ button,input,select,textarea{font-family:inherit;}
 /* Selected day in the 7-day sales chart */
 .v6BarItem.selected{background:#f0f8f4!important;border-color:#9bc9b4!important;box-shadow:inset 0 0 0 1px #9bc9b4,0 5px 18px rgba(8,116,67,.10)!important}
 .v6BarItem.selected .v6BarLabel,.v6BarItem.selected .v6BarDate{color:#087443!important;font-weight:900!important}
+.posNetPriceEdit{display:flex!important;flex-direction:column!important;align-items:flex-start!important;gap:2px!important;min-width:105px!important}.posPriceInput{width:105px!important;font-weight:900!important;text-align:center!important}.posNetPriceEdit small{font-size:8px!important;color:#7b8d86!important;white-space:nowrap!important}.posNetPriceEdit small::first-letter{}
+
