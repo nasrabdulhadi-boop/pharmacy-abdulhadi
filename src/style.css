@@ -532,3 +532,43 @@ input,select,textarea{border-color:var(--ab-line)!important}.muted{color:#71867d
 @media(max-width:980px){.adminShell aside{transform:translateX(100%);height:100dvh;transition:transform .22s ease;z-index:60}.adminShell aside.open{transform:none}.adminMain{margin-right:0;width:100%;padding:18px}.adminTopbar{position:sticky;top:-18px;margin:-18px -18px 18px;padding:10px 18px;grid-template-columns:1fr auto}.topbarTitle{display:none}.topbarClock{display:none}.mobileBar{display:flex;align-items:center;gap:12px;margin-bottom:15px}.reportFilterGrid{grid-template-columns:1fr 1fr}.reportCompareToggle{grid-column:1/-1}.reportUpdateBtn{width:100%}.purchaseInvoiceLayout{grid-template-columns:1fr;max-height:calc(100vh - 130px)}.purchaseInvoiceSidebar{border-right:0;border-top:1px solid var(--ab-line)}.purchaseSupplierGrid{grid-template-columns:1fr 1fr}.posPopupItem{grid-template-columns:34px 1fr auto}.posPopupMeta{display:none}.contentLayout{grid-template-columns:1fr!important}.servicesSide{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.heroContent{grid-template-columns:1fr!important}.heroVisual{display:none}.heroCopy{text-align:right;padding:0}.newGrid{grid-template-columns:repeat(2,minmax(0,1fr))!important}.heroCopy h1{font-size:47px!important}.reportVisualGrid{grid-template-columns:1fr}.topProductsChart{grid-column:auto}}
 @media(max-width:680px){body{font-size:14px}.adminMain{padding:13px}.adminTopbar{top:-13px;margin:-13px -13px 13px;padding:9px 13px}.globalSearch{height:45px}.globalSearch kbd{display:none}.topbarAction span{display:none}.topbarAction{padding:9px!important}.pageHead{align-items:flex-start;flex-direction:column;margin-bottom:15px}.pageHead h1{font-size:24px}.pageHead>div:last-child{width:100%}.pageHead>div:last-child>*{flex:1}.kpis{grid-template-columns:1fr 1fr}.kpi{min-height:108px;padding:14px}.kpi strong{font-size:21px}.purchaseWorkflow{grid-template-columns:1fr 1fr}.purchaseSupplierGrid{grid-template-columns:1fr}.purchaseInvoiceHeader{padding:16px;align-items:flex-start;flex-direction:column}.purchaseInvoiceMeta{width:100%}.purchaseInvoiceMeta>div{flex:1;min-width:0}.purchaseInvoiceBrand h2{font-size:18px}.purchaseInvoiceLayout{max-height:calc(100vh - 110px)}.purchaseInvoiceMain,.purchaseInvoiceSidebar{padding:11px}.purchaseSection{padding:11px}.reportNarrative{grid-template-columns:auto 1fr}.narrativeFacts{grid-column:1/-1}.narrativeFacts div{flex:1;min-width:0}.reportFilterGrid{grid-template-columns:1fr}.reportCompareToggle{grid-column:auto}.reportChartCard{padding:12px}.lineChartWrap svg{height:190px}.detailGrid{grid-template-columns:1fr 1fr}.heroContent{padding:45px 18px!important}.heroCopy h1{font-size:39px!important}.heroCopy>p{font-size:15px!important}.heroMeta{display:grid;grid-template-columns:1fr 1fr}.heroMeta>div{padding:9px!important}.customerNew{padding:15px 12px 35px!important}.quickServices{grid-template-columns:repeat(3,1fr)!important}.newGrid{grid-template-columns:1fr 1fr!important;gap:9px!important}.newProduct{min-height:315px!important;padding:12px!important}.productArt{height:90px!important}.servicesSide{grid-template-columns:1fr}.brandLogo .officialLogo{width:48px!important;height:48px!important}.brandWords b{font-size:15px!important}.siteHeader nav{display:none}.headerInner{padding:8px 13px!important}.callBtn span{display:none}.cartBtn.green span{display:none}.cartBtn.green{padding:9px!important}.topStrip .stripInner>span:nth-child(2),.topStrip .stripInner .stripAddress{display:none}.topStrip .stripInner{padding:7px 12px!important}.posTopBar{grid-template-columns:1fr}.posSearchBar{flex-direction:column}.posSearchInput{min-height:52px}.posPopupItem{grid-template-columns:30px 1fr auto}.posPopupActions .secondaryAction{display:none}.posPopupPrice{font-size:12px}.posTotalsBar{grid-template-columns:1fr 1fr}.paymentModes{grid-template-columns:1fr 1fr}.tableWrap table{min-width:700px}}
 @media(max-width:430px){.kpis{grid-template-columns:1fr}.purchaseWorkflow{grid-template-columns:1fr 1fr}.newGrid{grid-template-columns:1fr!important}.quickServices{grid-template-columns:1fr 1fr 1fr!important}.quickServices button{min-height:68px!important}.heroCopy h1{font-size:34px!important}.narrativeFacts{grid-template-columns:1fr 1fr 1fr}.detailGrid{grid-template-columns:1fr}.purchaseInvoiceMeta{display:grid;grid-template-columns:1fr 1fr}.topbarActions{gap:4px}}
+
+/* V6.4.2 PURCHASE INVOICE RESPONSIVE FIX — visual only */
+.purchaseInvoiceModal{padding:12px!important;place-items:center!important;overflow:auto!important}
+.purchaseInvoiceModal .modalBox{width:calc(100vw - 24px)!important;max-width:1600px!important;height:calc(100vh - 24px)!important;max-height:calc(100vh - 24px)!important;margin:0 auto!important;padding:0!important;overflow:hidden!important;border-radius:18px!important;display:flex!important;flex-direction:column!important}
+.purchaseInvoiceHeader{flex:0 0 auto;min-width:0;overflow:hidden}
+.purchaseInvoiceHeader>*{min-width:0}
+.purchaseInvoiceBrand{min-width:0;flex:1 1 auto}
+.purchaseInvoiceBrand>div:last-child{min-width:0}
+.purchaseInvoiceBrand h2,.purchaseInvoiceBrand small{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.purchaseInvoiceMeta{flex:0 1 auto;min-width:0;max-width:52%;overflow:auto}
+.purchaseInvoiceLayout{flex:1 1 auto;min-height:0;width:100%;max-height:none!important;grid-template-columns:minmax(0,1fr) minmax(290px,330px)!important;overflow:hidden}
+.purchaseInvoiceMain{min-width:0;min-height:0;overflow:auto!important;padding:16px!important}
+.purchaseInvoiceSidebar{min-width:0;min-height:0;overflow:auto!important;padding:16px!important}
+.purchaseItemsSection{min-width:0}
+.purchaseProfessionalTable{width:100%;max-width:100%;overflow:auto!important}
+.purchaseProfessionalTable table{min-width:1120px;width:100%}
+.purchaseProfessionalTable th,.purchaseProfessionalTable td{white-space:nowrap}
+.purchaseProductPicker{min-width:190px}
+.purchaseInvoiceSidebar .purchaseSummaryCard,.purchaseInvoiceSidebar .purchasePaymentCard,.purchaseInvoiceSidebar .purchaseSupplierLinkCard{width:100%}
+@media(max-width:1100px){
+ .purchaseInvoiceHeader{padding:16px 18px}
+ .purchaseInvoiceMeta{max-width:48%}
+ .purchaseInvoiceLayout{grid-template-columns:minmax(0,1fr) 300px!important}
+}
+@media(max-width:900px){
+ .purchaseInvoiceModal{padding:8px!important}
+ .purchaseInvoiceModal .modalBox{width:calc(100vw - 16px)!important;height:calc(100vh - 16px)!important;max-height:calc(100vh - 16px)!important;border-radius:15px!important}
+ .purchaseInvoiceHeader{align-items:flex-start;flex-direction:column;gap:12px;padding:14px!important}
+ .purchaseInvoiceMeta{width:100%;max-width:none}
+ .purchaseInvoiceLayout{grid-template-columns:1fr!important;overflow:auto}
+ .purchaseInvoiceMain{overflow:visible!important}
+ .purchaseInvoiceSidebar{border-top:1px solid var(--ab-line);overflow:visible!important}
+}
+@media(max-width:520px){
+ .purchaseInvoiceBrand h2{font-size:17px}
+ .purchaseInvoiceBrand small{font-size:10px}
+ .purchaseInvoiceMeta{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+ .purchaseInvoiceMeta>div{min-width:0!important;padding:8px 9px}
+ .purchaseInvoiceMain,.purchaseInvoiceSidebar{padding:10px!important}
+}
