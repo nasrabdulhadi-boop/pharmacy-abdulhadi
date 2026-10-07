@@ -602,3 +602,8 @@ input,select,textarea{border-color:var(--ab-line)!important}.muted{color:#71867d
 .activeFilterHint{background:#eaf7f0;color:#18754f;border-radius:99px;padding:5px 9px;font-weight:900}
 @media(max-width:900px){.productFilterControls{flex:1 1 100%}.productFilterControls label{min-width:135px}.productSortDir{flex:1 1 auto}}
 @media(max-width:600px){.productFilterControls{display:grid;grid-template-columns:1fr 1fr}.productFilterControls label{min-width:0}.productSortDir,.productFilterControls>button{width:100%}.productResultsMeta{align-items:flex-start;flex-direction:column}.productsTable{min-width:1100px}}
+
+/* V6.4.7 HARD FIX: purchase new-product dialog is a body-level modal above every purchase overlay. */
+.purchaseNewProductModal{z-index:2147483647!important;position:fixed!important;inset:0!important;display:grid!important;place-items:center!important;pointer-events:auto!important;}
+.purchaseNewProductModal .modalBox{position:relative!important;z-index:2147483647!important;}
+.purchaseNewProductModal .x,.purchaseNewProductModal button,.purchaseNewProductModal input,.purchaseNewProductModal select,.purchaseNewProductModal textarea{pointer-events:auto!important;}

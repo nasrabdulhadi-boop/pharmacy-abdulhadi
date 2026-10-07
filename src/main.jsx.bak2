@@ -149,20 +149,7 @@ function Customer(){
  </div>
 }
 function Modal({onClose,title,children,className=""}){return <div className={`modal ${className}`.trim()} onMouseDown={e=>{if(e.target===e.currentTarget)onClose()}}><div className="modalBox wide"><button className="x" onClick={onClose}>×</button><h2>{title}</h2>{children}</div></div>}
-function PortalModal({onClose,title,children,className=''}){
- if(typeof document==='undefined')return null;
- const close=()=>onClose?.();
- return createPortal(
-  <div className={`modal ${className}`.trim()} style={{position:'fixed',inset:0,zIndex:2147483647,isolation:'isolate',pointerEvents:'auto'}} onMouseDown={e=>{if(e.target===e.currentTarget)close()}}>
-   <div className="modalBox wide">
-    <button className="x" onClick={close}>×</button>
-    <h2>{title}</h2>
-    {children}
-   </div>
-  </div>,
-  document.body
- );
-}
+function PortalModal(props){return typeof document==='undefined'?null:createPortal(<Modal {...props}/>,document.body)}
 function PageHead({title,sub,refresh,actions}){
  const [busy,setBusy]=useState(false);
  const runRefresh=async()=>{if(!refresh||busy)return;setBusy(true);try{await refresh()}catch(e){alert(e?.message||'تعذر تحديث الصفحة')}finally{setBusy(false)}};
@@ -694,7 +681,7 @@ function Purchases({focus,go}){
 
    <div className="purchaseSection purchaseItemsSection">
     <div className="purchaseSectionHead"><div><b>أصناف الفاتورة</b><small>{lines.filter(x=>x.product_id).length} صنف مضاف</small></div><div className="purchaseSectionHeadActions"><span className="purchaseSectionBadge">3</span><button className="secondaryAction" onClick={addLine}><Plus/> إضافة صنف</button></div></div>
-    <div className="tableWrap purchaseProfessionalTable"><table><thead><tr><th>الباركود</th><th>الدواء</th><th>المادة الفعالة</th><th>الكمية</th><th>البونص</th><th>إجمالي الداخل</th><th>سعر النت</th><th>سعر المبيع</th><th>الصلاحية</th><th>الإجمالي</th><th></th></tr></thead><tbody>{lines.map((x,i)=>{const p=products.find(z=>z.id===x.product_id);return <tr key={i}><td><span className="purchaseBarcodeCell">{x.barcode||p?.barcode||'—'}</span></td><td><div className="purchaseProductPicker"><input value={i===0?productQ:''} onChange={e=>i===0&&setProductQ(e.target.value)} placeholder="بحث بالاسم / العلمي / الباركود"/><select value={x.product_id} onChange={e=>chooseProduct(i,e.target.value)}><option value="">اختر الدواء</option>{visibleProducts.map(z=><option key={z.id} value={z.id}>{z.name}{z.strength?` — ${z.strength}`:''}</option>)}</select>{i===0&&<button type="button" className="miniLinkBtn" onClick={(e)=>{e.preventDefault();e.stopPropagation();setNewProduct({...newProduct,barcode:x.barcode||''});setNewProductTargetLine(i);setNewProductOpen(true)}}>+ دواء جديد</button>}</div></td><td><span className="purchaseIngredientCell">{p?.active_ingredient||'—'}</span></td><td><input type="number" min="1" value={x.quantity} onChange={e=>updateLine(i,'quantity',e.target.value)}/></td><td><input type="number" min="0" value={x.bonus_quantity??0} onChange={e=>updateLine(i,'bonus_quantity',e.target.value)}/></td><td><b>{money(Number(x.quantity||0)+Math.max(0,Number(x.bonus_quantity||0)))}</b></td><td><input type="number" min="0" value={x.purchase_price} onChange={e=>updateLine(i,'purchase_price',e.target.value)}/></td><td><input type="number" min="0" value={x.sale_price} onChange={e=>updateLine(i,'sale_price',e.target.value)}/></td><td><input type="date" value={x.expiry_date} onChange={e=>updateLine(i,'expiry_date',e.target.value)}/></td><td><b className="purchaseLineTotal">{money(Number(x.quantity||0)*Number(x.purchase_price||0))}</b><small>ل.س</small></td><td><button className="iconBtn danger" title="حذف الصنف" onClick={()=>removeLine(i)}><Trash2/></button></td></tr>})}</tbody></table></div>
+    <div className="tableWrap purchaseProfessionalTable"><table><thead><tr><th>الباركود</th><th>الدواء</th><th>المادة الفعالة</th><th>الكمية</th><th>البونص</th><th>إجمالي الداخل</th><th>سعر النت</th><th>سعر المبيع</th><th>الصلاحية</th><th>الإجمالي</th><th></th></tr></thead><tbody>{lines.map((x,i)=>{const p=products.find(z=>z.id===x.product_id);return <tr key={i}><td><span className="purchaseBarcodeCell">{x.barcode||p?.barcode||'—'}</span></td><td><div className="purchaseProductPicker"><input value={i===0?productQ:''} onChange={e=>i===0&&setProductQ(e.target.value)} placeholder="بحث بالاسم / العلمي / الباركود"/><select value={x.product_id} onChange={e=>chooseProduct(i,e.target.value)}><option value="">اختر الدواء</option>{visibleProducts.map(z=><option key={z.id} value={z.id}>{z.name}{z.strength?` — ${z.strength}`:''}</option>)}</select>{i===0&&<button type="button" className="miniLinkBtn" onClick={()=>{setNewProduct({...newProduct,barcode:x.barcode||''});setNewProductTargetLine(i);setNewProductOpen(true)}}>+ دواء جديد</button>}</div></td><td><span className="purchaseIngredientCell">{p?.active_ingredient||'—'}</span></td><td><input type="number" min="1" value={x.quantity} onChange={e=>updateLine(i,'quantity',e.target.value)}/></td><td><input type="number" min="0" value={x.bonus_quantity??0} onChange={e=>updateLine(i,'bonus_quantity',e.target.value)}/></td><td><b>{money(Number(x.quantity||0)+Math.max(0,Number(x.bonus_quantity||0)))}</b></td><td><input type="number" min="0" value={x.purchase_price} onChange={e=>updateLine(i,'purchase_price',e.target.value)}/></td><td><input type="number" min="0" value={x.sale_price} onChange={e=>updateLine(i,'sale_price',e.target.value)}/></td><td><input type="date" value={x.expiry_date} onChange={e=>updateLine(i,'expiry_date',e.target.value)}/></td><td><b className="purchaseLineTotal">{money(Number(x.quantity||0)*Number(x.purchase_price||0))}</b><small>ل.س</small></td><td><button className="iconBtn danger" title="حذف الصنف" onClick={()=>removeLine(i)}><Trash2/></button></td></tr>})}</tbody></table></div>
    </div>
   </div>
 
