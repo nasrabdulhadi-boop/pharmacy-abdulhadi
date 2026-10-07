@@ -692,3 +692,9 @@ dialog.purchaseNewProductModal .modalBox{z-index:auto;box-shadow:0 35px 120px rg
 .purchaseSummaryRows .dangerText{color:#b44343!important}
 .supplierSummary strong{color:#087b52}
 @media(max-width:700px){.purchaseDiscountModes{grid-template-columns:1fr}.purchaseDiscountCard{padding:12px}}
+
+
+/* V6.4.14: stable purchase-line product display. Product identity is stored on the line so search-result refreshes cannot blank the selected medicine name. */
+.purchaseProductDisplay{min-width:220px;display:flex;flex-direction:column;gap:3px;padding:8px 10px;border:1px solid rgba(15,23,42,.08);border-radius:10px;background:rgba(248,250,252,.7);text-align:right}
+.purchaseProductDisplay b{display:block;white-space:normal;line-height:1.35}
+.purchaseProductDisplay small{display:block;opacity:.65;font-size:11px;line-height:1.25}
