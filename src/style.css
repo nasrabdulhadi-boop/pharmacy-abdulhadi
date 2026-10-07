@@ -673,3 +673,22 @@ dialog.purchaseNewProductModal .modalBox{z-index:auto;box-shadow:0 35px 120px rg
 .purchaseExpiryDialog .expiryMonthsGrid>button{min-height:48px;border:1px solid #e0ebe6;border-radius:10px;background:#fafcfb;color:#31594b;font-family:inherit;font-size:10px;font-weight:900;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;transition:.15s ease}
 .purchaseExpiryDialog .expiryMonthsGrid>button:hover,.purchaseExpiryDialog .expiryMonthsGrid>button.selected{background:#eaf7f0;border-color:#8bc4aa;color:#087b52;transform:translateY(-1px)}
 .purchaseExpiryDialog .expiryMonthsGrid>button small{font-size:8px;color:#8a9a94;font-weight:700}
+
+/* V6.4.13 — purchase invoice discount: percent or Syrian-pound amount. */
+.purchaseDiscountCard{margin-top:12px;padding:14px;border:1px solid #d8e9e1;border-radius:14px;background:linear-gradient(180deg,#fbfefc,#f4faf7);box-shadow:0 8px 24px rgba(20,80,55,.06)}
+.purchaseDiscountModes{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:10px 0}
+.purchaseDiscountModes button{min-height:38px;border:1px solid #d5e5de;border-radius:9px;background:#fff;color:#31594b;font-family:inherit;font-size:10px;font-weight:900;cursor:pointer;transition:.15s ease}
+.purchaseDiscountModes button:hover{border-color:#9bcbb5;transform:translateY(-1px)}
+.purchaseDiscountModes button.active{background:#eaf7f0;border-color:#74b996;color:#087b52;box-shadow:0 3px 10px rgba(8,123,82,.10)}
+.purchaseDiscountCard label{display:flex;flex-direction:column;gap:5px;color:#5d756b;font-size:9px;font-weight:900}
+.purchaseDiscountInput{position:relative;display:flex;align-items:center}
+.purchaseDiscountInput input{width:100%;height:42px;border:1px solid #cfe2d9;border-radius:10px;background:#fff;padding:0 45px 0 11px;font-family:inherit;font-size:13px;font-weight:900;color:#174d3a;outline:none}
+.purchaseDiscountInput input:focus{border-color:#71b492;box-shadow:0 0 0 3px rgba(8,123,82,.08)}
+.purchaseDiscountInput span{position:absolute;right:11px;color:#087b52;font-size:10px;font-weight:900;pointer-events:none}
+.purchaseDiscountBreakdown{display:grid;gap:7px;margin-top:11px;padding-top:10px;border-top:1px dashed #cfe2d9}
+.purchaseDiscountBreakdown span{display:flex;align-items:center;justify-content:space-between;gap:10px;color:#647b72;font-size:9px;font-weight:800}
+.purchaseDiscountBreakdown b{color:#31594b;font-size:10px}
+.purchaseDiscountBreakdown strong{color:#087b52;font-size:13px}
+.purchaseSummaryRows .dangerText{color:#b44343!important}
+.supplierSummary strong{color:#087b52}
+@media(max-width:700px){.purchaseDiscountModes{grid-template-columns:1fr}.purchaseDiscountCard{padding:12px}}
