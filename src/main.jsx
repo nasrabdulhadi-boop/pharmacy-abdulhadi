@@ -1,5 +1,6 @@
 import React,{useEffect,useMemo,useRef,useState} from 'react';
-import {createPortal,createRoot} from 'react-dom/client';
+import {createRoot} from 'react-dom/client';
+import {createPortal} from 'react-dom';
 import {createClient} from '@supabase/supabase-js';
 import {Search,LogIn,LogOut,Package,ShoppingCart,ClipboardList,Users,Truck,BarChart3,ShieldCheck,Plus,Trash2,RefreshCw,Menu,Home,Upload,Eye,Minus,Phone,Mail,MapPin,Clock,Send,FileImage,MessageCircle,Heart,Sparkles,ChevronLeft,AlertTriangle,AlertCircle,CalendarClock,TrendingUp,Download,SearchCheck,ScanLine,Receipt,Tag,Activity,FileDown,ChevronDown,ExternalLink,FileText,WalletCards,Pencil} from 'lucide-react';
 import './style.css';
@@ -9,6 +10,23 @@ import './V6_4_1_LAYOUT_POLISH.css';
 
 const url=import.meta.env.VITE_SUPABASE_URL; const key=import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 const supabase=url&&key?createClient(url,key):null;
+async function fetchAllAdminProducts({customerVisible=null,pageSize=500}={}){
+ if(!supabase) throw new Error('اتصال قاعدة البيانات غير متاح');
+ const out=[]; let offset=0;
+ while(true){
+  const args={p_limit:pageSize,p_offset:offset};
+  if(customerVisible!==null) args.p_customer_visible=customerVisible;
+  const {data,error}=await supabase.rpc('admin_get_products_page',args);
+  if(error) throw error;
+  const page=Array.isArray(data)?data:[];
+  out.push(...page);
+  if(page.length<pageSize) break;
+  offset+=page.length;
+  if(offset>100000) throw new Error('توقف تحميل المنتجات لحماية الواجهة من حلقة غير منتهية');
+ }
+ return out;
+}
+
 const CFG={name:'صيدلية عبدالهادي',owner:'نصر عبدالهادي',phone:'0995008129',whatsapp:'963995008129',email:'drnaser@pharmahadi.com',address:'حلب — الحاضر — شارع سيرياتيل',hours:'8:00 صباحاً — 12:00 منتصف الليل',maps:'https://maps.app.goo.gl/ZQ9LvYcxYA4cnvYZ9'};
 const money=v=>{const n=Number(v);return Number.isFinite(n)?n.toLocaleString('ar-SY',{maximumFractionDigits:2}):'0'};
 const localDateKey=d=>{const x=d instanceof Date?d:new Date(d);return `${x.getFullYear()}-${String(x.getMonth()+1).padStart(2,'0')}-${String(x.getDate()).padStart(2,'0')}`};
@@ -308,7 +326,7 @@ function ProductManager({mode='pharmacy'}){
  const manufacturers=useMemo(()=>uniqueOptions('manufacturer'),[allRows]);
  const dosageForms=useMemo(()=>uniqueOptions('dosage_form'),[allRows]);
  const categories=useMemo(()=>uniqueOptions('category'),[allRows]);
- const load=async()=>{setLoadErr('');const r=await supabase.rpc('admin_get_products');if(r.error)throw r.error;const list=(r.data||[]).filter(x=>x.active!==false && (mode==='pharmacy'||x.customer_visible===true));setAllRows(list);setRows(applyProductView(list))};
+ const load=async()=>{setLoadErr('');const list=await fetchAllAdminProducts({customerVisible:mode==='pharmacy'?null:true});setAllRows(list);setRows(applyProductView(list))};
  useEffect(()=>{load().catch(e=>setLoadErr(e?.message||'تعذر تحميل المنتجات'))},[mode]);
  useEffect(()=>{setRows(applyProductView(allRows))},[q,allRows,manufacturerFilter,dosageFormFilter,categoryFilter,sortBy,sortDir]);
  const clearProductFilters=()=>{setManufacturerFilter('');setDosageFormFilter('');setCategoryFilter('');setSortBy('name');setSortDir('asc');setQ('')};
@@ -354,7 +372,7 @@ function Inventory({focus}){
  const empty={product_id:'',barcode:'',expiry_date:'',quantity:'',purchase_price:'',sale_price:'',received_date:localDateKey(new Date())};const [rows,setRows]=useState([]),[allRows,setAllRows]=useState([]),[products,setProducts]=useState([]),[show,setShow]=useState(false),[edit,setEdit]=useState(null),[adjust,setAdjust]=useState(null),[form,setForm]=useState(empty),[busy,setBusy]=useState(false),[q,setQ]=useState(''),[scanOpen,setScanOpen]=useState(false),[card,setCard]=useState(null),[cardBatches,setCardBatches]=useState([]),[cardBusy,setCardBusy]=useState(false);
  const filterRows=(list,term)=>{const t=String(term||'').trim().toLowerCase();if(!t)return list;return list.filter(r=>[r.products?.name,r.products?.barcode,r.products?.active_ingredient].filter(Boolean).some(v=>String(v).toLowerCase().startsWith(t)))};
  const load=async()=>{const {data,error}=await supabase.rpc('admin_get_inventory');if(error)throw error;const all=(data||[]).map(x=>({id:x.batch_id,product_id:x.product_id,expiry_date:x.expiry_date,quantity:x.quantity,purchase_price:x.purchase_price,received_date:x.received_date,products:{name:x.name,barcode:x.barcode,active_ingredient:x.active_ingredient,reorder_level:x.reorder_level,sale_price:x.sale_price,purchase_price:x.product_purchase_price,manufacturer:x.manufacturer,strength:x.strength,dosage_form:x.dosage_form,parts_per_unit:x.parts_per_unit}}));setAllRows(all);setRows(filterRows(all,q))};
- const loadProducts=async()=>{const {data,error}=await supabase.rpc('admin_get_products');if(error)throw error;setProducts((data||[]).map(p=>({id:p.id,name:p.name,barcode:p.barcode,purchase_price:p.purchase_price,sale_price:p.sale_price,active_ingredient:p.active_ingredient}))) };
+ const loadProducts=async()=>{const data=await fetchAllAdminProducts();setProducts((data||[]).map(p=>({id:p.id,name:p.name,barcode:p.barcode,purchase_price:p.purchase_price,sale_price:p.sale_price,active_ingredient:p.active_ingredient}))) };
  useEffect(()=>{Promise.all([load(),loadProducts()]).catch(console.warn)},[]);
  useEffect(()=>{setRows(filterRows(allRows,q))},[q,allRows]);
  useEffect(()=>{if(!focus?.batchId)return;const t=setTimeout(()=>{const el=document.querySelector(`[data-batch-id="${focus.batchId}"]`);if(el){el.scrollIntoView({behavior:'smooth',block:'center'});el.classList.add('alertFocus');setTimeout(()=>el.classList.remove('alertFocus'),5000)}},180);return()=>clearTimeout(t)},[focus,rows.length]);
@@ -613,7 +631,7 @@ function Suppliers(){
 function Purchases({focus,go}){
  const emptyForm={supplier_id:'',invoice_number:'',invoice_date:localDateKey(new Date()),notes:''}; const emptyLine={product_id:'',barcode:'',quantity:1,bonus_quantity:0,purchase_price:0,sale_price:0,expiry_date:''};
  const [rows,setRows]=useState([]),[suppliers,setSuppliers]=useState([]),[products,setProducts]=useState([]),[show,setShow]=useState(false),[detail,setDetail]=useState(null),[form,setForm]=useState(emptyForm),[lines,setLines]=useState([{...emptyLine}]),[busy,setBusy]=useState(false),[q,setQ]=useState(''),[scanOpen,setScanOpen]=useState(false),[invoiceScanOpen,setInvoiceScanOpen]=useState(false),[barcodeInput,setBarcodeInput]=useState(''),[newProductOpen,setNewProductOpen]=useState(false),[newProductTargetLine,setNewProductTargetLine]=useState(null),[newSupplierOpen,setNewSupplierOpen]=useState(false),[newSupplier,setNewSupplier]=useState({name:'',phone:'',address:'',notes:''}),[supplierQ,setSupplierQ]=useState(''),[productQ,setProductQ]=useState(''),[payment,setPayment]=useState({amount:'',method:'cash',notes:''}),[newProduct,setNewProduct]=useState({name:'',barcode:'',active_ingredient:'',strength:'',dosage_form:'',manufacturer:'',category:'',unit:'box',parts_per_unit:1,purchase_price:0,sale_price:0,reorder_level:0,active:true,customer_visible:false});
- const load=async()=>{const [a,b,c]=await Promise.all([supabase.rpc('admin_list_purchases'),supabase.rpc('admin_list_suppliers'),supabase.rpc('admin_get_products')]);if(a.error)throw a.error;if(b.error)throw b.error;if(c.error)throw c.error;setRows(a.data||[]);setSuppliers(b.data||[]);setProducts(c.data||[])};useEffect(()=>{load().catch(e=>alert(e.message))},[]);
+ const load=async()=>{const [a,b,c]=await Promise.all([supabase.rpc('admin_list_purchases'),supabase.rpc('admin_list_suppliers'),fetchAllAdminProducts()]);if(a.error)throw a.error;if(b.error)throw b.error;setRows(a.data||[]);setSuppliers(b.data||[]);setProducts(c||[])};useEffect(()=>{load().catch(e=>alert(e.message))},[]);
  useEffect(()=>{if(!focus)return;if(focus.openNew||focus.supplier_id){setShow(true);if(focus.supplier_id)setForm(x=>({...x,supplier_id:focus.supplier_id}));setSupplierQ('')}},[focus]);
  const addLine=()=>setLines(x=>[...x,{...emptyLine}]); const updateLine=(i,k,v)=>setLines(x=>x.map((r,n)=>n===i?{...r,[k]:v}:r)); const removeLine=i=>setLines(x=>x.length===1?[{...emptyLine}]:x.filter((_,n)=>n!==i));
  const chooseProduct=(i,id)=>{const p=products.find(x=>x.id===id);setLines(x=>x.map((r,n)=>n===i?{...r,product_id:id,barcode:p?.barcode||'',purchase_price:p?.purchase_price??0,sale_price:p?.sale_price??0}:r))};
