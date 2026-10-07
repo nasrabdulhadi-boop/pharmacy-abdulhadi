@@ -616,3 +616,21 @@ dialog.nativeTopDialog .modalBox{position:relative;width:min(900px,94vw);max-wid
 dialog.purchaseNewProductModal{display:grid;place-items:center;z-index:auto}
 dialog.purchaseNewProductModal .modalBox{z-index:auto;box-shadow:0 35px 120px rgba(5,35,25,.38)}
 .productPagination{display:flex;justify-content:center;align-items:center;gap:12px;padding:14px 0}.productPagination span{min-width:170px;text-align:center;color:#60776e;font-size:12px}.productPagination button:disabled{opacity:.45;cursor:not-allowed}
+
+/* V6.4.9 PURCHASE UX: one main product search + fast expiry month picker. */
+.purchaseMainProductSearch{position:relative;align-items:stretch}
+.purchaseMainProductSearch input{min-width:0;flex:1}
+.purchaseMainSearchResults{margin-top:8px;display:grid;gap:5px;max-height:230px;overflow:auto;border:1px solid #d9e8e1;border-radius:10px;background:#fff;padding:5px;box-shadow:0 8px 24px rgba(18,72,52,.08)}
+.purchaseMainSearchResults button{width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;text-align:right;border:1px solid #e3ece7;background:#fff;border-radius:8px;padding:8px 10px;cursor:pointer}
+.purchaseMainSearchResults button:hover{background:#f4faf7;border-color:#c8ded4}
+.purchaseMainSearchResults button>span:first-child{display:flex;flex-direction:column;gap:2px;min-width:0}
+.purchaseMainSearchResults button b{font-size:11px;color:#184d3a}
+.purchaseMainSearchResults button small{font-size:9px;color:#71847c;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:620px}
+.purchaseMainSearchResults button>span:last-child{font-size:9px;color:#7a8b85;white-space:nowrap}
+.purchaseNewProductTopButton{white-space:nowrap}
+.purchaseExpiryPicker{display:flex;flex-direction:column;gap:3px;min-width:112px}
+.purchaseExpiryPicker input[type=month]{min-width:112px;max-width:132px}
+.purchaseExpiryPicker small{font-size:8px;color:#7c8d86;white-space:nowrap}
+.purchaseProfessionalTable td:nth-child(9){min-width:125px}
+.purchaseSectionHeadActions{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+@media(max-width:700px){.purchaseMainProductSearch{flex-direction:column}.purchaseMainProductSearch button{width:100%}.purchaseMainSearchResults button{align-items:flex-start;flex-direction:column}.purchaseExpiryPicker{min-width:110px}}
