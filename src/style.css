@@ -657,3 +657,19 @@ dialog.purchaseNewProductModal .modalBox{z-index:auto;box-shadow:0 35px 120px rg
 .purchaseProfessionalTable td:nth-child(9){min-width:150px;overflow:visible}
 .purchaseProfessionalTable tbody tr{overflow:visible}
 @media(max-width:700px){.expiryPickerPopover{position:fixed;top:50%;right:50%;transform:translate(50%,-50%);width:min(92vw,330px);z-index:10000}.purchaseExpiryPicker{min-width:135px}}
+
+/* V6.4.11 — expiry picker hard fix: render outside the purchase table/overflow stacking context. */
+.purchaseExpiryDialog{border:0;padding:0;background:transparent;width:min(360px,94vw);max-width:360px;overflow:visible}
+.purchaseExpiryDialog::backdrop{background:rgba(12,35,28,.24);backdrop-filter:blur(2px)}
+.purchaseExpiryDialogBox{width:100%;box-sizing:border-box;background:#fff;border:1px solid #d6e6df;border-radius:16px;padding:14px;box-shadow:0 28px 90px rgba(5,35,25,.32);color:#174d3a}
+.purchaseExpiryDialog .expiryPickerHead{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;color:#174d3a}
+.purchaseExpiryDialog .expiryPickerHead>div{display:flex;flex-direction:column;gap:3px}
+.purchaseExpiryDialog .expiryPickerHead>b{font-size:13px}
+.purchaseExpiryDialog .expiryPickerHead small{font-size:9px;color:#71847c}
+.purchaseExpiryDialog .expiryPickerHead>button{width:30px;height:30px;border:0;border-radius:9px;background:#f2f7f4;color:#47655a;font-size:19px;cursor:pointer}
+.purchaseExpiryDialog .expiryYearField{display:flex;flex-direction:column;gap:5px;margin-bottom:11px;color:#667b72;font-size:10px;font-weight:900}
+.purchaseExpiryDialog .expiryYearField select{height:42px;border:1px solid #d6e6df;border-radius:10px;background:#fff;padding:0 10px;font-family:inherit;font-size:12px;font-weight:900;color:#174d3a;cursor:pointer}
+.purchaseExpiryDialog .expiryMonthsGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+.purchaseExpiryDialog .expiryMonthsGrid>button{min-height:48px;border:1px solid #e0ebe6;border-radius:10px;background:#fafcfb;color:#31594b;font-family:inherit;font-size:10px;font-weight:900;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;transition:.15s ease}
+.purchaseExpiryDialog .expiryMonthsGrid>button:hover,.purchaseExpiryDialog .expiryMonthsGrid>button.selected{background:#eaf7f0;border-color:#8bc4aa;color:#087b52;transform:translateY(-1px)}
+.purchaseExpiryDialog .expiryMonthsGrid>button small{font-size:8px;color:#8a9a94;font-weight:700}

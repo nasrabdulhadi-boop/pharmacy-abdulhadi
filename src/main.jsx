@@ -173,6 +173,28 @@ function PortalModal({onClose,title,children,className=''}){
   document.body
  );
 }
+function PurchaseExpiryPickerPortal({year,years,months,currentMonth,onYearChange,onSelect,onClose}){
+ const ref=useRef(null);
+ useEffect(()=>{
+  const node=ref.current;
+  if(!node)return;
+  if(!node.open){try{node.showModal()}catch{node.setAttribute('open','')}}
+  const cancel=e=>{e.preventDefault();onClose?.()};
+  node.addEventListener('cancel',cancel);
+  return()=>node.removeEventListener('cancel',cancel);
+ },[onClose]);
+ if(typeof document==='undefined')return null;
+ return createPortal(
+  <dialog ref={ref} className="purchaseExpiryDialog" aria-modal="true" onMouseDown={e=>{if(e.target===e.currentTarget)onClose?.()}}>
+   <div className="purchaseExpiryDialogBox" dir="rtl">
+    <div className="expiryPickerHead"><div><b>صلاحية الدواء</b><small>اختر السنة ثم الشهر</small></div><button type="button" aria-label="إغلاق" onClick={onClose}>×</button></div>
+    <label className="expiryYearField">السنة<select value={year} onChange={e=>onYearChange(Number(e.target.value))}>{years.map(y=><option key={y} value={y}>{y}</option>)}</select></label>
+    <div className="expiryMonthsGrid">{months.map((name,mi)=>{const month=mi+1;const selected=currentMonth===month;return <button type="button" key={name} className={selected?'selected':''} onClick={()=>onSelect(month)}><span>{name}</span><small>{String(month).padStart(2,'0')}</small></button>})}</div>
+   </div>
+  </dialog>,
+  document.body
+ );
+}
 function PageHead({title,sub,refresh,actions}){
  const [busy,setBusy]=useState(false);
  const runRefresh=async()=>{if(!refresh||busy)return;setBusy(true);try{await refresh()}catch(e){alert(e?.message||'تعذر تحديث الصفحة')}finally{setBusy(false)}};
@@ -718,9 +740,11 @@ useEffect(()=>{load().catch(e=>alert(e.message))},[]);
 
    <div className="purchaseSection purchaseItemsSection">
     <div className="purchaseSectionHead"><div><b>أصناف الفاتورة</b><small>{lines.filter(x=>x.product_id).length} صنف مضاف</small></div><div className="purchaseSectionHeadActions"><span className="purchaseSectionBadge">3</span><button className="secondaryAction" onClick={addLine}><Plus/> إضافة صنف</button><button className="primary purchaseNewProductTopButton" onClick={openNewProductModal}><Plus/> إضافة دواء جديد</button></div></div>
-    <div className="tableWrap purchaseProfessionalTable"><table><thead><tr><th>الباركود</th><th>الدواء</th><th>المادة الفعالة</th><th>الكمية</th><th>البونص</th><th>إجمالي الداخل</th><th>سعر النت</th><th>سعر المبيع</th><th>الصلاحية</th><th>الإجمالي</th><th></th></tr></thead><tbody>{lines.map((x,i)=>{const p=products.find(z=>z.id===x.product_id)||productCache.find(z=>z.id===x.product_id);return <tr key={i}><td><span className="purchaseBarcodeCell">{x.barcode||p?.barcode||'—'}</span></td><td><div className="purchaseProductPicker"><select value={x.product_id} onChange={e=>chooseProduct(i,e.target.value)}><option value="">اختر الدواء</option>{visibleProducts.map(z=><option key={z.id} value={z.id}>{z.name}{z.strength?` — ${z.strength}`:''}</option>)}</select></div></td><td><span className="purchaseIngredientCell">{p?.active_ingredient||'—'}</span></td><td><input type="number" min="1" value={x.quantity} onChange={e=>updateLine(i,'quantity',e.target.value)}/></td><td><input type="number" min="0" value={x.bonus_quantity??0} onChange={e=>updateLine(i,'bonus_quantity',e.target.value)}/></td><td><b>{money(Number(x.quantity||0)+Math.max(0,Number(x.bonus_quantity||0)))}</b></td><td><input type="number" min="0" value={x.purchase_price} onChange={e=>updateLine(i,'purchase_price',e.target.value)}/></td><td><input type="number" min="0" value={x.sale_price} onChange={e=>updateLine(i,'sale_price',e.target.value)}/></td><td><div className="purchaseExpiryPicker"><button type="button" className={`purchaseExpiryButton ${x.expiry_date?'hasValue':''}`} onClick={()=>openExpiryPicker(i)}><CalendarDays/><span>{x.expiry_date?`${x.expiry_date.slice(0,7)}`:'اختيار الصلاحية'}</span><ChevronDown/></button>{x.expiry_date&&<small>يحفظ: {x.expiry_date}</small>}{expiryPicker?.line===i&&<div className="expiryPickerPopover" role="dialog"><div className="expiryPickerHead"><b>صلاحية الدواء</b><button type="button" onClick={()=>setExpiryPicker(null)}>×</button></div><label>السنة<select value={expiryPicker.year} onChange={e=>setExpiryPicker(v=>({...v,year:Number(e.target.value)}))}>{expiryYears.map(y=><option key={y} value={y}>{y}</option>)}</select></label><div className="expiryMonthsGrid">{expiryMonths.map((name,mi)=><button type="button" key={name} className={x.expiry_date?.slice(0,7)===`${expiryPicker.year}-${String(mi+1).padStart(2,'0')}`?'selected':''} onClick={()=>chooseExpiryMonth(mi+1)}>{name}<small>{String(mi+1).padStart(2,'0')}</small></button>)}</div></div>}</div></td><td><b className="purchaseLineTotal">{money(Number(x.quantity||0)*Number(x.purchase_price||0))}</b><small>ل.س</small></td><td><button className="iconBtn danger" title="حذف الصنف" onClick={()=>removeLine(i)}><Trash2/></button></td></tr>})}</tbody></table></div>
+    <div className="tableWrap purchaseProfessionalTable"><table><thead><tr><th>الباركود</th><th>الدواء</th><th>المادة الفعالة</th><th>الكمية</th><th>البونص</th><th>إجمالي الداخل</th><th>سعر النت</th><th>سعر المبيع</th><th>الصلاحية</th><th>الإجمالي</th><th></th></tr></thead><tbody>{lines.map((x,i)=>{const p=products.find(z=>z.id===x.product_id)||productCache.find(z=>z.id===x.product_id);return <tr key={i}><td><span className="purchaseBarcodeCell">{x.barcode||p?.barcode||'—'}</span></td><td><div className="purchaseProductPicker"><select value={x.product_id} onChange={e=>chooseProduct(i,e.target.value)}><option value="">اختر الدواء</option>{visibleProducts.map(z=><option key={z.id} value={z.id}>{z.name}{z.strength?` — ${z.strength}`:''}</option>)}</select></div></td><td><span className="purchaseIngredientCell">{p?.active_ingredient||'—'}</span></td><td><input type="number" min="1" value={x.quantity} onChange={e=>updateLine(i,'quantity',e.target.value)}/></td><td><input type="number" min="0" value={x.bonus_quantity??0} onChange={e=>updateLine(i,'bonus_quantity',e.target.value)}/></td><td><b>{money(Number(x.quantity||0)+Math.max(0,Number(x.bonus_quantity||0)))}</b></td><td><input type="number" min="0" value={x.purchase_price} onChange={e=>updateLine(i,'purchase_price',e.target.value)}/></td><td><input type="number" min="0" value={x.sale_price} onChange={e=>updateLine(i,'sale_price',e.target.value)}/></td><td><div className="purchaseExpiryPicker"><button type="button" className={`purchaseExpiryButton ${x.expiry_date?'hasValue':''}`} onClick={e=>{e.preventDefault();e.stopPropagation();openExpiryPicker(i)}}><CalendarDays/><span>{x.expiry_date?`${x.expiry_date.slice(0,7)}`:'اختيار الصلاحية'}</span><ChevronDown/></button>{x.expiry_date&&<small>يحفظ: {x.expiry_date}</small>}</div></td><td><b className="purchaseLineTotal">{money(Number(x.quantity||0)*Number(x.purchase_price||0))}</b><small>ل.س</small></td><td><button className="iconBtn danger" title="حذف الصنف" onClick={()=>removeLine(i)}><Trash2/></button></td></tr>})}</tbody></table></div>
    </div>
   </div>
+
+  {expiryPicker&&(()=>{const line=lines[expiryPicker.line];const currentMonth=line?.expiry_date?Number(line.expiry_date.slice(5,7)):null;return <PurchaseExpiryPickerPortal year={expiryPicker.year} years={expiryYears} months={expiryMonths} currentMonth={currentMonth} onYearChange={year=>setExpiryPicker(v=>v?{...v,year}:v)} onSelect={chooseExpiryMonth} onClose={()=>setExpiryPicker(null)}/>})()}
 
   <aside className="purchaseInvoiceSidebar">
    <div className="purchaseSummaryCard">
