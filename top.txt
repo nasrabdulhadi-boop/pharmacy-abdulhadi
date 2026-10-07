@@ -1,0 +1,330 @@
+import React,{useEffect,useMemo,useRef,useState} from 'react';
+import {createRoot} from 'react-dom/client';
+import {createPortal} from 'react-dom';
+import {createClient} from '@supabase/supabase-js';
+import {Search,LogIn,LogOut,Package,ShoppingCart,ClipboardList,Users,Truck,BarChart3,ShieldCheck,Plus,Trash2,RefreshCw,Menu,Home,Upload,Eye,Minus,Phone,Mail,MapPin,Clock,Send,FileImage,MessageCircle,Heart,Sparkles,ChevronLeft,AlertTriangle,AlertCircle,CalendarClock,TrendingUp,Download,SearchCheck,ScanLine,Receipt,Tag,Activity,FileDown,ChevronDown,ExternalLink,FileText,WalletCards,Pencil} from 'lucide-react';
+import './style.css';
+import './REDESIGN_V6_3.css';
+import './REDESIGN_V6_3_REAL.css';
+import './V6_4_1_LAYOUT_POLISH.css';
+
+const url=import.meta.env.VITE_SUPABASE_URL; const key=import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+const supabase=url&&key?createClient(url,key):null;
+async function fetchAllAdminProducts({customerVisible=null,pageSize=500}={}){
+ if(!supabase) throw new Error('اتصال قاعدة البيانات غير متاح');
+ const out=[]; let offset=0;
+ while(true){
+  const args={p_limit:pageSize,p_offset:offset};
+  if(customerVisible!==null) args.p_customer_visible=customerVisible;
+  const {data,error}=await supabase.rpc('admin_get_products_page',args);
+  if(error) throw error;
+  const page=Array.isArray(data)?data:[];
+  out.push(...page);
+  if(page.length<pageSize) break;
+  offset+=page.length;
+  if(offset>100000) throw new Error('توقف تحميل المنتجات لحماية الواجهة من حلقة غير منتهية');
+ }
+ return out;
+}
+
+const CFG={name:'صيدلية عبدالهادي',owner:'نصر عبدالهادي',phone:'0995008129',whatsapp:'963995008129',email:'drnaser@pharmahadi.com',address:'حلب — الحاضر — شارع سيرياتيل',hours:'8:00 صباحاً — 12:00 منتصف الليل',maps:'https://maps.app.goo.gl/ZQ9LvYcxYA4cnvYZ9'};
+const money=v=>{const n=Number(v);return Number.isFinite(n)?n.toLocaleString('ar-SY',{maximumFractionDigits:2}):'0'};
+const localDateKey=d=>{const x=d instanceof Date?d:new Date(d);return `${x.getFullYear()}-${String(x.getMonth()+1).padStart(2,'0')}-${String(x.getDate()).padStart(2,'0')}`};
+const localDateTime=d=>{if(!d)return '—';try{const dt=new Date(d);const tz=Intl.DateTimeFormat().resolvedOptions().timeZone||undefined;const locale=navigator.language||'ar-SY';return new Intl.DateTimeFormat(locale,{dateStyle:'medium',timeStyle:'short',hour12:false,timeZone:tz}).format(dt)}catch{return new Date(d).toLocaleString()}};
+function useUsbBarcodeCapture(enabled,onCode){
+ const callbackRef=useRef(onCode); const bufferRef=useRef(''); const lastRef=useRef(0); const timerRef=useRef(null);
+ useEffect(()=>{callbackRef.current=onCode},[onCode]);
+ useEffect(()=>{
+  if(!enabled)return;
+  const reset=()=>{bufferRef.current='';lastRef.current=0;if(timerRef.current){clearTimeout(timerRef.current);timerRef.current=null}};
+  const onKey=e=>{
+   const target=e.target; const tag=(target?.tagName||'').toUpperCase();
+   const isEditable=tag==='TEXTAREA'||target?.isContentEditable;
+   const now=Date.now();
+   if(e.key==='Enter'){
+    const rapid=now-lastRef.current<=220;
+    const targetValue=tag==='INPUT'&&typeof target.value==='string'?target.value.trim():'';
+    const code=(bufferRef.current||targetValue).trim();
+    if(code.length>=4 && (rapid || bufferRef.current.length>=4)){
+      if(!isEditable){e.preventDefault()}
+      reset();
+      callbackRef.current?.(code);
+    }
+    return;
+   }
+   if(typeof e.key!=='string'||e.key.length!==1)return;
+   if(tag==='TEXTAREA'||target?.isContentEditable)return;
+   if(now-lastRef.current>90)bufferRef.current=e.key; else bufferRef.current+=e.key;
+   lastRef.current=now;
+   if(timerRef.current)clearTimeout(timerRef.current);
+   timerRef.current=setTimeout(reset,260);
+  };
+  window.addEventListener('keydown',onKey,true);
+  return()=>{window.removeEventListener('keydown',onKey,true);reset()};
+ },[enabled]);
+}
+
+const readCart=()=>{try{const v=JSON.parse(localStorage.getItem('pharma_cart')||'[]');return Array.isArray(v)?v.filter(x=>x&&x.id):[]}catch{return[]}};
+const writeCart=v=>{try{localStorage.setItem('pharma_cart',JSON.stringify(v));}catch(e){console.warn('cart storage',e)}};
+const POS_DRAFT_KEY='pharma_pos_draft_v1';
+const readPosDraft=()=>{try{const v=JSON.parse(localStorage.getItem(POS_DRAFT_KEY)||'null');return v&&typeof v==='object'&&Array.isArray(v.cart)?v:null}catch{return null}};
+const writePosDraft=v=>{try{localStorage.setItem(POS_DRAFT_KEY,JSON.stringify(v))}catch(e){console.warn('pos draft storage',e)}};
+const clearPosDraft=()=>{try{localStorage.removeItem(POS_DRAFT_KEY)}catch(e){console.warn('pos draft clear',e)}};
+function App(){const [session,setSession]=useState(null); const [admin,setAdmin]=useState(false); const [loading,setLoading]=useState(true);
+ useEffect(()=>{if('serviceWorker' in navigator){navigator.serviceWorker.register('/sw.js').catch(()=>{})}},[]);
+ useEffect(()=>{if(!supabase){setLoading(false);return} supabase.auth.getSession().then(({data})=>{setSession(data.session);setAdmin(data.session?.user?.app_metadata?.role==='admin');setLoading(false)}); const {data:{subscription}}=supabase.auth.onAuthStateChange((_e,s)=>{setSession(s);setAdmin(s?.user?.app_metadata?.role==='admin')});return()=>subscription.unsubscribe()},[]);
+ if(loading)return <Splash/>; if(!supabase)return <ConfigError/>; return admin?<Admin onLogout={()=>supabase.auth.signOut()}/>:<Customer session={session}/>}
+
+class AppErrorBoundary extends React.Component {
+  constructor(props){super(props);this.state={error:null}}
+  static getDerivedStateFromError(error){return {error}}
+  componentDidCatch(error,info){console.error('Pharmacy UI error',error,info)}
+  render(){
+    if(this.state.error) return <div className="center" dir="rtl"><h1>حدث خطأ في واجهة الصيدلية</h1><p>السلة أو إحدى الواجهات واجهت خطأ غير متوقع.</p><button className="primary" onClick={()=>this.setState({error:null})}>إعادة المحاولة</button><small style={{display:'block',marginTop:12,opacity:.7}}>{this.state.error?.message||'Unknown error'}</small></div>;
+    return this.props.children;
+  }
+}
+
+function Splash(){return <div className="splash brandSplash"><img className="officialLogo splashLogo" src="/logo.png" alt="شعار صيدلية عبدالهادي"/><h1>صيدلية عبدالهادي</h1><p>جاري تشغيل النظام…</p></div>}
+function ConfigError(){return <div className="center"><h1>إعداد النظام غير مكتمل</h1><p>أضف VITE_SUPABASE_URL و VITE_SUPABASE_PUBLISHABLE_KEY في Vercel ثم أعد النشر.</p></div>}
+function BrandLogo({compact=false}){return <div className={`brandLogo ${compact?'compact':''}`}><img className="officialLogo" src="/logo.png" alt="صيدلية عبدالهادي"/><div className="brandWords"><b>صيدلية عبدالهادي</b><small>PHARMACY ABDULHADI</small></div></div>}
+function Customer(){
+ const [products,setProducts]=useState([]),[offers,setOffers]=useState([]),[q,setQ]=useState(''),[cart,setCart]=useState(()=>readCart()),[open,setOpen]=useState(false),[orderForm,setOrderForm]=useState({name:'',phone:'',address:'',notes:''}),[trackOpen,setTrackOpen]=useState(false),[track,setTrack]=useState({code:'',phone:''}),[trackResult,setTrackResult]=useState(null),[trackBusy,setTrackBusy]=useState(false),[rxOpen,setRxOpen]=useState(false),[rxForm,setRxForm]=useState({name:'',phone:'',notes:''}),[rxFile,setRxFile]=useState(null),[rxBusy,setRxBusy]=useState(false),[missingOpen,setMissingOpen]=useState(false),[missing,setMissing]=useState({name:'',strength:'',phone:''}),[waOpen,setWaOpen]=useState(false),[favorites,setFavorites]=useState(()=>JSON.parse(localStorage.getItem('pharma_favs')||'[]')), [lastOrder,setLastOrder]=useState(()=>JSON.parse(localStorage.getItem('pharma_last_order')||'null')), [sent,setSent]=useState(false),[cartNotice,setCartNotice]=useState('');
+ const load=async()=>{const [pr,of]=await Promise.all([supabase.from('products').select('id,name,active_ingredient,dosage_form,strength,manufacturer,category,unit,sale_price,barcode').eq('customer_visible',true).order('name'),supabase.from('offers').select('*').eq('active',true).order('created_at',{ascending:false}).limit(6)]);if(!pr.error)setProducts(pr.data||[]);if(!of.error)setOffers(of.data||[])};
+ useEffect(()=>{load()},[]);
+ const shown=products.filter(p=>(p.name+' '+(p.active_ingredient||'')+' '+(p.manufacturer||'')+' '+(p.barcode||'')).toLowerCase().includes(q.toLowerCase()));
+ useEffect(()=>{writeCart(cart)},[cart]);
+ 
+ const add=p=>{
+   if(!p?.id)return;
+   setCart(current=>{
+     const exists=current.find(i=>i.id===p.id);
+     const next=exists
+       ? current.map(i=>i.id===p.id?{...i,qty:Number(i.qty||0)+1}:i)
+       : [...current,{...p,qty:1}];
+     writeCart(next);
+     return next;
+   });
+   setSent(false);
+   setCartNotice(`تمت إضافة ${p.name||'الدواء'} إلى السلة`);
+   setOpen(true);
+   window.clearTimeout(window.__pharmaCartNoticeTimer);
+   window.__pharmaCartNoticeTimer=window.setTimeout(()=>setCartNotice(''),2500);
+ };
+ const inc=id=>setCart(c=>{const n=c.map(i=>i.id===id?{...i,qty:Number(i.qty||0)+1}:i);writeCart(n);return n});
+ const dec=id=>setCart(c=>{const n=c.map(i=>i.id===id?{...i,qty:Math.max(1,Number(i.qty||1)-1)}:i);writeCart(n);return n});
+ const remove=id=>setCart(c=>{const n=c.filter(i=>i.id!==id);writeCart(n);return n});
+ const clear=()=>{setCart([]);writeCart([])};
+ const toggleFav=id=>{const next=favorites.includes(id)?favorites.filter(x=>x!==id):[...favorites,id];setFavorites(next);localStorage.setItem('pharma_favs',JSON.stringify(next))};
+ const reorder=()=>{if(lastOrder?.items?.length){setCart(lastOrder.items.map(x=>({...x})));setOpen(true)}};
+ const submitOrder=async()=>{if(!cart.length)return alert('السلة فارغة');if(!orderForm.name.trim()||!orderForm.phone.trim())return alert('أدخل الاسم ورقم الهاتف');const items=cart.map(x=>({product_id:x.id,quantity:x.qty,unit_price:Number(x.sale_price||0)}));const {data,error}=await supabase.rpc('create_public_order',{p_name:orderForm.name.trim(),p_phone:orderForm.phone.trim(),p_address:orderForm.address.trim()||null,p_notes:orderForm.notes.trim()||null,p_items:items});if(error)return alert(`تعذر إرسال الطلب: ${error.message}`);const result=Array.isArray(data)?data[0]:data;const code=result?.public_code||result?.code||('ORD-'+String(result?.order_number||'').padStart(4,'0'));const saved={code,name:orderForm.name.trim(),phone:orderForm.phone.trim(),address:orderForm.address.trim(),notes:orderForm.notes.trim(),status:'new',total:Number(result?.v_total??result?.total??0),created_at:new Date().toISOString(),items:cart.map(x=>({id:x.id,name:x.name,qty:Number(x.qty||1),strength:x.strength,active_ingredient:x.active_ingredient,sale_price:Number(x.sale_price||0)}))};setLastOrder(saved);localStorage.setItem('pharma_last_order',JSON.stringify(saved));setCart([]);setOpen(false);setOrderForm({name:'',phone:'',address:'',notes:''});alert(`تم إرسال الطلب بنجاح. رقم الطلب: ${code}`)};
+ const submitRx=async()=>{if(!rxFile)return alert('اختر صورة أو PDF للوصفة');if(!rxForm.name.trim()||!rxForm.phone.trim())return alert('أدخل الاسم ورقم الهاتف');if(rxFile.size>10*1024*1024)return alert('الحد الأقصى 10 MB');setRxBusy(true);try{const safe=rxFile.name.replace(/[^a-zA-Z0-9._-]/g,'_');const path=`intake/${crypto.randomUUID()}-${safe}`;const up=await supabase.storage.from('prescriptions').upload(path,rxFile,{contentType:rxFile.type,upsert:false});if(up.error)throw up.error;const r=await supabase.rpc('submit_public_prescription',{p_name:rxForm.name.trim(),p_phone:rxForm.phone.trim(),p_notes:rxForm.notes.trim()||null,p_file_path:path,p_file_name:rxFile.name,p_mime_type:rxFile.type,p_file_size:rxFile.size});if(r.error){await supabase.storage.from('prescriptions').remove([path]);throw r.error}setRxOpen(false);setRxFile(null);setRxForm({name:'',phone:'',notes:''});alert('تم إرسال الوصفة بنجاح، وسيتم التواصل معك بعد المراجعة.')}catch(e){alert(`تعذر إرسال الوصفة: ${e.message||e}`)}finally{setRxBusy(false)}};
+ const submitMissing=async()=>{if(!missing.name.trim()||!missing.phone.trim())return alert('أدخل اسم الدواء والهاتف');const {error}=await supabase.rpc('submit_medicine_request',{p_name:missing.name.trim(),p_strength:missing.strength.trim()||null,p_phone:missing.phone.trim()});if(error)return alert(error.message);setMissingOpen(false);setMissing({name:'',strength:'',phone:''});alert('تم تسجيل طلب البحث عن الدواء، وسنتواصل معك.')};
+ const doTrack=async()=>{if(!track.code.trim()||!track.phone.trim())return;setTrackBusy(true);setTrackResult(null);const {data,error}=await supabase.rpc('track_public_order',{p_code:track.code.trim().toUpperCase(),p_phone:track.phone.trim()});if(error)alert(error.message);else {const r=Array.isArray(data)?data[0]||null:data||null;setTrackResult(r);if(r){setLastOrder(prev=>{const next={...(prev||{}),...r,code:r.public_code||prev?.code,phone:prev?.phone||track.phone,items:Array.isArray(r.items)&&r.items.length?r.items:(prev?.items||[])};localStorage.setItem('pharma_last_order',JSON.stringify(next));return next})}}setTrackBusy(false)};
+ const waMenu={order:`مرحباً، أريد طلب دواء من ${CFG.name}.`,rx:`مرحباً، أريد إرسال وصفة طبية إلى ${CFG.name}.`,question:`مرحباً، لدي سؤال صيدلاني.`,track:`مرحباً، أريد متابعة طلبي.`,call:''};
+ useEffect(()=>{if(!lastOrder?.code||!lastOrder?.phone||!supabase)return;let alive=true;(async()=>{const {data}=await supabase.rpc('track_public_order',{p_code:lastOrder.code,p_phone:lastOrder.phone});const r=Array.isArray(data)?data[0]||null:data||null;if(alive&&r){setLastOrder(prev=>{const next={...(prev||{}),...r,code:r.public_code||prev?.code,items:Array.isArray(r.items)&&r.items.length?r.items:(prev?.items||[])};localStorage.setItem('pharma_last_order',JSON.stringify(next));return next})}})();return()=>{alive=false}},[]);
+ const totalQty=cart.reduce((a,x)=>a+x.qty,0); const favProducts=products.filter(p=>favorites.includes(p.id));
+ const statusText={new:'جديد',confirmed:'مقبول',preparing:'قيد التجهيز',ready:'جاهز',completed:'تم التسليم',cancelled:'ملغى'};
+ return <div className="site" dir="rtl">
+  <div className="topStrip"><div className="stripInner"><span><MessageCircle/> واتساب: {CFG.phone}</span><span><Mail/> {CFG.email}</span><span className="stripAddress"><MapPin/> {CFG.address}</span><span className="welcome"><Heart/> أهلاً بكم في صيدلية عبدالهادي</span></div></div>
+  <header className="siteHeader"><div className="headerInner"><BrandLogo/><nav><a className="active" href="#home">الرئيسية</a><a href="#products">المنتجات</a><a href="#offers">العروض</a><a href="#rx">الوصفات</a><a href="#contact">تواصل معنا</a></nav><div className="headerActions"><button type="button" className="iconHeader" title="المفضلة" onClick={()=>document.getElementById('favorites')?.scrollIntoView({behavior:'smooth'})}><Heart/><em>{favorites.length}</em></button><button type="button" className="callBtn" onClick={()=>setWaOpen(true)}><MessageCircle/> <span>تواصل معنا</span></button><button type="button" className="cartBtn green" onClick={()=>setOpen(true)}><ShoppingCart/> <span>السلة</span><em>{totalQty}</em></button></div></div></header>
+  <section className="heroNew" id="home"><div className="heroGlow"></div><div className="heroContent"><div className="heroCopy"><span className="eyebrow"><Sparkles/> صحتكم.. أولويتنا</span><h1>صيدلية <strong>عبدالهادي</strong></h1><p>خدمات صيدلانية متكاملة.. لراحتكم وسلامتكم</p><div className="heroMeta"><div><ShieldCheck/><b>أدوية أصلية<br/>وموثوقة</b></div><div><Users/><b>استشارات<br/>صحية مجانية</b></div><div><Truck/><b>توصيل سريع<br/>لجميع المناطق</b></div></div><div className="heroButtons"><button className="primary green" onClick={()=>document.getElementById('products')?.scrollIntoView({behavior:'smooth'})}><Package/> تصفح المنتجات</button><button className="outlineGreen" onClick={()=>setRxOpen(true)}><FileImage/> إرسال وصفة</button></div></div><div className="heroVisual"><div className="pharmacyIllustration"><div className="leaf leaf1"></div><div className="leaf leaf2"></div><div className="bowl">⚕</div><div className="shopSign"><BrandLogo compact/></div></div><div className="heroBadge">أهلاً بكم في<br/><b>صيدليتكم</b></div></div></div></section>
+  <main className="customerNew">
+   {lastOrder&&<section className="lastOrderBar"><div className="lastOrderInfo"><div><b>آخر طلب لك: {lastOrder.code}</b><span>الاسم: {lastOrder.name||lastOrder.customer_name||'—'} • الهاتف: {lastOrder.phone||lastOrder.customer_phone||'—'}</span><span>العنوان: {lastOrder.address||lastOrder.customer_address||'—'}</span><span>الحالة: <strong>{statusText[lastOrder.status]||lastOrder.status||'جديد'}</strong>{lastOrder.total!=null?` • الإجمالي: ${money(lastOrder.total)} ل.س`:''}{lastOrder.created_at?` • ${localDateTime(lastOrder.created_at)}`:''}</span></div><div className="lastOrderItems"><b>محتويات الطلب:</b>{(lastOrder.items||[]).map((i,idx)=><span key={idx}>• {i.name||i.product_name||'دواء'} × {i.qty||i.quantity}</span>)}</div></div><div className="lastOrderActions"><button onClick={reorder}><RefreshCw/> إعادة الطلب</button><button className="ghostBtn" onClick={()=>{setTrack({code:lastOrder.code,phone:lastOrder.phone});setTrackOpen(true)}}>متابعة الطلب</button></div></section>}
+   {offers.length>0&&<section id="offers" className="offersCustomer"><div className="sectionTitle"><div><span>عروض الصيدلية</span><h2>عروض الأسبوع <Sparkles/></h2></div></div><div className="offerGrid">{offers.map(o=><div className="offerCustomer" key={o.id}><span>🔥 عرض خاص</span><b>{o.title}</b><p>{o.description||'استفد من العرض لفترة محدودة.'}</p></div>)}</div></section>}
+   <section className="quickServices"><button type="button" onClick={()=>setQ('')}><span><Package/></span><b>جميع الأقسام</b></button><button type="button" onClick={()=>setQ('')}><span><PillIcon/></span><b>الأدوية</b></button><button type="button" onClick={()=>setQ('فيتامين')}><span>◉</span><b>الفيتامينات</b></button><button type="button" onClick={()=>setWaOpen(true)}><span><MessageCircle/></span><b>واتساب ذكي</b></button><button type="button" onClick={()=>setMissingOpen(true)}><span>?</span><b>لم تجد الدواء؟</b></button><button type="button" onClick={()=>setTrackOpen(true)}><span><ClipboardList/></span><b>تتبع الطلب</b></button></section>
+   <section className="contentLayout" id="products"><div className="productsArea"><div className="searchNew"><Search/><input value={q} onChange={e=>setQ(e.target.value)} placeholder="ابحث عن دواء، اسم تجاري، مادة فعالة أو باركود..."/><button className="scanSmall" type="button" onClick={()=>{if('BarcodeDetector' in window){setQ('');alert('للمسح بالكاميرا استخدم ماسح الباركود من لوحة الإدارة.')}else alert('المتصفح لا يدعم ماسح الباركود بالكاميرا.')}}><ScanLine/></button></div><div className="sectionTitle"><div><span>اختياراتنا</span><h2>منتجات مميزة <Sparkles/></h2></div><button type="button" onClick={()=>setQ('')}>عرض الكل <ChevronLeft/></button></div><div className="grid newGrid">{shown.map(p=><article className="product newProduct" key={p.id}><button className={`heartBtn ${favorites.includes(p.id)?'liked':''}`} type="button" onClick={()=>toggleFav(p.id)}><Heart fill={favorites.includes(p.id)?'currentColor':'none'}/></button><div className="productArt"><PillIcon/></div><span className="productCategory">{p.dosage_form||'دواء'}</span><h3>{p.name}</h3><p>{[p.strength,p.active_ingredient].filter(Boolean).join(' · ')||'منتج صيدلاني'}</p><small>{p.manufacturer||'—'}</small><div className="productBottom"><strong>السعر عند الطلب</strong><button type="button" className="addOrderBtn green" onClick={()=>add(p)}><ShoppingCart/> إضافة للطلب</button></div></article>)}</div>{!shown.length&&<div className="emptyProducts"><Package/><h3>لم نجد المنتج المطلوب</h3><p>جرّب اسم دواء أو مادة فعالة أخرى.</p><button className="primary" onClick={()=>setMissingOpen(true)}>أرسل لنا اسم الدواء</button></div>}
+   {favProducts.length>0&&<section className="favoritesSection" id="favorites"><div className="sectionTitle"><div><span>محفوظة لك</span><h2>منتجاتي المفضلة <Heart/></h2></div></div><div className="favChips">{favProducts.map(p=><button key={p.id} onClick={()=>add(p)}><Heart fill="currentColor"/> {p.name}</button>)}</div></section>}</div>
+    <aside className="servicesSide"><div className="serviceCard rxCard" id="rx"><div className="serviceIcon"><FileImage/></div><h3>إرسال وصفة طبية</h3><p>ارفع صورة أو PDF مباشرة إلى النظام، مع الاسم والهاتف والملاحظات.</p><button type="button" onClick={()=>setRxOpen(true)}>إرسال الوصفة الآن <Send/></button></div><div className="serviceCard"><div className="serviceIcon"><ClipboardList/></div><h3>تتبع طلبك</h3><p>أدخل رقم الطلب ورقم الهاتف لمعرفة حالته.</p><button onClick={()=>setTrackOpen(true)}>متابعة الطلب <ChevronLeft/></button></div><div className="serviceCard"><div className="serviceIcon"><MessageCircle/></div><h3>واتساب ذكي</h3><p>اختر نوع الخدمة وسيتم فتح رسالة جاهزة.</p><button onClick={()=>setWaOpen(true)}>فتح القائمة <MessageCircle/></button></div><div className="serviceCard locationCard"><div className="serviceIcon"><MapPin/></div><h3>موقعنا</h3><p>{CFG.address}</p><a href={CFG.maps} target="_blank" rel="noreferrer">فتح الخريطة <ChevronLeft/></a></div></aside>
+   </section>
+   <section className="promoRow"><div className="promo"><Truck/><div><b>خدمة التوصيل</b><p>نوصل طلبك إلى جميع مناطق الحاضر وما حولها</p></div><span>قريباً</span></div><div className="promo doctor"><Users/><div><b>استشارات صيدلانية</b><p>استفسر عن دواء أو تداخل دوائي من فريقنا الصيدلاني</p></div><button onClick={()=>setWaOpen(true)}>تواصل معنا</button></div><div className="promo trust"><ShieldCheck/><div><b>لأن صحتك تهمنا</b><p>نقدم لك أفضل الخدمات بأعلى معايير الجودة</p></div><Heart/></div></section>
+  </main>
+  {cartNotice&&<div className="cartNotice" role="status"><ShoppingCart/><span>{cartNotice}</span><button type="button" onClick={()=>setOpen(true)}>عرض السلة</button></div>}
+  <footer className="siteFooter" id="contact"><div><BrandLogo compact/><p>خدمتكم شرف.. وصحتكم أمانة.</p></div><div className="footerContact"><a href={`tel:${CFG.phone}`}><Phone/> {CFG.phone}</a><a href={`mailto:${CFG.email}`}><Mail/> {CFG.email}</a><a href={CFG.maps} target="_blank" rel="noreferrer"><MapPin/> {CFG.address}</a></div><div className="footerHours"><Clock/> <span>{CFG.hours}</span></div><small>© 2026 صيدلية عبدالهادي — جميع الحقوق محفوظة</small></footer>
+  {open&&<div className="cartOverlay" dir="rtl" onMouseDown={e=>{if(e.target===e.currentTarget)setOpen(false)}}><aside className="cartDrawer" role="dialog" aria-modal="true" aria-label="سلة الطلب"><div className="cartDrawerHead"><div><b>سلة الطلب</b><small>{totalQty} قطعة</small></div><button type="button" className="cartClose" onClick={()=>setOpen(false)}>×</button></div><div className="cartItems">{cart.map(x=><div className="cartItem" key={x.id}><div className="cartInfo"><b>{x.name}</b><small>{[x.strength,x.active_ingredient].filter(Boolean).join(' · ')}</small></div><div className="qtyControl"><button type="button" onClick={()=>dec(x.id)}><Minus/></button><input type="number" min="1" value={x.qty} onChange={e=>setCart(c=>{const n=c.map(i=>i.id===x.id?{...i,qty:Math.max(1,Number(e.target.value)||1)}:i);writeCart(n);return n})}/><button type="button" onClick={()=>inc(x.id)}><Plus/></button></div><button type="button" className="removeCart" onClick={()=>remove(x.id)}><Trash2/></button></div>)}</div>{cart.length>0?<><div className="orderForm"><h3>بيانات الطلب</h3><div className="formGrid"><label>الاسم<input value={orderForm.name} onChange={e=>setOrderForm({...orderForm,name:e.target.value})}/></label><label>الهاتف<input value={orderForm.phone} onChange={e=>setOrderForm({...orderForm,phone:e.target.value})}/></label><label>العنوان<input value={orderForm.address} onChange={e=>setOrderForm({...orderForm,address:e.target.value})}/></label><label>ملاحظات<textarea value={orderForm.notes} onChange={e=>setOrderForm({...orderForm,notes:e.target.value})}/></label></div><button type="button" className="primary full green" onClick={submitOrder}><Send/> إرسال الطلب</button><button type="button" className="clearCartBtn" onClick={clear}>تفريغ السلة</button></div></>:<div className="emptyCart"><ShoppingCart/><p>السلة فارغة</p><small>أضف دواء من المنتجات ليظهر هنا.</small></div>}</aside></div>}
+  {rxOpen&&<Modal onClose={()=>setRxOpen(false)} title="إرسال وصفة طبية"><div className="rxUploadForm"><div className="rxBigIcon"><FileImage/></div><p>الصورة أو PDF يذهب مباشرة إلى النظام الخاص بالصيدلية، ولن يكون الملف عاماً.</p><div className="formGrid"><label>الاسم<input value={rxForm.name} onChange={e=>setRxForm({...rxForm,name:e.target.value})}/></label><label>الهاتف<input value={rxForm.phone} onChange={e=>setRxForm({...rxForm,phone:e.target.value})}/></label><label>ملاحظات<textarea value={rxForm.notes} onChange={e=>setRxForm({...rxForm,notes:e.target.value})}/></label><label>الوصفة<input type="file" accept="image/jpeg,image/png,image/webp,application/pdf" onChange={e=>setRxFile(e.target.files?.[0]||null)}/></label></div><button className="primary full green" onClick={submitRx} disabled={rxBusy}>{rxBusy?'جارٍ الإرسال…':'إرسال الوصفة'}</button></div></Modal>}
+  {missingOpen&&<Modal onClose={()=>setMissingOpen(false)} title="لم تجد الدواء؟"><p>أرسل لنا اسم الدواء وسنبحث عنه لك.</p><div className="formGrid"><label>اسم الدواء<input value={missing.name} onChange={e=>setMissing({...missing,name:e.target.value})}/></label><label>التركيز<input value={missing.strength} onChange={e=>setMissing({...missing,strength:e.target.value})}/></label><label>الهاتف<input value={missing.phone} onChange={e=>setMissing({...missing,phone:e.target.value})}/></label></div><button className="primary full green" onClick={submitMissing}>إرسال الطلب</button></Modal>}
+  {trackOpen&&<Modal onClose={()=>setTrackOpen(false)} title="متابعة الطلب"><div className="formGrid"><label>رقم الطلب<input value={track.code} onChange={e=>setTrack({...track,code:e.target.value})} placeholder="ORD-1025"/></label><label>رقم الهاتف<input value={track.phone} onChange={e=>setTrack({...track,phone:e.target.value})}/></label></div><button className="primary full green" onClick={doTrack} disabled={trackBusy}>{trackBusy?'جارٍ التحديث…':'تحديث حالة الطلب'}</button>{trackResult&&<div className="trackResult"><b>{trackResult.public_code}</b><strong>{statusText[trackResult.status]||trackResult.status}</strong><small>{trackResult.customer_name||lastOrder?.name||'—'} • {trackResult.customer_phone||trackResult.phone||lastOrder?.phone||'—'}</small><small>{localDateTime(trackResult.updated_at||trackResult.created_at)}</small><div className="trackItems">{(trackResult.items||lastOrder?.items||[]).map((i,idx)=><div className="line" key={idx}><span>{i.product_name||i.name||'دواء'} × {i.quantity||i.qty}</span></div>)}</div></div>}{!trackResult&&track.code&&<div className="notice">لم نجد طلباً مطابقاً للرقم والهاتف.</div>}</Modal>}
+  {waOpen&&<Modal onClose={()=>setWaOpen(false)} title="واتساب ذكي"><div className="waGrid">{[['order','💊','طلب دواء'],['rx','📸','إرسال وصفة'],['question','❓','سؤال صيدلي'],['track','📦','متابعة طلب'],['call','📞','اتصال بالصيدلية']].map(([k,ic,label])=><button key={k} onClick={()=>{if(k==='call'){window.location.href=`tel:${CFG.phone}`;return}window.open(`https://wa.me/${CFG.whatsapp}?text=${encodeURIComponent(waMenu[k])}`,'_blank','noopener,noreferrer');setWaOpen(false)}}><span>{ic}</span><b>{label}</b></button>)}</div></Modal>}
+ </div>
+}
+function Modal({onClose,title,children,className=""}){return <div className={`modal ${className}`.trim()} onMouseDown={e=>{if(e.target===e.currentTarget)onClose()}}><div className="modalBox wide"><button className="x" onClick={onClose}>×</button><h2>{title}</h2>{children}</div></div>}
+function PortalModal({onClose,title,children,className=''}){
+ if(typeof document==='undefined')return null;
+ const close=()=>onClose?.();
+ return createPortal(
+  <div className={`modal ${className}`.trim()} style={{position:'fixed',inset:0,zIndex:2147483647,isolation:'isolate',pointerEvents:'auto'}} onMouseDown={e=>{if(e.target===e.currentTarget)close()}}>
+   <div className="modalBox wide">
+    <button className="x" onClick={close}>×</button>
+    <h2>{title}</h2>
+    {children}
+   </div>
+  </div>,
+  document.body
+ );
+}
+function PageHead({title,sub,refresh,actions}){
+ const [busy,setBusy]=useState(false);
+ const runRefresh=async()=>{if(!refresh||busy)return;setBusy(true);try{await refresh()}catch(e){alert(e?.message||'تعذر تحديث الصفحة')}finally{setBusy(false)}};
+ return <div className="pageHead">
+  <div><h1>{title}</h1>{sub&&<p>{sub}</p>}</div>
+  <div style={{display:'flex',alignItems:'center',gap:8,flexWrap:'wrap'}}>
+   {actions}
+   {refresh&&<button type="button" className="secondaryAction refreshBtn" onClick={runRefresh} title="تحديث" disabled={busy}><RefreshCw size={16} className={busy?'spin':''}/> {busy?'جارٍ التحديث…':'تحديث'}</button>}
+  </div>
+ </div>
+}
+function PillIcon(){return <span className="pillIcon" aria-hidden="true"><i></i></span>}
+function SystemClock(){const [now,setNow]=useState(new Date());useEffect(()=>{const id=setInterval(()=>setNow(new Date()),1000);return()=>clearInterval(id)},[]);return <div className="systemClock">🕒 توقيت الجهاز: {localDateTime(now)}</div>}
+function Admin({onLogout}){
+ const [tab,setTab]=useState('dashboard'),[mobile,setMobile]=useState(false),[focus,setFocus]=useState(null),[quickSearch,setQuickSearch]=useState('');
+ const go=(next,target=null)=>{setFocus(target);setTab(next);setMobile(false);setQuickSearch('')};
+ const navGroups=[
+  {title:'اليوم',items:[['dashboard','لوحة التحكم',Home],['pos','نقطة البيع',ShoppingCart]]},
+  {title:'المخزون والشراء',items:[['pharmacyProducts','منتجات الصيدلية',Package],['siteProducts','منتجات الموقع',ExternalLink],['inventory','المخزون',BarChart3],['smart','المخزون الذكي',Sparkles],['purchases','المشتريات',Receipt],['suppliers','الموردون',Truck],['supplierDebts','ديون الموردين',WalletCards]]},
+  {title:'العملاء والخدمات',items:[['orders','الطلبات',ClipboardList],['prescriptions','الوصفات',Upload],['requests','طلبات الأدوية',SearchCheck],['customers','العملاء',Users],['debtors','المتدينين',Users],['offers','العروض',Tag]]},
+  {title:'المال والتقارير',items:[['cashbox','الصندوق',Receipt],['returns','المرتجعات',Receipt],['reports','التقارير',TrendingUp]]},
+  {title:'الحماية',items:[['security','الأمان والتدقيق',ShieldCheck]]}
+ ];
+ const nav=navGroups.flatMap(g=>g.items);
+ const runQuickSearch=()=>{const q=quickSearch.trim().toLowerCase();if(!q)return;const hit=nav.find(x=>String(x[1]).toLowerCase().includes(q)||String(x[0]).toLowerCase().includes(q));if(hit)go(hit[0])};
+ useEffect(()=>{const onKey=e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='k'){e.preventDefault();document.querySelector('.globalSearch input')?.focus()}};window.addEventListener('keydown',onKey);return()=>window.removeEventListener('keydown',onKey)},[]);
+ return <div className="adminShell" dir="rtl">
+  <aside className={mobile?'open':''}>
+   <div className="sideBrand"><img className="sideLogo" src="/logo.png" alt="شعار صيدلية عبدالهادي"/><div><b>صيدلية عبدالهادي</b><span>نظام إدارة الصيدلية • V6.3.6</span></div></div>
+   <div className="sideMiniProfile"><span className="onlineDot"></span><div><b>الإدارة</b><small>النظام يعمل بشكل طبيعي</small></div></div>
+   {navGroups.map(group=><div className="navGroup" key={group.title}><div className="sideCaption">{group.title}</div>{group.items.map(([id,label,I])=><button className={tab===id?'active':''} onClick={()=>go(id)} key={id}><I/><span>{label}</span>{tab===id&&<i className="navActiveDot"/>}</button>)}</div>)}
+   <div className="sideFooter"><div className="sideStatus"><i></i><span>متصل بـ Supabase</span></div><button className="logout" onClick={onLogout}><LogOut/> تسجيل الخروج</button></div>
+  </aside>
+  <main className="adminMain">
+   <div className="adminTopbar"><div className="topbarTitle"><div className="topbarEyebrow">إدارة صيدلية عبدالهادي</div><strong>{nav.find(x=>x[0]===tab)?.[1]}</strong></div><div className="globalSearch"><Search size={17}/><input value={quickSearch} onChange={e=>setQuickSearch(e.target.value)} onKeyDown={e=>{if(e.key==='Enter')runQuickSearch()}} placeholder="ابحث في أقسام النظام…" aria-label="بحث سريع داخل النظام"/><kbd>Ctrl K</kbd></div><div className="topbarActions"><button type="button" className="topbarAction" onClick={()=>go('pos')} title="بيع جديد"><ShoppingCart size={17}/><span>بيع جديد</span></button><button type="button" className="topbarAction accent" onClick={()=>go('purchases')} title="فاتورة شراء جديدة"><Plus size={17}/><span>شراء جديد</span></button><div className="topbarClock"><Clock size={15}/><SystemClock/></div></div></div>
+   <div className="mobileBar"><button onClick={()=>setMobile(!mobile)} aria-label="فتح القائمة"><Menu/></button><div><small>صيدلية عبدالهادي</small><b>{nav.find(x=>x[0]===tab)?.[1]}</b></div></div>
+   {tab==='dashboard'&&<Dashboard go={go}/>} {tab==='pos'&&<POS/>}{tab==='pharmacyProducts'&&<ProductManager mode="pharmacy"/>}{tab==='siteProducts'&&<ProductManager mode="site"/>}{tab==='inventory'&&<Inventory focus={focus}/>}{tab==='smart'&&<SmartInventory/>}{tab==='orders'&&<Orders/>}{tab==='prescriptions'&&<Prescriptions/>}{tab==='requests'&&<Requests/>}{tab==='offers'&&<Offers/>}{tab==='reports'&&<Reports/>}{tab==='cashbox'&&<Cashbox/>}{tab==='debtors'&&<Debtors/>}{tab==='purchases'&&<Purchases focus={focus} go={go}/>} {tab==='supplierDebts'&&<SupplierDebts go={go}/>}{tab==='suppliers'&&<Suppliers/>}{tab==='customers'&&<Customers/>}{tab==='returns'&&<Returns/>}{tab==='security'&&<Security/>}
+  </main>
+ </div>
+}
+function Card({title,value,icon:I,meta,alert}){return <div className={`kpi ${alert?'alertKpi':''}`}><div><span>{title}</span><strong>{value}</strong>{meta&&<small>{meta}</small>}</div><I/></div>}
+function DashboardDayDetails({day,dayErr,onClose}){
+ const [section,setSection]=useState('sales');
+ const cashboxTypeLabel={sale_cash:'بيع نقدي',debtor_payment:'تحصيل دين',expense:'مصروف',income:'دخل',purchase_payment:'دفع شراء',withdrawal:'سحب',deposit:'إيداع',adjustment:'تسوية',customer_return_refund:'استرداد مرتجع'};
+ const sections=[['sales','المبيعات',day.sales||[]],['purchases','المشتريات',day.purchases||[]],['cashbox','الصندوق',day.cashbox||[]],['returns','المرتجعات',day.returns||[]],['debtor_payments','تحصيل الديون',day.debtor_payments||[]],['supplier_payments','دفعات الموردين',day.supplier_payments||[]],['orders','الطلبات',day.orders||[]],['prescriptions','الوصفات',day.prescriptions||[]]];
+ const active=sections.find(x=>x[0]===section)||sections[0];
+ return <div className="dashboardDayOverlay" role="dialog" aria-modal="true" aria-label={`تفاصيل يوم ${day.dayKey}`}>
+  <button className="dashboardDayBackdrop" aria-label="إغلاق تفاصيل اليوم" onClick={onClose}/>
+  <aside className="dashboardDayPanel">
+   <header className="dashboardDayPanelHead"><div><span>تفاصيل اليوم</span><h2>{day.dayKey}</h2><small>البيانات مرتبطة مباشرة بالمبيعات والمحاسبة والصندوق والمشتريات والمرتجعات</small></div><button className="dashboardDayClose" onClick={onClose}>×</button></header>
+   <div className="dashboardDaySummary">
+    <div><span>المبيعات</span><b>{money(day.summary?.sales||0)} ل.س</b></div><div><span>صافي المبيعات</span><b>{money((day.summary?.net_sales ?? day.summary?.sales ?? 0))} ل.س</b></div><div><span>الربح</span><b>{money(day.summary?.profit||0)} ل.س</b></div><div><span>عدد الفواتير</span><b>{day.summary?.invoice_count||0}</b></div>
+    <div><span>المشتريات</span><b>{money(day.summary?.purchases||0)} ل.س</b></div><div><span>مرتجعات العملاء</span><b>{money(day.summary?.customer_returns||0)} ل.س</b></div><div><span>داخل الصندوق</span><b>{money(day.summary?.cash_in||0)} ل.س</b></div><div><span>خارج الصندوق</span><b>{money(day.summary?.cash_out||0)} ل.س</b></div>
+   </div>
+   {dayErr&&<div className="error dashboardDayError">{dayErr}</div>}
+   <nav className="dashboardDayTabs">{sections.map(([id,label,rows])=><button key={id} className={section===id?'active':''} onClick={()=>setSection(id)}>{label}<em>{rows.length}</em></button>)}</nav>
+   <div className="dashboardDayContent">
+    {section==='sales'&&<section className="dashboardDayList">{active[2].length?active[2].map(s=><article className="dashboardSaleDetail" key={s.id}><div className="dashboardSaleHead"><div><b>{new Date(s.created_at).toLocaleTimeString('ar-SY',{hour:'2-digit',minute:'2-digit',second:'2-digit'})}</b><small>{s.payment_method==='credit'?'دين'+(s.debtor_name?' — '+s.debtor_name:''):'نقدي'} • {s.invoice_number||String(s.id).slice(0,8)}</small></div><strong>{money(s.total)} ل.س</strong></div><div className="dashboardSaleMeta"><span>المدفوع: {money(s.paid_amount||0)} ل.س</span><span>المتبقي: {money(s.due_amount||0)} ل.س</span></div><div className="dashboardSaleItems">{(s.items||[]).map((it,i)=><div key={i}><span><b>{it.product_name}</b>{it.barcode?' • '+it.barcode:''}</span><span>{money(it.quantity)} × {money(it.unit_price)} = {money(it.line_total)} ل.س</span></div>)}</div></article>):<div className="emptyCart">لا توجد مبيعات في هذا اليوم.</div>}</section>}
+    {section==='purchases'&&<DayRows rows={active[2]} empty="لا توجد مشتريات في هذا اليوم." render={x=><><div><b>{x.invoice_number||String(x.id).slice(0,8)}</b><small>{x.supplier_name||'بدون مورد'} • {x.item_count||0} صنف</small></div><strong>{money(x.total)} ل.س</strong><span>{x.payment_status==='paid'?'مدفوعة':x.payment_status==='partial'?'جزئية':'آجلة'}</span></>}/>}
+    {section==='cashbox'&&<DayRows rows={active[2]} empty="لا توجد حركات صندوق في هذا اليوم." render={x=><><div><b>{cashboxTypeLabel[x.type]||x.type}</b><small>{x.description||'—'}</small></div><strong className={Number(x.amount)<0?'dangerText':''}>{money(x.amount)} ل.س</strong><span>{localDateTime(x.created_at)}</span></>}/>}
+    {section==='returns'&&<DayRows rows={active[2]} empty="لا توجد مرتجعات في هذا اليوم." render={x=><><div><b>{x.type==='customer'?'مرتجع من الزبون':'مرتجع إلى المورد'}</b><small>{x.product_name||'—'} • الكمية {money(x.quantity)} • {x.reason||'—'}</small></div><strong>{money(x.amount)} ل.س</strong><span>{localDateTime(x.created_at)}</span></>}/>}
+    {section==='debtor_payments'&&<DayRows rows={active[2]} empty="لا توجد تحصيلات ديون في هذا اليوم." render={x=><><div><b>{x.debtor_name||'—'}</b><small>{x.payment_method==='cash'?'نقداً':'طريقة أخرى'} • {x.notes||'بدون ملاحظات'}</small></div><strong>{money(x.amount)} ل.س</strong><span>{localDateTime(x.created_at)}</span></>}/>}
+    {section==='supplier_payments'&&<DayRows rows={active[2]} empty="لا توجد دفعات موردين في هذا اليوم." render={x=><><div><b>{x.supplier_name||'—'}</b><small>{x.payment_method==='cash'?'نقداً':'طريقة أخرى'} • {x.notes||'بدون ملاحظات'}</small></div><strong>{money(x.amount)} ل.س</strong><span>{localDateTime(x.created_at)}</span></>}/>}
+    {section==='orders'&&<DayRows rows={active[2]} empty="لا توجد طلبات في هذا اليوم." render={x=><><div><b>طلب {x.public_code||String(x.id).slice(0,8)}</b><small>{x.customer_name||'بدون اسم'} • {x.customer_phone||'—'} • {x.status||'جديد'}</small></div><strong>{money(x.total||0)} ل.س</strong><span>{localDateTime(x.created_at)}</span></>}/>}
+    {section==='prescriptions'&&<DayRows rows={active[2]} empty="لا توجد وصفات في هذا اليوم." render={x=><><div><b>وصفة طبية</b><small>{x.customer_name||'بدون اسم'} • {x.customer_phone||'—'} • {x.status||'جديدة'} • {x.file_name||'ملف'}</small></div><strong>—</strong><span>{localDateTime(x.created_at)}</span></>}/>}
+   </div>
+  </aside>
+ </div>
+}
+function DayRows({rows,empty,render}){return <section className="dashboardDayList">{rows.length?rows.map(x=><div className="dashboardActivityRow" key={x.id}>{render(x)}</div>):<div className="emptyCart">{empty}</div>}</section>}
+
+function Dashboard({go}){
+ const [d,load]=useDashboardData();
+ const [day,setDay]=useState(null),[dayBusy,setDayBusy]=useState(false),[dayErr,setDayErr]=useState('');
+ const max=Math.max(1,...d.chart.map(x=>Number(x.value)||0));
+ const openDay=async(dayKey)=>{setDayBusy(true);setDayErr('');try{const [y,m,dd]=String(dayKey).split('-').map(Number);const start=new Date(y,m-1,dd,0,0,0,0),end=new Date(y,m-1,dd+1,0,0,0,0);const {data,error}=await supabase.rpc('admin_dashboard_day_details',{p_start:start.toISOString(),p_end:end.toISOString()});if(error)throw error;setDay({...data,dayKey})}catch(e){setDay(null);setDayErr(e?.message||'تعذر تحميل تفاصيل اليوم')}finally{setDayBusy(false)}};
+ const points=d.chart.map(x=>{const val=Number(x.value)||0;return {...x,val,height:Math.max(4,(val/max)*100)}});
+ const today=new Date();
+ return <div className="v6Dashboard">
+  {d.error&&<div className="error dashboardLoadError">تعذر تحميل بعض بيانات لوحة التحكم: {d.error}</div>}
+  <section className="v6Welcome"><div className="v6WelcomeContent"><span className="eyebrow">نظام إدارة صيدلية عبدالهادي • لوحة المتابعة اليومية</span><h1>مرحباً بك، د. نصر 👋</h1><p>كل ما تحتاجه لإدارة صيدليتك في مكان واحد — المبيعات، المخزون، المشتريات، العملاء والتقارير.</p></div><img className="v6WelcomeLogo" src="/logo.png" alt="شعار صيدلية عبدالهادي"/><div className="v6WelcomeDate">{today.toLocaleDateString('ar-SY',{weekday:'long',year:'numeric',month:'long',day:'numeric'})} • {today.toLocaleTimeString('ar-SY',{hour:'2-digit',minute:'2-digit'})}</div></section>
+  <section className="v6PrimaryKpis">
+   <div className="v6Kpi"><div className="v6KpiTop"><label>مبيعات اليوم</label><span className="v6KpiIcon"><TrendingUp size={17}/></span></div><strong>{money(d.sales)} <small style={{display:'inline',fontSize:9}}>ل.س</small></strong><small>إجمالي مبيعات اليوم</small></div>
+   <div className="v6Kpi"><div className="v6KpiTop"><label>الربح اليوم</label><span className="v6KpiIcon"><Activity size={17}/></span></div><strong>{money(d.profit)} <small style={{display:'inline',fontSize:9}}>ل.س</small></strong><small>الربح المحسوب</small></div>
+   <div className="v6Kpi gold"><div className="v6KpiTop"><label>الطلبات اليوم</label><span className="v6KpiIcon"><ShoppingCart size={17}/></span></div><strong>{d.orders}</strong><small>طلبات تحتاج متابعة</small></div>
+   <div className="v6Kpi red"><div className="v6KpiTop"><label>عدد الأصناف</label><span className="v6KpiIcon"><Package size={17}/></span></div><strong>{d.products}</strong><small>أصناف مسجلة في النظام</small></div>
+  </section>
+  <section className="v6DashboardGrid">
+   <div className="v6Panel"><div className="v6PanelHead"><div><h2>تطور المبيعات خلال آخر 7 أيام</h2><p>اضغط على أي عمود لعرض حركة اليوم كاملة وفواتيره وتفاصيله</p></div><span className="v6SectionBadge">آخر 7 أيام</span></div>
+    <div className="v6BarChart" role="img" aria-label="مبيعات آخر 7 أيام">{points.map(p=><button key={p.dateKey} type="button" className={`v6BarItem ${day?.dayKey===p.dateKey?'selected':''}`} onClick={()=>openDay(p.dateKey)} disabled={dayBusy} aria-label={`تفاصيل مبيعات ${p.label}`}><span className="v6BarValue">{p.val?money(p.val):'0'}</span><span className="v6BarTrack"><span className="v6BarFill" style={{height:`${p.height}%`}}></span></span><span className="v6BarLabel">{p.label}</span><span className="v6BarDate">{p.dateKey.slice(5)}</span></button>)}</div>
+   </div>
+   <div className="v6Panel"><div className="v6PanelHead"><div><h2>العمليات السريعة</h2><p>اختصارات للمهام الأكثر استخداماً</p></div><Sparkles size={16} color="#087b52"/></div><div className="v6SideList"><button className="v6Action" onClick={()=>go('pos')}><span className="v6ActionIcon"><ShoppingCart size={14}/></span><span><b>بيع جديد</b><small>فتح نقطة البيع وإضافة فاتورة</small></span><ChevronLeft size={13}/></button><button className="v6Action" onClick={()=>go('purchases')}><span className="v6ActionIcon"><Receipt size={14}/></span><span><b>فاتورة شراء جديدة</b><small>توريد وربط الدفعات بالمخزون</small></span><ChevronLeft size={13}/></button><button className="v6Action" onClick={()=>go('inventory')}><span className="v6ActionIcon"><Package size={14}/></span><span><b>المخزون</b><small>البحث والجرد والدفعات</small></span><ChevronLeft size={13}/></button><button className="v6Action" onClick={()=>go('reports')}><span className="v6ActionIcon"><BarChart3 size={14}/></span><span><b>التقارير</b><small>الحسابات والمبيعات والأرباح</small></span><ChevronLeft size={13}/></button></div></div>
+  </section>
+  <section className="v6LowerGrid">
+   <div className="v6Panel"><div className="v6PanelHead"><div><h2>حالة المخزون</h2><p>مؤشرات تحتاج انتباهاً</p></div><Package size={16} color="#087b52"/></div><div className="v6MiniStat"><span>عدد الأصناف</span><strong>{d.products}</strong></div><div className="v6MiniStat"><span>قاربت على النفاد</span><strong>{d.low}</strong></div><div className="v6MiniStat"><span>منتهية الصلاحية</span><strong>{d.expired}</strong></div><div className="v6MiniStat"><span>تنتهي خلال 30 يوماً</span><strong>{d.expiring}</strong></div><div className="v6MiniStat"><span>مخزون راكد</span><strong>{d.dead}</strong></div></div>
+   <div className="v6Panel"><div className="v6PanelHead"><div><h2>تنبيهات تحتاج إجراء</h2><p>آخر التنبيهات المهمة في النظام</p></div><span className="v6SectionBadge">{d.notifications.length} تنبيه</span></div>{d.notifications.length?d.notifications.slice(0,6).map((n,i)=><button key={i} className="v6Notice" onClick={()=>go(n.go,n.target)} style={{width:'100%',textAlign:'right',fontFamily:'inherit',cursor:'pointer'}}><span className="badge">{n.type==='low'?'!':n.type==='expired'?'×':n.type==='expiring'?'⌛':n.type==='order'?'🛒':'•'}</span><span><b>{n.text}</b><small>{n.date}</small></span></button>):<div className="v6Empty">✓ لا توجد تنبيهات حرجة حالياً</div>}</div>
+   <div className="v6Panel"><div className="v6PanelHead"><div><h2>مؤشرات اليوم</h2><p>ملخص سريع</p></div><Activity size={16} color="#087b52"/></div><div className="v6MiniStat"><span>الوصفات الجديدة</span><strong>{d.rx}</strong></div><div className="v6MiniStat"><span>طلبات اليوم</span><strong>{d.orders}</strong></div><div className="v6MiniStat"><span>المبيعات الإجمالية</span><strong>{money(d.sales)} ل.س</strong></div><div className="v6MiniStat"><span>صافي المبيعات</span><strong>{money(d.netSales)} ل.س</strong></div><div className="v6MiniStat"><span>الربح</span><strong>{money(d.profit)} ل.س</strong></div></div>
+  </section>
+  {day&&<DashboardDayDetails day={day} dayErr={dayErr} onClose={()=>setDay(null)}/>}
+ </div>
+}
+function useDashboardData(){
+ const [d,setD]=useState({sales:0,netSales:0,profit:0,dead:0,orders:0,rx:0,products:0,low:0,expired:0,expiring:0,chart:[],notifications:[],error:''});
+ const load=async()=>{
+  const now=new Date(), today=localDateKey(now), monthStart=new Date(now.getFullYear(),now.getMonth(),1);
+  const soon=new Date(now); soon.setDate(soon.getDate()+30); const soonKey=localDateKey(soon);
+  const dayStart=new Date(now.getFullYear(),now.getMonth(),now.getDate()).toISOString(),dayEnd=new Date(now.getFullYear(),now.getMonth(),now.getDate()+1).toISOString();
+  const errors=[];
+
+  // Load each dashboard source independently. One broken auxiliary query must not blank the whole dashboard.
+  const [p,b,o,r,s,smart,todayDetails,productCount]=await Promise.all([
+   supabase.rpc('admin_get_products'),
+   supabase.rpc('admin_get_inventory'),
+   supabase.from('orders').select('id,status,created_at').gte('created_at',dayStart).lt('created_at',dayEnd),
+   supabase.from('prescriptions').select('id,status,created_at').gte('created_at',dayStart).lt('created_at',dayEnd),
+   supabase.rpc('admin_list_sales',{p_start:monthStart.toISOString()}),
+   supabase.rpc('admin_smart_summary'),
+   supabase.rpc('admin_dashboard_day_details',{p_start:dayStart,p_end:dayEnd}),
+   supabase.rpc('admin_products_count')
+  ]);
+
+  const sevenDayRanges=Array.from({length:7},(_,i)=>{const st=new Date(now.getFullYear(),now.getMonth(),now.getDate()-6+i);const en=new Date(st.getFullYear(),st.getMonth(),st.getDate()+1);return {st,en}});
+  const sevenDayResults=await Promise.all(sevenDayRanges.map(({st,en})=>supabase.rpc('admin_dashboard_sales_day',{p_start:st.toISOString(),p_end:en.toISOString()})));
+
+  const check=(result,label)=>{if(result?.error){errors.push(`${label}: ${result.error.message||'خطأ غير معروف'}`);return null}return result?.data};
+  const productsData=check(p,'المنتجات');
+  const inventoryData=check(b,'المخزون');
+  const ordersData=check(o,'الطلبات');
+  const rxData=check(r,'الوصفات');
+  const salesData=check(s,'المبيعات');
+  const smartData=check(smart,'الملخص الذكي')||{};
+  const todayData=check(todayDetails,'تفاصيل اليوم')||{};
+  const exactProductCount=check(productCount,'عدد الأصناف');
+  const sevenDayUsable=sevenDayResults.some(x=>!x.error);
+
+  const products=Array.isArray(productsData)?productsData:(productsData?.rows||productsData?.items||[]);
+  const batches=Array.isArray(inventoryData)?inventoryData:(inventoryData?.rows||inventoryData?.items||[]);
+  const sales=Array.isArray(salesData)?salesData:(salesData?.rows||[]);
+  const orders=Array.isArray(ordersData)?ordersData:[];
+  const rx=Array.isArray(rxData)?rxData:[];
+  const low=batches.filter(x=>Number(x.quantity)<=Number(x.reorder_level??x.products?.reorder_level??0)&&Number(x.quantity)>0);
+  const expired=batches.filter(x=>x.expiry_date&&x.expiry_date<today);
+  const expiring=batches.filter(x=>x.expiry_date&&x.expiry_date>=today&&x.expiry_date<=soonKey);
+  const daily={};sales.forEach(x=>{const k=localDateKey(x.created_at);const v=Number(x.total);if(Number.isFinite(v))daily[k]=(daily[k]||0)+v});
+  const chart=Array.from({length:7},(_,i)=>{const dt=new Date(now.getFullYear(),now.getMonth(),now.getDate()-6+i);const k=localDateKey(dt);const rpcValue=Number(sevenDayResults[i]?.data?.summary?.net_sales);const value=Number.isFinite(rpcValue)?rpcValue:(Number.isFinite(daily[k])?daily[k]:0);return {label:dt.toLocaleDateString('ar-SY',{weekday:'short'}),dateKey:k,value}});
+  const notes=[
+   ...low.slice(0,7).map(x=>({type:'low',text:`${x.product_name||x.products?.name||'دواء'}: الكمية ${x.quantity} / حد إعادة الطلب ${x.reorder_level??x.products?.reorder_level??0}`,date:`تاريخ الفحص: ${localDateTime(now)}`,go:'inventory',target:{batchId:x.id,productId:x.product_id,kind:'low'}})),
+   ...expired.slice(0,5).map(x=>({type:'expired',text:`${x.product_name||x.products?.name||'دواء'} — منتهية`,date:`انتهت في: ${x.expiry_date}`,go:'inventory',target:{batchId:x.id,productId:x.product_id,kind:'expired'}})),
+   ...expiring.slice(0,5).map(x=>({type:'expiring',text:`${x.product_name||x.products?.name||'دواء'} — ستنتهي قريباً`,date:`تاريخ الانتهاء: ${x.expiry_date}`,go:'inventory',target:{batchId:x.id,productId:x.product_id,kind:'expiring'}})),
+   ...orders.filter(x=>x.status==='new').slice(0,5).map(x=>({type:'order',text:`طلب جديد ${String(x.id).slice(0,8)}`,date:`وصل: ${localDateTime(x.created_at)}`,go:'orders',target:{orderId:x.id}})),
+   ...rx.filter(x=>!['completed','rejected'].includes(x.status||'new')).slice(0,5).map(x=>({type:'rx',text:'وصفة جديدة بحاجة للمراجعة',date:`وصلت: ${localDateTime(x.created_at)}`,go:'prescriptions',target:{prescriptionId:x.id}}))
+  ];
+  const finite=v=>Number.isFinite(Number(v))?Number(v):0;
+  const summary=todayData.summary||{};
+  setD({
+   sales:finite(summary.sales),netSales:finite(summary.net_sales),profit:finite(summary.profit),dead:finite(smartData.dead_stock),
+   orders:orders.filter(x=>x.status==='new').length,rx:rx.filter(x=>!['completed','rejected'].includes(x.status||'new')).length,
+   products:exactProductCount!=null?finite(exactProductCount):products.length,low:finite(smartData.low_stock||low.length),expired:finite(smartData.expired||expired.length),expiring:finite(smartData.expiring_30||expiring.length),chart,notifications:notes,error:errors.length?errors.join(' | '):''
+  });
+ };
+ useEffect(()=>{load().catch(e=>setD(x=>({...x,error:e?.message||'تعذر تحميل لوحة التحكم'})))},[]);
+ return[d,load]
+}
+function ProductManager({mode='pharmacy'}){
+ const empty={name:'',barcode:'',active_ingredient:'',strength:'',dosage_form:'',manufacturer:'',category:'',unit:'piece',reorder_level:1,purchase_price:0,sale_price:0,parts_per_unit:1,customer_visible:true};

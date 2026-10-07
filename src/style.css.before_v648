@@ -607,12 +607,3 @@ input,select,textarea{border-color:var(--ab-line)!important}.muted{color:#71867d
 .purchaseNewProductModal{z-index:2147483647!important;position:fixed!important;inset:0!important;display:grid!important;place-items:center!important;pointer-events:auto!important;}
 .purchaseNewProductModal .modalBox{position:relative!important;z-index:2147483647!important;}
 .purchaseNewProductModal .x,.purchaseNewProductModal button,.purchaseNewProductModal input,.purchaseNewProductModal select,.purchaseNewProductModal textarea{pointer-events:auto!important;}
-
-/* V6.4.8 — Native browser top-layer for nested purchase-product dialog. */
-body.native-modal-open{overflow:hidden}
-dialog.nativeTopDialog{position:fixed;inset:0;width:100vw;max-width:none;height:100vh;max-height:none;margin:0;padding:16px;border:0;border-radius:0;background:rgba(8,35,24,.58);overflow:auto;z-index:auto;box-sizing:border-box}
-dialog.nativeTopDialog::backdrop{background:rgba(8,35,24,.58);backdrop-filter:blur(7px)}
-dialog.nativeTopDialog .modalBox{position:relative;width:min(900px,94vw);max-width:900px;max-height:90vh;margin:auto;overflow:auto;box-sizing:border-box}
-dialog.purchaseNewProductModal{display:grid;place-items:center;z-index:auto}
-dialog.purchaseNewProductModal .modalBox{z-index:auto;box-shadow:0 35px 120px rgba(5,35,25,.38)}
-.productPagination{display:flex;justify-content:center;align-items:center;gap:12px;padding:14px 0}.productPagination span{min-width:170px;text-align:center;color:#60776e;font-size:12px}.productPagination button:disabled{opacity:.45;cursor:not-allowed}
