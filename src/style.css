@@ -710,3 +710,46 @@ dialog.purchaseNewProductModal .modalBox{z-index:auto;box-shadow:0 35px 120px rg
 .cashDrawerCount{margin-bottom:16px}.cashDrawerCountRow{display:grid;grid-template-columns:minmax(180px,1.5fr) minmax(150px,1fr) auto;align-items:end;gap:12px}.cashDrawerCountRow label{display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:700}.cashDrawerCountRow input{width:100%;min-height:42px;border:1px solid var(--line,#dce5df);border-radius:10px;padding:9px 11px;background:var(--surface,#fff);color:inherit}.cashDrawerDifference{display:flex;flex-direction:column;gap:7px;padding:10px 12px;border-radius:10px;background:var(--surface-soft,#f5f8f6);min-height:42px}.cashDrawerDifference small{color:var(--muted,#6b7b74);font-size:12px}.cashDrawerDifference b{font-size:16px}.cashDrawerCount>.muted,.cashDrawerCount>p.muted{font-size:12px;line-height:1.6;margin-top:10px}
 @media(max-width:700px){.posQuickHead{align-items:flex-start;flex-direction:column}.posQuickGrid{grid-template-columns:repeat(2,minmax(0,1fr))}.cashDrawerCountRow{grid-template-columns:1fr}.quickManageRow{align-items:flex-start}.quickManageActions{gap:2px}}
 .cashCountHistory{margin-top:12px;border-top:1px solid var(--line,#e3e9e6);padding-top:10px}.cashCountHistory>b{display:block;margin-bottom:7px;font-size:13px}.cashCountHistory>div{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:7px 0;font-size:12px;border-bottom:1px solid var(--line,#edf1ee)}
+
+/* V6.4.17 — compact modern POS workspace: vertical quick list beside the invoice */
+.posWorkspace{display:grid;grid-template-columns:minmax(190px,245px) minmax(0,1fr);gap:12px;align-items:stretch;direction:ltr}
+.posWorkspace>.posQuickPanel,.posWorkspace>.posInvoiceColumn{direction:rtl;min-width:0}
+.posWorkspace .posQuickPanel{margin:0;padding:12px;border-radius:14px;align-self:stretch;background:linear-gradient(180deg,#fff 0%,#f7fbf8 100%);box-shadow:0 4px 18px rgba(20,70,48,.05)}
+.posWorkspace .posQuickHead{align-items:flex-start;gap:8px;flex-wrap:wrap}
+.posWorkspace .posQuickHead>div{min-width:0}
+.posWorkspace .posQuickHead b{font-size:14px;color:var(--ab-green-900,#174d3a)}
+.posWorkspace .posQuickHead small{font-size:10px;line-height:1.5}
+.posWorkspace .posQuickGrid{display:flex;flex-direction:column;gap:6px;max-height:66vh;overflow-y:auto;padding:1px 2px 3px}
+.posWorkspace .posQuickItem{position:relative;min-height:0;width:100%;padding:9px 10px;display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"name price" "meta price";gap:3px 7px;align-items:center;border-radius:10px;background:#fff;text-align:right;box-shadow:0 1px 3px rgba(22,64,45,.04)}
+.posWorkspace .posQuickItem b{grid-area:name;font-size:12px;line-height:1.35;overflow-wrap:anywhere}
+.posWorkspace .posQuickItem small{grid-area:meta;font-size:10px;line-height:1.35}
+.posWorkspace .posQuickItem span{grid-area:price;white-space:nowrap;font-size:11px;margin:0}
+.posWorkspace .posQuickEmpty{font-size:11px;line-height:1.7;padding:10px}
+.posInvoiceColumn{min-width:0}
+.posInvoice{border-radius:14px;box-shadow:0 4px 18px rgba(20,70,48,.05)}
+.posInvoice .cardHead{padding:11px 13px}
+.posInvoice .cardHead h2{font-size:17px;margin:0}
+.posInvoice .cardHead p{font-size:10px;margin:3px 0 0}
+.posInvoice .tableWrap{overflow-x:auto;max-width:100%}
+.posInvoice .invoiceTable{width:100%;min-width:920px;table-layout:auto}
+.posInvoice .invoiceTable th{padding:7px 5px;font-size:10px!important;letter-spacing:0;}
+.posInvoice .invoiceTable td{padding:5px 4px;font-size:10px!important;white-space:nowrap}
+.posInvoice .invoiceTable td:nth-child(3){white-space:normal;min-width:135px;max-width:210px}
+.posInvoice .invoiceTable .posProductName{font-size:11px!important;max-width:100%;line-height:1.3!important;overflow-wrap:anywhere}
+.posInvoice .invoiceTable .posProductName span{font-size:9px!important;white-space:normal}
+.posInvoice .invoiceTable .posProductName+small{font-size:9px!important;max-width:190px}
+.posInvoice .qtyInput{width:53px;min-width:0;padding:5px 3px;border-radius:6px;font-size:10px}
+.posInvoice .partInput{width:43px}
+.posPurchaseNet{display:inline-block;min-width:52px;text-align:center;color:#60766b;font-size:10px;font-variant-numeric:tabular-nums}
+.posInvoice .posNetPriceEdit{display:flex;flex-direction:column;align-items:center;gap:2px}
+.posInvoice .posNetPriceEdit small{font-size:8px;max-width:76px;white-space:normal;line-height:1.2}
+.posInvoice .iconBtn{width:27px;height:27px;min-width:27px;padding:4px}
+.posInvoice .posTotalsBar{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;padding:9px 11px}
+.posInvoice .posTotalsBar div{padding:8px 10px;border-radius:10px}
+.posInvoice .posTotalsBar b,.posInvoice .posTotalsBar strong{font-size:16px}
+.posInvoice .paymentBox{padding:10px 12px}
+.posInvoice .paymentModes{margin-bottom:8px}
+.posInvoice .paymentModes button{padding:8px;font-size:11px}
+.posInvoice .posComplete{min-height:43px;padding:10px!important;font-size:12px!important}
+@media(max-width:1050px){.posWorkspace{grid-template-columns:minmax(165px,205px) minmax(0,1fr);gap:8px}.posWorkspace .posQuickPanel{padding:9px}.posInvoice .invoiceTable{min-width:880px}}
+@media(max-width:760px){.posWorkspace{grid-template-columns:1fr;direction:rtl}.posWorkspace>.posQuickPanel,.posWorkspace>.posInvoiceColumn{direction:rtl}.posWorkspace .posQuickGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));max-height:250px}.posWorkspace .posQuickItem{grid-template-columns:minmax(0,1fr);grid-template-areas:"name" "meta" "price";gap:3px}.posWorkspace .posQuickItem span{margin-top:2px}.posInvoice .invoiceTable{min-width:900px}.posInvoice .posTotalsBar{grid-template-columns:repeat(2,minmax(0,1fr))}}
