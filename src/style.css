@@ -710,3 +710,100 @@ dialog.purchaseNewProductModal .modalBox{z-index:auto;box-shadow:0 35px 120px rg
 .cashDrawerCount{margin-bottom:16px}.cashDrawerCountRow{display:grid;grid-template-columns:minmax(180px,1.5fr) minmax(150px,1fr) auto;align-items:end;gap:12px}.cashDrawerCountRow label{display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:700}.cashDrawerCountRow input{width:100%;min-height:42px;border:1px solid var(--line,#dce5df);border-radius:10px;padding:9px 11px;background:var(--surface,#fff);color:inherit}.cashDrawerDifference{display:flex;flex-direction:column;gap:7px;padding:10px 12px;border-radius:10px;background:var(--surface-soft,#f5f8f6);min-height:42px}.cashDrawerDifference small{color:var(--muted,#6b7b74);font-size:12px}.cashDrawerDifference b{font-size:16px}.cashDrawerCount>.muted,.cashDrawerCount>p.muted{font-size:12px;line-height:1.6;margin-top:10px}
 @media(max-width:700px){.posQuickHead{align-items:flex-start;flex-direction:column}.posQuickGrid{grid-template-columns:repeat(2,minmax(0,1fr))}.cashDrawerCountRow{grid-template-columns:1fr}.quickManageRow{align-items:flex-start}.quickManageActions{gap:2px}}
 .cashCountHistory{margin-top:12px;border-top:1px solid var(--line,#e3e9e6);padding-top:10px}.cashCountHistory>b{display:block;margin-bottom:7px;font-size:13px}.cashCountHistory>div{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:7px 0;font-size:12px;border-bottom:1px solid var(--line,#edf1ee)}
+
+/* V6.4.19 — POS layout correction: quick-sale rail on the LEFT, invoice on the RIGHT. */
+.posV440 .posWorkspace{
+  display:grid !important;
+  grid-template-columns:minmax(245px, 300px) minmax(0, 1fr) !important;
+  grid-template-areas:"quick invoice" !important;
+  align-items:start;
+  gap:16px;
+  direction:ltr;
+  width:100%;
+  min-width:0;
+  margin-top:14px;
+}
+.posV440 .posQuickPanel{
+  grid-area:quick;
+  direction:rtl;
+  min-width:0;
+  width:100%;
+  margin:0;
+  padding:13px;
+  position:relative;
+  align-self:start;
+  border:1px solid #d7e8df;
+  border-radius:16px;
+  background:linear-gradient(180deg,#ffffff 0%,#f7fbf8 100%);
+  box-shadow:0 8px 24px rgba(18,75,52,.07);
+}
+.posV440 .posInvoiceColumn{
+  grid-area:invoice;
+  direction:rtl;
+  min-width:0;
+  width:100%;
+}
+.posV440 .posQuickHead{align-items:center;gap:8px;margin-bottom:12px}
+.posV440 .posQuickHead>div{min-width:0}
+.posV440 .posQuickHead b{font-size:15px;color:#0b563e}
+.posV440 .posQuickHead small{font-size:11px;line-height:1.5}
+.posV440 .posQuickTabs{
+  display:grid !important;
+  grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+  grid-auto-flow:column;
+  gap:5px;
+  width:100%;
+  margin:0 0 12px;
+  direction:rtl;
+}
+.posV440 .posQuickTabs button{
+  display:flex !important;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:4px;
+  min-width:0;
+  min-height:54px;
+  padding:7px 4px;
+  border:1px solid #dce9e2;
+  border-radius:10px;
+  background:#f1f7f3;
+  color:#416657;
+  font-family:inherit;
+  cursor:pointer;
+  transition:background .16s ease,border-color .16s ease,transform .16s ease,box-shadow .16s ease;
+}
+.posV440 .posQuickTabs button:hover{transform:translateY(-1px);border-color:#86bda2}
+.posV440 .posQuickTabs button.active{background:linear-gradient(135deg,#0a6749,#07815a);border-color:#087b52;color:#fff;box-shadow:0 4px 12px rgba(8,123,82,.18)}
+.posV440 .posQuickTabs button span{font-size:12px;font-weight:900;white-space:nowrap}
+.posV440 .posQuickTabs button small{font-size:9px;line-height:1.3;color:inherit;opacity:.82;white-space:nowrap}
+.posV440 .posQuickGrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+.posV440 .posQuickItem{min-width:0;min-height:84px;padding:9px 8px;border-radius:11px;gap:5px;overflow-wrap:anywhere}
+.posV440 .posQuickItem b{font-size:12px;line-height:1.4;overflow-wrap:anywhere}
+.posV440 .posQuickItem small{font-size:10px;line-height:1.4}
+.posV440 .posQuickItem span{font-size:11px}
+.posV440 .posQuickEmpty{font-size:11px;line-height:1.65;padding:12px;text-align:center}
+.posV440 .posInvoice{min-width:0;width:100%;border-radius:16px;box-shadow:0 8px 26px rgba(18,75,52,.06)}
+.posV440 .posInvoice .tableWrap{max-width:100%;overflow-x:auto}
+.posV440 .posInvoice .posTable{width:100%;min-width:990px;border-collapse:separate;border-spacing:0}
+.posV440 .posInvoice .posTable th,.posV440 .posInvoice .posTable td{padding:7px 6px !important;vertical-align:middle;white-space:nowrap}
+.posV440 .posInvoice .posTable th{font-size:10px!important;line-height:1.4;background:#f1f7f4;color:#315d4a}
+.posV440 .posInvoice .posTable td{font-size:11px!important}
+.posV440 .posInvoice .posTable tbody tr:nth-child(even){background:#fbfdfc}
+.posV440 .posInvoice .posTable tbody tr:hover{background:#f0f8f3}
+.posV440 .posInvoice .posProductName{max-width:240px;font-size:12px!important;white-space:normal;line-height:1.35}
+.posV440 .posInvoice .posProductName+small{max-width:220px;font-size:9px!important}
+.posV440 .posInvoice .qtyInput{max-width:70px;min-width:54px;padding:6px 5px;border-radius:8px}
+.posV440 .posInvoice .posPriceInput{min-width:76px}
+.posV440 .posTotalsBar{margin:0}
+@media(max-width:1100px){
+ .posV440 .posWorkspace{grid-template-columns:minmax(220px,260px) minmax(0,1fr)!important;gap:10px}
+ .posV440 .posQuickPanel{padding:10px}
+ .posV440 .posQuickGrid{grid-template-columns:1fr}
+}
+@media(max-width:760px){
+ .posV440 .posWorkspace{grid-template-columns:minmax(0,1fr)!important;grid-template-areas:"quick" "invoice" !important;gap:12px}
+ .posV440 .posQuickGrid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .posV440 .posQuickTabs button{min-height:48px}
+ .posV440 .posInvoice .posTable{min-width:900px}
+}
