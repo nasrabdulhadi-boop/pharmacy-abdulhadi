@@ -719,11 +719,11 @@ dialog.purchaseNewProductModal .modalBox{z-index:auto;box-shadow:0 35px 120px rg
  overflow-x:auto!important; margin-top:14px!important;
 }
 .posV440 .posWorkspace > .posQuickPanel{
- order:0!important; flex:0 0 25%!important; width:25%!important; min-width:220px!important; max-width:320px!important;
+ order:0!important; flex:0 0 clamp(220px,24%,300px)!important; width:clamp(220px,24%,300px)!important; min-width:220px!important; max-width:300px!important;
  box-sizing:border-box!important; direction:rtl!important; align-self:stretch!important;
 }
 .posV440 .posWorkspace > .posInvoiceColumn{
- order:1!important; flex:1 1 75%!important; width:0!important; min-width:0!important; max-width:none!important;
+ order:1!important; flex:1 1 0!important; width:auto!important; min-width:0!important; max-width:none!important;
  box-sizing:border-box!important; direction:rtl!important; align-self:stretch!important;
 }
 .posV440 .posInvoice{width:100%!important; min-width:0!important;}
@@ -735,3 +735,12 @@ dialog.purchaseNewProductModal .modalBox{z-index:auto;box-shadow:0 35px 120px rg
  .posV440 .posWorkspace > .posQuickPanel{flex:0 0 220px!important;width:220px!important;min-width:220px!important;}
  .posV440 .posWorkspace > .posInvoiceColumn{flex:0 0 720px!important;width:720px!important;min-width:720px!important;}
 }
+
+/* V6.4.24 recovery: stable split without changing invoice columns */
+.posV440 .posWorkspace{display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;direction:ltr!important;align-items:stretch!important;justify-content:space-between!important;gap:12px!important;width:100%!important;min-width:0!important;overflow:visible!important;}
+.posV440 .posWorkspace > .posQuickPanel{order:0!important;flex:0 0 clamp(220px,24%,300px)!important;width:clamp(220px,24%,300px)!important;min-width:220px!important;max-width:300px!important;box-sizing:border-box!important;direction:rtl!important;}
+.posV440 .posWorkspace > .posInvoiceColumn{order:1!important;flex:1 1 0!important;width:auto!important;min-width:0!important;max-width:none!important;box-sizing:border-box!important;direction:rtl!important;}
+.posV440 .posWorkspace > .posInvoiceColumn > .posInvoice{display:block!important;width:100%!important;min-width:0!important;}
+.posV440 .posInvoice .tableWrap{display:block!important;width:100%!important;max-width:100%!important;overflow-x:auto!important;}
+.posV440 .posInvoice .posTable{width:max-content!important;min-width:100%!important;}
+@media(max-width:760px){.posV440 .posWorkspace{overflow-x:auto!important}.posV440 .posWorkspace > .posQuickPanel{flex:0 0 220px!important;width:220px!important;min-width:220px!important}.posV440 .posWorkspace > .posInvoiceColumn{flex:0 0 720px!important;width:720px!important;min-width:720px!important}}
