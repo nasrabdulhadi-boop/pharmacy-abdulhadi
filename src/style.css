@@ -814,3 +814,55 @@ dialog.purchaseNewProductModal .modalBox{z-index:auto;box-shadow:0 35px 120px rg
 .posV440 .posPartEditor input:disabled{background:#f0f3f1;color:#9aa8a1;border-color:#e1e8e4;cursor:not-allowed}
 .posV440 .posQuickPanel,.posV440 .posInvoiceColumn{align-self:start}
 .posV440 .posWorkspace>*{min-width:0}
+
+
+/* V6.4.21 HOTFIX — enforce POS split layout using flex, independent of inherited RTL/grid rules.
+   The quick-sale panel must remain the first (left) column and invoice the second (right) column. */
+.posV440 .posWorkspace {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+  direction: ltr !important;
+  align-items: flex-start !important;
+  justify-content: stretch !important;
+  gap: 14px !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  overflow-x: auto !important;
+}
+.posV440 .posWorkspace > .posQuickPanel {
+  order: 0 !important;
+  flex: 0 0 clamp(230px, 27%, 310px) !important;
+  width: clamp(230px, 27%, 310px) !important;
+  min-width: 230px !important;
+  max-width: 310px !important;
+  box-sizing: border-box !important;
+  direction: rtl !important;
+}
+.posV440 .posWorkspace > .posInvoiceColumn {
+  order: 1 !important;
+  flex: 1 0 0 !important;
+  width: auto !important;
+  min-width: 700px !important;
+  max-width: none !important;
+  box-sizing: border-box !important;
+  direction: rtl !important;
+}
+@media (max-width: 640px) {
+  .posV440 .posWorkspace {
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    grid-template-columns: none !important;
+    grid-template-areas: none !important;
+  }
+  .posV440 .posWorkspace > .posQuickPanel {
+    flex-basis: 230px !important;
+    width: 230px !important;
+    min-width: 230px !important;
+  }
+  .posV440 .posWorkspace > .posInvoiceColumn {
+    flex: 1 0 700px !important;
+    min-width: 700px !important;
+  }
+}
