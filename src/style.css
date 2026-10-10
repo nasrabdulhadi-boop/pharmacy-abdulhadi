@@ -866,3 +866,9 @@ dialog.purchaseNewProductModal .modalBox{z-index:auto;box-shadow:0 35px 120px rg
     min-width: 700px !important;
   }
 }
+
+/* V6.4.22 POS emergency layout guard */
+.posV440 .posWorkspace{display:grid!important;grid-template-columns:minmax(250px,300px) minmax(700px,1fr)!important;grid-template-areas:"quick invoice"!important;direction:ltr!important;align-items:start!important;overflow-x:auto!important}
+.posV440 .posWorkspace>.posQuickPanel{grid-area:quick!important;grid-column:1!important;grid-row:1!important;order:0!important;justify-self:stretch!important;align-self:start!important}
+.posV440 .posWorkspace>.posInvoiceColumn{grid-area:invoice!important;grid-column:2!important;grid-row:1!important;order:1!important;justify-self:stretch!important;align-self:start!important}
+@media(max-width:640px){.posV440 .posWorkspace{grid-template-columns:minmax(230px,230px) minmax(700px,1fr)!important;grid-template-areas:"quick invoice"!important}}
