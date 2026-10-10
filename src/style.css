@@ -711,164 +711,27 @@ dialog.purchaseNewProductModal .modalBox{z-index:auto;box-shadow:0 35px 120px rg
 @media(max-width:700px){.posQuickHead{align-items:flex-start;flex-direction:column}.posQuickGrid{grid-template-columns:repeat(2,minmax(0,1fr))}.cashDrawerCountRow{grid-template-columns:1fr}.quickManageRow{align-items:flex-start}.quickManageActions{gap:2px}}
 .cashCountHistory{margin-top:12px;border-top:1px solid var(--line,#e3e9e6);padding-top:10px}.cashCountHistory>b{display:block;margin-bottom:7px;font-size:13px}.cashCountHistory>div{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:7px 0;font-size:12px;border-bottom:1px solid var(--line,#edf1ee)}
 
-/* V6.4.19 — POS layout correction: quick-sale rail on the LEFT, invoice on the RIGHT. */
+/* V6.4.23 — single authoritative POS split layout; invoice content/columns are unchanged. */
 .posV440 .posWorkspace{
-  display:grid !important;
-  grid-template-columns:minmax(245px, 300px) minmax(0, 1fr) !important;
-  grid-template-areas:"quick invoice" !important;
-  align-items:start;
-  gap:16px;
-  direction:ltr;
-  width:100%;
-  min-width:0;
-  margin-top:14px;
+ display:flex!important; flex-direction:row!important; flex-wrap:nowrap!important;
+ direction:ltr!important; align-items:stretch!important; justify-content:stretch!important;
+ gap:14px!important; width:100%!important; max-width:100%!important; min-width:0!important;
+ overflow-x:auto!important; margin-top:14px!important;
 }
-.posV440 .posQuickPanel{
-  grid-area:quick;
-  direction:rtl;
-  min-width:0;
-  width:100%;
-  margin:0;
-  padding:13px;
-  position:relative;
-  align-self:start;
-  border:1px solid #d7e8df;
-  border-radius:16px;
-  background:linear-gradient(180deg,#ffffff 0%,#f7fbf8 100%);
-  box-shadow:0 8px 24px rgba(18,75,52,.07);
+.posV440 .posWorkspace > .posQuickPanel{
+ order:0!important; flex:0 0 25%!important; width:25%!important; min-width:220px!important; max-width:320px!important;
+ box-sizing:border-box!important; direction:rtl!important; align-self:stretch!important;
 }
-.posV440 .posInvoiceColumn{
-  grid-area:invoice;
-  direction:rtl;
-  min-width:0;
-  width:100%;
+.posV440 .posWorkspace > .posInvoiceColumn{
+ order:1!important; flex:1 1 75%!important; width:0!important; min-width:0!important; max-width:none!important;
+ box-sizing:border-box!important; direction:rtl!important; align-self:stretch!important;
 }
-.posV440 .posQuickHead{align-items:center;gap:8px;margin-bottom:12px}
-.posV440 .posQuickHead>div{min-width:0}
-.posV440 .posQuickHead b{font-size:15px;color:#0b563e}
-.posV440 .posQuickHead small{font-size:11px;line-height:1.5}
-.posV440 .posQuickTabs{
-  display:grid !important;
-  grid-template-columns:repeat(3,minmax(0,1fr)) !important;
-  grid-auto-flow:column;
-  gap:5px;
-  width:100%;
-  margin:0 0 12px;
-  direction:rtl;
+.posV440 .posInvoice{width:100%!important; min-width:0!important;}
+.posV440 .posInvoice .tableWrap{width:100%!important; max-width:100%!important; overflow-x:auto!important;}
+.posV440 .posInvoice .posTable{width:100%!important; min-width:990px!important;}
+.posV440 .posQuickPanel,.posV440 .posInvoiceColumn{margin-top:0!important;}
+@media(max-width:760px){
+ .posV440 .posWorkspace{flex-direction:row!important;flex-wrap:nowrap!important;overflow-x:auto!important;}
+ .posV440 .posWorkspace > .posQuickPanel{flex:0 0 220px!important;width:220px!important;min-width:220px!important;}
+ .posV440 .posWorkspace > .posInvoiceColumn{flex:0 0 720px!important;width:720px!important;min-width:720px!important;}
 }
-.posV440 .posQuickTabs button{
-  display:flex !important;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  gap:4px;
-  min-width:0;
-  min-height:54px;
-  padding:7px 4px;
-  border:1px solid #dce9e2;
-  border-radius:10px;
-  background:#f1f7f3;
-  color:#416657;
-  font-family:inherit;
-  cursor:pointer;
-  transition:background .16s ease,border-color .16s ease,transform .16s ease,box-shadow .16s ease;
-}
-.posV440 .posQuickTabs button:hover{transform:translateY(-1px);border-color:#86bda2}
-.posV440 .posQuickTabs button.active{background:linear-gradient(135deg,#0a6749,#07815a);border-color:#087b52;color:#fff;box-shadow:0 4px 12px rgba(8,123,82,.18)}
-.posV440 .posQuickTabs button span{font-size:12px;font-weight:900;white-space:nowrap}
-.posV440 .posQuickTabs button small{font-size:9px;line-height:1.3;color:inherit;opacity:.82;white-space:nowrap}
-.posV440 .posQuickGrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
-.posV440 .posQuickItem{min-width:0;min-height:84px;padding:9px 8px;border-radius:11px;gap:5px;overflow-wrap:anywhere}
-.posV440 .posQuickItem b{font-size:12px;line-height:1.4;overflow-wrap:anywhere}
-.posV440 .posQuickItem small{font-size:10px;line-height:1.4}
-.posV440 .posQuickItem span{font-size:11px}
-.posV440 .posQuickEmpty{font-size:11px;line-height:1.65;padding:12px;text-align:center}
-.posV440 .posInvoice{min-width:0;width:100%;border-radius:16px;box-shadow:0 8px 26px rgba(18,75,52,.06)}
-.posV440 .posInvoice .tableWrap{max-width:100%;overflow-x:auto}
-.posV440 .posInvoice .posTable{width:100%;min-width:990px;border-collapse:separate;border-spacing:0}
-.posV440 .posInvoice .posTable th,.posV440 .posInvoice .posTable td{padding:7px 6px !important;vertical-align:middle;white-space:nowrap}
-.posV440 .posInvoice .posTable th{font-size:10px!important;line-height:1.4;background:#f1f7f4;color:#315d4a}
-.posV440 .posInvoice .posTable td{font-size:11px!important}
-.posV440 .posInvoice .posTable tbody tr:nth-child(even){background:#fbfdfc}
-.posV440 .posInvoice .posTable tbody tr:hover{background:#f0f8f3}
-.posV440 .posInvoice .posProductName{max-width:240px;font-size:12px!important;white-space:normal;line-height:1.35}
-.posV440 .posInvoice .posProductName+small{max-width:220px;font-size:9px!important}
-.posV440 .posInvoice .qtyInput{max-width:70px;min-width:54px;padding:6px 5px;border-radius:8px}
-.posV440 .posInvoice .posPriceInput{min-width:76px}
-.posV440 .posTotalsBar{margin:0}
-@media(max-width:1100px){
- .posV440 .posWorkspace{grid-template-columns:minmax(220px,27%) minmax(0,1fr)!important;grid-template-areas:"quick invoice"!important;gap:10px}
- .posV440 .posQuickPanel{padding:10px}
- .posV440 .posQuickGrid{grid-template-columns:1fr}
-}
-@media(max-width:640px){
- .posV440 .posWorkspace{grid-template-columns:minmax(0,1fr)!important;grid-template-areas:"quick" "invoice" !important;gap:12px}
- .posV440 .posQuickGrid{grid-template-columns:repeat(2,minmax(0,1fr))}
- .posV440 .posQuickTabs button{min-height:48px}
- .posV440 .posInvoice .posTable{min-width:900px}
-}
-
-/* V6.4.20 — make split-unit input understandable and consistent with POS palette. */
-.posV440 .posPartEditor{display:flex;flex-direction:column;align-items:center;gap:3px;min-width:58px}
-.posV440 .posPartEditor small{font-size:9px;line-height:1.2;color:#71867d;white-space:nowrap}
-.posV440 .posPartEditor input:disabled{background:#f0f3f1;color:#9aa8a1;border-color:#e1e8e4;cursor:not-allowed}
-.posV440 .posQuickPanel,.posV440 .posInvoiceColumn{align-self:start}
-.posV440 .posWorkspace>*{min-width:0}
-
-
-/* V6.4.21 HOTFIX — enforce POS split layout using flex, independent of inherited RTL/grid rules.
-   The quick-sale panel must remain the first (left) column and invoice the second (right) column. */
-.posV440 .posWorkspace {
-  display: flex !important;
-  flex-direction: row !important;
-  flex-wrap: nowrap !important;
-  direction: ltr !important;
-  align-items: flex-start !important;
-  justify-content: stretch !important;
-  gap: 14px !important;
-  width: 100% !important;
-  max-width: 100% !important;
-  min-width: 0 !important;
-  overflow-x: auto !important;
-}
-.posV440 .posWorkspace > .posQuickPanel {
-  order: 0 !important;
-  flex: 0 0 clamp(230px, 27%, 310px) !important;
-  width: clamp(230px, 27%, 310px) !important;
-  min-width: 230px !important;
-  max-width: 310px !important;
-  box-sizing: border-box !important;
-  direction: rtl !important;
-}
-.posV440 .posWorkspace > .posInvoiceColumn {
-  order: 1 !important;
-  flex: 1 0 0 !important;
-  width: auto !important;
-  min-width: 700px !important;
-  max-width: none !important;
-  box-sizing: border-box !important;
-  direction: rtl !important;
-}
-@media (max-width: 640px) {
-  .posV440 .posWorkspace {
-    flex-direction: row !important;
-    flex-wrap: nowrap !important;
-    grid-template-columns: none !important;
-    grid-template-areas: none !important;
-  }
-  .posV440 .posWorkspace > .posQuickPanel {
-    flex-basis: 230px !important;
-    width: 230px !important;
-    min-width: 230px !important;
-  }
-  .posV440 .posWorkspace > .posInvoiceColumn {
-    flex: 1 0 700px !important;
-    min-width: 700px !important;
-  }
-}
-
-/* V6.4.22 POS emergency layout guard */
-.posV440 .posWorkspace{display:grid!important;grid-template-columns:minmax(250px,300px) minmax(700px,1fr)!important;grid-template-areas:"quick invoice"!important;direction:ltr!important;align-items:start!important;overflow-x:auto!important}
-.posV440 .posWorkspace>.posQuickPanel{grid-area:quick!important;grid-column:1!important;grid-row:1!important;order:0!important;justify-self:stretch!important;align-self:start!important}
-.posV440 .posWorkspace>.posInvoiceColumn{grid-area:invoice!important;grid-column:2!important;grid-row:1!important;order:1!important;justify-self:stretch!important;align-self:start!important}
-@media(max-width:640px){.posV440 .posWorkspace{grid-template-columns:minmax(230px,230px) minmax(700px,1fr)!important;grid-template-areas:"quick invoice"!important}}
