@@ -797,13 +797,20 @@ dialog.purchaseNewProductModal .modalBox{z-index:auto;box-shadow:0 35px 120px rg
 .posV440 .posInvoice .posPriceInput{min-width:76px}
 .posV440 .posTotalsBar{margin:0}
 @media(max-width:1100px){
- .posV440 .posWorkspace{grid-template-columns:minmax(220px,260px) minmax(0,1fr)!important;gap:10px}
+ .posV440 .posWorkspace{grid-template-columns:minmax(220px,27%) minmax(0,1fr)!important;grid-template-areas:"quick invoice"!important;gap:10px}
  .posV440 .posQuickPanel{padding:10px}
  .posV440 .posQuickGrid{grid-template-columns:1fr}
 }
-@media(max-width:760px){
+@media(max-width:640px){
  .posV440 .posWorkspace{grid-template-columns:minmax(0,1fr)!important;grid-template-areas:"quick" "invoice" !important;gap:12px}
  .posV440 .posQuickGrid{grid-template-columns:repeat(2,minmax(0,1fr))}
  .posV440 .posQuickTabs button{min-height:48px}
  .posV440 .posInvoice .posTable{min-width:900px}
 }
+
+/* V6.4.20 — make split-unit input understandable and consistent with POS palette. */
+.posV440 .posPartEditor{display:flex;flex-direction:column;align-items:center;gap:3px;min-width:58px}
+.posV440 .posPartEditor small{font-size:9px;line-height:1.2;color:#71867d;white-space:nowrap}
+.posV440 .posPartEditor input:disabled{background:#f0f3f1;color:#9aa8a1;border-color:#e1e8e4;cursor:not-allowed}
+.posV440 .posQuickPanel,.posV440 .posInvoiceColumn{align-self:start}
+.posV440 .posWorkspace>*{min-width:0}
