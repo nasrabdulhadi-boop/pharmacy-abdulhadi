@@ -814,3 +814,10 @@ dialog.purchaseNewProductModal .modalBox{z-index:auto;box-shadow:0 35px 120px rg
   .posV440 .posWorkspace > .posQuickPanel { flex:0 0 auto !important; width:100% !important; min-width:0 !important; max-width:100% !important; max-height:260px !important; }
   .posV440 .posWorkspace > .posInvoiceColumn { flex:1 1 auto !important; width:100% !important; min-width:0 !important; }
 }
+
+
+/* V6.4.27: remove Quick Sale panel; keep the invoice as the full POS workspace. */
+.posWorkspace { display:block !important; width:100% !important; min-width:0 !important; }
+.posWorkspace .posQuickPanel { display:none !important; }
+.posWorkspace .posInvoiceColumn { display:block !important; width:100% !important; min-width:0 !important; max-width:100% !important; flex:none !important; order:initial !important; }
+.posWorkspace .posInvoice { width:100% !important; max-width:100% !important; min-width:0 !important; }
