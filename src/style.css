@@ -821,3 +821,7 @@ dialog.purchaseNewProductModal .modalBox{z-index:auto;box-shadow:0 35px 120px rg
 .posWorkspace .posQuickPanel { display:none !important; }
 .posWorkspace .posInvoiceColumn { display:block !important; width:100% !important; min-width:0 !important; max-width:100% !important; flex:none !important; order:initial !important; }
 .posWorkspace .posInvoice { width:100% !important; max-width:100% !important; min-width:0 !important; }
+
+/* V6.4.28: allow typing part count without clamping each keystroke */
+.posClassic .posPartEditor .partInput{pointer-events:auto!important;user-select:text!important;cursor:text!important;position:relative;z-index:2;touch-action:manipulation}
+.posClassic .posPartEditor .partInput:focus{outline:2px solid #16845b!important;border-color:#16845b!important;background:#fff!important}

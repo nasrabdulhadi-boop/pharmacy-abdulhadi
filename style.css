@@ -307,3 +307,7 @@ html{scroll-behavior:smooth}body{font-family:system-ui,-apple-system,"Segoe UI",
 .posHint{margin:8px 0}
 @media(max-width:1050px){.posWorkspace{grid-template-columns:minmax(0,1fr) 230px;gap:10px}.posQuickPanel{padding:9px}.posInvoice .posTable{min-width:930px}}
 @media(max-width:760px){.posWorkspace{grid-template-columns:1fr;direction:rtl}.posWorkspace>.posQuickPanel{order:0;max-height:none;min-height:0}.posWorkspace>.posInvoiceColumn{order:1}.posQuickGrid{grid-template-columns:repeat(2,minmax(0,1fr))}.posQuickItem{padding:8px}.posInvoice .posTable{min-width:940px}.posTotalsBar{flex-wrap:wrap;justify-content:stretch;gap:6px}.posTotalsBar>div{flex:1;min-width:90px}}
+
+/* V6.4.28: editable part quantity field; preserve usability inside invoice table */
+.posInvoice .partInput{pointer-events:auto;user-select:text;cursor:text;position:relative;z-index:1;touch-action:manipulation}
+.posInvoice .partInput:focus{outline:2px solid #16845b;border-color:#16845b;background:#fff}
