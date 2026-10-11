@@ -744,3 +744,45 @@ dialog.purchaseNewProductModal .modalBox{z-index:auto;box-shadow:0 35px 120px rg
 .posV440 .posInvoice .tableWrap{display:block!important;width:100%!important;max-width:100%!important;overflow-x:auto!important;}
 .posV440 .posInvoice .posTable{width:max-content!important;min-width:100%!important;}
 @media(max-width:760px){.posV440 .posWorkspace{overflow-x:auto!important}.posV440 .posWorkspace > .posQuickPanel{flex:0 0 220px!important;width:220px!important;min-width:220px!important}.posV440 .posWorkspace > .posInvoiceColumn{flex:0 0 720px!important;width:720px!important;min-width:720px!important}}
+
+
+/* V6.4.25 verified POS layout override: quick-sale left, invoice right */
+.posV440 .posWorkspace {
+  display: grid !important;
+  grid-template-columns: minmax(220px, 25%) minmax(0, 1fr) !important;
+  grid-template-areas: "quick invoice" !important;
+  direction: ltr !important;
+  align-items: start !important;
+  justify-content: initial !important;
+  gap: 14px !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  overflow: visible !important;
+}
+.posV440 .posWorkspace > .posQuickPanel {
+  grid-area: quick !important;
+  order: initial !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  flex: initial !important;
+  direction: rtl !important;
+  box-sizing: border-box !important;
+}
+.posV440 .posWorkspace > .posInvoiceColumn {
+  grid-area: invoice !important;
+  order: initial !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  flex: initial !important;
+  direction: rtl !important;
+  box-sizing: border-box !important;
+}
+.posV440 .posWorkspace > .posInvoiceColumn > .posInvoice { width: 100% !important; min-width: 0 !important; }
+.posV440 .posInvoice .tableWrap { width: 100% !important; max-width: 100% !important; overflow-x: auto !important; }
+.posV440 .posInvoice .posTable { width: max-content !important; min-width: 100% !important; }
+@media (max-width: 760px) {
+  .posV440 .posWorkspace { grid-template-columns: minmax(0, 1fr) !important; grid-template-areas: "quick" "invoice" !important; gap: 12px !important; overflow: visible !important; }
+  .posV440 .posWorkspace > .posQuickPanel, .posV440 .posWorkspace > .posInvoiceColumn { width: 100% !important; min-width: 0 !important; max-width: 100% !important; }
+}
