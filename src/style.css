@@ -895,3 +895,23 @@ dialog.purchaseNewProductModal .modalBox{z-index:auto;box-shadow:0 35px 120px rg
 .purchaseInvoiceModal .purchaseInvoiceSidebar{flex:none!important;width:100%!important;max-width:100%!important;overflow:visible!important;border-left:0!important;border-top:1px solid #d7e8de!important}
 .purchaseInvoiceModal .purchaseSection{padding:12px!important}
 }
+
+
+/* Purchase detail view: keep the ten headings aligned with their ten data cells. */
+.purchaseDetailModal .modalBox{width:min(1150px,calc(100vw - 28px))!important;max-width:1150px!important;max-height:calc(100dvh - 32px)!important;overflow-y:auto!important;padding:24px!important;box-sizing:border-box!important}
+.purchaseDetailModal .purchaseDetailItemsTable{display:block!important;width:100%!important;max-width:100%!important;overflow-x:auto!important;border:1px solid #d9e8df!important;border-radius:12px!important;scrollbar-width:thin}
+.purchaseDetailModal .purchaseDetailItemsTable table{width:1190px!important;min-width:1190px!important;table-layout:fixed!important;direction:rtl!important;border-collapse:collapse!important}
+.purchaseDetailModal .purchaseDetailItemsTable th,.purchaseDetailModal .purchaseDetailItemsTable td{box-sizing:border-box!important;text-align:center!important;vertical-align:middle!important;white-space:normal!important;overflow-wrap:anywhere!important;padding:12px 8px!important;border-bottom:1px solid #e2ece6!important;font-size:12px!important;line-height:1.6!important}
+.purchaseDetailModal .purchaseDetailItemsTable th{background:#e9f4ed!important;color:#215b3d!important;font-weight:800!important}
+.purchaseDetailModal .purchaseDetailItemsTable th:nth-child(1){width:175px!important}
+.purchaseDetailModal .purchaseDetailItemsTable th:nth-child(2){width:128px!important}
+.purchaseDetailModal .purchaseDetailItemsTable th:nth-child(3){width:185px!important}
+.purchaseDetailModal .purchaseDetailItemsTable th:nth-child(4),.purchaseDetailModal .purchaseDetailItemsTable th:nth-child(5){width:70px!important}
+.purchaseDetailModal .purchaseDetailItemsTable th:nth-child(6){width:95px!important}
+.purchaseDetailModal .purchaseDetailItemsTable th:nth-child(7),.purchaseDetailModal .purchaseDetailItemsTable th:nth-child(8){width:110px!important}
+.purchaseDetailModal .purchaseDetailItemsTable th:nth-child(9){width:130px!important}
+.purchaseDetailModal .purchaseDetailItemsTable th:nth-child(10){width:117px!important}
+.purchaseDetailModal .purchaseDetailCurrencyTag{display:inline-block;padding:5px 8px;border-radius:8px;background:#e9f4ed;color:#246343;font-weight:700;white-space:nowrap}
+.purchaseDetailModal .purchaseDetailExpiry{display:inline-block;white-space:nowrap;font-variant-numeric:tabular-nums;font-weight:700}
+.purchaseDetailModal .supplierSummary{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:10px!important}
+@media(max-width:750px){.purchaseDetailModal .modalBox{padding:12px!important}.purchaseDetailModal .supplierSummary{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
