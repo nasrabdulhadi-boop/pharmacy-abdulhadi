@@ -825,3 +825,23 @@ dialog.purchaseNewProductModal .modalBox{z-index:auto;box-shadow:0 35px 120px rg
 /* V6.4.28: allow typing part count without clamping each keystroke */
 .posClassic .posPartEditor .partInput{pointer-events:auto!important;user-select:text!important;cursor:text!important;position:relative;z-index:2;touch-action:manipulation}
 .posClassic .posPartEditor .partInput:focus{outline:2px solid #16845b!important;border-color:#16845b!important;background:#fff!important}
+
+
+/* V6.4.35 — purchase invoice currency selector and desktop readability */
+.purchaseInvoiceModal .purchaseCurrencyToolbar{display:flex;align-items:center;flex-wrap:wrap;gap:14px;padding:16px 22px;background:#eaf5ef;border-bottom:2px solid #c4dfd0;direction:rtl;flex-shrink:0}
+.purchaseInvoiceModal .purchaseCurrencyTitle{display:flex;flex-direction:column;gap:3px;min-width:175px}
+.purchaseInvoiceModal .purchaseCurrencyTitle strong{font-size:17px;color:#154a37}
+.purchaseInvoiceModal .purchaseCurrencyTitle small{font-size:12px;color:#496e5d}
+.purchaseInvoiceModal .purchaseCurrencyButtons{display:flex;gap:9px;flex-wrap:wrap}
+.purchaseInvoiceModal .purchaseCurrencyButtons button{font-size:15px;font-weight:800;min-width:175px;padding:12px 20px;border:2px solid #b4d0c1;border-radius:12px;background:white;color:#25543e;cursor:pointer;transition:background .15s,border-color .15s}
+.purchaseInvoiceModal .purchaseCurrencyButtons button.purchaseCurrencyActive{background:#17653e;border-color:#17653e;color:white;box-shadow:0 3px 9px #17653e25}
+.purchaseInvoiceModal .purchaseCurrencyButtons button:focus-visible{outline:3px solid #e3b44b;outline-offset:2px}
+.purchaseInvoiceModal .purchaseCurrencyRate{font-size:13px;color:#235a42;font-weight:700;margin-inline-start:auto}
+.purchaseInvoiceModal .purchaseCurrencyLegacyNotice{display:none!important}
+.purchaseInvoiceModal .purchaseInvoiceHeader{padding:16px 24px}
+.purchaseInvoiceModal .purchaseInvoiceMain{min-width:0}
+.purchaseInvoiceModal .purchaseSupplierGrid label,.purchaseInvoiceModal .purchaseSectionHead b{font-size:13px}
+.purchaseInvoiceModal .purchaseSection{margin-bottom:14px}
+.purchaseInvoiceModal .purchaseProfessionalTable{overflow-x:auto}
+.purchaseInvoiceModal .purchaseProfessionalTable table{min-width:1180px}
+@media(max-width:820px){.purchaseInvoiceModal .purchaseCurrencyToolbar{padding:12px;gap:9px}.purchaseInvoiceModal .purchaseCurrencyButtons{width:100%}.purchaseInvoiceModal .purchaseCurrencyButtons button{flex:1;min-width:120px;font-size:12px;padding:10px 7px}.purchaseInvoiceModal .purchaseCurrencyRate{margin-inline-start:0}}
