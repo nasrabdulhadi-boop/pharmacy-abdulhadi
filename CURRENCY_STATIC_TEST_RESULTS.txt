@@ -1,0 +1,23 @@
+Pharmacy Abdulhadi V6.4.28 — Static QA results
+Date: 2026-10-14
+
+PASS 1: index.html entry point resolves to src/main.jsx
+PASS 2: POS currency search RPC is referenced by frontend and defined in migration
+PASS 3: POS sale RPC is referenced by frontend and defined in migration
+PASS 4: exchange-rate update RPC signature matches frontend arguments
+PASS 5: frontend blocks adding USD-priced products when current FX <= 1
+PASS 6: migration ignores client-provided p_fx_rate and reads database rate
+PASS 7: server-side guard blocks USD-priced sale if rate <= 1
+PASS 8: migration has BEGIN and COMMIT
+PASS 9: migration has no DROP TABLE, TRUNCATE, or DELETE FROM statements (comments excluded)
+PASS 10: no .env file included in archive
+PASS 11: SQL dollar-quote delimiters are balanced
+
+11/11 static checks passed.
+
+NOT PASSED / NOT RUN:
+- npm install timed out; offline cache did not contain dependencies.
+- npm run build was not run because dependencies are unavailable.
+- SQL was not run against Supabase.
+- No live sale/purchase/inventory/accounting tests were run.
+- USD purchase invoices and supplier debts are NOT implemented end-to-end in this candidate; do not use this candidate as a complete dual-currency production release.

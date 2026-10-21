@@ -1,0 +1,157 @@
+
+> pharmacy-abdelhadi-final@6.4.32 test
+> node --test src/currency-pricing.test.js src/deploy-compat.test.js src/currency-backend-contract.test.js
+
+TAP version 13
+# Subtest: currency feature requires both explicit flag and backend readiness contract
+ok 1 - currency feature requires both explicit flag and backend readiness contract
+  ---
+  duration_ms: 2.932078
+  type: 'test'
+  ...
+# Subtest: contract checks both USD write RPCs and allocation and supplier return guard
+ok 2 - contract checks both USD write RPCs and allocation and supplier return guard
+  ---
+  duration_ms: 2.360929
+  type: 'test'
+  ...
+# Subtest: allocation guard validates currency, exchange snapshot and USD converted amount
+ok 3 - allocation guard validates currency, exchange snapshot and USD converted amount
+  ---
+  duration_ms: 0.868913
+  type: 'test'
+  ...
+# Subtest: purchase and supplier payment lock USD rate through completion of transaction
+ok 4 - purchase and supplier payment lock USD rate through completion of transaction
+  ---
+  duration_ms: 0.631921
+  type: 'test'
+  ...
+# Subtest: neither frontend nor migration auto-switches currency flag or runs SQL
+ok 5 - neither frontend nor migration auto-switches currency flag or runs SQL
+  ---
+  duration_ms: 0.880943
+  type: 'test'
+  ...
+# Subtest: supplier return options keep separate paid and bonus batches
+ok 6 - supplier return options keep separate paid and bonus batches
+  ---
+  duration_ms: 0.450652
+  type: 'test'
+  ...
+# Subtest: backend readiness fails on inconsistent legacy ledger balances
+ok 7 - backend readiness fails on inconsistent legacy ledger balances
+  ---
+  duration_ms: 0.511888
+  type: 'test'
+  ...
+# Subtest: does not convert historical SYP products when rate is missing
+ok 8 - does not convert historical SYP products when rate is missing
+  ---
+  duration_ms: 1.517751
+  type: 'test'
+  ...
+# Subtest: keeps the original USD price, exchange snapshot, and converted SYP separately
+ok 9 - keeps the original USD price, exchange snapshot, and converted SYP separately
+  ---
+  duration_ms: 2.298333
+  type: 'test'
+  ...
+# Subtest: rejects an invalid or missing exchange rate, including default 1
+ok 10 - rejects an invalid or missing exchange rate, including default 1
+  ---
+  duration_ms: 0.678259
+  type: 'test'
+  ...
+# Subtest: rejects stale rate during lookup and at checkout
+ok 11 - rejects stale rate during lookup and at checkout
+  ---
+  duration_ms: 0.815641
+  type: 'test'
+  ...
+# Subtest: rejects legacy draft with no USD price snapshot
+ok 12 - rejects legacy draft with no USD price snapshot
+  ---
+  duration_ms: 0.947507
+  type: 'test'
+  ...
+# Subtest: rejects inconsistent backend SYP conversion
+ok 13 - rejects inconsistent backend SYP conversion
+  ---
+  duration_ms: 0.498315
+  type: 'test'
+  ...
+# Subtest: allows manual SYP edit without mutating the original USD price
+ok 14 - allows manual SYP edit without mutating the original USD price
+  ---
+  duration_ms: 0.780879
+  type: 'test'
+  ...
+# Subtest: currency engine requires explicit Vercel opt in
+ok 15 - currency engine requires explicit Vercel opt in
+  ---
+  duration_ms: 1.494726
+  type: 'test'
+  ...
+# Subtest: all core finance sections preserve tested SYP legacy implementation
+ok 16 - all core finance sections preserve tested SYP legacy implementation
+  ---
+  duration_ms: 2.967301
+  type: 'test'
+  ...
+# Subtest: missing backend is fail-closed to existing safe screen
+ok 17 - missing backend is fail-closed to existing safe screen
+  ---
+  duration_ms: 0.510704
+  type: 'test'
+  ...
+# Subtest: legacy SYP purchase path retained and USD function never selected for SYP
+ok 18 - legacy SYP purchase path retained and USD function never selected for SYP
+  ---
+  duration_ms: 0.299776
+  type: 'test'
+  ...
+# Subtest: purchase amount discount is labelled and computed in invoice currency
+ok 19 - purchase amount discount is labelled and computed in invoice currency
+  ---
+  duration_ms: 0.249708
+  type: 'test'
+  ...
+# Subtest: opening cashbox does not reconcile mutable records
+ok 20 - opening cashbox does not reconcile mutable records
+  ---
+  duration_ms: 0.415967
+  type: 'test'
+  ...
+# Subtest: user browser build has no service-role key or SQL migration execution
+ok 21 - user browser build has no service-role key or SQL migration execution
+  ---
+  duration_ms: 1.031538
+  type: 'test'
+  ...
+1..21
+# tests 21
+# suites 0
+# pass 21
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 128.506019
+PASS no destructive table statements
+PASS USD invoice new rpc
+PASS USD vendor payment new rpc
+PASS original USD inventory cost frozen
+PASS vendor payments same currency guard
+PASS supplier payment cap guard
+PASS no FX default 15000
+PASS new purchases require valid rate
+PASS manual cashbox only SYP
+PASS prevent unsupported USD returns
+PASS report uses SYP normalization
+PASS no reconciliation auto on page load
+PASS old original file set intact
+PASS effective inventory cost math
+PASS SYP and USD kept apart in views
+PASSED: 15/15 static tests. NOT a database integration test.
+JSX parse errors: 0

@@ -29,9 +29,12 @@ ON CONFLICT (id) DO NOTHING;
 ALTER TABLE public.products
   ADD COLUMN IF NOT EXISTS sale_currency text NOT NULL DEFAULT 'SYP';
 
-UPDATE public.products
-SET sale_currency = 'SYP'
-WHERE sale_currency IS NULL OR sale_currency NOT IN ('SYP','USD');
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM public.products WHERE sale_currency IS NULL OR sale_currency NOT IN ('SYP','USD')) THEN
+    RAISE EXCEPTION 'Existing products contain an unknown sale_currency; no product rows were changed. Audit these rows before retrying the migration.';
+  END IF;
+END; $$;
 
 ALTER TABLE public.products DROP CONSTRAINT IF EXISTS products_sale_currency_check;
 ALTER TABLE public.products
@@ -97,7 +100,7 @@ RETURNS jsonb
 LANGUAGE plpgsql SECURITY DEFINER SET search_path=public,auth AS $$
 BEGIN
   IF NOT public.is_admin() THEN RAISE EXCEPTION 'Admin authorization required'; END IF;
-  IF p_rate IS NULL OR p_rate <= 0 THEN RAISE EXCEPTION 'سعر الصرف يجب أن يكون أكبر من صفر'; END IF;
+  IF p_rate IS NULL OR p_rate <= 1 THEN RAISE EXCEPTION 'سعر الصرف يجب أن يكون أكبر من 1 ليرة سورية لكل دولار'; END IF;
   UPDATE public.pharmacy_currency_settings
   SET usd_to_syp=p_rate, updated_at=now(), updated_by=auth.uid()
   WHERE id=1;
@@ -204,8 +207,10 @@ BEGIN
   IF p_payment_method NOT IN ('cash','credit') THEN RAISE EXCEPTION 'Invalid payment method'; END IF;
   IF p_payment_method='credit' AND p_debtor_id IS NULL THEN RAISE EXCEPTION 'اختر ملف المتدين أولاً'; END IF;
   IF p_debtor_id IS NOT NULL THEN SELECT name INTO v_debtor_name FROM public.debtors WHERE id=p_debtor_id; IF NOT FOUND THEN RAISE EXCEPTION 'ملف المتدين غير موجود'; END IF; END IF;
-  SELECT usd_to_syp INTO v_item_fx FROM public.pharmacy_currency_settings WHERE id=1;
-  v_item_fx:=COALESCE(NULLIF(p_fx_rate,0),v_item_fx,1);
+  SELECT usd_to_syp INTO v_item_fx FROM public.pharmacy_currency_settings WHERE id=1 FOR SHARE;
+  IF v_item_fx IS NULL OR v_item_fx <= 1 THEN RAISE EXCEPTION 'سعر صرف الدولار غير مضبوط. أدخل سعراً صحيحاً من إعدادات النظام'; END IF;
+  -- The trusted server-side rate is authoritative; do not accept a client-supplied override.
+  -- p_fx_rate remains in the signature for backwards compatibility only.
   INSERT INTO public.sales(id,customer_id,debtor_id,subtotal,discount,total,created_by,payment_method,paid_amount,due_amount,payment_notes,currency,fx_rate,total_syp)
   VALUES(v_sale_id,NULL,p_debtor_id,0,GREATEST(COALESCE(p_discount,0),0),0,auth.uid(),p_payment_method,0,0,p_notes,upper(COALESCE(p_currency,'SYP')),v_item_fx,0);
 
@@ -216,6 +221,7 @@ BEGIN
     IF NOT FOUND THEN RAISE EXCEPTION 'Invalid sale product'; END IF;
     IF need<=0 THEN RAISE EXCEPTION 'Invalid quantity'; END IF;
     v_product_currency:=upper(COALESCE(v_product_currency,'SYP'));
+    IF v_product_currency='USD' AND v_item_fx <= 1 THEN RAISE EXCEPTION 'سعر صرف الدولار غير مضبوط. حدّث سعر الصرف قبل بيع المنتجات المسعّرة بالدولار'; END IF;
     IF v_product_currency='USD' THEN v_unit_price:=v_base_price*v_item_fx; ELSE v_unit_price:=v_base_price; END IF;
     IF it ? 'unit_price' AND (it->>'unit_price') IS NOT NULL THEN
       IF (it->>'unit_price')::numeric<0 THEN RAISE EXCEPTION 'سعر البيع لا يمكن أن يكون سالباً'; END IF;

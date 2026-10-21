@@ -1,12 +1,14 @@
 {
   "name": "pharmacy-abdelhadi-final",
   "private": true,
-  "version": "6.4.28",
+  "version": "6.4.32",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "node --test src/currency-pricing.test.js src/deploy-compat.test.js src/currency-backend-contract.test.js",
+    "prebuild": "npm test"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.57.0",
