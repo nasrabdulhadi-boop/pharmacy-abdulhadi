@@ -19,9 +19,11 @@ test('missing backend is fail-closed to existing safe screen',()=>{
  assert.match(code,/return status\?<CurrencyView/);
  assert.match(code,/legacy:LegacyView/);
 });
-test('legacy SYP purchase path retained and USD function never selected for SYP',()=>{
- assert.match(code,/invoiceCurrency==='USD'\?'admin_create_purchase_usd_v1':'admin_create_purchase_with_payment_discount'/);
+test('currency-aware SYP purchase and USD paths remain independent',()=>{
+ assert.match(code,/invoiceCurrency==='USD'\?'admin_create_purchase_usd_v1':'admin_create_purchase_syp_v1'/);
  assert.match(code,/invoiceCurrency==='SYP'&&valid\.some/);
+ assert.match(code,/admin_currency_supplier_return_v2/);
+ assert.match(code,/admin_currency_supplier_refund_receipt_v1/);
 });
 test('purchase amount discount is labelled and computed in invoice currency',()=>{
  assert.match(code,/invoiceCurrency==='USD'\?'\$':'ل\.س'/);
