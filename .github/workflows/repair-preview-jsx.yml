@@ -28,7 +28,7 @@ jobs:
           PY
       - name: Verify source and build
         run: |
-          npm ci
+          npm install --no-audit --no-fund
           npm run build
       - name: Commit verified fix
         run: |
