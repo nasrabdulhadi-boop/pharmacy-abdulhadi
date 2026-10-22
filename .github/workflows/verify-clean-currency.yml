@@ -20,7 +20,7 @@ jobs:
           s=p.read_text()
           old="{money(product?.purchase_price)} ل.س</span>"
           new="{money(product?.purchase_price)} {product?.sale_currency==='USD'?'$':'ل.س'}</span>"
-          assert s.count(old)==1, s.count(old)
+          assert s.count(old)==2, s.count(old)
           s=s.replace(old,new)
           old2="سعر النت (سعر الشراء)<input"
           assert s.count(old2)==1,s.count(old2)
