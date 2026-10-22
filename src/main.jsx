@@ -812,46 +812,6 @@ useEffect(()=>{load().catch(e=>alert(e.message))},[]);
  </>}
 
 
-:'ل.س'}</b></div>
-     <div><span>عدد الأصناف</span><b>{lines.filter(x=>x.product_id).length}</b></div>
-     <div><span>المدفوع</span><b>{money(paidAmount)} {form.currency==="USD"?"$":"ل.س"}</b></div>
-     <div className="due"><span>المتبقي / دين المورد</span><b>{money(dueAmount)} {form.currency==="USD"?"$":"ل.س"}</b></div>
-    </div>
-    <div className={`purchasePaymentStatus ${dueAmount===0?'paid':'due'}`}><span>{dueAmount===0?'✓ مدفوعة بالكامل':paidAmount>0?'◐ مدفوعة جزئيًا':'○ غير مدفوعة'}</span><small>{dueAmount===0?'لا يوجد دين على المورد':`الدين الحالي ${money(dueAmount)} {form.currency==="USD"?"$":"ل.س"}`}</small></div>
-   </div>
-
-   <div className="purchaseDiscountCard">
-    <div className="purchaseSidebarTitle">الخصم على إجمالي الفاتورة</div>
-    <div className="purchaseDiscountModes">
-     <button type="button" className={discountType==='none'?'active':''} onClick={()=>{setDiscountType('none');setDiscountValue('')}}>بدون خصم</button>
-     <button type="button" className={discountType==='percent'?'active':''} onClick={()=>setDiscountType('percent')}>نسبة مئوية ٪</button>
-     <button type="button" className={discountType==='amount'?'active':''} onClick={()=>setDiscountType('amount')}>ليرة سورية</button>
-    </div>
-    {discountType!=='none'&&<label>{discountType==='percent'?'نسبة الخصم':'قيمة الخصم'}<div className="purchaseDiscountInput"><input type="number" min="0" max={discountType==='percent'?100:subtotal} step="0.01" inputMode="decimal" value={discountValue} onChange={e=>setDiscountValue(e.target.value)} placeholder="0"/><span>{discountType==='percent'?'٪':'ل.س'}</span></div></label>}
-    <div className="purchaseDiscountBreakdown"><span>قبل الخصم <b>{money(subtotal)} {form.currency==="USD"?"$":"ل.س"}</b></span><span>قيمة الخصم <b>{money(discountAmount)} {form.currency==="USD"?"$":"ل.س"}</b></span><span>بعد الخصم <strong>{money(total)} ل.س</strong></span></div>
-   </div>
-
-   <div className="purchasePaymentCard">
-    <div className="purchaseSidebarTitle">الدفع</div>
-    <label>المبلغ المدفوع<input className="purchaseBigAmount" type="number" min="0" max={total} value={payment.amount} onChange={e=>setPayment({...payment,amount:e.target.value})} placeholder="0"/></label>
-    <div className="purchaseQuickPay"><button type="button" onClick={()=>setPayment({...payment,amount:String(total)})} disabled={!total}>دفع كامل</button><button type="button" onClick={()=>setPayment({...payment,amount:'0'})}>آجل</button></div>
-    <label>طريقة الدفع<select value={payment.method} onChange={e=>setPayment({...payment,method:e.target.value})}><option value="cash">نقداً — من الصندوق</option><option value="other">طريقة أخرى</option></select></label>
-    <label>ملاحظات الدفع<textarea value={payment.notes} onChange={e=>setPayment({...payment,notes:e.target.value})} placeholder="اختياري…"/></label>
-   </div>
-
-   <div className="purchaseSupplierLinkCard"><span>حساب المورد</span><b>{form.supplier_id?suppliers.find(s=>s.id===form.supplier_id)?.name||'المورد المحدد':'سيتم ربط الدين بالمورد'}</b><small>الدفع والدين والدفعات تُسجل على نفس الفاتورة.</small></div>
-   <button className="primary full purchaseSaveButton" disabled={busy} onClick={save}>{busy?'جارٍ الحفظ…':'حفظ واستلام الفاتورة'}</button>
-   <button className="secondaryAction full purchaseCancelButton" disabled={busy} onClick={()=>setShow(false)}>إلغاء</button>
-  </aside>
- </div>
-</Modal>}
- {newProductOpen&&<PortalModal className="purchaseNewProductModal" onClose={()=>!busy&&setNewProductOpen(false)} title="إضافة دواء جديد وربطه بالمنتجات والمخزون"><p className="muted">سيُحفظ الدواء في منتجات الصيدلية أولاً، ثم يُربط مباشرة بسطر الفاتورة، وعند حفظ الفاتورة تُنشأ له الدفعة في المخزون.</p><div className="formGrid">{[['name','اسم الدواء'],['barcode','الباركود'],['active_ingredient','المادة الفعالة'],['strength','العيار'],['dosage_form','الشكل الصيدلاني'],['manufacturer','الشركة'],['category','التصنيف'],['unit','الوحدة'],['parts_per_unit','الأجزاء في العلبة'],['purchase_price','سعر الشراء الافتراضي'],['sale_price','سعر المبيع'],['reorder_level','حد إعادة الطلب']].map(([k,l])=><label key={k}>{l}<input value={newProduct[k]??''} onChange={e=>setNewProduct({...newProduct,[k]:e.target.value})}/></label>)}<label>عملة البيع<select value={newProduct.sale_currency||"SYP"} onChange={e=>setNewProduct({...newProduct,sale_currency:e.target.value})}><option value="SYP">ليرة سورية</option><option value="USD">دولار أمريكي</option></select></label><label className="checkLabel"><input type="checkbox" checked={newProduct.active!==false} onChange={e=>setNewProduct({...newProduct,active:e.target.checked})}/> الدواء فعال</label><label className="checkLabel"><input type="checkbox" checked={!!newProduct.customer_visible} onChange={e=>setNewProduct({...newProduct,customer_visible:e.target.checked})}/> إظهار للزبائن في الموقع</label></div><button className="primary full" onClick={saveNewProduct} disabled={busy}>حفظ الدواء وإضافته للفاتورة</button></PortalModal>}
- {newSupplierOpen&&<PortalModal className="purchaseNewSupplierModal" onClose={()=>!busy&&setNewSupplierOpen(false)} title="إضافة مورد جديد"><div className="formGrid"><label>اسم المورد *<input value={newSupplier.name} onChange={e=>setNewSupplier({...newSupplier,name:e.target.value})} autoFocus/></label><label>الهاتف<input value={newSupplier.phone} onChange={e=>setNewSupplier({...newSupplier,phone:e.target.value})}/></label><label>العنوان<input value={newSupplier.address} onChange={e=>setNewSupplier({...newSupplier,address:e.target.value})}/></label><label>ملاحظات<textarea value={newSupplier.notes} onChange={e=>setNewSupplier({...newSupplier,notes:e.target.value})}/></label></div><button className="primary full" disabled={busy} onClick={createSupplierOnly}>حفظ واختيار المورد</button></PortalModal>}
-
- {invoiceScanOpen&&<div className="modal"><div className="modalBox"><button className="x" onClick={()=>setInvoiceScanOpen(false)}>×</button><h2>تصوير باركود رقم فاتورة المورد</h2><video id="purchaseInvoiceBarcodeVideo" className="barcodeVideo" playsInline/><p className="muted">وجّه الكاميرا نحو باركود رقم الفاتورة.</p></div></div>}
- {scanOpen&&<div className="modal"><div className="modalBox"><button className="x" onClick={()=>setScanOpen(false)}>×</button><h2>تصوير باركود الدواء</h2><video id="purchaseBarcodeVideo" className="barcodeVideo" playsInline/><p className="muted">وجّه الكاميرا نحو باركود الدواء.</p></div></div>}
- {detail&&<Modal onClose={()=>setDetail(null)} title={`فاتورة ${detail.invoice_number||String(detail.id).slice(0,8)}`}><div className="supplierSummary"><div><b>المورد</b><span>{detail.supplier_name||'—'}</span></div><div><b>التاريخ</b><span>{detail.invoice_date||'—'}</span></div><div><b>قبل الخصم</b><span>{money(detail.subtotal??detail.total)} ل.س</span></div><div><b>الخصم</b><span>{money(detail.discount_amount||0)} ل.س{detail.discount_type==='percent'&&Number(detail.discount_value)>0?` (${money(detail.discount_value)}٪)`:''}</span></div><div><b>بعد الخصم</b><span><strong>{money(detail.total)} ل.س</strong></span></div><div><b>المدفوع</b><span>{money(detail.paid_amount||0)} ل.س</span></div><div><b>المتبقي</b><span className={Number(detail.due_amount)>0?'dangerText':''}>{money(detail.due_amount||0)} ل.س</span></div><div><b>حالة الدفع</b><span>{detail.payment_status==='paid'?'مدفوعة بالكامل':Number(detail.paid_amount||0)>0?'مدفوعة جزئياً':'غير مدفوعة'}</span></div></div><h3>الأصناف</h3><div className="tableWrap"><table><thead><tr><th>الدواء</th><th>الباركود</th><th>المادة الفعالة</th><th>الكمية</th><th>البونص</th><th>إجمالي الداخل</th><th>سعر الشراء ({form.currency==="USD"?"$":"ل.س"})</th><th>سعر المبيع</th><th>عملة البيع</th><th>الصلاحية</th></tr></thead><tbody>{(detail.items||[]).map(x=><tr key={x.id}><td>{x.product_name}</td><td>{x.barcode||'—'}</td><td>{x.active_ingredient||'—'}</td><td>{x.quantity}</td><td>{x.bonus_quantity||0}</td><td>{money(Number(x.quantity||0)+Number(x.bonus_quantity||0))}</td><td>{money(x.purchase_price)} {form.currency==="USD"?"$":"ل.س"}</td><td>{money(x.sale_price)} {x.sale_price_currency==='USD'?'USD':'SYP'}</td><td>{x.sale_price_currency==='USD'?'USD':'SYP'}</td><td>{x.expiry_date||'—'}</td></tr>)}</tbody></table></div><h3>دفعات الفاتورة</h3>{(detail.payments||[]).length?<div className="tableWrap"><table><thead><tr><th>التاريخ والساعة</th><th>المبلغ</th><th>طريقة الدفع</th><th>ملاحظات</th></tr></thead><tbody>{detail.payments.map(p=><tr key={p.id}><td>{localDateTime(p.created_at)}</td><td>{money(p.amount)} ل.س</td><td>{p.payment_method==='cash'?'نقداً — خرج من الصندوق':'طريقة أخرى'}</td><td>{p.notes||'—'}</td></tr>)}</tbody></table></div>:<div className="emptyCart">لم تسجل دفعة لهذه الفاتورة.</div>}<div className="purchaseAuditNote">الدفع النقدي المسجل هنا مرتبط بحركة خروج من الصندوق وسجل التدقيق عبر نظام المحاسبة.</div></Modal>}
- </>}
 
 
 :'ل.س'}`}</small></div>
