@@ -866,3 +866,29 @@ dialog.purchaseNewProductModal .modalBox{z-index:auto;box-shadow:0 35px 120px rg
 .purchaseInvoiceModal .purchaseProfessionalTable th,.purchaseInvoiceModal .purchaseProfessionalTable td{border-left:1px solid #e7eeeb!important}
 .purchaseInvoiceModal .purchaseProfessionalTable tbody tr:nth-child(even) td{background:#f8fbf9}
 @media(max-width:760px){.purchaseInvoiceModal .purchaseInvoiceCurrencyPicker{min-width:180px}.purchaseInvoiceModal .purchaseProfessionalTable table{width:1430px!important}}
+
+
+/* Invoice header: currency stays at the right edge of the header, never in the sidebar. */
+.purchaseInvoiceModal .purchaseInvoiceHeader{display:grid!important;grid-template-columns:minmax(235px,1fr) auto auto!important;direction:rtl!important;align-items:center!important;gap:16px!important;min-height:100px;overflow:visible!important}
+.purchaseInvoiceModal .purchaseInvoiceBrand{grid-column:1!important;grid-row:1;min-width:0}
+.purchaseInvoiceModal .purchaseInvoiceCurrencySlot{grid-column:2!important;grid-row:1;justify-self:center;min-width:235px;max-width:270px}
+.purchaseInvoiceModal .purchaseInvoiceCurrencyPicker{display:flex!important;flex-direction:column!important;gap:6px!important;min-width:0!important;width:100%;font-size:12px!important}
+.purchaseInvoiceModal .purchaseInvoiceCurrencyPicker select{width:100%!important;min-height:42px!important;direction:rtl!important}
+.purchaseInvoiceModal .purchaseInvoiceMeta{grid-column:3!important;grid-row:1;display:flex!important;flex-wrap:nowrap!important;width:auto!important;max-width:none!important;min-width:240px!important;overflow:visible!important;gap:8px!important}
+.purchaseInvoiceModal .purchaseInvoiceMeta>div{flex:0 0 auto!important;min-width:108px!important}
+.purchaseInvoiceModal .purchaseProfessionalTable table{width:1530px!important;min-width:1530px!important;table-layout:fixed!important}
+.purchaseInvoiceModal .purchaseProfessionalTable th:nth-child(1),.purchaseInvoiceModal .purchaseProfessionalTable td:nth-child(1){width:110px}
+.purchaseInvoiceModal .purchaseProfessionalTable th:nth-child(2),.purchaseInvoiceModal .purchaseProfessionalTable td:nth-child(2){width:190px}
+.purchaseInvoiceModal .purchaseProfessionalTable th:nth-child(3),.purchaseInvoiceModal .purchaseProfessionalTable td:nth-child(3){width:150px}
+.purchaseInvoiceModal .purchaseProfessionalTable th:nth-child(4),.purchaseInvoiceModal .purchaseProfessionalTable td:nth-child(4){width:85px}
+.purchaseInvoiceModal .purchaseProfessionalTable th:nth-child(5),.purchaseInvoiceModal .purchaseProfessionalTable td:nth-child(5){width:85px}
+.purchaseInvoiceModal .purchaseProfessionalTable th:nth-child(6),.purchaseInvoiceModal .purchaseProfessionalTable td:nth-child(6){width:105px}
+.purchaseInvoiceModal .purchaseProfessionalTable th:nth-child(7),.purchaseInvoiceModal .purchaseProfessionalTable td:nth-child(7){width:130px}
+.purchaseInvoiceModal .purchaseProfessionalTable th:nth-child(8),.purchaseInvoiceModal .purchaseProfessionalTable td:nth-child(8){width:120px}
+.purchaseInvoiceModal .purchaseProfessionalTable th:nth-child(9),.purchaseInvoiceModal .purchaseProfessionalTable td:nth-child(9){width:110px}
+.purchaseInvoiceModal .purchaseProfessionalTable th:nth-child(10),.purchaseInvoiceModal .purchaseProfessionalTable td:nth-child(10){width:170px}
+.purchaseInvoiceModal .purchaseProfessionalTable th:nth-child(11),.purchaseInvoiceModal .purchaseProfessionalTable td:nth-child(11){width:135px}
+.purchaseInvoiceModal .purchaseProfessionalTable th:nth-child(12),.purchaseInvoiceModal .purchaseProfessionalTable td:nth-child(12){width:90px}
+.purchaseInvoiceModal .purchaseProfessionalTable td:nth-child(9) select{font-weight:800;color:#18583d;background:#edf8f0}
+@media(max-width:1100px){.purchaseInvoiceModal .purchaseInvoiceHeader{grid-template-columns:minmax(0,1fr) minmax(200px,260px)!important}.purchaseInvoiceModal .purchaseInvoiceBrand{grid-column:1!important}.purchaseInvoiceModal .purchaseInvoiceCurrencySlot{grid-column:2!important;justify-self:stretch}.purchaseInvoiceModal .purchaseInvoiceMeta{grid-column:1/-1!important;grid-row:2;justify-content:flex-start!important}}
+@media(max-width:600px){.purchaseInvoiceModal .purchaseInvoiceHeader{grid-template-columns:1fr!important;gap:9px!important}.purchaseInvoiceModal .purchaseInvoiceBrand{grid-column:1!important;grid-row:1}.purchaseInvoiceModal .purchaseInvoiceCurrencySlot{grid-column:1!important;grid-row:2;justify-self:stretch;max-width:none}.purchaseInvoiceModal .purchaseInvoiceMeta{grid-column:1!important;grid-row:3;min-width:0!important}}
