@@ -1,0 +1,40 @@
+name: Verify clean currency fix
+on:
+  push:
+    branches:
+      - fix/clean-build-currency-20261022
+    paths:
+      - .github/workflows/verify-clean-currency.yml
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Apply safe currency display fix
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('src/main.jsx')
+          s=p.read_text()
+          old="{money(product?.purchase_price)} ل.س</span>"
+          new="{money(product?.purchase_price)} {product?.sale_currency==='USD'?'$':'ل.س'}</span>"
+          assert s.count(old)==1, s.count(old)
+          s=s.replace(old,new)
+          old2="سعر النت (سعر الشراء)<input"
+          assert s.count(old2)==1,s.count(old2)
+          s=s.replace(old2,"سعر النت (بنفس عملة المبيع)<input")
+          p.write_text(s)
+          PY
+      - name: Build application
+        run: |
+          npm install --no-audit --no-fund
+          npm run build
+      - name: Commit only if build succeeds
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/main.jsx
+          git commit -m "fix: net price currency display verified by build"
+          git push
