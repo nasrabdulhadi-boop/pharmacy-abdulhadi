@@ -892,3 +892,9 @@ dialog.purchaseNewProductModal .modalBox{z-index:auto;box-shadow:0 35px 120px rg
 .purchaseInvoiceModal .purchaseProfessionalTable td:nth-child(9) select{font-weight:800;color:#18583d;background:#edf8f0}
 @media(max-width:1100px){.purchaseInvoiceModal .purchaseInvoiceHeader{grid-template-columns:minmax(0,1fr) minmax(200px,260px)!important}.purchaseInvoiceModal .purchaseInvoiceBrand{grid-column:1!important}.purchaseInvoiceModal .purchaseInvoiceCurrencySlot{grid-column:2!important;justify-self:stretch}.purchaseInvoiceModal .purchaseInvoiceMeta{grid-column:1/-1!important;grid-row:2;justify-content:flex-start!important}}
 @media(max-width:600px){.purchaseInvoiceModal .purchaseInvoiceHeader{grid-template-columns:1fr!important;gap:9px!important}.purchaseInvoiceModal .purchaseInvoiceBrand{grid-column:1!important;grid-row:1}.purchaseInvoiceModal .purchaseInvoiceCurrencySlot{grid-column:1!important;grid-row:2;justify-self:stretch;max-width:none}.purchaseInvoiceModal .purchaseInvoiceMeta{grid-column:1!important;grid-row:3;min-width:0!important}}
+
+/* Purchase details: only sale currency is editable; no invoice amount controls are changed. */
+.purchaseDetailCurrencyEdit{display:flex;align-items:center;gap:7px;min-width:220px;direction:rtl}
+.purchaseDetailCurrencyEdit select{min-width:112px;min-height:36px;padding:5px 8px;border:1px solid #cbded2;border-radius:8px;background:#f6fbf7;color:#185c3e;font-weight:700}
+.purchaseDetailCurrencyEdit button{min-width:90px;min-height:36px;padding:6px 10px;white-space:nowrap;font-size:12px}
+.purchaseDetailCurrencyEdit button:disabled{opacity:.48;cursor:not-allowed}
