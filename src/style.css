@@ -978,3 +978,37 @@ dialog.purchaseNewProductModal .modalBox{z-index:auto;box-shadow:0 35px 120px rg
   grid-column:1!important;grid-row:2!important;width:100%!important;
  }
 }
+
+
+/* POS shortcut medicine names: visually distinguish filled shortcuts only. */
+.posV440 .posShortcutSidebar .posShortcutSlot.populated{
+ background:linear-gradient(110deg,#e3f4ec 0%,#eff9f4 100%)!important;
+ border:1px solid #83c4a2!important;
+ border-right:4px solid #198455!important;
+ box-shadow:0 1px 4px rgba(20,94,64,.08)!important;
+ color:#14583b!important;
+}
+.posV440 .posShortcutSidebar .posShortcutSlot.populated .posShortcutName{
+ color:#11623f!important;
+ font-size:13px!important;
+ font-weight:900!important;
+ letter-spacing:0!important;
+ text-shadow:none!important;
+}
+.posV440 .posShortcutSidebar .posShortcutSlot.populated .posShortcutIndex{
+ background:#c6e9d6!important;
+ color:#12603c!important;
+}
+.posV440 .posShortcutSidebar .posShortcutSlot.populated small{
+ color:#496d60!important;
+ font-weight:650!important;
+}
+.posV440 .posShortcutSidebar .posShortcutSlot.populated:hover{
+ background:linear-gradient(110deg,#c9ebd8 0%,#e0f4e8 100%)!important;
+ border-color:#299368!important;
+ box-shadow:0 3px 10px rgba(21,101,66,.15)!important;
+}
+.posV440 .posShortcutSidebar .posShortcutSlot.populated:focus-visible{
+ outline:3px solid #e0ac46!important;
+ outline-offset:2px!important;
+}
