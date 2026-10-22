@@ -1284,3 +1284,15 @@ dialog.purchaseNewProductModal .modalBox{z-index:auto;box-shadow:0 35px 120px rg
   width:100%!important;max-width:none!important;
  }
 }
+
+
+/* Quick shortcut management: one-click direct assignment to list 1/2/3. */
+.quickAssignIntro{margin:9px 0 12px;padding:10px 12px;border-radius:10px;background:#edf8f0;color:#276447;font-size:13px;line-height:1.7;border:1px solid #d3e9da}
+.quickAssignActions{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;flex-shrink:0}
+.quickAssignLabel{color:#47725a;font-size:11px;font-weight:700;white-space:nowrap}
+.quickAssignButtons{display:flex;align-items:center;gap:6px;direction:ltr}
+.quickAssignBtn{min-width:38px;min-height:36px;padding:5px 10px;border-radius:9px;background:#f0f7f2;color:#276c4b;border:1px solid #b9dac5;font-weight:850;cursor:pointer;transition:background .12s,border-color .12s}
+.quickAssignBtn:hover{background:#d9f0e2;border-color:#198258}
+.quickAssignBtn.selected{background:#188257;color:#fff;border-color:#188257;box-shadow:0 2px 7px rgba(24,130,87,.18)}
+.quickAssignBtn:focus-visible{outline:3px solid #d8a848;outline-offset:2px}
+@media(max-width:540px){.quickManageRow{flex-wrap:wrap}.quickAssignActions{align-items:flex-start;width:100%}.quickAssignButtons{width:100%;justify-content:flex-start}}
