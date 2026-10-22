@@ -1,0 +1,55 @@
+name: Verify restored USD purchase features
+on:
+  push:
+    branches:
+      - fix/restore-usd-purchases-safe-20261022
+    paths:
+      - .github/workflows/verify-restored-usd.yml
+permissions:
+  contents: write
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Safely patch USD display and cross-currency purchase autofill
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('src/main.jsx')
+          s=p.read_text(encoding='utf-8')
+          changes=[
+            ("<th>سعر النت (ل.س)</th>","<th>سعر النت / العملة</th>",1),
+            ("<td>{money(r.purchase_price)} ل.س</td><td>{r.sale_currency==='USD'?","<td>{money(r.purchase_price)} {r.sale_currency==='USD'?'$':'ل.س'}</td><td>{r.sale_currency==='USD'?",1),
+            ("<b>سعر النت</b><span>{money(product?.purchase_price)} ل.س</span>","<b>سعر النت</b><span>{money(product?.purchase_price)} {product?.sale_currency==='USD'?'$':'ل.س'}</span>",1),
+            ("سعر النت (سعر الشراء)<input","سعر النت (بنفس عملة المبيع)<input",1),
+            ("عملة سعر المبيع<select","عملة سعر النت والمبيع<select",1),
+          ]
+          for old,new,count in changes:
+            found=s.count(old)
+            if found!=count: raise SystemExit(f'Unsafe replacement: expected {count} matches, found {found}: {old[:65]}')
+            s=s.replace(old,new)
+          start=s.index('function CurrencyPurchases(')
+          end=s.index('\nfunction ',start+25)
+          segment=s[start:end]
+          old='purchase_price:p.purchase_price??0,sale_price:p.sale_price??0,sale_currency:p.sale_currency||\'SYP\',original_sale_currency:p.sale_currency||\'SYP\''
+          new='purchase_price:invoiceCurrency===(p.sale_currency||\'SYP\')?(p.purchase_price??0):0,sale_price:p.sale_price??0,sale_currency:p.sale_currency||\'SYP\',original_sale_currency:p.sale_currency||\'SYP\''
+          if segment.count(old)!=2: raise SystemExit('Expected two currency-aware purchase selection paths')
+          segment=segment.replace(old,new)
+          s=s[:start]+segment+s[end:]
+          required=['function CurrencyPurchases(','عملة فاتورة المورد — اختر الليرة أو الدولار','invoiceCurrency','original_sale_currency','admin_create_purchase']
+          for needle in required:
+            if needle not in s: raise SystemExit(f'Missing regression requirement: {needle}')
+          p.write_text(s,encoding='utf-8')
+          PY
+      - name: Install and build
+        run: |
+          npm install --no-audit --no-fund
+          npm run build
+      - name: Commit only verified change
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/main.jsx
+          git commit -m "fix: preserve USD invoice flow and correct net-price currency"
+          git push
