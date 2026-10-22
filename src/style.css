@@ -1179,3 +1179,45 @@ dialog.purchaseNewProductModal .modalBox{z-index:auto;box-shadow:0 35px 120px rg
   grid-column:1!important;grid-row:2!important;width:100%!important;
  }
 }
+
+
+/* Pharmacy Pro: full-height independent shortcut rail.
+   Starts near the page heading/refresh row; normal document flow (NOT sticky).
+   Keep all 10 shortcut rows visible, without inner scrolling. */
+@media(min-width:761px){
+ .posV440.posClassic .posWorkspace.posWorkspaceWithShortcuts{
+  align-items:stretch!important;
+ }
+ .posV440.posClassic .posWorkspace.posWorkspaceWithShortcuts>.posShortcutSidebar{
+  position:relative!important;
+  top:-116px!important;
+  margin-bottom:-116px!important;
+  align-self:stretch!important;
+  min-height:max(660px,calc(100vh - 200px))!important;
+  height:auto!important;
+  display:flex!important;
+  flex-direction:column!important;
+  overflow:visible!important;
+  z-index:1;
+ }
+ .posV440.posClassic .posShortcutSidebar .posShortcutSlots{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr)!important;
+  grid-template-rows:repeat(10,minmax(51px,auto))!important;
+  gap:7px!important;
+  overflow:visible!important;
+ }
+ .posV440.posClassic .posShortcutSidebar .posShortcutSlot{
+  min-height:51px!important;
+ }
+ .posV440.posClassic .posShortcutSidebar .posShortcutHelp{
+  margin-top:auto!important;
+  padding-top:12px!important;
+ }
+}
+@media(max-width:760px){
+ .posV440.posClassic .posWorkspace.posWorkspaceWithShortcuts>.posShortcutSidebar{
+  position:static!important;top:auto!important;margin-bottom:0!important;
+  min-height:0!important;height:auto!important;display:block!important;
+ }
+}
