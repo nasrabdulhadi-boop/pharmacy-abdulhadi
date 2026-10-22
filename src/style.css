@@ -853,3 +853,16 @@ dialog.purchaseNewProductModal .modalBox{z-index:auto;box-shadow:0 35px 120px rg
 .purchaseInvoiceModal .purchaseProfessionalTable .purchaseExpiryButton{width:100%;min-width:0;justify-content:center;font-size:11px}
 .purchaseInvoiceModal .purchaseProfessionalTable .purchaseLineTotal{font-size:12px}
 .purchaseInvoiceModal .purchaseProfessionalTable tbody tr:hover td{background:#f5faf7}
+
+
+/* Invoice currency selector and clear sale-price control, desktop and tablet. */
+.purchaseInvoiceModal .purchaseInvoiceMeta{display:flex!important;align-items:center;gap:14px;flex-wrap:wrap}
+.purchaseInvoiceModal .purchaseInvoiceCurrencyPicker{display:flex;flex-direction:column;gap:6px;min-width:220px;font-size:13px!important;font-weight:800;color:#1e513a}
+.purchaseInvoiceModal .purchaseInvoiceCurrencyPicker select{min-height:42px!important;width:100%;border:2px solid #2b8055!important;border-radius:9px!important;background:#effaf2!important;color:#135334!important;padding:7px 10px!important;font-size:13px!important;font-weight:800!important}
+.purchaseInvoiceModal .purchaseProfessionalTable .purchaseSalePriceGroup{display:flex!important;flex-direction:row!important;align-items:stretch!important;gap:7px!important;direction:rtl!important}
+.purchaseInvoiceModal .purchaseProfessionalTable .purchaseSalePriceGroup input{flex:1 1 0!important;width:90px!important;min-width:65px!important}
+.purchaseInvoiceModal .purchaseProfessionalTable .purchaseSalePriceGroup select{flex:0 0 76px!important;width:76px!important;min-width:76px!important;direction:ltr!important}
+.purchaseInvoiceModal .purchaseProfessionalTable{direction:rtl}
+.purchaseInvoiceModal .purchaseProfessionalTable th,.purchaseInvoiceModal .purchaseProfessionalTable td{border-left:1px solid #e7eeeb!important}
+.purchaseInvoiceModal .purchaseProfessionalTable tbody tr:nth-child(even) td{background:#f8fbf9}
+@media(max-width:760px){.purchaseInvoiceModal .purchaseInvoiceCurrencyPicker{min-width:180px}.purchaseInvoiceModal .purchaseProfessionalTable table{width:1430px!important}}
