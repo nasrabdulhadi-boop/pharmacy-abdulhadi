@@ -783,10 +783,10 @@ useEffect(()=>{load().catch(e=>alert(e.message))},[]);
     <div className="purchaseDiscountModes">
      <button type="button" className={discountType==='none'?'active':''} onClick={()=>{setDiscountType('none');setDiscountValue('')}}>بدون خصم</button>
      <button type="button" className={discountType==='percent'?'active':''} onClick={()=>setDiscountType('percent')}>نسبة مئوية ٪</button>
-     <button type="button" className={discountType==='amount'?'active':''} onClick={()=>setDiscountType('amount')}>ليرة سورية</button>
+     <button type="button" className={discountType==='amount'?'active':''} onClick={()=>setDiscountType('amount')}>مبلغ ثابت ({form.currency==='USD'?'$':'ل.س'})</button>
     </div>
-    {discountType!=='none'&&<label>{discountType==='percent'?'نسبة الخصم':'قيمة الخصم'}<div className="purchaseDiscountInput"><input type="number" min="0" max={discountType==='percent'?100:subtotal} step="0.01" inputMode="decimal" value={discountValue} onChange={e=>setDiscountValue(e.target.value)} placeholder="0"/><span>{discountType==='percent'?'٪':form.currency==='USD'?'</div></label>}
-    <div className="purchaseDiscountBreakdown"><span>قبل الخصم <b>{money(subtotal)} {form.currency==="USD"?"$":"ل.س"}</b></span><span>قيمة الخصم <b>{money(discountAmount)} {form.currency==="USD"?"$":"ل.س"}</b></span><span>بعد الخصم <strong>{money(total)} {form.currency==='USD'?'</div>
+     {discountType!=='none'&&<label>{discountType==='percent'?'نسبة الخصم':'قيمة الخصم'}<div className="purchaseDiscountInput"><input type="number" min="0" max={discountType==='percent'?100:subtotal} step="0.01" inputMode="decimal" value={discountValue} onChange={e=>setDiscountValue(e.target.value)} placeholder="0"/><span>{discountType==='percent'?'٪':form.currency==='USD'?'$':'ل.س'}</span></div></label>}
+     <div className="purchaseDiscountBreakdown"><span>قبل الخصم <b>{money(subtotal)} {form.currency==='USD'?'$':'ل.س'}</b></span><span>قيمة الخصم <b>{money(discountAmount)} {form.currency==='USD'?'$':'ل.س'}</b></span><span>بعد الخصم <strong>{money(total)} {form.currency==='USD'?'$':'ل.س'}</strong></span></div>
    </div>
 
    <div className="purchasePaymentCard">
