@@ -770,12 +770,12 @@ useEffect(()=>{load().catch(e=>alert(e.message))},[]);
     <div className="purchaseSummaryTotal"><small>الإجمالي بعد الخصم</small><strong>{money(total)} <em>{form.currency==="USD"?"$":"ل.س"}</em></strong></div>
     <div className="purchaseSummaryRows">
      <div><span>الإجمالي قبل الخصم</span><b>{money(subtotal)} {form.currency==="USD"?"$":"ل.س"}</b></div>
-     <div><span>الخصم</span><b className={discountAmount>0?'dangerText':''}>{discountAmount>0?`− ${money(discountAmount)}`:'0'} {form.currency==='USD'?'</b></div>
+     <div><span>الخصم</span><b className={discountAmount>0?'dangerText':''}>{discountAmount>0?`− ${money(discountAmount)}`:'0'} {form.currency==='USD'?'$':'ل.س'}</b></div>
      <div><span>عدد الأصناف</span><b>{lines.filter(x=>x.product_id).length}</b></div>
      <div><span>المدفوع</span><b>{money(paidAmount)} {form.currency==="USD"?"$":"ل.س"}</b></div>
      <div className="due"><span>المتبقي / دين المورد</span><b>{money(dueAmount)} {form.currency==="USD"?"$":"ل.س"}</b></div>
     </div>
-    <div className={`purchasePaymentStatus ${dueAmount===0?'paid':'due'}`}><span>{dueAmount===0?'✓ مدفوعة بالكامل':paidAmount>0?'◐ مدفوعة جزئيًا':'○ غير مدفوعة'}</span><small>{dueAmount===0?'لا يوجد دين على المورد':`الدين الحالي ${money(dueAmount)} ${form.currency==='USD'?'}</small></div>
+     <div className={`purchasePaymentStatus ${dueAmount===0?'paid':'due'}`}><span>{dueAmount===0?'✓ مدفوعة بالكامل':paidAmount>0?'◐ مدفوعة جزئيًا':'○ غير مدفوعة'}</span><small>{dueAmount===0?'لا يوجد دين على المورد':`الدين الحالي ${money(dueAmount)} ${form.currency==='USD'?'$':'ل.س'}`}</small></div>
    </div>
 
    <div className="purchaseDiscountCard">
