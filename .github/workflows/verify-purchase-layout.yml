@@ -1,0 +1,40 @@
+name: Verify purchase table and product currency
+on:
+  push:
+    branches: [fix/clean-build-currency-20261022]
+    paths: [.github/workflows/verify-purchase-layout.yml]
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Repair misaligned table and product prices
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('src/main.jsx')
+          s=p.read_text()
+          replacements=[
+            ('<th>الشكل الصيدلاني</th><th>سعر المبيع</th><th>الموقع</th>', '<th>الشكل الصيدلاني</th><th>سعر النت / العملة</th><th>سعر المبيع / العملة</th><th>الموقع</th>'),
+            ('<td>{money(r.purchase_price)} ل.س</td><td>{r.sale_currency', '<td>{money(r.purchase_price)} {r.sale_currency===\'USD\'?\'$\':\'ل.س\'}</td><td>{r.sale_currency'),
+            ('<th>إجمالي الداخل</th><th>سعر المبيع</th><th>الصلاحية</th><th>الإجمالي</th>', '<th>إجمالي الداخل</th><th>سعر الشراء (النت)</th><th>سعر المبيع</th><th>الصلاحية</th><th>الإجمالي</th>')
+          ]
+          for old,new in replacements:
+            count=s.count(old)
+            if count!=1: raise SystemExit(f'Expected 1 occurrence; found {count}: {old[:65]}')
+            s=s.replace(old,new)
+          p.write_text(s)
+          PY
+      - name: Verify production build
+        run: |
+          npm install --no-audit --no-fund
+          npm run build
+      - name: Save only validated change
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/main.jsx
+          git commit -m "fix: restore purchase table columns and USD product net display"
+          git push
