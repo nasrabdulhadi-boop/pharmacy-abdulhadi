@@ -1143,7 +1143,7 @@ useEffect(()=>{load().catch(e=>alert(e.message))},[]);
      <button type="button" className={discountType==='amount'?'active':''} onClick={()=>setDiscountType('amount')}>ليرة سورية</button>
     </div>
     {discountType!=='none'&&<label>{discountType==='percent'?'نسبة الخصم':'قيمة الخصم'}<div className="purchaseDiscountInput"><input type="number" min="0" max={discountType==='percent'?100:subtotal} step="0.01" inputMode="decimal" value={discountValue} onChange={e=>setDiscountValue(e.target.value)} placeholder="0"/><span>{discountType==='percent'?'٪':'ل.س'}</span></div></label>}
-    <div className="purchaseDiscountBreakdown"><span>قبل الخصم <b>{money(subtotal)} ل.س</b></span><span>قيمة الخصم <b>{money(discountAmount)} {invoiceCurrency==='USD'?'$':'ل.س'}</b></span><span>بعد الخصم <strong>{money(total)} ل.س</strong></span></div>
+    <div className="purchaseDiscountBreakdown"><span>قبل الخصم <b>{money(subtotal)} ل.س</b></span><span>قيمة الخصم <b>{money(discountAmount)} ل.س</b></span><span>بعد الخصم <strong>{money(total)} ل.س</strong></span></div>
    </div>
 
    <div className="purchasePaymentCard">
