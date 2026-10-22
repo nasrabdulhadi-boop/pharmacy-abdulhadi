@@ -825,3 +825,474 @@ dialog.purchaseNewProductModal .modalBox{z-index:auto;box-shadow:0 35px 120px rg
 /* V6.4.28: allow typing part count without clamping each keystroke */
 .posClassic .posPartEditor .partInput{pointer-events:auto!important;user-select:text!important;cursor:text!important;position:relative;z-index:2;touch-action:manipulation}
 .posClassic .posPartEditor .partInput:focus{outline:2px solid #16845b!important;border-color:#16845b!important;background:#fff!important}
+
+
+/* Purchase invoice: consistent column alignment and readable USD/SYP controls. */
+.purchaseInvoiceModal .purchaseProfessionalTable{width:100%;max-width:100%;overflow-x:auto!important;overflow-y:visible;border:1px solid #d8e5df;border-radius:13px;scrollbar-width:thin;scrollbar-color:#9ab9a9 #f1f6f3}
+.purchaseInvoiceModal .purchaseProfessionalTable table{table-layout:fixed!important;width:1430px!important;min-width:1430px!important;border-collapse:separate;border-spacing:0;font-size:12px!important;direction:rtl}
+.purchaseInvoiceModal .purchaseProfessionalTable th,.purchaseInvoiceModal .purchaseProfessionalTable td{box-sizing:border-box!important;min-width:0!important;max-width:none!important;padding:11px 8px!important;text-align:center;vertical-align:middle!important;border-bottom:1px solid #e6eee9;white-space:normal!important;overflow-wrap:anywhere}
+.purchaseInvoiceModal .purchaseProfessionalTable th{position:sticky;top:0;z-index:2;background:#eaf4ee!important;color:#234d3c!important;font-size:12px!important;font-weight:800!important;line-height:1.5;white-space:nowrap!important}
+.purchaseInvoiceModal .purchaseProfessionalTable td{background:#fff;font-size:12px;line-height:1.5}
+.purchaseInvoiceModal .purchaseProfessionalTable th:nth-child(1),.purchaseInvoiceModal .purchaseProfessionalTable td:nth-child(1){width:110px}
+.purchaseInvoiceModal .purchaseProfessionalTable th:nth-child(2),.purchaseInvoiceModal .purchaseProfessionalTable td:nth-child(2){width:190px;text-align:right}
+.purchaseInvoiceModal .purchaseProfessionalTable th:nth-child(3),.purchaseInvoiceModal .purchaseProfessionalTable td:nth-child(3){width:150px}
+.purchaseInvoiceModal .purchaseProfessionalTable th:nth-child(4),.purchaseInvoiceModal .purchaseProfessionalTable td:nth-child(4){width:85px}
+.purchaseInvoiceModal .purchaseProfessionalTable th:nth-child(5),.purchaseInvoiceModal .purchaseProfessionalTable td:nth-child(5){width:85px}
+.purchaseInvoiceModal .purchaseProfessionalTable th:nth-child(6),.purchaseInvoiceModal .purchaseProfessionalTable td:nth-child(6){width:105px}
+.purchaseInvoiceModal .purchaseProfessionalTable th:nth-child(7),.purchaseInvoiceModal .purchaseProfessionalTable td:nth-child(7){width:130px}
+.purchaseInvoiceModal .purchaseProfessionalTable th:nth-child(8),.purchaseInvoiceModal .purchaseProfessionalTable td:nth-child(8){width:180px}
+.purchaseInvoiceModal .purchaseProfessionalTable th:nth-child(9),.purchaseInvoiceModal .purchaseProfessionalTable td:nth-child(9){width:170px}
+.purchaseInvoiceModal .purchaseProfessionalTable th:nth-child(10),.purchaseInvoiceModal .purchaseProfessionalTable td:nth-child(10){width:135px}
+.purchaseInvoiceModal .purchaseProfessionalTable th:nth-child(11),.purchaseInvoiceModal .purchaseProfessionalTable td:nth-child(11){width:90px}
+.purchaseInvoiceModal .purchaseProfessionalTable input,.purchaseInvoiceModal .purchaseProfessionalTable select{box-sizing:border-box!important;width:100%!important;max-width:none!important;min-width:0!important;min-height:37px!important;font-size:12px!important;padding:6px 8px!important;border-radius:8px}
+.purchaseInvoiceModal .purchaseProfessionalTable input[type=number]{max-width:none!important;text-align:center;direction:ltr}
+.purchaseInvoiceModal .purchaseProfessionalTable .purchaseSalePriceGroup{display:grid;grid-template-columns:minmax(0,1fr) 72px;gap:6px;align-items:center;direction:ltr}
+.purchaseInvoiceModal .purchaseProfessionalTable .purchaseSalePriceGroup select{direction:rtl;font-weight:800;color:#155b3c;background:#eaf6ee}
+.purchaseInvoiceModal .purchaseProfessionalTable .purchaseProductDisplay b{font-size:12px;line-height:1.6}
+.purchaseInvoiceModal .purchaseProfessionalTable .purchaseBarcodeCell,.purchaseInvoiceModal .purchaseProfessionalTable .purchaseIngredientCell{font-size:11px;max-width:none}
+.purchaseInvoiceModal .purchaseProfessionalTable .purchaseExpiryButton{width:100%;min-width:0;justify-content:center;font-size:11px}
+.purchaseInvoiceModal .purchaseProfessionalTable .purchaseLineTotal{font-size:12px}
+.purchaseInvoiceModal .purchaseProfessionalTable tbody tr:hover td{background:#f5faf7}
+
+
+/* Invoice currency selector and clear sale-price control, desktop and tablet. */
+.purchaseInvoiceModal .purchaseInvoiceMeta{display:flex!important;align-items:center;gap:14px;flex-wrap:wrap}
+.purchaseInvoiceModal .purchaseInvoiceCurrencyPicker{display:flex;flex-direction:column;gap:6px;min-width:220px;font-size:13px!important;font-weight:800;color:#1e513a}
+.purchaseInvoiceModal .purchaseInvoiceCurrencyPicker select{min-height:42px!important;width:100%;border:2px solid #2b8055!important;border-radius:9px!important;background:#effaf2!important;color:#135334!important;padding:7px 10px!important;font-size:13px!important;font-weight:800!important}
+.purchaseInvoiceModal .purchaseProfessionalTable .purchaseSalePriceGroup{display:flex!important;flex-direction:row!important;align-items:stretch!important;gap:7px!important;direction:rtl!important}
+.purchaseInvoiceModal .purchaseProfessionalTable .purchaseSalePriceGroup input{flex:1 1 0!important;width:90px!important;min-width:65px!important}
+.purchaseInvoiceModal .purchaseProfessionalTable .purchaseSalePriceGroup select{flex:0 0 76px!important;width:76px!important;min-width:76px!important;direction:ltr!important}
+.purchaseInvoiceModal .purchaseProfessionalTable{direction:rtl}
+.purchaseInvoiceModal .purchaseProfessionalTable th,.purchaseInvoiceModal .purchaseProfessionalTable td{border-left:1px solid #e7eeeb!important}
+.purchaseInvoiceModal .purchaseProfessionalTable tbody tr:nth-child(even) td{background:#f8fbf9}
+@media(max-width:760px){.purchaseInvoiceModal .purchaseInvoiceCurrencyPicker{min-width:180px}.purchaseInvoiceModal .purchaseProfessionalTable table{width:1430px!important}}
+
+
+/* Invoice header: currency stays at the right edge of the header, never in the sidebar. */
+.purchaseInvoiceModal .purchaseInvoiceHeader{display:grid!important;grid-template-columns:minmax(235px,1fr) auto auto!important;direction:rtl!important;align-items:center!important;gap:16px!important;min-height:100px;overflow:visible!important}
+.purchaseInvoiceModal .purchaseInvoiceBrand{grid-column:1!important;grid-row:1;min-width:0}
+.purchaseInvoiceModal .purchaseInvoiceCurrencySlot{grid-column:2!important;grid-row:1;justify-self:center;min-width:235px;max-width:270px}
+.purchaseInvoiceModal .purchaseInvoiceCurrencyPicker{display:flex!important;flex-direction:column!important;gap:6px!important;min-width:0!important;width:100%;font-size:12px!important}
+.purchaseInvoiceModal .purchaseInvoiceCurrencyPicker select{width:100%!important;min-height:42px!important;direction:rtl!important}
+.purchaseInvoiceModal .purchaseInvoiceMeta{grid-column:3!important;grid-row:1;display:flex!important;flex-wrap:nowrap!important;width:auto!important;max-width:none!important;min-width:240px!important;overflow:visible!important;gap:8px!important}
+.purchaseInvoiceModal .purchaseInvoiceMeta>div{flex:0 0 auto!important;min-width:108px!important}
+.purchaseInvoiceModal .purchaseProfessionalTable table{width:1530px!important;min-width:1530px!important;table-layout:fixed!important}
+.purchaseInvoiceModal .purchaseProfessionalTable th:nth-child(1),.purchaseInvoiceModal .purchaseProfessionalTable td:nth-child(1){width:110px}
+.purchaseInvoiceModal .purchaseProfessionalTable th:nth-child(2),.purchaseInvoiceModal .purchaseProfessionalTable td:nth-child(2){width:190px}
+.purchaseInvoiceModal .purchaseProfessionalTable th:nth-child(3),.purchaseInvoiceModal .purchaseProfessionalTable td:nth-child(3){width:150px}
+.purchaseInvoiceModal .purchaseProfessionalTable th:nth-child(4),.purchaseInvoiceModal .purchaseProfessionalTable td:nth-child(4){width:85px}
+.purchaseInvoiceModal .purchaseProfessionalTable th:nth-child(5),.purchaseInvoiceModal .purchaseProfessionalTable td:nth-child(5){width:85px}
+.purchaseInvoiceModal .purchaseProfessionalTable th:nth-child(6),.purchaseInvoiceModal .purchaseProfessionalTable td:nth-child(6){width:105px}
+.purchaseInvoiceModal .purchaseProfessionalTable th:nth-child(7),.purchaseInvoiceModal .purchaseProfessionalTable td:nth-child(7){width:130px}
+.purchaseInvoiceModal .purchaseProfessionalTable th:nth-child(8),.purchaseInvoiceModal .purchaseProfessionalTable td:nth-child(8){width:120px}
+.purchaseInvoiceModal .purchaseProfessionalTable th:nth-child(9),.purchaseInvoiceModal .purchaseProfessionalTable td:nth-child(9){width:110px}
+.purchaseInvoiceModal .purchaseProfessionalTable th:nth-child(10),.purchaseInvoiceModal .purchaseProfessionalTable td:nth-child(10){width:170px}
+.purchaseInvoiceModal .purchaseProfessionalTable th:nth-child(11),.purchaseInvoiceModal .purchaseProfessionalTable td:nth-child(11){width:135px}
+.purchaseInvoiceModal .purchaseProfessionalTable th:nth-child(12),.purchaseInvoiceModal .purchaseProfessionalTable td:nth-child(12){width:90px}
+.purchaseInvoiceModal .purchaseProfessionalTable td:nth-child(9) select{font-weight:800;color:#18583d;background:#edf8f0}
+@media(max-width:1100px){.purchaseInvoiceModal .purchaseInvoiceHeader{grid-template-columns:minmax(0,1fr) minmax(200px,260px)!important}.purchaseInvoiceModal .purchaseInvoiceBrand{grid-column:1!important}.purchaseInvoiceModal .purchaseInvoiceCurrencySlot{grid-column:2!important;justify-self:stretch}.purchaseInvoiceModal .purchaseInvoiceMeta{grid-column:1/-1!important;grid-row:2;justify-content:flex-start!important}}
+@media(max-width:600px){.purchaseInvoiceModal .purchaseInvoiceHeader{grid-template-columns:1fr!important;gap:9px!important}.purchaseInvoiceModal .purchaseInvoiceBrand{grid-column:1!important;grid-row:1}.purchaseInvoiceModal .purchaseInvoiceCurrencySlot{grid-column:1!important;grid-row:2;justify-self:stretch;max-width:none}.purchaseInvoiceModal .purchaseInvoiceMeta{grid-column:1!important;grid-row:3;min-width:0!important}}
+
+/* Purchase details: only sale currency is editable; no invoice amount controls are changed. */
+.purchaseDetailCurrencyEdit{display:flex;align-items:center;gap:7px;min-width:220px;direction:rtl}
+.purchaseDetailCurrencyEdit select{min-width:112px;min-height:36px;padding:5px 8px;border:1px solid #cbded2;border-radius:8px;background:#f6fbf7;color:#185c3e;font-weight:700}
+.purchaseDetailCurrencyEdit button{min-width:90px;min-height:36px;padding:6px 10px;white-space:nowrap;font-size:12px}
+.purchaseDetailCurrencyEdit button:disabled{opacity:.48;cursor:not-allowed}
+
+
+/* POS shortcut rail: three lists, ten stable slots each, no impact on invoice logic. */
+.posWorkspaceWithShortcuts{display:flex!important;flex-direction:row-reverse!important;align-items:flex-start!important;gap:16px!important;width:100%!important;min-width:0!important}
+.posWorkspaceWithShortcuts>.posInvoiceColumn{flex:1 1 0!important;width:auto!important;max-width:none!important;min-width:0!important}
+.posShortcutSidebar{flex:0 0 252px;box-sizing:border-box;width:252px;max-width:252px;border:1px solid #cbded5;border-radius:14px;background:#f7faf9;padding:10px;direction:rtl;box-shadow:0 3px 12px rgba(13,55,35,.06)}
+.posShortcutHead{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px;color:#184f37;font-size:14px}
+.posShortcutTabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;margin-bottom:8px}
+.posShortcutTabs button{min-width:0;padding:10px 3px;border:1px solid #cbded5;border-radius:8px;background:#fff;color:#315342;font-size:12px;font-weight:800;cursor:pointer}
+.posShortcutTabs button.active{background:#17613f;color:#fff;border-color:#17613f}
+.posShortcutSlots{display:grid;grid-template-columns:minmax(0,1fr);gap:5px}
+.posShortcutSlot{display:flex;align-items:center;gap:7px;min-height:51px;width:100%;max-width:100%;padding:8px 9px;border:1px solid #bfd7ce;border-radius:7px;background:#eaf5fb;color:#1b4252;text-align:right;cursor:pointer;overflow:hidden;transition:background .12s,border-color .12s}
+.posShortcutSlot.populated:hover{background:#d8f1e3;border-color:#39946a}
+.posShortcutSlot.empty{color:#839c9a;background:#f5fafb;border-style:dashed}
+.posShortcutSlot.empty:hover{color:#17613f;border-color:#17613f}
+.posShortcutSlot:disabled{opacity:.65;cursor:wait}
+.posShortcutIndex{flex:0 0 22px;display:grid;place-items:center;height:22px;border-radius:6px;background:rgba(31,102,81,.09);font-size:11px;font-weight:800}
+.posShortcutName{font-size:12px;font-weight:800;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;flex:1}
+.posShortcutSlot small{font-size:10px;color:#537568;max-width:66px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.posShortcutHelp{display:block;margin-top:9px;color:#6d8279;line-height:1.6;font-size:10px}
+@media(max-width:950px){.posWorkspaceWithShortcuts{flex-direction:column!important}.posShortcutSidebar{flex:0 0 auto;width:100%;max-width:none}.posShortcutSlots{grid-template-columns:repeat(2,minmax(0,1fr))}.posWorkspaceWithShortcuts>.posInvoiceColumn{width:100%!important}}
+@media(max-width:480px){.posShortcutSlots{grid-template-columns:1fr}}
+
+
+/* POS 3x10 layout correction: explicit left rail and right invoice.
+   Overrides legacy .posWorkspace grid and .posInvoiceColumn grid-area rules. */
+.posV440.posClassic .posWorkspace.posWorkspaceWithShortcuts{
+ display:grid!important;
+ grid-template-columns:252px minmax(0,1fr)!important;
+ grid-template-areas:"shortcuts invoice"!important;
+ direction:ltr!important;
+ align-items:start!important;
+ justify-content:stretch!important;
+ gap:14px!important;
+ width:100%!important;
+ min-width:0!important;
+ overflow:visible!important;
+}
+.posV440.posClassic .posWorkspace.posWorkspaceWithShortcuts>.posShortcutSidebar{
+ grid-area:shortcuts!important;
+ grid-column:1!important;
+ grid-row:1!important;
+ order:initial!important;
+ width:252px!important;
+ max-width:252px!important;
+ min-width:0!important;
+ position:static!important;
+ margin:0!important;
+ box-sizing:border-box!important;
+ align-self:start!important;
+ direction:rtl!important;
+ background:#f7faf9!important;
+}
+.posV440.posClassic .posWorkspace.posWorkspaceWithShortcuts>.posInvoiceColumn{
+ grid-area:invoice!important;
+ grid-column:2!important;
+ grid-row:1!important;
+ order:initial!important;
+ width:100%!important;
+ max-width:100%!important;
+ min-width:0!important;
+ margin:0!important;
+ box-sizing:border-box!important;
+ align-self:start!important;
+ direction:rtl!important;
+}
+.posV440.posClassic .posWorkspace.posWorkspaceWithShortcuts>.posInvoiceColumn>.posInvoice{width:100%!important;max-width:100%!important;min-width:0!important}
+@media(max-width:760px){
+ .posV440.posClassic .posWorkspace.posWorkspaceWithShortcuts{
+  grid-template-columns:minmax(0,1fr)!important;
+  grid-template-areas:"shortcuts" "invoice"!important;
+  gap:12px!important;
+ }
+ .posV440.posClassic .posWorkspace.posWorkspaceWithShortcuts>.posShortcutSidebar{
+  grid-column:1!important;grid-row:1!important;width:100%!important;max-width:none!important;
+ }
+ .posV440.posClassic .posWorkspace.posWorkspaceWithShortcuts>.posInvoiceColumn{
+  grid-column:1!important;grid-row:2!important;width:100%!important;
+ }
+}
+
+
+/* POS shortcut medicine names: visually distinguish filled shortcuts only. */
+.posV440 .posShortcutSidebar .posShortcutSlot.populated{
+ background:linear-gradient(110deg,#e3f4ec 0%,#eff9f4 100%)!important;
+ border:1px solid #83c4a2!important;
+ border-right:4px solid #198455!important;
+ box-shadow:0 1px 4px rgba(20,94,64,.08)!important;
+ color:#14583b!important;
+}
+.posV440 .posShortcutSidebar .posShortcutSlot.populated .posShortcutName{
+ color:#11623f!important;
+ font-size:13px!important;
+ font-weight:900!important;
+ letter-spacing:0!important;
+ text-shadow:none!important;
+}
+.posV440 .posShortcutSidebar .posShortcutSlot.populated .posShortcutIndex{
+ background:#c6e9d6!important;
+ color:#12603c!important;
+}
+.posV440 .posShortcutSidebar .posShortcutSlot.populated small{
+ color:#496d60!important;
+ font-weight:650!important;
+}
+.posV440 .posShortcutSidebar .posShortcutSlot.populated:hover{
+ background:linear-gradient(110deg,#c9ebd8 0%,#e0f4e8 100%)!important;
+ border-color:#299368!important;
+ box-shadow:0 3px 10px rgba(21,101,66,.15)!important;
+}
+.posV440 .posShortcutSidebar .posShortcutSlot.populated:focus-visible{
+ outline:3px solid #e0ac46!important;
+ outline-offset:2px!important;
+}
+
+
+/* Pharmacy Pro — POS-only visual theme, no changes to sales or data logic.
+   Deliberately scoped to .posV440.posClassic to protect every other module. */
+.posV440.posClassic{
+ --phpro-ink:#173f30;--phpro-green:#17784f;--phpro-soft:#eaf6ee;
+ --phpro-line:#d6e7dc;--phpro-muted:#617e6d;
+ background:linear-gradient(145deg,#f2f8f4 0%,#f8faf8 68%,#edf6f0 100%)!important;
+ color:var(--phpro-ink)!important;
+ border:1px solid #d7e8dd!important;border-radius:20px!important;
+ padding:16px!important;direction:rtl!important;
+ box-shadow:0 10px 30px rgba(29,83,54,.07)!important;
+}
+.posV440.posClassic .posTopBar{
+ background:#fff!important;border:1px solid var(--phpro-line)!important;
+ border-radius:16px!important;box-shadow:0 3px 14px rgba(27,94,60,.055)!important;
+}
+.posV440.posClassic .posSearchInput{
+ background:#f8fcf9!important;border:1.5px solid #b8d9c5!important;
+ border-radius:12px!important;color:#174b34!important;
+}
+.posV440.posClassic .posSearchInput input{
+ background:transparent!important;color:#173f30!important;caret-color:#19835a!important;
+}
+.posV440.posClassic .posSearchInput input::placeholder{color:#779482!important;opacity:1}
+.posV440.posClassic .posSearchInput:focus-within{
+ border-color:#2c9868!important;box-shadow:0 0 0 3px rgba(34,146,93,.1)!important;
+}
+.posV440.posClassic .posSettingsBtn,
+.posV440.posClassic .posSearchBar .secondaryAction{
+ background:#eff7f1!important;color:#226747!important;border:1px solid #c8e2d0!important;
+ border-radius:10px!important;
+}
+.posV440.posClassic .posDefaultsHint{
+ background:#fff!important;border:1px solid #d8e8dd!important;
+ color:#577866!important;border-radius:12px!important;
+ padding:10px 14px!important;
+}
+.posV440.posClassic .posDefaultsHint b{color:#17784f!important}
+.posV440.posClassic .posWorkspace.posWorkspaceWithShortcuts{
+ display:grid!important;grid-template-columns:252px minmax(0,1fr)!important;
+ grid-template-areas:"shortcuts invoice"!important;direction:ltr!important;
+ align-items:start!important;gap:16px!important;min-width:0!important;
+ background:transparent!important;
+}
+.posV440.posClassic .posWorkspace.posWorkspaceWithShortcuts>.posShortcutSidebar{
+ grid-area:shortcuts!important;grid-column:1!important;grid-row:1!important;
+ width:252px!important;max-width:252px!important;min-width:0!important;
+ direction:rtl!important;background:#fff!important;
+ border:1px solid var(--phpro-line)!important;border-radius:15px!important;
+ box-shadow:0 3px 12px rgba(20,76,48,.055)!important;
+}
+.posV440.posClassic .posWorkspace.posWorkspaceWithShortcuts>.posInvoiceColumn{
+ grid-area:invoice!important;grid-column:2!important;grid-row:1!important;
+ width:100%!important;max-width:100%!important;min-width:0!important;
+ direction:rtl!important;
+}
+.posV440.posClassic .posWorkspace.posWorkspaceWithShortcuts>.posInvoiceColumn>.posInvoice{
+ width:100%!important;max-width:100%!important;min-width:0!important;
+ background:#fff!important;color:#173f30!important;
+ border:1px solid var(--phpro-line)!important;border-radius:15px!important;
+ box-shadow:0 3px 12px rgba(20,76,48,.055)!important;
+}
+.posV440.posClassic .posShortcutHead,
+.posV440.posClassic .posShortcutHead b{color:#1b5a3e!important;font-weight:850!important}
+.posV440.posClassic .posShortcutHead .secondaryAction{
+ background:#eff7f1!important;color:#246746!important;
+ border:1px solid #cce3d3!important;border-radius:9px!important;
+}
+.posV440.posClassic .posShortcutTabs button{
+ background:#f1f7f3!important;color:#577b65!important;
+ border:1px solid #d2e4d7!important;border-radius:8px!important;
+}
+.posV440.posClassic .posShortcutTabs button.active{
+ background:#187b52!important;color:#fff!important;border-color:#187b52!important;
+ box-shadow:0 2px 6px rgba(24,123,82,.14)!important;
+}
+.posV440.posClassic .posShortcutSlot.empty{
+ background:#f8fbf9!important;color:#8a9e91!important;
+ border:1px dashed #c6dcd0!important;
+}
+.posV440.posClassic .posShortcutSlot.empty:hover{
+ background:#eff8f2!important;color:#17784f!important;border-color:#329b6b!important;
+}
+.posV440.posClassic .posShortcutSlot.populated{
+ background:linear-gradient(110deg,#e1f4e9,#f0faf4)!important;
+ border:1px solid #92cbaa!important;border-right:4px solid #188258!important;
+ color:#165b3b!important;box-shadow:0 1px 4px rgba(20,94,64,.055)!important;
+}
+.posV440.posClassic .posShortcutSlot.populated .posShortcutName{
+ color:#11623f!important;font-weight:900!important;font-size:13px!important;
+}
+.posV440.posClassic .posShortcutSlot.populated .posShortcutIndex{
+ background:#c9ebd8!important;color:#11623f!important;
+}
+.posV440.posClassic .posShortcutSlot.populated small{color:#537a63!important}
+.posV440.posClassic .posShortcutSlot.populated:hover{
+ background:linear-gradient(110deg,#c9ecd9,#e4f6eb)!important;
+ border-color:#28976b!important;box-shadow:0 3px 9px rgba(20,94,64,.11)!important;
+}
+.posV440.posClassic .posShortcutHelp{color:#728d7b!important}
+.posV440.posClassic .posInvoice h2,
+.posV440.posClassic .posInvoice h3,
+.posV440.posClassic .posInvoice .posProductName{color:#194e36!important}
+.posV440.posClassic .posInvoice .tableWrap{
+ background:#fff!important;border:1px solid #dbe8df!important;border-radius:11px!important;
+}
+.posV440.posClassic .posInvoice .posTable thead th{
+ background:#eaf5ed!important;color:#285d42!important;
+ border-bottom:1px solid #cfe4d6!important;font-weight:850!important;
+}
+.posV440.posClassic .posInvoice .posTable tbody td{
+ background:#fff!important;color:#244b35!important;
+ border-bottom:1px solid #e4ede6!important;
+}
+.posV440.posClassic .posInvoice .posTable tbody tr:nth-child(even) td{background:#fbfdfb!important}
+.posV440.posClassic .posInvoice .posTable tbody tr:hover td{background:#edf8f0!important}
+.posV440.posClassic .posInvoice input,
+.posV440.posClassic .posInvoice select,
+.posV440.posClassic .posInvoice textarea{
+ background:#fbfefc!important;color:#194b35!important;
+ border:1px solid #cbded1!important;border-radius:9px!important;
+}
+.posV440.posClassic .posInvoice .posTotalsBar{
+ background:linear-gradient(105deg,#e8f6ed,#f5fbf6)!important;
+ border:1px solid #b8dec5!important;border-radius:13px!important;
+ padding:12px!important;box-shadow:none!important;
+}
+.posV440.posClassic .posInvoice .posTotalsBar span{color:#527862!important}
+.posV440.posClassic .posInvoice .posTotalsBar b,
+.posV440.posClassic .posInvoice .posTotalsBar strong{color:#147347!important}
+.posV440.posClassic .posInvoice .paymentBox{
+ background:#fcfefd!important;border:1px solid #d6e7db!important;
+ border-radius:13px!important;color:#204b35!important;
+}
+.posV440.posClassic .posInvoice .paymentModes button{
+ background:#f1f8f3!important;color:#366c4d!important;
+ border:1px solid #d1e4d6!important;border-radius:9px!important;
+}
+.posV440.posClassic .posInvoice .paymentModes button.active{
+ background:#187b52!important;color:#fff!important;border-color:#187b52!important;
+}
+.posV440.posClassic .posInvoice .primary.posComplete{
+ background:#188257!important;color:#fff!important;
+ border:1px solid #188257!important;border-radius:11px!important;
+ box-shadow:0 3px 11px rgba(22,122,79,.18)!important;
+}
+.posV440.posClassic .posInvoice .primary.posComplete:hover{background:#126a46!important}
+.posV440.posClassic button:focus-visible,
+.posV440.posClassic input:focus-visible,
+.posV440.posClassic select:focus-visible{
+ outline:3px solid #d8a848!important;outline-offset:2px!important;
+}
+@media(max-width:760px){
+ .posV440.posClassic{padding:10px!important;border-radius:13px!important}
+ .posV440.posClassic .posWorkspace.posWorkspaceWithShortcuts{
+  grid-template-columns:minmax(0,1fr)!important;
+  grid-template-areas:"shortcuts" "invoice"!important;
+  gap:12px!important;
+ }
+ .posV440.posClassic .posWorkspace.posWorkspaceWithShortcuts>.posShortcutSidebar{
+  grid-column:1!important;grid-row:1!important;width:100%!important;max-width:none!important;
+ }
+ .posV440.posClassic .posWorkspace.posWorkspaceWithShortcuts>.posInvoiceColumn{
+  grid-column:1!important;grid-row:2!important;width:100%!important;
+ }
+}
+
+
+/* Pharmacy Pro: full-height independent shortcut rail.
+   Starts near the page heading/refresh row; normal document flow (NOT sticky).
+   Keep all 10 shortcut rows visible, without inner scrolling. */
+@media(min-width:761px){
+ .posV440.posClassic .posWorkspace.posWorkspaceWithShortcuts{
+  align-items:stretch!important;
+ }
+ .posV440.posClassic .posWorkspace.posWorkspaceWithShortcuts>.posShortcutSidebar{
+  position:relative!important;
+  top:-116px!important;
+  margin-bottom:-116px!important;
+  align-self:stretch!important;
+  min-height:max(660px,calc(100vh - 200px))!important;
+  height:auto!important;
+  display:flex!important;
+  flex-direction:column!important;
+  overflow:visible!important;
+  z-index:1;
+ }
+ .posV440.posClassic .posShortcutSidebar .posShortcutSlots{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr)!important;
+  grid-template-rows:repeat(10,minmax(51px,auto))!important;
+  gap:7px!important;
+  overflow:visible!important;
+ }
+ .posV440.posClassic .posShortcutSidebar .posShortcutSlot{
+  min-height:51px!important;
+ }
+ .posV440.posClassic .posShortcutSidebar .posShortcutHelp{
+  margin-top:auto!important;
+  padding-top:12px!important;
+ }
+}
+@media(max-width:760px){
+ .posV440.posClassic .posWorkspace.posWorkspaceWithShortcuts>.posShortcutSidebar{
+  position:static!important;top:auto!important;margin-bottom:0!important;
+  min-height:0!important;height:auto!important;display:block!important;
+ }
+}
+
+
+/* FIX: independent left shortcut rail. Reserve its entire width in the POS root,
+   rather than lifting the sidebar over the invoice with a negative top offset. */
+@media(min-width:761px){
+ .posV440.posClassic{
+  position:relative!important;
+  padding-left:286px!important;
+  min-height:calc(100vh - 165px)!important;
+  overflow:visible!important;
+ }
+ .posV440.posClassic .posWorkspace.posWorkspaceWithShortcuts{
+  display:block!important;
+  width:100%!important;
+  min-width:0!important;
+  direction:rtl!important;
+  overflow:visible!important;
+ }
+ .posV440.posClassic .posWorkspace.posWorkspaceWithShortcuts>.posShortcutSidebar{
+  position:absolute!important;
+  left:14px!important;
+  right:auto!important;
+  top:14px!important;
+  bottom:14px!important;
+  margin:0!important;
+  transform:none!important;
+  width:252px!important;
+  max-width:252px!important;
+  min-height:660px!important;
+  height:auto!important;
+  box-sizing:border-box!important;
+  display:flex!important;
+  flex-direction:column!important;
+  z-index:1!important;
+ }
+ .posV440.posClassic .posWorkspace.posWorkspaceWithShortcuts>.posInvoiceColumn{
+  display:block!important;
+  grid-area:auto!important;
+  grid-column:auto!important;
+  grid-row:auto!important;
+  width:100%!important;
+  max-width:100%!important;
+  min-width:0!important;
+  margin:0!important;
+ }
+ .posV440.posClassic .posShortcutSidebar .posShortcutSlots{
+  grid-template-columns:minmax(0,1fr)!important;
+  overflow:visible!important;
+ }
+}
+@media(max-width:760px){
+ .posV440.posClassic{padding-left:10px!important;min-height:0!important}
+ .posV440.posClassic .posWorkspace.posWorkspaceWithShortcuts{
+  display:grid!important;grid-template-columns:minmax(0,1fr)!important;
+  grid-template-areas:"shortcuts" "invoice"!important;
+ }
+ .posV440.posClassic .posWorkspace.posWorkspaceWithShortcuts>.posShortcutSidebar{
+  position:static!important;left:auto!important;right:auto!important;
+  top:auto!important;bottom:auto!important;transform:none!important;
+  margin:0!important;min-height:0!important;height:auto!important;
+  width:100%!important;max-width:none!important;
+ }
+}
+
+
+/* Quick shortcut management: one-click direct assignment to list 1/2/3. */
+.quickAssignIntro{margin:9px 0 12px;padding:10px 12px;border-radius:10px;background:#edf8f0;color:#276447;font-size:13px;line-height:1.7;border:1px solid #d3e9da}
+.quickAssignActions{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;flex-shrink:0}
+.quickAssignLabel{color:#47725a;font-size:11px;font-weight:700;white-space:nowrap}
+.quickAssignButtons{display:flex;align-items:center;gap:6px;direction:ltr}
+.quickAssignBtn{min-width:38px;min-height:36px;padding:5px 10px;border-radius:9px;background:#f0f7f2;color:#276c4b;border:1px solid #b9dac5;font-weight:850;cursor:pointer;transition:background .12s,border-color .12s}
+.quickAssignBtn:hover{background:#d9f0e2;border-color:#198258}
+.quickAssignBtn.selected{background:#188257;color:#fff;border-color:#188257;box-shadow:0 2px 7px rgba(24,130,87,.18)}
+.quickAssignBtn:focus-visible{outline:3px solid #d8a848;outline-offset:2px}
+@media(max-width:540px){.quickManageRow{flex-wrap:wrap}.quickAssignActions{align-items:flex-start;width:100%}.quickAssignButtons{width:100%;justify-content:flex-start}}
