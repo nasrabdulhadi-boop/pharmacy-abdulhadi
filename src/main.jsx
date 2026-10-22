@@ -402,7 +402,7 @@ function ProductForm({form,setForm,save,close,edit,busy,suggestions=[],onUsbBarc
  <label>الشركة<input value={form.manufacturer??''} onChange={e=>setForm({...form,manufacturer:e.target.value})}/></label>
  <label>الوحدة<input value={form.unit??'piece'} onChange={e=>setForm({...form,unit:e.target.value})}/></label>
  <label>حد إعادة الطلب<input type="number" min="0" step="1" value={form.reorder_level??1} onChange={e=>setNum('reorder_level',e.target.value)}/></label>
- <label>سعر النت (سعر الشراء — {form.sale_currency==='USD'?'
+ <label>سعر النت (بنفس عملة المبيع)<input type="number" min="0" step="0.01" value={form.purchase_price??0} onChange={e=>setNum("purchase_price",e.target.value)}/></label>
  <label>عملة سعر النت والمبيع<select value={form.sale_currency||'SYP'} onChange={e=>setForm({...form,sale_currency:e.target.value})}><option value="SYP">ليرة سورية</option><option value="USD">دولار أمريكي</option></select></label>
  <label>سعر المبيع (الصافي)<input type="number" min="0" step="0.01" value={form.sale_price??0} onChange={e=>setNum('sale_price',e.target.value)}/>{form.sale_currency==='USD'&&<small className="muted">سعر النت وسعر المبيع محفوظان بالدولار. تغيير العملة لا يحوّل الأرقام تلقائياً؛ راجع الأسعار قبل الحفظ.</small>}</label>
  <label>عدد الأجزاء في العلبة<input type="number" min="1" step="1" value={form.parts_per_unit??1} onChange={e=>setForm({...form,parts_per_unit:Math.max(1,Number(e.target.value)||1)})}/></label>
