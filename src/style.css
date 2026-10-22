@@ -1221,3 +1221,66 @@ dialog.purchaseNewProductModal .modalBox{z-index:auto;box-shadow:0 35px 120px rg
   min-height:0!important;height:auto!important;display:block!important;
  }
 }
+
+
+/* FIX: independent left shortcut rail. Reserve its entire width in the POS root,
+   rather than lifting the sidebar over the invoice with a negative top offset. */
+@media(min-width:761px){
+ .posV440.posClassic{
+  position:relative!important;
+  padding-left:286px!important;
+  min-height:calc(100vh - 165px)!important;
+  overflow:visible!important;
+ }
+ .posV440.posClassic .posWorkspace.posWorkspaceWithShortcuts{
+  display:block!important;
+  width:100%!important;
+  min-width:0!important;
+  direction:rtl!important;
+  overflow:visible!important;
+ }
+ .posV440.posClassic .posWorkspace.posWorkspaceWithShortcuts>.posShortcutSidebar{
+  position:absolute!important;
+  left:14px!important;
+  right:auto!important;
+  top:14px!important;
+  bottom:14px!important;
+  margin:0!important;
+  transform:none!important;
+  width:252px!important;
+  max-width:252px!important;
+  min-height:660px!important;
+  height:auto!important;
+  box-sizing:border-box!important;
+  display:flex!important;
+  flex-direction:column!important;
+  z-index:1!important;
+ }
+ .posV440.posClassic .posWorkspace.posWorkspaceWithShortcuts>.posInvoiceColumn{
+  display:block!important;
+  grid-area:auto!important;
+  grid-column:auto!important;
+  grid-row:auto!important;
+  width:100%!important;
+  max-width:100%!important;
+  min-width:0!important;
+  margin:0!important;
+ }
+ .posV440.posClassic .posShortcutSidebar .posShortcutSlots{
+  grid-template-columns:minmax(0,1fr)!important;
+  overflow:visible!important;
+ }
+}
+@media(max-width:760px){
+ .posV440.posClassic{padding-left:10px!important;min-height:0!important}
+ .posV440.posClassic .posWorkspace.posWorkspaceWithShortcuts{
+  display:grid!important;grid-template-columns:minmax(0,1fr)!important;
+  grid-template-areas:"shortcuts" "invoice"!important;
+ }
+ .posV440.posClassic .posWorkspace.posWorkspaceWithShortcuts>.posShortcutSidebar{
+  position:static!important;left:auto!important;right:auto!important;
+  top:auto!important;bottom:auto!important;transform:none!important;
+  margin:0!important;min-height:0!important;height:auto!important;
+  width:100%!important;max-width:none!important;
+ }
+}
