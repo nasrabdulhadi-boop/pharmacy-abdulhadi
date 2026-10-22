@@ -920,3 +920,61 @@ dialog.purchaseNewProductModal .modalBox{z-index:auto;box-shadow:0 35px 120px rg
 .posShortcutHelp{display:block;margin-top:9px;color:#6d8279;line-height:1.6;font-size:10px}
 @media(max-width:950px){.posWorkspaceWithShortcuts{flex-direction:column!important}.posShortcutSidebar{flex:0 0 auto;width:100%;max-width:none}.posShortcutSlots{grid-template-columns:repeat(2,minmax(0,1fr))}.posWorkspaceWithShortcuts>.posInvoiceColumn{width:100%!important}}
 @media(max-width:480px){.posShortcutSlots{grid-template-columns:1fr}}
+
+
+/* POS 3x10 layout correction: explicit left rail and right invoice.
+   Overrides legacy .posWorkspace grid and .posInvoiceColumn grid-area rules. */
+.posV440.posClassic .posWorkspace.posWorkspaceWithShortcuts{
+ display:grid!important;
+ grid-template-columns:252px minmax(0,1fr)!important;
+ grid-template-areas:"shortcuts invoice"!important;
+ direction:ltr!important;
+ align-items:start!important;
+ justify-content:stretch!important;
+ gap:14px!important;
+ width:100%!important;
+ min-width:0!important;
+ overflow:visible!important;
+}
+.posV440.posClassic .posWorkspace.posWorkspaceWithShortcuts>.posShortcutSidebar{
+ grid-area:shortcuts!important;
+ grid-column:1!important;
+ grid-row:1!important;
+ order:initial!important;
+ width:252px!important;
+ max-width:252px!important;
+ min-width:0!important;
+ position:static!important;
+ margin:0!important;
+ box-sizing:border-box!important;
+ align-self:start!important;
+ direction:rtl!important;
+ background:#f7faf9!important;
+}
+.posV440.posClassic .posWorkspace.posWorkspaceWithShortcuts>.posInvoiceColumn{
+ grid-area:invoice!important;
+ grid-column:2!important;
+ grid-row:1!important;
+ order:initial!important;
+ width:100%!important;
+ max-width:100%!important;
+ min-width:0!important;
+ margin:0!important;
+ box-sizing:border-box!important;
+ align-self:start!important;
+ direction:rtl!important;
+}
+.posV440.posClassic .posWorkspace.posWorkspaceWithShortcuts>.posInvoiceColumn>.posInvoice{width:100%!important;max-width:100%!important;min-width:0!important}
+@media(max-width:760px){
+ .posV440.posClassic .posWorkspace.posWorkspaceWithShortcuts{
+  grid-template-columns:minmax(0,1fr)!important;
+  grid-template-areas:"shortcuts" "invoice"!important;
+  gap:12px!important;
+ }
+ .posV440.posClassic .posWorkspace.posWorkspaceWithShortcuts>.posShortcutSidebar{
+  grid-column:1!important;grid-row:1!important;width:100%!important;max-width:none!important;
+ }
+ .posV440.posClassic .posWorkspace.posWorkspaceWithShortcuts>.posInvoiceColumn{
+  grid-column:1!important;grid-row:2!important;width:100%!important;
+ }
+}
