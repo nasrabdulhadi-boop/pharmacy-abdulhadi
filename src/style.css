@@ -1012,3 +1012,148 @@ dialog.purchaseNewProductModal .modalBox{z-index:auto;box-shadow:0 35px 120px rg
  outline:3px solid #e0ac46!important;
  outline-offset:2px!important;
 }
+
+
+/* POS Dashboard dark: presentation-only, scoped to the POS root.
+   No business logic, product records, currency calculations, or database changes. */
+.posV440.posClassic{
+ --posd-bg:#111f2b;--posd-panel:#1c3040;--posd-panel2:#233b4b;
+ --posd-border:#385465;--posd-text:#edf7f9;--posd-muted:#a4bfca;
+ --posd-accent:#62deb0;--posd-green:#168e68;
+ background:linear-gradient(155deg,#142836,#101d29)!important;
+ color:var(--posd-text)!important;
+ border:1px solid #2d4858!important;
+ border-radius:20px!important;
+ padding:16px!important;
+ box-shadow:0 14px 38px rgba(13,29,39,.16)!important;
+ direction:rtl;
+}
+.posV440.posClassic .posTopBar{
+ background:#1c3040!important;border:1px solid var(--posd-border)!important;
+ border-radius:14px!important;box-shadow:none!important;
+}
+.posV440.posClassic .posSearchInput,
+.posV440.posClassic .posSearchBar .search{
+ background:#253d4d!important;border-color:#496574!important;
+ color:var(--posd-text)!important;
+}
+.posV440.posClassic .posSearchInput input{
+ background:transparent!important;color:#fff!important;caret-color:var(--posd-accent)!important;
+}
+.posV440.posClassic .posSearchInput input::placeholder{color:#b1c6d0!important;opacity:1}
+.posV440.posClassic .posTopBar svg,
+.posV440.posClassic .posSearchInput svg{color:var(--posd-accent)!important}
+.posV440.posClassic .posSettingsBtn,
+.posV440.posClassic .posSearchBar .secondaryAction{
+ background:#304959!important;color:#e8f7f7!important;border:1px solid #567281!important;
+}
+.posV440.posClassic .posDefaultsHint{
+ background:#1c3040!important;color:var(--posd-muted)!important;
+ border:1px solid #355264!important;border-radius:11px!important;
+ padding:10px 14px!important;
+}
+.posV440.posClassic .posDefaultsHint b{color:#8ee9bf!important}
+.posV440.posClassic .posWorkspace.posWorkspaceWithShortcuts{
+ background:transparent!important;
+}
+.posV440.posClassic .posWorkspace.posWorkspaceWithShortcuts>.posShortcutSidebar{
+ background:#1c3040!important;color:var(--posd-text)!important;
+ border:1px solid var(--posd-border)!important;border-radius:15px!important;
+ box-shadow:none!important;
+}
+.posV440.posClassic .posShortcutHead,
+.posV440.posClassic .posShortcutHead b{color:#edf7f9!important}
+.posV440.posClassic .posShortcutHead .secondaryAction{
+ background:#2e4a59!important;color:#d6f6e9!important;border-color:#537182!important;
+}
+.posV440.posClassic .posShortcutTabs button{
+ background:#2b4352!important;color:#c3d7df!important;border:1px solid #4b6777!important;
+}
+.posV440.posClassic .posShortcutTabs button.active{
+ background:#168e68!important;color:#fff!important;border-color:#39c092!important;
+}
+.posV440.posClassic .posShortcutSlot.empty{
+ background:#223948!important;border-color:#486575!important;color:#aac2cd!important;
+}
+.posV440.posClassic .posShortcutSlot.empty:hover{
+ background:#2d4955!important;color:#e0f8ec!important;border-color:#63dcb0!important;
+}
+.posV440.posClassic .posShortcutSlot.populated{
+ background:linear-gradient(110deg,#254c49,#294c51)!important;
+ color:#c0f5dc!important;border:1px solid #3e8d7d!important;
+ border-right:4px solid #64d8a9!important;box-shadow:none!important;
+}
+.posV440.posClassic .posShortcutSlot.populated .posShortcutName{
+ color:#a6f1c9!important;font-weight:900!important;font-size:13px!important;
+}
+.posV440.posClassic .posShortcutSlot.populated .posShortcutIndex{
+ background:#35695a!important;color:#e6fff1!important;
+}
+.posV440.posClassic .posShortcutSlot.populated small,
+.posV440.posClassic .posShortcutHelp{color:#b4d0cb!important}
+.posV440.posClassic .posShortcutSlot.populated:hover{
+ background:linear-gradient(110deg,#30675b,#315d5d)!important;border-color:#7be6b8!important;
+}
+.posV440.posClassic .posWorkspace.posWorkspaceWithShortcuts>.posInvoiceColumn>.posInvoice{
+ background:#1c3040!important;color:var(--posd-text)!important;
+ border:1px solid var(--posd-border)!important;border-radius:15px!important;
+ box-shadow:none!important;
+}
+.posV440.posClassic .posInvoice h2,
+.posV440.posClassic .posInvoice h3,
+.posV440.posClassic .posInvoice .posProductName,
+.posV440.posClassic .posInvoice strong{color:#f1faf9!important}
+.posV440.posClassic .posInvoice .muted,
+.posV440.posClassic .posInvoice .posEmpty,
+.posV440.posClassic .posInvoice .posNote{color:#b0c6d0!important}
+.posV440.posClassic .posInvoice .tableWrap{
+ background:#1c3040!important;border-color:#39586a!important;
+}
+.posV440.posClassic .posInvoice .posTable{color:#e6f3f6!important}
+.posV440.posClassic .posInvoice .posTable thead th{
+ background:#294454!important;color:#c9e8df!important;
+ border-bottom:1px solid #557282!important;
+}
+.posV440.posClassic .posInvoice .posTable tbody td{
+ background:#1c3040!important;color:#e8f3f5!important;
+ border-bottom:1px solid #304c5c!important;
+}
+.posV440.posClassic .posInvoice .posTable tbody tr:hover td{background:#294657!important}
+.posV440.posClassic .posInvoice input,
+.posV440.posClassic .posInvoice select,
+.posV440.posClassic .posInvoice textarea{
+ background:#263e4e!important;color:#f4fafb!important;
+ border:1px solid #527083!important;
+}
+.posV440.posClassic .posInvoice input::placeholder{color:#acc2ce!important}
+.posV440.posClassic .posInvoice .posTotalsBar{
+ background:#203b49!important;border:1px solid #386b63!important;
+ border-radius:13px!important;padding:12px!important;
+}
+.posV440.posClassic .posInvoice .posTotalsBar span{color:#bad0d8!important}
+.posV440.posClassic .posInvoice .posTotalsBar b,
+.posV440.posClassic .posInvoice .posTotalsBar strong{color:#85eab9!important}
+.posV440.posClassic .posInvoice .paymentBox{
+ background:#1f3645!important;color:#e6f4f5!important;
+ border:1px solid #395667!important;border-radius:13px!important;
+}
+.posV440.posClassic .posInvoice .paymentModes button{
+ background:#2c4756!important;color:#d9ebed!important;border:1px solid #4b6979!important;
+}
+.posV440.posClassic .posInvoice .paymentModes button.active{
+ background:#168e68!important;color:#fff!important;border-color:#52cda0!important;
+}
+.posV440.posClassic .posInvoice .primary.posComplete{
+ background:#168e68!important;color:#fff!important;
+ border:1px solid #35b88c!important;box-shadow:0 3px 12px rgba(5,60,43,.28)!important;
+}
+.posV440.posClassic .posInvoice .primary.posComplete:hover{background:#1aab7c!important}
+.posV440.posClassic button:focus-visible,
+.posV440.posClassic input:focus-visible,
+.posV440.posClassic select:focus-visible{
+ outline:3px solid #f0bd69!important;outline-offset:2px!important;
+}
+@media(max-width:760px){
+ .posV440.posClassic{padding:10px!important;border-radius:13px!important}
+ .posV440.posClassic .posWorkspace.posWorkspaceWithShortcuts>.posShortcutSidebar{width:100%!important;max-width:none!important}
+}
