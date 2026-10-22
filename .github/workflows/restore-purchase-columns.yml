@@ -1,0 +1,37 @@
+name: Restore purchase invoice columns
+on:
+  push:
+    branches:
+      - fix/clean-build-currency-20261022
+    paths:
+      - .github/workflows/restore-purchase-columns.yml
+permissions:
+  contents: write
+jobs:
+  restore:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Restore purchase price column
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('src/main.jsx')
+          s=p.read_text()
+          old='<th>إجمالي الداخل</th><th>سعر المبيع</th><th>الصلاحية</th>'
+          new='<th>إجمالي الداخل</th><th>سعر الشراء (النت)</th><th>سعر المبيع</th><th>الصلاحية</th>'
+          assert s.count(old)==1, s.count(old)
+          s=s.replace(old,new)
+          p.write_text(s)
+          PY
+      - name: Validate production build
+        run: |
+          npm install --no-audit --no-fund
+          npm run build
+      - name: Commit verified correction
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/main.jsx
+          git commit -m "fix: restore purchase price table heading and column alignment"
+          git push
