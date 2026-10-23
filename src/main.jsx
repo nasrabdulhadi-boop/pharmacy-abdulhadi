@@ -215,7 +215,7 @@ function Admin({onLogout}){
   {title:'اليوم',items:[['dashboard','لوحة التحكم',Home],['pos','نقطة البيع',ShoppingCart]]},
   {title:'المخزون والشراء',items:[['pharmacyProducts','منتجات الصيدلية',Package],['siteProducts','منتجات الموقع',ExternalLink],['inventory','المخزون',BarChart3],['smart','المخزون الذكي',Sparkles],['purchases','المشتريات',Receipt],['suppliers','الموردون',Truck],['supplierDebts','ديون الموردين',WalletCards]]},
   {title:'العملاء والخدمات',items:[['orders','الطلبات',ClipboardList],['prescriptions','الوصفات',Upload],['requests','طلبات الأدوية',SearchCheck],['customers','العملاء',Users],['debtors','المتدينين',Users],['offers','العروض',Tag]]},
-  {title:'المال والتقارير',items:[['cashbox','الصندوق',Receipt],['returns','المرتجعات',Receipt],['reports','التقارير',TrendingUp]]},
+  {title:'المال والتقارير',items:[['cashbox','الصندوق',Receipt],['returns','المرتجعات',Receipt],['reports','التقارير',TrendingUp],['profitCenterPreview','مركز الأرباح التجريبي',BarChart3]]},
   {title:'الحماية',items:[['security','الأمان والتدقيق',ShieldCheck]]}
  ];
  const nav=navGroups.flatMap(g=>g.items);
@@ -231,7 +231,7 @@ function Admin({onLogout}){
   <main className="adminMain">
    <div className="adminTopbar"><div className="topbarTitle"><div className="topbarEyebrow">إدارة صيدلية عبدالهادي</div><strong>{nav.find(x=>x[0]===tab)?.[1]}</strong></div><div className="globalSearch"><Search size={17}/><input value={quickSearch} onChange={e=>setQuickSearch(e.target.value)} onKeyDown={e=>{if(e.key==='Enter')runQuickSearch()}} placeholder="ابحث في أقسام النظام…" aria-label="بحث سريع داخل النظام"/><kbd>Ctrl K</kbd></div><div className="topbarActions"><button type="button" className="topbarAction" onClick={()=>go('pos')} title="بيع جديد"><ShoppingCart size={17}/><span>بيع جديد</span></button><button type="button" className="topbarAction accent" onClick={()=>go('purchases')} title="فاتورة شراء جديدة"><Plus size={17}/><span>شراء جديد</span></button><div className="topbarClock"><Clock size={15}/><SystemClock/></div></div></div>
    <div className="mobileBar"><button onClick={()=>setMobile(!mobile)} aria-label="فتح القائمة"><Menu/></button><div><small>صيدلية عبدالهادي</small><b>{nav.find(x=>x[0]===tab)?.[1]}</b></div></div>
-   {tab==='dashboard'&&<Dashboard go={go}/>} {tab==='pos'&&<POS/>}{tab==='pharmacyProducts'&&<ProductManager mode="pharmacy"/>}{tab==='siteProducts'&&<ProductManager mode="site"/>}{tab==='inventory'&&<Inventory focus={focus}/>}{tab==='smart'&&<SmartInventory/>}{tab==='orders'&&<Orders/>}{tab==='prescriptions'&&<Prescriptions/>}{tab==='requests'&&<Requests/>}{tab==='offers'&&<Offers/>}{tab==='reports'&&<Reports/>}{tab==='cashbox'&&<Cashbox/>}{tab==='debtors'&&<Debtors/>}{tab==='purchases'&&<Purchases focus={focus} go={go}/>} {tab==='supplierDebts'&&<SupplierDebts go={go}/>}{tab==='suppliers'&&<Suppliers/>}{tab==='customers'&&<Customers/>}{tab==='returns'&&<Returns/>}{tab==='security'&&<Security/>}
+   {tab==='dashboard'&&<Dashboard go={go}/>} {tab==='pos'&&<POS/>}{tab==='pharmacyProducts'&&<ProductManager mode="pharmacy"/>}{tab==='siteProducts'&&<ProductManager mode="site"/>}{tab==='inventory'&&<Inventory focus={focus}/>}{tab==='smart'&&<SmartInventory/>}{tab==='orders'&&<Orders/>}{tab==='prescriptions'&&<Prescriptions/>}{tab==='requests'&&<Requests/>}{tab==='offers'&&<Offers/>}{tab==='reports'&&<Reports/>}{tab==='profitCenterPreview'&&<ProfitCenterPreview/>}{tab==='cashbox'&&<Cashbox/>}{tab==='debtors'&&<Debtors/>}{tab==='purchases'&&<Purchases focus={focus} go={go}/>} {tab==='supplierDebts'&&<SupplierDebts go={go}/>}{tab==='suppliers'&&<Suppliers/>}{tab==='customers'&&<Customers/>}{tab==='returns'&&<Returns/>}{tab==='security'&&<Security/>}
   </main>
  </div>
 }
@@ -616,6 +616,22 @@ function ReportVisuals({data,sm}){
   </div>
   <div className="reportChartCard topProductsChart"><div className="reportChartHead"><div><span>الأداء حسب الصنف</span><h3>الأكثر مبيعًا</h3><small>حسب صافي قيمة المبيعات</small></div><Package/></div><div className="horizontalBars">{top.map((x,i)=><button key={i} onClick={()=>document.querySelector('.reportItemsPanel')?.scrollIntoView({behavior:'smooth',block:'center'})}><span><b>#{i+1}</b>{x.product_name}</span><div><i style={{width:`${Math.max(7,Number(x.net_sales||0)/topMax*100)}%`}}></i></div><strong>{money(x.net_sales)} ل.س</strong></button>)}{!top.length&&<div className="emptyCart">لا توجد مبيعات ضمن الفترة.</div>}</div></div>
  </div>
+}
+
+function ProfitCenterPreview(){
+ const now=new Date(),[start,setStart]=useState(localDateKey(new Date(now.getFullYear(),now.getMonth(),1))),[end,setEnd]=useState(localDateKey(now));
+ const [data,setData]=useState(null),[busy,setBusy]=useState(false),[error,setError]=useState('');
+ const load=async()=>{if(!start||!end||start>end){setError('اختر فترة صحيحة');return}setBusy(true);setError('');try{const a=new Date(start+'T00:00:00'),b=new Date(end+'T00:00:00');b.setDate(b.getDate()+1);const {data:report,error:e}=await supabase.rpc('admin_accounting_report',{p_start:a.toISOString(),p_end:b.toISOString(),p_compare_start:null,p_compare_end:null});if(e)throw e;setData(report)}catch(e){setError(e.message||'تعذر تحميل التقرير');setData(null)}finally{setBusy(false)}};
+ useEffect(()=>{load()},[]);
+ const sm=data?.summary||{},items=Array.isArray(data?.items)?data.items:[];
+ const cards=[['إجمالي المبيعات',sm.sales],['صافي المبيعات',sm.net_sales],['الربح حسب التقرير الحالي',sm.profit],['هامش الربح حسب التقرير',sm.margin,'%'],['المبيعات النقدية',sm.cash_sales],['المبيعات بالدين',sm.credit_sales],['رصيد الصندوق',sm.cash_balance],['ديون العملاء الحالية',sm.outstanding_debt]];
+ return <><PageHead title="مركز الأرباح التجريبي" sub="عرض تحليلي للقراءة فقط يعتمد على التقرير المحاسبي الحالي" refresh={load}/>
+ <div className="card" style={{padding:16,marginBottom:16}}><div style={{display:'flex',gap:12,flexWrap:'wrap',alignItems:'end'}}><label>من تاريخ<input type="date" value={start} onChange={e=>setStart(e.target.value)}/></label><label>إلى تاريخ<input type="date" value={end} onChange={e=>setEnd(e.target.value)}/></label><button className="primary" disabled={busy} onClick={load}>{busy?'جارٍ التحميل…':'تحليل الفترة'}</button></div><p style={{marginTop:12}}>هذه شاشة تجريبية للقراءة فقط. الربح المعروض هو ناتج دالة المحاسبة الحالية وليس صافي ربح نهائياً بعد المصاريف التشغيلية؛ لا تخلط بين النقد والربح.</p></div>
+ {error&&<div className="error">{error}</div>}
+ {data&&<><div className="kpis" style={{marginBottom:16}}>{cards.map(([label,value,suffix],i)=><Card key={i} title={label} value={value==null?'غير متاح':money(value)+(suffix||' ل.س')} icon={i===2?TrendingUp:Receipt}/>)}</div>
+ <div className="card" style={{padding:16,marginBottom:16}}><h2>أرباح الأصناف المسجلة</h2><p>حسب حسابات التقرير المحاسبي الحالي، مع إظهار المرتجعات عند توفرها.</p><div className="tableWrap"><table><thead><tr><th>الدواء</th><th>الكمية</th><th>صافي المبيعات (ل.س)</th><th>الربح المحسوب (ل.س)</th><th>المرتجعات (ل.س)</th></tr></thead><tbody>{items.slice().sort((a,b)=>Number(b.net_profit||0)-Number(a.net_profit||0)).slice(0,100).map((x,i)=><tr key={i}><td>{x.product_name||'—'}</td><td>{money(x.quantity)}</td><td>{money(x.net_sales)}</td><td>{money(x.net_profit)}</td><td>{money(x.return_amount)}</td></tr>)}</tbody></table></div>{items.length===0&&<div className="emptyCart">لا توجد أصناف مباعة ضمن الفترة.</div>}</div>
+ <div className="card" style={{padding:16}}><h2>حدود دقة التحليل</h2><p>يُعاد استخدام التقرير الحالي دون تعديل دوال المحاسبة أو قاعدة البيانات. قبل اعتماد صافي الربح النهائي يلزم تدقيق تكلفة الدفعات الفعلية، سعر الصرف وقت العملية، المرتجعات، والمصاريف التشغيلية المسجلة.</p></div></>}
+ </>;
 }
 
 function Reports(){
