@@ -25,7 +25,7 @@ BEGIN
   FOR v_item IN SELECT value FROM jsonb_array_elements(p_items) LOOP
     v_product_id:=NULLIF(v_item->>'product_id','')::uuid;
     v_qty:=COALESCE((v_item->>'quantity')::numeric,0);
-    v_bonus:=GREATEST(COALESCE((v_item->>'bonus_quantity')::numeric,0),0);
+    v_bonus:=COALESCE((v_item->>'bonus_quantity')::numeric,0);
     v_purchase_price:=COALESCE((v_item->>'purchase_price')::numeric,0);
     v_sale_price:=COALESCE((v_item->>'sale_price')::numeric,0);
     v_expiry:=NULLIF(v_item->>'expiry_date','')::date;
@@ -178,6 +178,7 @@ BEGIN
        received_date,supplier_id,purchase_id,purchase_item_id,purchase_currency,purchase_fx_rate,original_purchase_price)
      VALUES(v_batch_bonus,v_product,'USD-'||substr(replace(v_line::text,'-',''),1,12)||'-BONUS',v_expiry,v_bonus,0,
        COALESCE(p_invoice_date,CURRENT_DATE),v_supplier,v_id,v_line,'USD',v_fx,0);
+     IF v_qty=0 THEN UPDATE public.purchase_items SET batch_id=v_batch_bonus WHERE id=v_line; END IF;
      INSERT INTO public.stock_movements(product_id,batch_id,movement_type,quantity,note,created_by)
      VALUES(v_product,v_batch_bonus,'purchase_bonus',v_bonus,'بونص فاتورة دولار '||v_invoice,auth.uid());
    END IF;
