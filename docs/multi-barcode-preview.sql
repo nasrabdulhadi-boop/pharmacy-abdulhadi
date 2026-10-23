@@ -39,3 +39,40 @@ grant execute on function public.admin_set_product_barcodes(uuid,text[]) to auth
 -- Integration requirement: extend ALL POS, purchase, inventory and product lookup RPCs
 -- to resolve product_barcodes.barcode -> product_id, while keeping products.barcode.
 -- Do not activate until these RPCs are audited and integrated.
+
+-- Atomic creation/update of product and its alias barcodes in one transaction.
+create or replace function public.admin_save_product_with_barcodes(
+ p_product_id uuid, p_payload jsonb, p_barcodes text[]
+) returns public.products language plpgsql security definer set search_path=public,auth as $$
+declare v public.products; v_code text;
+begin
+ if not public.is_admin() then raise exception 'غير مصرح'; end if;
+ if coalesce(array_length(p_barcodes,1),0)>30 then raise exception 'Too many barcodes'; end if;
+ for v_code in select btrim(c) from unnest(coalesce(p_barcodes,array[]::text[])) as c loop
+   if v_code='' then raise exception 'Empty barcode'; end if;
+   if v_code=coalesce(btrim(p_payload->>'barcode'),'') then raise exception 'Additional barcode equals primary'; end if;
+ end loop;
+ -- Check that primary barcode is not an alias of a different product.
+ if exists(select 1 from public.product_barcodes pb
+    where pb.barcode=btrim(p_payload->>'barcode') and (p_product_id is null or pb.product_id<>p_product_id))
+ then raise exception 'Primary barcode belongs to another product'; end if;
+ v:=public.admin_save_pharmacy_product(p_product_id,p_payload);
+ perform public.admin_set_product_barcodes(v.id,p_barcodes);
+ return v;
+end; $$;
+revoke all on function public.admin_save_product_with_barcodes(uuid,jsonb,text[]) from public,anon;
+grant execute on function public.admin_save_product_with_barcodes(uuid,jsonb,text[]) to authenticated;
+
+-- Lookup returns the canonical product ID for primary OR alias barcode.
+create or replace function public.admin_resolve_product_barcode(p_barcode text)
+returns uuid language plpgsql security definer set search_path=public,auth as $$
+declare v_id uuid; v_code text:=btrim(coalesce(p_barcode,''));
+begin
+ if not public.is_admin() then raise exception 'غير مصرح'; end if;
+ select p.id into v_id from public.products p where p.barcode=v_code limit 1;
+ if v_id is not null then return v_id; end if;
+ select pb.product_id into v_id from public.product_barcodes pb where pb.barcode=v_code limit 1;
+ return v_id;
+end; $$;
+revoke all on function public.admin_resolve_product_barcode(text) from public,anon;
+grant execute on function public.admin_resolve_product_barcode(text) to authenticated;
