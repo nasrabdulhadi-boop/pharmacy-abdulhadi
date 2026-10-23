@@ -260,3 +260,16 @@ BEGIN
 END;
 $function$
 
+
+
+-- Read-only inventory marker, restricted to pharmacy admins.
+CREATE OR REPLACE FUNCTION public.admin_bonus_batch_ids()
+RETURNS TABLE(batch_id uuid)
+LANGUAGE sql STABLE SECURITY DEFINER SET search_path TO 'public', 'auth'
+AS $bonus$
+ SELECT b.id FROM public.batches b
+ WHERE public.is_admin() AND (b.batch_number ILIKE '%-BONUS' OR EXISTS (
+ SELECT 1 FROM public.stock_movements sm WHERE sm.batch_id=b.id AND sm.movement_type='purchase_bonus'));
+$bonus$;
+REVOKE ALL ON FUNCTION public.admin_bonus_batch_ids() FROM PUBLIC, anon;
+GRANT EXECUTE ON FUNCTION public.admin_bonus_batch_ids() TO authenticated;
