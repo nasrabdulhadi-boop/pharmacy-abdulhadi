@@ -1,0 +1,25 @@
+-- REFERENCE ONLY. Do not execute this file.
+-- Multi-barcode feature was migrated to Supabase project eewjjzgwoaxhojnjvzgq
+-- via managed migrations:
+--   add_product_barcode_aliases_atomic_admin_rpc
+--   search_aliases_in_pos_purchases_inventory_catalog
+--   prevent_primary_barcode_collision_with_aliases
+--
+-- Objects:
+--   public.product_barcodes
+--   public.admin_get_product_barcodes(uuid)
+--   public.admin_set_product_barcodes(uuid,text[])
+--   public.admin_save_product_with_barcodes(uuid,jsonb,text[])
+--   public.admin_resolve_product_barcode(text)
+--   public.admin_product_search_key_for_barcode(text)
+--   public.prevent_primary_barcode_alias_collision()
+--
+-- Core search functions patched:
+--   admin_search_pos_products_currency
+--   admin_search_purchase_products
+--   admin_search_inventory_products
+--   admin_product_catalog
+--
+-- Admin-only RPC authorization: public.is_admin().
+-- No old products, batches, purchases or sales were migrated or deleted.
+-- End-to-end authenticated browser tests are required before merging to main.
