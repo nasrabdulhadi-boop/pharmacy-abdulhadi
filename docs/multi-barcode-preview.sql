@@ -76,3 +76,17 @@ begin
 end; $$;
 revoke all on function public.admin_resolve_product_barcode(text) from public,anon;
 grant execute on function public.admin_resolve_product_barcode(text) to authenticated;
+
+-- Catalog search helper: map any alias to the original product search key.
+create or replace function public.admin_product_search_key_for_barcode(p_barcode text)
+returns text language plpgsql security definer set search_path=public,auth as $$
+declare v_key text;
+begin
+ if not public.is_admin() then raise exception 'غير مصرح'; end if;
+ select coalesce(nullif(p.barcode,''),p.name) into v_key
+ from public.product_barcodes pb join public.products p on p.id=pb.product_id
+ where pb.barcode=btrim(coalesce(p_barcode,'')) limit 1;
+ return v_key;
+end; $$;
+revoke all on function public.admin_product_search_key_for_barcode(text) from public,anon;
+grant execute on function public.admin_product_search_key_for_barcode(text) to authenticated;
