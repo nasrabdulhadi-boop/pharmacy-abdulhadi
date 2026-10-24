@@ -44,6 +44,14 @@ function notify(message,variant){
 function SmartToastHost(){
  const [items,setItems]=useState([]);
  const timers=useRef(new Map());
+ const [dialogTarget,setDialogTarget]=useState(null);
+ useEffect(()=>{
+  const current=()=>{const dialogs=document.querySelectorAll('dialog[open]');return dialogs.length?dialogs[dialogs.length-1]:null};
+  let last=current();setDialogTarget(last);
+  const observer=new MutationObserver(()=>{const next=current();if(next!==last){last=next;setDialogTarget(next)}});
+  observer.observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['open']});
+  return()=>observer.disconnect();
+ },[]);
  const dismiss=id=>{clearTimeout(timers.current.get(id));timers.current.delete(id);setItems(list=>list.filter(x=>x.id!==id))};
  useEffect(()=>{
   const handler=item=>setItems(list=>[...list.slice(-2),item]);
@@ -54,8 +62,7 @@ function SmartToastHost(){
   for(const item of items)if(!timers.current.has(item.id))timers.current.set(item.id,setTimeout(()=>dismiss(item.id),item.duration));
   for(const [id,timer] of timers.current)if(!items.some(x=>x.id===id)){clearTimeout(timer);timers.current.delete(id)}
  },[items]);
- const dialogs=typeof document==='undefined'?[]:[...document.querySelectorAll('dialog[open]')];
- const target=dialogs.length?dialogs[dialogs.length-1]:document.body;
+ const target=dialogTarget?.isConnected&&dialogTarget.open?dialogTarget:document.body;
  const view=<div className="smartToastStack" dir="rtl" aria-live="polite" aria-atomic="false">{items.map(item=><div className={`smartToast smartToast--${item.kind}`} role={item.kind==='error'?'alert':'status'} key={item.id}><span className="smartToastIcon" aria-hidden="true">{item.kind==='success'?'✓':item.kind==='error'?'!':item.kind==='warning'?'⚠':'i'}</span><span className="smartToastMessage">{item.text}</span><button type="button" className="smartToastClose" aria-label="إغلاق الإشعار" onClick={()=>dismiss(item.id)}>×</button><span className="smartToastProgress" style={{animationDuration:`${item.duration}ms`}}/></div>)}</div>;
  return createPortal(view,target);
 }
