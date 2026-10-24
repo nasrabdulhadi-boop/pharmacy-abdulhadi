@@ -29,3 +29,19 @@ export function screenExactIngredientOverlap(products){
  }
  return {overlaps,unresolved:parsed.filter(p=>p.parsed.status!=='parsed').map(p=>({id:p.id,name:p.name,reason:p.parsed.reason})),reviewed:parsed.length};
 }
+
+export function auditClinicalCatalog(products){
+ const rows=(Array.isArray(products)?products:[]).map(p=>({
+  id:p.id,name:p.name||'',ingredient:p.active_ingredient||'',strength:p.strength||'',form:p.dosage_form||'',
+  parsed:parseIngredientField(p.active_ingredient)
+ }));
+ const counts={total:rows.length,missingIngredient:0,manualReview:0,missingStrength:0,missingForm:0,parseable:0};
+ for(const r of rows){
+  if(r.parsed.status==='missing')counts.missingIngredient++;
+  if(r.parsed.status==='review')counts.manualReview++;
+  if(r.parsed.status==='parsed')counts.parseable++;
+  if(!String(r.strength).trim())counts.missingStrength++;
+  if(!String(r.form).trim())counts.missingForm++;
+ }
+ return {counts,issues:rows.filter(r=>r.parsed.status!=='parsed'||!String(r.strength).trim()||!String(r.form).trim()).slice(0,60)};
+}
