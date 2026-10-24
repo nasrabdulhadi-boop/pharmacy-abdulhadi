@@ -894,7 +894,8 @@ useEffect(()=>{load().catch(e=>alert(e.message))},[]);
     <div className="purchaseSummaryTotal"><small>الإجمالي بعد الخصم</small><strong>{money(total)} <em>{form.currency==="USD"?"$":"ل.س"}</em></strong></div>
     <div className="purchaseSummaryRows">
      <div><span>إجمالي الأصناف بعد حسمها</span><b>{money(subtotal)} {form.currency==="USD"?"$":"ل.س"}</b></div>
-     <div><span>حسم الأصناف المستقل</span><b>{money(lineDiscountTotal)} {form.currency==='USD'?'>0?'dangerText':''}>{discountAmount>0?`− ${money(discountAmount)}`:'0'} {form.currency==='USD'?'$':'ل.س'}</b></div>
+     <div><span>حسم الأصناف المستقل</span><b>{money(lineDiscountTotal)} {form.currency==='USD'?'$':'ل.س'}</b></div>
+     <div><span>خصم الفاتورة</span><b className={discountAmount>0?'dangerText':''}>{discountAmount>0?`− ${money(discountAmount)}`:'0'} {form.currency==='USD'?'$':'ل.س'}</b></div>
      <div><span>عدد الأصناف</span><b>{lines.filter(x=>x.product_id).length}</b></div>
      <div><span>المدفوع</span><b>{money(paidAmount)} {form.currency==="USD"?"$":"ل.س"}</b></div>
      <div className="due"><span>المتبقي / دين المورد</span><b>{money(dueAmount)} {form.currency==="USD"?"$":"ل.س"}</b></div>
