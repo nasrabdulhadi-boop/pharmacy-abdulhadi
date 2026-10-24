@@ -1462,3 +1462,15 @@ dialog.purchaseNewProductModal .modalBox{z-index:auto;box-shadow:0 35px 120px rg
 @media(max-width:900px){.intelNeo .intelWelcomeHero{grid-template-columns:1fr}.intelNeoOrbit{left:8%;top:12%;opacity:.18}}
 @media(max-width:650px){.intelNeo{padding:13px;border-radius:14px}.intelNeo .intelWelcomeHero{padding:23px 19px}.intelNeoOrbit{display:none}.intelNeo .intelIdentity h1{font-size:23px}}
 @media(prefers-reduced-motion:reduce){.intelNeoOrbit:before,.intelNeoOrbit:after{animation:none}}
+
+
+/* Daily sales details: centered in the current viewport, no scroll-to-top required */
+.dashboardDayOverlay.dashboardDayCentered{position:fixed!important;inset:0!important;z-index:100000!important;display:flex!important;align-items:center!important;justify-content:center!important;padding:clamp(10px,3vh,28px)!important;pointer-events:auto!important}
+.dashboardDayCentered .dashboardDayBackdrop{position:absolute!important;inset:0!important;background:rgba(2,14,24,.68)!important;backdrop-filter:blur(5px);cursor:pointer!important}
+.dashboardDayCentered .dashboardDayPanel{position:relative!important;top:auto!important;right:auto!important;left:auto!important;width:min(100%,1040px)!important;height:auto!important;max-height:min(88dvh,920px)!important;min-height:0!important;margin:auto!important;border:1px solid #d8e9e3!important;border-radius:20px!important;box-shadow:0 28px 90px #0007!important;animation:dashboardDayCenterIn .2s ease-out!important;display:flex!important;flex-direction:column!important;overflow:hidden!important}
+.dashboardDayCentered .dashboardDayPanelHead{border-radius:20px 20px 0 0}
+.dashboardDayCentered .dashboardDayContent{min-height:0!important;overflow-y:auto!important;overscroll-behavior:contain}
+.dashboardDayCentered .dashboardDayTabs{flex-shrink:0!important}
+@keyframes dashboardDayCenterIn{from{transform:translateY(12px) scale(.985);opacity:.7}to{transform:translateY(0) scale(1);opacity:1}}
+@media(max-width:650px){.dashboardDayOverlay.dashboardDayCentered{padding:8px!important}.dashboardDayCentered .dashboardDayPanel{width:100%!important;max-height:94dvh!important;border-radius:14px!important}.dashboardDayCentered .dashboardDayPanelHead{border-radius:14px 14px 0 0}}
+@media(prefers-reduced-motion:reduce){.dashboardDayCentered .dashboardDayPanel{animation:none!important}}
