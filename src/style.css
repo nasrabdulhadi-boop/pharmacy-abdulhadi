@@ -1474,3 +1474,50 @@ dialog.purchaseNewProductModal .modalBox{z-index:auto;box-shadow:0 35px 120px rg
 @keyframes dashboardDayCenterIn{from{transform:translateY(12px) scale(.985);opacity:.7}to{transform:translateY(0) scale(1);opacity:1}}
 @media(max-width:650px){.dashboardDayOverlay.dashboardDayCentered{padding:8px!important}.dashboardDayCentered .dashboardDayPanel{width:100%!important;max-height:94dvh!important;border-radius:14px!important}.dashboardDayCentered .dashboardDayPanelHead{border-radius:14px 14px 0 0}}
 @media(prefers-reduced-motion:reduce){.dashboardDayCentered .dashboardDayPanel{animation:none!important}}
+
+
+/* Purchase invoice compact desktop workspace — preserve every existing column */
+@media(min-width:1050px){
+ .purchaseInvoiceModal{width:100%!important;max-width:100%!important;box-sizing:border-box}
+ .purchaseInvoiceModal .purchaseInvoiceLayout{display:grid!important;grid-template-columns:minmax(0,1fr) 235px!important;gap:12px!important;width:100%!important;max-width:100%!important}
+ .purchaseInvoiceModal .purchaseInvoiceMain{min-width:0!important;width:100%!important}
+ .purchaseInvoiceModal .purchaseInvoiceSidebar{min-width:0!important;width:235px!important}
+ .purchaseInvoiceModal .purchaseProfessionalTable{width:100%!important;max-width:100%!important;overflow-x:auto!important;overflow-y:visible!important}
+ .purchaseInvoiceModal .purchaseProfessionalTable table{table-layout:fixed!important;width:100%!important;min-width:0!important;border-collapse:collapse!important}
+ .purchaseInvoiceModal .purchaseProfessionalTable th,.purchaseInvoiceModal .purchaseProfessionalTable td{padding:7px 3px!important;font-size:10px!important;line-height:1.4!important;min-width:0!important;max-width:0!important;overflow-wrap:anywhere!important;white-space:normal!important;vertical-align:middle!important}
+ .purchaseInvoiceModal .purchaseProfessionalTable th:nth-child(1){width:9%}
+ .purchaseInvoiceModal .purchaseProfessionalTable th:nth-child(2){width:14%}
+ .purchaseInvoiceModal .purchaseProfessionalTable th:nth-child(3){width:10%}
+ .purchaseInvoiceModal .purchaseProfessionalTable th:nth-child(4){width:5%}
+ .purchaseInvoiceModal .purchaseProfessionalTable th:nth-child(5){width:5%}
+ .purchaseInvoiceModal .purchaseProfessionalTable th:nth-child(6){width:6%}
+ .purchaseInvoiceModal .purchaseProfessionalTable th:nth-child(7){width:8%}
+ .purchaseInvoiceModal .purchaseProfessionalTable th:nth-child(8){width:7%}
+ .purchaseInvoiceModal .purchaseProfessionalTable th:nth-child(9){width:7%}
+ .purchaseInvoiceModal .purchaseProfessionalTable th:nth-child(10){width:7%}
+ .purchaseInvoiceModal .purchaseProfessionalTable th:nth-child(11){width:10%}
+ .purchaseInvoiceModal .purchaseProfessionalTable th:nth-child(12){width:8%}
+ .purchaseInvoiceModal .purchaseProfessionalTable th:nth-child(13){width:4%}
+ .purchaseInvoiceModal .purchaseProfessionalTable :is(input,select){display:block!important;width:100%!important;min-width:0!important;max-width:100%!important;box-sizing:border-box!important;padding:6px 2px!important;font-size:10px!important;min-height:32px!important}
+ .purchaseInvoiceModal .purchaseProfessionalTable .purchaseProductDisplay b{font-size:10px!important;line-height:1.5!important}
+ .purchaseInvoiceModal .purchaseProfessionalTable :is(.purchaseIngredientCell,.purchaseBarcodeCell){font-size:9px!important;overflow-wrap:anywhere!important}
+ .purchaseInvoiceModal .purchaseProfessionalTable .purchaseExpiryButton{width:100%!important;min-width:0!important;padding:5px 2px!important;gap:2px!important;font-size:9px!important}
+ .purchaseInvoiceModal .purchaseProfessionalTable .purchaseExpiryButton svg{width:12px!important;height:12px!important;flex-shrink:0}
+ .purchaseInvoiceModal .purchaseProfessionalTable .iconBtn{width:26px!important;height:29px!important;padding:4px!important}
+ .purchaseInvoiceModal .purchaseProfessionalTable .iconBtn svg{width:14px!important;height:14px!important}
+ .purchaseInvoiceModal .purchaseProfessionalTable td small{font-size:9px!important}
+ .purchaseInvoiceModal .purchaseInvoiceHeader{padding:14px 18px!important;gap:12px!important}
+ .purchaseInvoiceModal .purchaseSection{padding:12px!important}
+ .purchaseInvoiceModal .purchaseSectionHead{gap:10px!important;flex-wrap:wrap!important}
+}
+@media(min-width:1050px) and (max-width:1280px){
+ .purchaseInvoiceModal .purchaseInvoiceLayout{grid-template-columns:minmax(0,1fr) 205px!important;gap:8px!important}
+ .purchaseInvoiceModal .purchaseInvoiceSidebar{width:205px!important}
+ .purchaseInvoiceModal .purchaseProfessionalTable th,.purchaseInvoiceModal .purchaseProfessionalTable td{font-size:9px!important;padding:6px 2px!important}
+}
+@media(max-width:1049px){
+ .purchaseInvoiceModal .purchaseInvoiceLayout{display:flex!important;flex-direction:column!important;gap:14px!important}
+ .purchaseInvoiceModal .purchaseInvoiceSidebar{width:100%!important;min-width:0!important}
+ .purchaseInvoiceModal .purchaseProfessionalTable{max-width:100%!important;overflow-x:auto!important}
+ .purchaseInvoiceModal .purchaseProfessionalTable table{min-width:930px!important}
+}
