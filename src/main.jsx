@@ -925,7 +925,17 @@ useEffect(()=>{load().catch(e=>alert(e.message))},[]);
    <div className="purchaseSupplierLinkCard"><span>حساب المورد</span><b>{form.supplier_id?suppliers.find(s=>s.id===form.supplier_id)?.name||'المورد المحدد':'سيتم ربط الدين بالمورد'}</b><small>الدفع والدين والدفعات تُسجل على نفس الفاتورة.</small></div>
   </aside>
   <div className="purchaseInvoiceStickyFooter" role="group" aria-label="إجمالي فاتورة الشراء وإجراءات الحفظ">
-   <div className="purchaseStickyAmounts"><span>الإجمالي النهائي <strong>{money(total)} {form.currency==='USD'?'
+   <div className="purchaseStickyAmounts">
+    <span>الإجمالي النهائي <strong>{money(total)} {form.currency==="USD"?"دولار":"ل.س"}</strong></span>
+    <span>المدفوع <b>{money(paidAmount)} {form.currency==="USD"?"دولار":"ل.س"}</b></span>
+    <span>المتبقي <b>{money(dueAmount)} {form.currency==="USD"?"دولار":"ل.س"}</b></span>
+   </div>
+   <div className="purchaseStickyActions">
+    <button className="secondaryAction purchaseCancelButton" type="button" disabled={busy} onClick={()=>setShow(false)}>إلغاء</button>
+    <button className="primary purchaseSaveButton" type="button" disabled={busy} onClick={save}>{busy?"جارٍ الحفظ…":"حفظ واستلام الفاتورة"}</button>
+   </div>
+  </div>
+ </div>
 </Modal>}
  {newProductOpen&&<PortalModal className="purchaseNewProductModal" onClose={()=>!busy&&setNewProductOpen(false)} title="إضافة دواء جديد وربطه بالمنتجات والمخزون"><p className="muted">سيُحفظ الدواء في منتجات الصيدلية أولاً، ثم يُربط مباشرة بسطر الفاتورة، وعند حفظ الفاتورة تُنشأ له الدفعة في المخزون.</p><div className="formGrid">{[['name','اسم الدواء'],['barcode','الباركود'],['active_ingredient','المادة الفعالة'],['strength','العيار'],['dosage_form','الشكل الصيدلاني'],['manufacturer','الشركة'],['category','التصنيف'],['unit','الوحدة'],['parts_per_unit','الأجزاء في العلبة'],['purchase_price','سعر الشراء الافتراضي'],['sale_price','سعر المبيع'],['reorder_level','حد إعادة الطلب']].map(([k,l])=><label key={k}>{l}<input value={newProduct[k]??''} onChange={e=>setNewProduct({...newProduct,[k]:e.target.value})}/></label>)}<label>عملة البيع<select value={newProduct.sale_currency||"SYP"} onChange={e=>setNewProduct({...newProduct,sale_currency:e.target.value})}><option value="SYP">ليرة سورية</option><option value="USD">دولار أمريكي</option></select></label><label className="checkLabel"><input type="checkbox" checked={newProduct.active!==false} onChange={e=>setNewProduct({...newProduct,active:e.target.checked})}/> الدواء فعال</label><label className="checkLabel"><input type="checkbox" checked={!!newProduct.customer_visible} onChange={e=>setNewProduct({...newProduct,customer_visible:e.target.checked})}/> إظهار للزبائن في الموقع</label></div><button className="primary full" onClick={saveNewProduct} disabled={busy}>حفظ الدواء وإضافته للفاتورة</button></PortalModal>}
  {newSupplierOpen&&<PortalModal className="purchaseNewSupplierModal" onClose={()=>!busy&&setNewSupplierOpen(false)} title="إضافة مورد جديد"><div className="formGrid"><label>اسم المورد *<input value={newSupplier.name} onChange={e=>setNewSupplier({...newSupplier,name:e.target.value})} autoFocus/></label><label>الهاتف<input value={newSupplier.phone} onChange={e=>setNewSupplier({...newSupplier,phone:e.target.value})}/></label><label>العنوان<input value={newSupplier.address} onChange={e=>setNewSupplier({...newSupplier,address:e.target.value})}/></label><label>ملاحظات<textarea value={newSupplier.notes} onChange={e=>setNewSupplier({...newSupplier,notes:e.target.value})}/></label></div><button className="primary full" disabled={busy} onClick={createSupplierOnly}>حفظ واختيار المورد</button></PortalModal>}
