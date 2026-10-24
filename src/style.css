@@ -1392,3 +1392,73 @@ dialog.purchaseNewProductModal .modalBox{z-index:auto;box-shadow:0 35px 120px rg
 .intelHeroAdvisor h3{font-size:17px;line-height:1.6;margin:0;color:white}.intelHeroAdvisor p{font-size:12px;color:#d2ebdc;margin:0}.intelHeroAdvisor button{display:flex;align-items:center;gap:5px;margin-top:auto;border:0;background:#bdf5d0;color:#124b35;border-radius:9px;padding:9px 13px;font-weight:800;font-size:11px}
 @media(max-width:900px){.intelWelcomeHero{grid-template-columns:1fr;padding:22px;gap:20px}.intelHeroAdvisor{max-width:none}}
 @media(max-width:500px){.intelHeroContent h2{font-size:25px}.intelAdvisorTop{flex-wrap:wrap}.intelHeroActions button{flex:1;justify-content:center}}
+
+
+/* Intelligence OS / Neo-technology edition: scoped dashboard theme */
+.intelNeo{--ink:#dceff2;--muted:#8daeb5;--accent:#4df2d4;gap:22px;background:radial-gradient(ellipse at 95% 0%,#123f4e 0%,transparent 36%),linear-gradient(145deg,#071723,#0b1c2c 58%,#07151f);padding:26px;border-radius:25px;color:#e4f6f7;min-height:calc(100vh - 100px);position:relative;overflow:hidden}
+.intelNeo:before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.13;background-image:linear-gradient(#57e6dd22 1px,transparent 1px),linear-gradient(90deg,#57e6dd22 1px,transparent 1px);background-size:46px 46px;mask-image:linear-gradient(to bottom,black,transparent 70%)}
+.intelNeo>*{position:relative;z-index:1}
+.intelNeo .intelTop{padding:0 2px 5px}
+.intelNeo .intelMark{background:linear-gradient(135deg,#1ee8c5,#35a6ff);color:#04262e;box-shadow:0 0 35px #2ee8d544;border:1px solid #a0fff27a}
+.intelNeo .intelIdentity span{color:#69e9da;letter-spacing:2px}
+.intelNeo .intelIdentity h1{color:#f0ffff;font-size:29px}
+.intelNeo .intelIdentity p{color:#92b3bf}
+.intelNeo .intelLive{background:#0c473f;color:#85ffe3;border:1px solid #40bfa967}
+.intelNeo .intelTopActions>button:not(.intelNewSale){background:#142e3b;border-color:#325768;color:#b7f2ed}
+.intelNeo .intelNewSale{background:linear-gradient(120deg,#1ae2b5,#2bb8ed);color:#052b33;box-shadow:0 8px 26px #00d5c038}
+.intelNeo .intelWelcomeHero{min-height:300px;background:radial-gradient(circle at 75% 45%,#164f66 0%,transparent 33%),linear-gradient(115deg,#0b2d3b,#123e4d 58%,#0c2a3a);border:1px solid #4fd5cf66;border-radius:25px;box-shadow:inset 0 1px #a9fff21a,0 22px 55px #0007;padding:36px 38px;grid-template-columns:minmax(0,1.5fr) minmax(240px,.7fr)}
+.intelNeoGrid{position:absolute;inset:0;background-image:linear-gradient(#67f4e013 1px,transparent 1px),linear-gradient(90deg,#67f4e013 1px,transparent 1px);background-size:28px 28px;mask-image:linear-gradient(100deg,transparent,#000 70%);pointer-events:none}
+.intelNeoOrbit{position:absolute;left:33%;top:15%;height:205px;width:205px;border-radius:50%;border:1px solid #4cf7db45;box-shadow:0 0 0 20px #45eed008,0 0 0 45px #45eed008,inset 0 0 45px #36d7dd22;display:grid;place-items:center;pointer-events:none}
+.intelNeoOrbit:before,.intelNeoOrbit:after{content:"";position:absolute;border-radius:50%;border:1px dashed #72fce469;inset:19px;animation:intelSpin 25s linear infinite}
+.intelNeoOrbit:after{inset:43px;animation-direction:reverse}
+.intelNeoOrbitInner{display:grid;place-items:center;width:72px;height:72px;border-radius:23px;background:#2ae4d01e;border:1px solid #63f9e5;color:#88ffea;box-shadow:0 0 45px #25d8cb38}
+.intelNeoOrbit i{position:absolute;width:8px;height:8px;background:#60ffe4;border-radius:50%;box-shadow:0 0 15px #59f7dd}
+.intelNeoOrbit i:nth-of-type(1){top:3px;left:48%}.intelNeoOrbit i:nth-of-type(2){bottom:27px;right:14%}.intelNeoOrbit i:nth-of-type(3){top:35%;left:5%}
+@keyframes intelSpin{to{transform:rotate(360deg)}}
+.intelNeo .intelHeroTag{background:#20e4c319;border-color:#51f7d270;color:#98ffe9;letter-spacing:.5px}
+.intelNeo .intelHeroContent h2{font-size:clamp(30px,3.4vw,46px);font-weight:900;text-shadow:0 5px 28px #0004}
+.intelNeo .intelHeroContent>p{color:#b5d9db;font-size:14px}
+.intelNeo .intelHeroDate{color:#9fc7ca}
+.intelNeo .intelHeroActions button{background:#53f1d9;border-color:#53f1d9;color:#06333c}
+.intelNeo .intelHeroActions button+button{background:#ffffff12;border-color:#7ed9d76c;color:#e0fffb}
+.intelNeo .intelHeroAdvisor{background:#071e2bd9;border:1px solid #5ccecc66;box-shadow:inset 0 1px #ffffff15,0 16px 35px #0004;backdrop-filter:blur(16px);z-index:1}
+.intelNeo .intelAdvisorTop span:first-child{color:#85fbe7}.intelNeo .intelAdvisorTop span:last-child{color:#87aeb6}
+.intelNeo .intelAdvisorIcon{background:#1a9c8c33;color:#7afde5;border:1px solid #6df4d34d}
+.intelNeo .intelHeroAdvisor h3{color:#fff}.intelNeo .intelHeroAdvisor p{color:#aacfd0}
+.intelNeo .intelHeroAdvisor button{background:#60f2d8;color:#063b42}
+.intelNeo .intelSearchPanel,.intelNeo .intelPanel,.intelNeo .intelInventoryView{background:#102838ed;border:1px solid #315466;border-radius:18px;box-shadow:0 10px 32px #0003}
+.intelNeo .intelSearchField{background:#0a202e;border:1px solid #3a6a75;color:#66f1da}
+.intelNeo .intelSearchField input{color:#e8ffff}.intelNeo .intelSearchField input::placeholder{color:#83a5ae}
+.intelNeo .intelSearchField kbd{background:#1a3946;border-color:#3a6672;color:#9cd1d0}
+.intelNeo .intelQuickLinks button{background:#183846;border-color:#335868;color:#bce8e7}
+.intelNeo .intelQuickLinks button:hover{background:#225a60;color:#fff}
+.intelNeo .intelSearchResults{background:#12303f;border-color:#416777}
+.intelNeo .intelSearchResults button{background:#12303f;color:#d8f4f3}
+.intelNeo .intelSearchResults button:hover{background:#235061}
+.intelNeo .intelTabs{border-bottom-color:#2a4c5a}.intelNeo .intelTabs button{color:#90acb5}
+.intelNeo .intelTabs button.selected{color:#68f4db;border-bottom-color:#56efcf}
+.intelNeo .intelTabs>span{color:#8cb5bc}
+.intelNeo .intelKpi{background:linear-gradient(145deg,#133748,#0e2837);border:1px solid #345869;box-shadow:0 10px 24px #0004;border-radius:18px;position:relative;overflow:hidden}
+.intelNeo .intelKpi:before{content:"";position:absolute;top:0;right:0;left:0;height:2px;background:linear-gradient(90deg,transparent,#56f5d4,transparent)}
+.intelNeo .intelKpiIcon,.intelNeo .intelKpi1 .intelKpiIcon,.intelNeo .intelKpi2 .intelKpiIcon,.intelNeo .intelKpi3 .intelKpiIcon{background:#1b6b6938;color:#6df7e0;border:1px solid #4acbb94d}
+.intelNeo .intelKpiLabel{color:#a1c4c7}.intelNeo .intelKpi strong{color:#f1ffff}.intelNeo .intelKpi strong small{color:#8dc5c3}
+.intelNeo .intelKpiHint{color:#7aa9b0;border-top-color:#2a4c58}
+.intelNeo .intelPanelTitle h2,.intelNeo .intelViewIntro h2{color:#e9fffd}
+.intelNeo .intelPanelTitle p,.intelNeo .intelViewIntro p{color:#8caeb6}
+.intelNeo .intelSectionEyebrow{color:#55ddc7}
+.intelNeo .intelPeriod,.intelNeo .intelPanelTitle>button{background:#164b4a;color:#80f6dd}
+.intelNeo .intelBarTrack{background:#1a3a49}.intelNeo .intelBarTrack>span{background:linear-gradient(180deg,#7bfce3,#159d9c);box-shadow:0 0 18px #35e1d35a}
+.intelNeo .intelBarNumber,.intelNeo .intelBarLabel{color:#aac9cc}
+.intelNeo .intelInsights>button,.intelNeo .intelStockGrid>div,.intelNeo .intelStockGrid>button,.intelNeo .intelSalesTotals span{background:#143443;border-color:#2d5160}
+.intelNeo .intelInsightIcon{background:#1c5055;color:#7efde3}
+.intelNeo .intelInsights b,.intelNeo .intelRecent b{color:#e0f9f4}
+.intelNeo .intelInsights small,.intelNeo .intelRecent small,.intelNeo .intelStockGrid span{color:#91b2b9}
+.intelNeo .intelInsights strong,.intelNeo .intelStockGrid strong{color:#75f3db}
+.intelNeo .intelPanelFooter{background:#1a514e;color:#88ffe6}
+.intelNeo .intelRecent>button{border-bottom-color:#294c5c}
+.intelNeo .intelEmpty{color:#a6cbc8}
+.intelNeo .intelSalesTotals b{color:#77f6dc}
+@media(max-width:1100px){.intelNeoOrbit{opacity:.3;left:28%}}
+@media(max-width:900px){.intelNeo .intelWelcomeHero{grid-template-columns:1fr}.intelNeoOrbit{left:8%;top:12%;opacity:.18}}
+@media(max-width:650px){.intelNeo{padding:13px;border-radius:14px}.intelNeo .intelWelcomeHero{padding:23px 19px}.intelNeoOrbit{display:none}.intelNeo .intelIdentity h1{font-size:23px}}
+@media(prefers-reduced-motion:reduce){.intelNeoOrbit:before,.intelNeoOrbit:after{animation:none}}
