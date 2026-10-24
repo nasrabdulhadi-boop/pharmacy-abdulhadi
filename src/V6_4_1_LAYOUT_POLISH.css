@@ -250,3 +250,66 @@ body.abdulhadiNight .dashboardDayOverlay .dashboardDayPanel :is(.dashboardDaySum
 .adminShell:not(.adminDark) .mobileBar{background:#f1fff8!important;color:#125d48!important;border-color:#c3e8d7!important}
 @media(max-width:900px){.adminShell:not(.adminDark) .adminTopbar{backdrop-filter:none}}
 @media(prefers-reduced-transparency:reduce){.adminShell:not(.adminDark) .adminTopbar{background:#f2fff8!important;backdrop-filter:none}}
+
+
+/* Emerald Glass Circuit / Daylight V4: true green glass with subtle smart circuit lines */
+.adminShell:not(.adminDark){
+ --ui-green:#118557;--ui-green-dark:#086b49;--ui-green-deep:#06583f;--ui-green-soft:#eaf4ec;
+ --ui-bg:#f3f6f3;--ui-card:#ffffff;--ui-line:#c8d9cf;--ui-line-soft:#e2eae3;
+ --ui-text:#193d2f;--ui-muted:#657b6e;--glass-ink:#193d2f;--glass-strong:#08734c;
+ background:#f3f6f3!important;isolation:isolate;
+}
+.adminShell:not(.adminDark):before{
+ content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+ background:
+  radial-gradient(ellipse at 12% 9%,#b4d5c06e 0%,transparent 36%),
+  radial-gradient(ellipse at 84% 80%,#b2cfc13d 0%,transparent 42%),
+  repeating-linear-gradient(90deg,transparent 0 72px,#2d7c5d0c 73px 74px,transparent 75px 148px),
+  repeating-linear-gradient(0deg,transparent 0 72px,#2d7c5d09 73px 74px,transparent 75px 148px);
+}
+.adminShell:not(.adminDark) .adminMain{position:relative;background:transparent!important;isolation:isolate}
+.adminShell:not(.adminDark) .adminMain:before{
+ content:"";position:absolute;inset:0;pointer-events:none;z-index:-1;opacity:.65;
+ background:
+  linear-gradient(90deg,transparent 0 20%,#2b946e12 20.08%,transparent 20.2% 64%,#2b946e10 64.08%,transparent 64.2%),
+  linear-gradient(0deg,transparent 0 33%,#2b946e0e 33.08%,transparent 33.2% 79%,#2b946e0d 79.08%,transparent 79.2%);
+ background-size:640px 560px;
+}
+.adminShell:not(.adminDark) aside{
+ background:linear-gradient(158deg,#248d5d 0%,#14794f 46%,#0a6648 100%)!important;
+ border-left:1px solid #bce4cb78!important;
+ box-shadow:-12px 0 32px #10593b32,inset 1px 0 #ffffff28!important;
+}
+.adminShell:not(.adminDark) aside:before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.23;background:repeating-linear-gradient(145deg,transparent 0 34px,#ffffff19 35px 36px,transparent 37px 90px)}
+.adminShell:not(.adminDark) .adminTopbar{
+ background:#ffffffbb!important;backdrop-filter:blur(22px) saturate(115%);-webkit-backdrop-filter:blur(22px) saturate(115%);
+ border-bottom:1px solid #9fc4ad!important;box-shadow:0 7px 24px #245f4220!important;
+}
+.adminShell:not(.adminDark) .adminMain :is(.card,.kpi,.tableWrap,.modalBox,.purchaseSection,.posPanel,.posCard,.posInvoice,.posShortcutPanel,.inventoryCard,.reportPanel,.reportChartCard,.reportTabPanel,.reportKpis,.reportKpisPolished,.supplierSummary,.cashboxCard,.auditHeroStat,.serviceCard,.pageCard,.dataCard,.statCard,.v6Panel,.v6Kpi,.toolbar,.formCard,.tableCard,.invoiceCard,.summaryCard){
+ background:linear-gradient(142deg,#ffffffdb,#f6faf6bb)!important;
+ border:1px solid #bdd3c4!important;
+ color:#193d2f!important;
+ box-shadow:0 8px 24px #1d60401a,inset 0 1px #ffffffd9!important;
+ backdrop-filter:blur(12px) saturate(112%);-webkit-backdrop-filter:blur(12px) saturate(112%);
+}
+.adminShell:not(.adminDark) .adminMain :is(.card,.kpi,.tableWrap,.modalBox,.purchaseSection,.posPanel,.posCard,.posInvoice,.posShortcutPanel,.inventoryCard,.reportPanel,.reportChartCard,.reportTabPanel,.reportKpis,.reportKpisPolished,.supplierSummary,.cashboxCard,.auditHeroStat,.serviceCard,.pageCard,.dataCard,.statCard,.v6Panel,.v6Kpi,.toolbar,.formCard,.tableCard,.invoiceCard,.summaryCard):hover{border-color:#8dbba0!important;box-shadow:0 12px 30px #185a3b26,inset 0 1px #fff!important}
+.adminShell:not(.adminDark) .adminMain :is(.cardHead,.sectionTitle,.purchaseSectionHead,.reportChartHead,.reportHeader,.invoiceHeader,.posHeader) :is(h1,h2,h3,h4,b,strong){color:#164b34!important}
+.adminShell:not(.adminDark) .adminMain :is(.kpi,.statCard,.reportKpis,.reportKpisPolished,.auditHeroStat,.summaryCard) :is(strong,b){color:#096e49!important}
+.adminShell:not(.adminDark) .adminMain :is(.kpi,.statCard,.reportKpis,.reportKpisPolished,.auditHeroStat,.summaryCard) svg{color:#168457!important}
+.adminShell:not(.adminDark) .adminMain :is(.tableWrap,.tableWrapper,.tableContainer,.table-responsive,.productsTable,.purchaseTable,.stockTable,.dataTable){background:#ffffffc9!important;border-color:#c1d5c7!important}
+.adminShell:not(.adminDark) .adminMain :is(table,.table,.dataTable){background:#ffffffbf!important;border-color:#c8d8ce!important}
+.adminShell:not(.adminDark) .adminMain :is(thead,thead tr,thead th){background:#e2eee5!important;color:#1b5639!important;border-color:#b8cdbd!important}
+.adminShell:not(.adminDark) .adminMain tbody tr{background:#ffffffd8!important}
+.adminShell:not(.adminDark) .adminMain tbody tr:nth-child(even){background:#edf4ee!important}
+.adminShell:not(.adminDark) .adminMain tbody tr:hover{background:#dcecdf!important}
+.adminShell:not(.adminDark) .adminMain :is(td,th){color:#24513a!important;border-color:#d1dfd5!important}
+.adminShell:not(.adminDark) .adminMain :is(input,textarea,select){background:#ffffffdf!important;border-color:#b3ccbb!important;color:#1b4932!important}
+.adminShell:not(.adminDark) .adminMain :is(input,textarea,select):focus{border-color:#16835a!important;outline:2px solid #238d6244!important}
+.adminShell:not(.adminDark) .adminMain :is(.primary,.green,.addBtn,.saveBtn,.confirmBtn){background:linear-gradient(135deg,#279c69,#0d7d55)!important;color:#fff!important;border-color:#178259!important;box-shadow:0 6px 18px #14764e29!important}
+.adminShell:not(.adminDark) .adminMain :is(.secondary,.secondaryBtn,.secondaryAction,.iconBtn,.miniBtn,.scanBtn,.filterBtn,.outlineBtn){background:#f4faf5d9!important;color:#116845!important;border-color:#b4d0bd!important}
+.adminShell:not(.adminDark) .adminMain :is(.price,.amount,.total,.totalAmount,.money,.profit,.salePrice,.purchasePrice,.statValue,.metricValue,.kpiValue){color:#096c49!important}
+.adminShell:not(.adminDark) .adminMain :is(.posShortcutTile,.posQuickItem,.result,.quickManageRow){background:#f4faf4d9!important;border-color:#c4d9c7!important;color:#164a32!important}
+.adminShell:not(.adminDark) .adminMain :is(.posShortcutTile,.posQuickItem,.result,.quickManageRow):hover{background:#e4f1e6!important}
+.adminShell:not(.adminDark) .globalSearch,.adminShell:not(.adminDark) .topbarAction{background:#ffffffd1!important;border-color:#b5d0bd!important;color:#155d3e!important}
+.adminShell:not(.adminDark) .mobileBar{background:#f7faf6e9!important;border-color:#c0d5c5!important;color:#164a35!important}
+@media(prefers-reduced-transparency:reduce){.adminShell:not(.adminDark) .adminTopbar,.adminShell:not(.adminDark) .adminMain :is(.card,.kpi,.tableWrap,.modalBox,.purchaseSection,.posPanel,.posCard,.posInvoice,.inventoryCard,.reportPanel){backdrop-filter:none!important;background:#f8fbf8!important}}
