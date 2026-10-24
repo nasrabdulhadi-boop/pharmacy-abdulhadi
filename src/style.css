@@ -1296,3 +1296,383 @@ dialog.purchaseNewProductModal .modalBox{z-index:auto;box-shadow:0 35px 120px rg
 .quickAssignBtn.selected{background:#188257;color:#fff;border-color:#188257;box-shadow:0 2px 7px rgba(24,130,87,.18)}
 .quickAssignBtn:focus-visible{outline:3px solid #d8a848;outline-offset:2px}
 @media(max-width:540px){.quickManageRow{flex-wrap:wrap}.quickAssignActions{align-items:flex-start;width:100%}.quickAssignButtons{width:100%;justify-content:flex-start}}
+
+
+/* Pharmacy Pro + Intelligence dashboard preview, scoped to dashboard only */
+.proIntelDashboard{display:flex;flex-direction:column;gap:18px;padding-bottom:28px}
+.proIntelHeader{display:flex;align-items:center;justify-content:space-between;gap:22px;background:linear-gradient(115deg,#103d32,#146348 62%,#1a8060);color:#fff;border-radius:20px;padding:26px 30px;box-shadow:0 12px 35px rgba(20,99,72,.12)}
+.proIntelHeader h1{color:#fff;font-size:clamp(19px,2vw,27px);margin:9px 0 7px;font-weight:800;letter-spacing:-.5px}
+.proIntelHeader p{color:#d9eee4;font-size:13px;margin:0;line-height:1.8}
+.proIntelEyebrow{display:inline-flex;align-items:center;gap:6px;font-size:10px;font-weight:800;letter-spacing:1.2px;color:#c4f2d9}
+.proIntelDate{display:flex;align-items:center;gap:6px;color:#c8e8d8;font-size:11px;margin-top:12px}
+.proIntelHeaderActions{display:flex;gap:8px;flex-wrap:wrap;flex-shrink:0}
+.proIntelHeaderActions button{font:inherit;font-size:12px;font-weight:800;padding:11px 14px;border-radius:10px;display:flex;gap:7px;align-items:center;cursor:pointer;white-space:nowrap}
+.proIntelPrimary{border:1px solid #fff;background:#fff;color:#14543e}
+.proIntelSecondary{border:1px solid #90c4ae;background:#ffffff15;color:#fff}
+.proIntelDecision{background:#fff;border:1px solid #e2eee7;border-radius:17px;padding:19px 21px;box-shadow:0 3px 16px rgba(20,65,43,.035)}
+.proIntelDecisionTitle,.proIntelDecisionTitle>div{display:flex;align-items:center;gap:11px}
+.proIntelDecisionTitle{justify-content:space-between;margin-bottom:14px}
+.proIntelDecisionTitle h2{font-size:17px;color:#194c39;margin:0 0 3px}
+.proIntelDecisionTitle p{font-size:11px;color:#728578;margin:0}
+.proIntelDecisionIcon{background:#e4f7ec;color:#167447;border-radius:11px;width:37px;height:37px;display:grid;place-items:center}
+.proIntelDecisionTitle button{display:flex;align-items:center;gap:4px;border:0;background:#e9f5ee;color:#126441;border-radius:9px;padding:9px 12px;font:inherit;font-size:11px;font-weight:800;cursor:pointer}
+.proIntelDecisionList{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.proIntelDecisionItem{display:flex;align-items:center;gap:9px;text-align:right;background:#f7faf8;border:1px solid #e9f1eb;border-radius:11px;padding:12px;cursor:pointer;font:inherit;min-width:0}
+.proIntelDecisionItem:hover{background:#edf7f0;border-color:#c8e6d4}
+.proIntelDecisionItemIcon{display:grid;place-items:center;flex-shrink:0;width:31px;height:31px;border-radius:9px;background:#fff;color:#24744e}
+.proIntelDecisionItem>span:nth-child(2){display:flex;flex:1;min-width:0;flex-direction:column;gap:4px}
+.proIntelDecisionItem b{font-size:11px;color:#244a38}
+.proIntelDecisionItem small{font-size:10px;color:#75887c;line-height:1.5}
+.proIntelDecisionItem strong{font-size:17px;color:#146b45}
+.proIntelDecisionItem>svg:last-child{flex-shrink:0;color:#8ba79a}
+.proIntelAllClear{grid-column:1/-1;display:flex;align-items:center;gap:9px;color:#22734e;background:#f3fbf5;padding:12px;border-radius:10px;font-size:12px}
+.proIntelDashboard .v6PrimaryKpis{margin-top:0}
+.proIntelDashboard .v6Kpi{border-radius:15px;box-shadow:0 4px 18px rgba(18,64,42,.035)}
+.proIntelDashboard .v6Panel{border-radius:15px}
+@media(max-width:1100px){.proIntelDecisionList{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:700px){.proIntelHeader{flex-direction:column;align-items:stretch;padding:20px;border-radius:15px}.proIntelHeaderActions{width:100%}.proIntelHeaderActions button{flex:1;justify-content:center}.proIntelDecision{padding:14px}.proIntelDecisionList{grid-template-columns:1fr}.proIntelDecisionTitle{align-items:flex-start}.proIntelDecisionTitle p{max-width:220px}}
+
+
+/* Intelligence V2: independent dashboard visual system */
+.intelV2{--ink:#183c31;--muted:#81968c;--accent:#137d59;display:flex;flex-direction:column;gap:19px;padding:4px 0 30px;color:var(--ink)}
+.intelV2 button{font-family:inherit;cursor:pointer}
+.intelTop{display:flex;justify-content:space-between;align-items:center;gap:20px;padding:6px 0}
+.intelIdentity{display:flex;align-items:center;gap:15px}.intelMark{width:55px;height:55px;border-radius:17px;display:grid;place-items:center;background:#103f32;color:#b4f0ce;box-shadow:0 8px 24px #164c3528}
+.intelIdentity span,.intelSectionEyebrow{font-size:10px;font-weight:800;letter-spacing:1.2px;color:#3b9d74}
+.intelIdentity h1{font-size:clamp(21px,2.2vw,30px);letter-spacing:-.7px;margin:4px 0;color:#143b2d}
+.intelIdentity p{margin:0;font-size:12px;color:#7a9083}.intelTopActions{display:flex;gap:9px;align-items:center}
+.intelTopActions>button:not(.intelNewSale){border:1px solid #e0eae4;background:white;color:#406d55;width:39px;height:39px;border-radius:11px;display:grid;place-items:center}
+.intelLive{font-size:11px;color:#2d815b;display:flex;align-items:center;gap:7px;background:#e8f6ed;padding:9px 11px;border-radius:20px}.intelLive i{height:7px;width:7px;background:#26a769;border-radius:50%}
+.intelNewSale{display:inline-flex;align-items:center;justify-content:center;gap:7px;background:#147d55;color:white;border:0;border-radius:11px;padding:12px 16px;font-size:12px;font-weight:800;box-shadow:0 7px 20px #16774a29}
+.intelSearchPanel{background:#fff;border:1px solid #e4ede7;border-radius:18px;padding:13px 15px;box-shadow:0 5px 23px #184c3010;position:relative}
+.intelSearchField{display:flex;align-items:center;gap:11px;background:#f6faf7;border:1px solid #e7f0e9;border-radius:12px;padding:0 13px;color:#29875c}
+.intelSearchField input{flex:1;min-width:0;padding:15px 0;border:0;background:transparent;outline:none;color:#254936;font-size:13px;font-family:inherit}
+.intelSearchField kbd{background:white;border:1px solid #e5eee8;border-radius:6px;padding:3px 8px;color:#8a9b90;font-size:12px}
+.intelQuickLinks{display:flex;gap:8px;flex-wrap:wrap;margin-top:11px}.intelQuickLinks button{display:flex;align-items:center;gap:6px;padding:8px 11px;border:1px solid #e6eee8;border-radius:9px;background:#fff;color:#496958;font-size:11px;font-weight:700}
+.intelQuickLinks button:hover{background:#eaf7ee;color:#16764c}.intelSearchResults{position:absolute;top:64px;right:15px;left:15px;z-index:10;background:white;box-shadow:0 14px 30px #102f252b;border:1px solid #e1ede6;border-radius:11px;padding:8px;display:grid;gap:3px}
+.intelSearchResults button{display:flex;gap:10px;align-items:center;text-align:right;border:0;background:white;padding:11px;border-radius:7px;color:#234b35}.intelSearchResults button:hover{background:#f0f8f2}.intelSearchResults button svg:last-child{margin-right:auto}.intelSearchResults>span{font-size:12px;padding:12px;color:#789081}
+.intelTabs{display:flex;justify-content:space-between;align-items:center;gap:12px;border-bottom:1px solid #e2eae4}.intelTabs>div{display:flex;gap:20px}.intelTabs button{padding:12px 5px;background:transparent;border:0;border-bottom:3px solid transparent;color:#82988a;font-size:12px;font-weight:800}.intelTabs button.selected{color:#147b54;border-bottom-color:#16895a}.intelTabs>span{display:flex;gap:7px;align-items:center;font-size:11px;color:#8ba296}
+.intelKpiGrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.intelKpi{text-align:right;display:flex;flex-direction:column;align-items:flex-start;gap:10px;background:#fff;border:1px solid #e4eee7;border-radius:17px;padding:19px;min-width:0;box-shadow:0 5px 18px #123c2710;transition:transform .15s,box-shadow .15s}
+.intelKpi:hover{transform:translateY(-2px);box-shadow:0 10px 25px #123c2720}
+.intelKpiIcon{display:grid;place-items:center;background:#e9f7ef;color:#178251;border-radius:11px;width:39px;height:39px}
+.intelKpiLabel{font-size:12px;color:#728b7b;font-weight:700}.intelKpi strong{font-size:clamp(19px,2vw,28px);color:#193f30;line-height:1.25;white-space:normal;overflow-wrap:anywhere}.intelKpi strong small{font-size:11px;color:#8aa094}
+.intelKpiHint{display:flex;justify-content:space-between;align-items:center;width:100%;font-size:10px;color:#91a59a;border-top:1px solid #eef3ef;padding-top:11px}
+.intelKpi1 .intelKpiIcon{background:#e7f4ff;color:#3177ad}.intelKpi2 .intelKpiIcon{background:#fff4e5;color:#b77b2c}.intelKpi3 .intelKpiIcon{background:#f1ebff;color:#7959aa}
+.intelContentGrid{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(290px,1fr);gap:15px}.intelBottomGrid{display:grid;grid-template-columns:1fr 1fr;gap:15px}
+.intelPanel{background:#fff;border:1px solid #e4eee7;border-radius:17px;padding:20px;min-width:0;box-shadow:0 5px 19px #123c270b}
+.intelPanelTitle{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:15px}.intelPanelTitle h2{font-size:17px;color:#214935;margin:5px 0}.intelPanelTitle h2 svg{vertical-align:middle;color:#27825a}.intelPanelTitle p{margin:0;color:#91a498;font-size:11px}
+.intelPanelTitle>button,.intelPeriod{display:flex;gap:4px;align-items:center;color:#288057;background:#edf8f0;border:0;border-radius:9px;padding:8px 11px;font-size:11px;font-weight:800}
+.intelBars{height:225px;display:flex;align-items:stretch;justify-content:space-around;gap:10px;padding:8px 5px 0}.intelBars>button{flex:1;max-width:75px;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:8px;border:0;background:transparent;color:#728a7d}
+.intelBarNumber{font-size:10px;font-weight:700;color:#4c6f59;white-space:nowrap}.intelBarTrack{height:155px;width:100%;max-width:42px;background:#edf5ef;border-radius:9px 9px 5px 5px;display:flex;align-items:flex-end;overflow:hidden}
+.intelBarTrack>span{width:100%;min-height:4px;background:linear-gradient(180deg,#39b88a,#157c56);border-radius:9px 9px 4px 4px;transition:height .2s}.intelBars>button:hover .intelBarTrack>span{background:linear-gradient(180deg,#61d4a6,#0b6547)}
+.intelBarLabel{font-size:10px}.intelInsights{display:grid;gap:8px}.intelInsights>button{display:flex;align-items:center;gap:10px;text-align:right;border:1px solid #edf2ed;background:#f8fbf8;padding:11px;border-radius:11px}
+.intelInsightIcon{display:grid;place-items:center;background:white;color:#218458;border-radius:9px;width:33px;height:33px;flex-shrink:0}.intelInsights>button>span:nth-child(2){flex:1;min-width:0;display:grid;gap:4px}.intelInsights b,.intelRecent b{font-size:11px;color:#2b513d}.intelInsights small,.intelRecent small{font-size:10px;color:#8da195}.intelInsights strong{font-size:17px;color:#177b52}.intelInsights>button>svg:last-child{color:#9fb5a6}
+.intelPanelFooter{display:flex;gap:7px;align-items:center;justify-content:center;width:100%;margin-top:13px;padding:11px;background:#eaf7ef;color:#207a50;border:0;border-radius:10px;font-size:11px;font-weight:800}
+.intelStockGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}.intelStockGrid>div,.intelStockGrid>button{display:flex;flex-direction:column;gap:8px;text-align:right;border:1px solid #e9f0e9;border-radius:11px;background:#f8fbf8;padding:13px;min-width:0}.intelStockGrid span{font-size:11px;color:#7c9383}.intelStockGrid strong{font-size:20px;color:#23553c}.intelRecent{display:grid;gap:3px}.intelRecent>button{display:flex;align-items:center;gap:10px;text-align:right;border:0;background:transparent;padding:10px 4px;border-bottom:1px solid #f0f3f0}.intelRecent>button>span:nth-child(2){display:grid;gap:5px;flex:1}.intelAlertDot{width:8px;height:8px;border-radius:50%;background:#edac50}.intelEmpty{display:flex;align-items:center;justify-content:center;gap:9px;padding:25px;color:#56806a;font-size:12px}
+.intelInventoryView{background:white;border:1px solid #e3eee6;border-radius:17px;padding:24px;display:grid;gap:20px}.intelViewIntro{display:flex;gap:12px;align-items:center;color:#218256}.intelViewIntro h2{margin:0;color:#234c38}.intelViewIntro p{margin:5px 0 0;font-size:12px;color:#859b8c}.intelStockExpanded{grid-template-columns:repeat(5,minmax(0,1fr))}.intelStockExpanded button{position:relative}.intelStockExpanded button svg{position:absolute;bottom:10px;left:10px;color:#90aa99}.intelInventoryView>.intelNewSale{justify-self:start}.intelSalesView .intelBars{height:300px}.intelSalesView .intelBarTrack{height:225px}.intelSalesTotals{display:flex;gap:12px;flex-wrap:wrap;margin-top:22px}.intelSalesTotals span{padding:12px;background:#f4faf6;border-radius:10px;color:#688471;font-size:11px}.intelSalesTotals b{color:#1b704b;margin-right:8px}
+@media(max-width:1150px){.intelKpiGrid{grid-template-columns:repeat(2,minmax(0,1fr))}.intelContentGrid{grid-template-columns:1fr}.intelStockExpanded{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:750px){.intelTop{flex-direction:column;align-items:stretch}.intelTopActions{justify-content:space-between}.intelIdentity h1{font-size:22px}.intelQuickLinks{overflow:auto;flex-wrap:nowrap}.intelQuickLinks button{white-space:nowrap}.intelTabs{overflow:auto}.intelTabs>span{display:none}.intelTabs>div{white-space:nowrap}.intelKpiGrid{gap:9px}.intelKpi{padding:13px}.intelKpi strong{font-size:18px}.intelBottomGrid{grid-template-columns:1fr}.intelStockGrid,.intelStockExpanded{grid-template-columns:repeat(2,minmax(0,1fr))}.intelPanel{padding:14px}.intelBars{gap:3px}.intelBarNumber{font-size:8px}}
+
+
+/* Personalized intelligence hero */
+.intelWelcomeHero{position:relative;overflow:hidden;isolation:isolate;display:grid;grid-template-columns:minmax(0,1.5fr) minmax(255px,.8fr);gap:24px;background:linear-gradient(120deg,#0d322a 0%,#11573f 55%,#168463 100%);border-radius:24px;padding:28px 32px;color:#fff;box-shadow:0 16px 38px #0c503a24}
+.intelHeroGlow{position:absolute;z-index:-1;width:430px;height:430px;left:-115px;top:-240px;border-radius:50%;background:radial-gradient(circle,#77e8aa45,transparent 65%);pointer-events:none}
+.intelHeroContent{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:13px}
+.intelHeroTag{display:flex;gap:7px;align-items:center;border:1px solid #8fd8b657;background:#ffffff14;color:#c2f5d8;padding:8px 12px;border-radius:25px;font-size:11px;font-weight:800}
+.intelHeroContent h2{color:#fff;font-size:clamp(25px,3vw,38px);line-height:1.45;margin:0;letter-spacing:-.8px}.intelHeroContent h2 span{font-size:.7em}
+.intelHeroContent>p{font-size:14px;color:#d4eddf;margin:0;line-height:1.9}
+.intelHeroDate{display:flex;gap:8px;align-items:center;flex-wrap:wrap;color:#c4e5d5;font-size:11px}
+.intelHeroActions{display:flex;gap:9px;flex-wrap:wrap;margin-top:8px}
+.intelHeroActions button{display:flex;align-items:center;gap:8px;padding:11px 17px;border-radius:10px;border:1px solid #c6f2d5;background:#fff;color:#155c41;font-size:12px;font-weight:800}
+.intelHeroActions button+button{background:#ffffff13;border-color:#8bd2ae7d;color:#fff}
+.intelHeroAdvisor{align-self:stretch;display:flex;flex-direction:column;align-items:flex-start;gap:10px;border:1px solid #b4e6c54d;border-radius:17px;padding:19px;background:#ffffff12;backdrop-filter:blur(12px)}
+.intelAdvisorTop{width:100%;display:flex;justify-content:space-between;align-items:center;gap:8px}.intelAdvisorTop span:first-child{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:800;color:#fff}.intelAdvisorTop span:last-child{font-size:10px;color:#bde9d1}
+.intelAdvisorIcon{display:grid;place-items:center;border-radius:12px;background:#b9efcb28;width:45px;height:45px;color:#c8ffdf;margin-top:6px}
+.intelHeroAdvisor h3{font-size:17px;line-height:1.6;margin:0;color:white}.intelHeroAdvisor p{font-size:12px;color:#d2ebdc;margin:0}.intelHeroAdvisor button{display:flex;align-items:center;gap:5px;margin-top:auto;border:0;background:#bdf5d0;color:#124b35;border-radius:9px;padding:9px 13px;font-weight:800;font-size:11px}
+@media(max-width:900px){.intelWelcomeHero{grid-template-columns:1fr;padding:22px;gap:20px}.intelHeroAdvisor{max-width:none}}
+@media(max-width:500px){.intelHeroContent h2{font-size:25px}.intelAdvisorTop{flex-wrap:wrap}.intelHeroActions button{flex:1;justify-content:center}}
+
+
+/* Intelligence OS / Neo-technology edition: scoped dashboard theme */
+.intelNeo{--ink:#dceff2;--muted:#8daeb5;--accent:#4df2d4;gap:22px;background:radial-gradient(ellipse at 95% 0%,#123f4e 0%,transparent 36%),linear-gradient(145deg,#071723,#0b1c2c 58%,#07151f);padding:26px;border-radius:25px;color:#e4f6f7;min-height:calc(100vh - 100px);position:relative;overflow:hidden}
+.intelNeo:before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.13;background-image:linear-gradient(#57e6dd22 1px,transparent 1px),linear-gradient(90deg,#57e6dd22 1px,transparent 1px);background-size:46px 46px;mask-image:linear-gradient(to bottom,black,transparent 70%)}
+.intelNeo>*{position:relative;z-index:1}
+.intelNeo .intelTop{padding:0 2px 5px}
+.intelNeo .intelMark{background:linear-gradient(135deg,#1ee8c5,#35a6ff);color:#04262e;box-shadow:0 0 35px #2ee8d544;border:1px solid #a0fff27a}
+.intelNeo .intelIdentity span{color:#69e9da;letter-spacing:2px}
+.intelNeo .intelIdentity h1{color:#f0ffff;font-size:29px}
+.intelNeo .intelIdentity p{color:#92b3bf}
+.intelNeo .intelLive{background:#0c473f;color:#85ffe3;border:1px solid #40bfa967}
+.intelNeo .intelTopActions>button:not(.intelNewSale){background:#142e3b;border-color:#325768;color:#b7f2ed}
+.intelNeo .intelNewSale{background:linear-gradient(120deg,#1ae2b5,#2bb8ed);color:#052b33;box-shadow:0 8px 26px #00d5c038}
+.intelNeo .intelWelcomeHero{min-height:300px;background:radial-gradient(circle at 75% 45%,#164f66 0%,transparent 33%),linear-gradient(115deg,#0b2d3b,#123e4d 58%,#0c2a3a);border:1px solid #4fd5cf66;border-radius:25px;box-shadow:inset 0 1px #a9fff21a,0 22px 55px #0007;padding:36px 38px;grid-template-columns:minmax(0,1.5fr) minmax(240px,.7fr)}
+.intelNeoGrid{position:absolute;inset:0;background-image:linear-gradient(#67f4e013 1px,transparent 1px),linear-gradient(90deg,#67f4e013 1px,transparent 1px);background-size:28px 28px;mask-image:linear-gradient(100deg,transparent,#000 70%);pointer-events:none}
+.intelNeoOrbit{position:absolute;left:33%;top:15%;height:205px;width:205px;border-radius:50%;border:1px solid #4cf7db45;box-shadow:0 0 0 20px #45eed008,0 0 0 45px #45eed008,inset 0 0 45px #36d7dd22;display:grid;place-items:center;pointer-events:none}
+.intelNeoOrbit:before,.intelNeoOrbit:after{content:"";position:absolute;border-radius:50%;border:1px dashed #72fce469;inset:19px;animation:intelSpin 25s linear infinite}
+.intelNeoOrbit:after{inset:43px;animation-direction:reverse}
+.intelNeoOrbitInner{display:grid;place-items:center;width:72px;height:72px;border-radius:23px;background:#2ae4d01e;border:1px solid #63f9e5;color:#88ffea;box-shadow:0 0 45px #25d8cb38}
+.intelNeoOrbit i{position:absolute;width:8px;height:8px;background:#60ffe4;border-radius:50%;box-shadow:0 0 15px #59f7dd}
+.intelNeoOrbit i:nth-of-type(1){top:3px;left:48%}.intelNeoOrbit i:nth-of-type(2){bottom:27px;right:14%}.intelNeoOrbit i:nth-of-type(3){top:35%;left:5%}
+@keyframes intelSpin{to{transform:rotate(360deg)}}
+.intelNeo .intelHeroTag{background:#20e4c319;border-color:#51f7d270;color:#98ffe9;letter-spacing:.5px}
+.intelNeo .intelHeroContent h2{font-size:clamp(30px,3.4vw,46px);font-weight:900;text-shadow:0 5px 28px #0004}
+.intelNeo .intelHeroContent>p{color:#b5d9db;font-size:14px}
+.intelNeo .intelHeroDate{color:#9fc7ca}
+.intelNeo .intelHeroActions button{background:#53f1d9;border-color:#53f1d9;color:#06333c}
+.intelNeo .intelHeroActions button+button{background:#ffffff12;border-color:#7ed9d76c;color:#e0fffb}
+.intelNeo .intelHeroAdvisor{background:#071e2bd9;border:1px solid #5ccecc66;box-shadow:inset 0 1px #ffffff15,0 16px 35px #0004;backdrop-filter:blur(16px);z-index:1}
+.intelNeo .intelAdvisorTop span:first-child{color:#85fbe7}.intelNeo .intelAdvisorTop span:last-child{color:#87aeb6}
+.intelNeo .intelAdvisorIcon{background:#1a9c8c33;color:#7afde5;border:1px solid #6df4d34d}
+.intelNeo .intelHeroAdvisor h3{color:#fff}.intelNeo .intelHeroAdvisor p{color:#aacfd0}
+.intelNeo .intelHeroAdvisor button{background:#60f2d8;color:#063b42}
+.intelNeo .intelSearchPanel,.intelNeo .intelPanel,.intelNeo .intelInventoryView{background:#102838ed;border:1px solid #315466;border-radius:18px;box-shadow:0 10px 32px #0003}
+.intelNeo .intelSearchField{background:#0a202e;border:1px solid #3a6a75;color:#66f1da}
+.intelNeo .intelSearchField input{color:#e8ffff}.intelNeo .intelSearchField input::placeholder{color:#83a5ae}
+.intelNeo .intelSearchField kbd{background:#1a3946;border-color:#3a6672;color:#9cd1d0}
+.intelNeo .intelQuickLinks button{background:#183846;border-color:#335868;color:#bce8e7}
+.intelNeo .intelQuickLinks button:hover{background:#225a60;color:#fff}
+.intelNeo .intelSearchResults{background:#12303f;border-color:#416777}
+.intelNeo .intelSearchResults button{background:#12303f;color:#d8f4f3}
+.intelNeo .intelSearchResults button:hover{background:#235061}
+.intelNeo .intelTabs{border-bottom-color:#2a4c5a}.intelNeo .intelTabs button{color:#90acb5}
+.intelNeo .intelTabs button.selected{color:#68f4db;border-bottom-color:#56efcf}
+.intelNeo .intelTabs>span{color:#8cb5bc}
+.intelNeo .intelKpi{background:linear-gradient(145deg,#133748,#0e2837);border:1px solid #345869;box-shadow:0 10px 24px #0004;border-radius:18px;position:relative;overflow:hidden}
+.intelNeo .intelKpi:before{content:"";position:absolute;top:0;right:0;left:0;height:2px;background:linear-gradient(90deg,transparent,#56f5d4,transparent)}
+.intelNeo .intelKpiIcon,.intelNeo .intelKpi1 .intelKpiIcon,.intelNeo .intelKpi2 .intelKpiIcon,.intelNeo .intelKpi3 .intelKpiIcon{background:#1b6b6938;color:#6df7e0;border:1px solid #4acbb94d}
+.intelNeo .intelKpiLabel{color:#a1c4c7}.intelNeo .intelKpi strong{color:#f1ffff}.intelNeo .intelKpi strong small{color:#8dc5c3}
+.intelNeo .intelKpiHint{color:#7aa9b0;border-top-color:#2a4c58}
+.intelNeo .intelPanelTitle h2,.intelNeo .intelViewIntro h2{color:#e9fffd}
+.intelNeo .intelPanelTitle p,.intelNeo .intelViewIntro p{color:#8caeb6}
+.intelNeo .intelSectionEyebrow{color:#55ddc7}
+.intelNeo .intelPeriod,.intelNeo .intelPanelTitle>button{background:#164b4a;color:#80f6dd}
+.intelNeo .intelBarTrack{background:#1a3a49}.intelNeo .intelBarTrack>span{background:linear-gradient(180deg,#7bfce3,#159d9c);box-shadow:0 0 18px #35e1d35a}
+.intelNeo .intelBarNumber,.intelNeo .intelBarLabel{color:#aac9cc}
+.intelNeo .intelInsights>button,.intelNeo .intelStockGrid>div,.intelNeo .intelStockGrid>button,.intelNeo .intelSalesTotals span{background:#143443;border-color:#2d5160}
+.intelNeo .intelInsightIcon{background:#1c5055;color:#7efde3}
+.intelNeo .intelInsights b,.intelNeo .intelRecent b{color:#e0f9f4}
+.intelNeo .intelInsights small,.intelNeo .intelRecent small,.intelNeo .intelStockGrid span{color:#91b2b9}
+.intelNeo .intelInsights strong,.intelNeo .intelStockGrid strong{color:#75f3db}
+.intelNeo .intelPanelFooter{background:#1a514e;color:#88ffe6}
+.intelNeo .intelRecent>button{border-bottom-color:#294c5c}
+.intelNeo .intelEmpty{color:#a6cbc8}
+.intelNeo .intelSalesTotals b{color:#77f6dc}
+@media(max-width:1100px){.intelNeoOrbit{opacity:.3;left:28%}}
+@media(max-width:900px){.intelNeo .intelWelcomeHero{grid-template-columns:1fr}.intelNeoOrbit{left:8%;top:12%;opacity:.18}}
+@media(max-width:650px){.intelNeo{padding:13px;border-radius:14px}.intelNeo .intelWelcomeHero{padding:23px 19px}.intelNeoOrbit{display:none}.intelNeo .intelIdentity h1{font-size:23px}}
+@media(prefers-reduced-motion:reduce){.intelNeoOrbit:before,.intelNeoOrbit:after{animation:none}}
+
+
+/* Daily sales details: centered in the current viewport, no scroll-to-top required */
+.dashboardDayOverlay.dashboardDayCentered{position:fixed!important;inset:0!important;z-index:100000!important;display:flex!important;align-items:center!important;justify-content:center!important;padding:clamp(10px,3vh,28px)!important;pointer-events:auto!important}
+.dashboardDayCentered .dashboardDayBackdrop{position:absolute!important;inset:0!important;background:rgba(2,14,24,.68)!important;backdrop-filter:blur(5px);cursor:pointer!important}
+.dashboardDayCentered .dashboardDayPanel{position:relative!important;top:auto!important;right:auto!important;left:auto!important;width:min(100%,1040px)!important;height:auto!important;max-height:min(88dvh,920px)!important;min-height:0!important;margin:auto!important;border:1px solid #d8e9e3!important;border-radius:20px!important;box-shadow:0 28px 90px #0007!important;animation:dashboardDayCenterIn .2s ease-out!important;display:flex!important;flex-direction:column!important;overflow:hidden!important}
+.dashboardDayCentered .dashboardDayPanelHead{border-radius:20px 20px 0 0}
+.dashboardDayCentered .dashboardDayContent{min-height:0!important;overflow-y:auto!important;overscroll-behavior:contain}
+.dashboardDayCentered .dashboardDayTabs{flex-shrink:0!important}
+@keyframes dashboardDayCenterIn{from{transform:translateY(12px) scale(.985);opacity:.7}to{transform:translateY(0) scale(1);opacity:1}}
+@media(max-width:650px){.dashboardDayOverlay.dashboardDayCentered{padding:8px!important}.dashboardDayCentered .dashboardDayPanel{width:100%!important;max-height:94dvh!important;border-radius:14px!important}.dashboardDayCentered .dashboardDayPanelHead{border-radius:14px 14px 0 0}}
+@media(prefers-reduced-motion:reduce){.dashboardDayCentered .dashboardDayPanel{animation:none!important}}
+
+
+/* Purchase invoice compact desktop workspace — preserve every existing column */
+@media(min-width:1050px){
+ .purchaseInvoiceModal{width:100%!important;max-width:100%!important;box-sizing:border-box}
+ .purchaseInvoiceModal .purchaseInvoiceLayout{display:grid!important;grid-template-columns:minmax(0,1fr) 235px!important;gap:12px!important;width:100%!important;max-width:100%!important}
+ .purchaseInvoiceModal .purchaseInvoiceMain{min-width:0!important;width:100%!important}
+ .purchaseInvoiceModal .purchaseInvoiceSidebar{min-width:0!important;width:235px!important}
+ .purchaseInvoiceModal .purchaseProfessionalTable{width:100%!important;max-width:100%!important;overflow-x:auto!important;overflow-y:visible!important}
+ .purchaseInvoiceModal .purchaseProfessionalTable table{table-layout:fixed!important;width:100%!important;min-width:0!important;border-collapse:collapse!important}
+ .purchaseInvoiceModal .purchaseProfessionalTable th,.purchaseInvoiceModal .purchaseProfessionalTable td{padding:7px 3px!important;font-size:10px!important;line-height:1.4!important;min-width:0!important;max-width:0!important;overflow-wrap:anywhere!important;white-space:normal!important;vertical-align:middle!important}
+ .purchaseInvoiceModal .purchaseProfessionalTable th:nth-child(1){width:9%}
+ .purchaseInvoiceModal .purchaseProfessionalTable th:nth-child(2){width:14%}
+ .purchaseInvoiceModal .purchaseProfessionalTable th:nth-child(3){width:10%}
+ .purchaseInvoiceModal .purchaseProfessionalTable th:nth-child(4){width:5%}
+ .purchaseInvoiceModal .purchaseProfessionalTable th:nth-child(5){width:5%}
+ .purchaseInvoiceModal .purchaseProfessionalTable th:nth-child(6){width:6%}
+ .purchaseInvoiceModal .purchaseProfessionalTable th:nth-child(7){width:8%}
+ .purchaseInvoiceModal .purchaseProfessionalTable th:nth-child(8){width:7%}
+ .purchaseInvoiceModal .purchaseProfessionalTable th:nth-child(9){width:7%}
+ .purchaseInvoiceModal .purchaseProfessionalTable th:nth-child(10){width:7%}
+ .purchaseInvoiceModal .purchaseProfessionalTable th:nth-child(11){width:10%}
+ .purchaseInvoiceModal .purchaseProfessionalTable th:nth-child(12){width:8%}
+ .purchaseInvoiceModal .purchaseProfessionalTable th:nth-child(13){width:4%}
+ .purchaseInvoiceModal .purchaseProfessionalTable :is(input,select){display:block!important;width:100%!important;min-width:0!important;max-width:100%!important;box-sizing:border-box!important;padding:6px 2px!important;font-size:10px!important;min-height:32px!important}
+ .purchaseInvoiceModal .purchaseProfessionalTable .purchaseProductDisplay b{font-size:10px!important;line-height:1.5!important}
+ .purchaseInvoiceModal .purchaseProfessionalTable :is(.purchaseIngredientCell,.purchaseBarcodeCell){font-size:9px!important;overflow-wrap:anywhere!important}
+ .purchaseInvoiceModal .purchaseProfessionalTable .purchaseExpiryButton{width:100%!important;min-width:0!important;padding:5px 2px!important;gap:2px!important;font-size:9px!important}
+ .purchaseInvoiceModal .purchaseProfessionalTable .purchaseExpiryButton svg{width:12px!important;height:12px!important;flex-shrink:0}
+ .purchaseInvoiceModal .purchaseProfessionalTable .iconBtn{width:26px!important;height:29px!important;padding:4px!important}
+ .purchaseInvoiceModal .purchaseProfessionalTable .iconBtn svg{width:14px!important;height:14px!important}
+ .purchaseInvoiceModal .purchaseProfessionalTable td small{font-size:9px!important}
+ .purchaseInvoiceModal .purchaseInvoiceHeader{padding:14px 18px!important;gap:12px!important}
+ .purchaseInvoiceModal .purchaseSection{padding:12px!important}
+ .purchaseInvoiceModal .purchaseSectionHead{gap:10px!important;flex-wrap:wrap!important}
+}
+@media(min-width:1050px) and (max-width:1280px){
+ .purchaseInvoiceModal .purchaseInvoiceLayout{grid-template-columns:minmax(0,1fr) 205px!important;gap:8px!important}
+ .purchaseInvoiceModal .purchaseInvoiceSidebar{width:205px!important}
+ .purchaseInvoiceModal .purchaseProfessionalTable th,.purchaseInvoiceModal .purchaseProfessionalTable td{font-size:9px!important;padding:6px 2px!important}
+}
+@media(max-width:1049px){
+ .purchaseInvoiceModal .purchaseInvoiceLayout{display:flex!important;flex-direction:column!important;gap:14px!important}
+ .purchaseInvoiceModal .purchaseInvoiceSidebar{width:100%!important;min-width:0!important}
+ .purchaseInvoiceModal .purchaseProfessionalTable{max-width:100%!important;overflow-x:auto!important}
+ .purchaseInvoiceModal .purchaseProfessionalTable table{min-width:930px!important}
+}
+
+
+/* Purchase Invoice Pro — full-width item grid, financial summary below items, sticky save strip */
+.purchaseInvoiceModal .modalBox{width:min(1540px,calc(100vw - 30px))!important;max-width:calc(100vw - 30px)!important;max-height:94dvh!important;overflow-y:auto!important;overflow-x:hidden!important;scrollbar-width:thin}
+.purchaseInvoiceModal .purchaseInvoiceLayout{display:flex!important;flex-direction:column!important;align-items:stretch!important;direction:rtl!important;width:100%!important;max-width:100%!important;box-sizing:border-box!important;padding:12px 10px 0!important;gap:16px!important}
+.purchaseInvoiceModal .purchaseInvoiceMain{display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:14px!important;width:100%!important;min-width:0!important}
+.purchaseInvoiceModal .purchaseInvoiceSidebar{display:grid!important;grid-template-columns:repeat(12,minmax(0,1fr))!important;align-items:start!important;gap:12px!important;width:100%!important;min-width:0!important;direction:rtl!important}
+.purchaseInvoiceModal .purchaseSummaryCard{grid-column:span 12!important;min-width:0!important;position:static!important}
+.purchaseInvoiceModal .purchaseDiscountCard{grid-column:span 6!important;min-width:0!important}
+.purchaseInvoiceModal .purchasePaymentCard{grid-column:span 6!important;min-width:0!important}
+.purchaseInvoiceModal .purchaseSupplierLinkCard{grid-column:span 12!important;min-width:0!important}
+.purchaseInvoiceModal .purchaseSummaryRows{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:10px!important}
+.purchaseInvoiceModal .purchaseSummaryRows>div{min-width:0!important;display:flex!important;flex-direction:column!important;align-items:flex-start!important;gap:5px!important;border:1px solid #bcd9c9!important;border-radius:11px!important;padding:10px 12px!important;background:#ffffff7d!important}
+.purchaseInvoiceModal .purchaseSummaryRows>div :is(span,b){overflow-wrap:anywhere!important}
+.purchaseInvoiceModal .purchaseSummaryTotal{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:12px!important;flex-wrap:wrap!important}
+.purchaseInvoiceModal .purchaseSummaryTotal strong{font-variant-numeric:tabular-nums!important}
+.purchaseInvoiceModal .purchaseProfessionalTable{width:100%!important;max-width:100%!important;min-width:0!important;overflow-x:auto!important}
+.purchaseInvoiceModal .purchaseInvoiceStickyFooter{position:sticky!important;bottom:-1px!important;z-index:25!important;display:flex!important;justify-content:space-between!important;align-items:center!important;gap:16px!important;width:100%!important;box-sizing:border-box!important;padding:12px 16px!important;margin:0!important;border:1px solid #aacdb9!important;border-radius:14px 14px 0 0!important;background:#f1faf3f5!important;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 -9px 26px #173c2920!important;direction:rtl!important}
+.purchaseInvoiceModal .purchaseStickyAmounts{display:flex!important;flex-wrap:wrap!important;align-items:center!important;gap:10px 22px!important;min-width:0!important}
+.purchaseInvoiceModal .purchaseStickyAmounts>span{display:flex!important;align-items:center!important;gap:8px!important;font-size:12px!important;color:#416958!important}
+.purchaseInvoiceModal .purchaseStickyAmounts strong{font-size:19px!important;color:#096946!important;font-weight:900!important;font-variant-numeric:tabular-nums!important}
+.purchaseInvoiceModal .purchaseStickyAmounts b{font-size:13px!important;color:#164e37!important;font-variant-numeric:tabular-nums!important}
+.purchaseInvoiceModal .purchaseStickyActions{display:flex!important;align-items:center!important;gap:9px!important;flex-shrink:0!important}
+.purchaseInvoiceModal .purchaseStickyActions button{min-height:39px!important;padding:8px 18px!important;white-space:nowrap!important}
+.adminShell.adminDark .purchaseInvoiceModal .purchaseInvoiceStickyFooter,body.abdulhadiNight .purchaseInvoiceModal .purchaseInvoiceStickyFooter{background:#162b3bf5!important;border-color:#3a596c!important;box-shadow:0 -9px 25px #0005!important}
+.adminShell.adminDark .purchaseInvoiceModal .purchaseStickyAmounts>span,body.abdulhadiNight .purchaseInvoiceModal .purchaseStickyAmounts>span{color:#bfd0da!important}
+.adminShell.adminDark .purchaseInvoiceModal .purchaseStickyAmounts strong,body.abdulhadiNight .purchaseInvoiceModal .purchaseStickyAmounts strong{color:#89e8d5!important}
+.adminShell.adminDark .purchaseInvoiceModal .purchaseStickyAmounts b,body.abdulhadiNight .purchaseInvoiceModal .purchaseStickyAmounts b{color:#e8f7fc!important}
+.adminShell.adminDark .purchaseInvoiceModal .purchaseSummaryRows>div,body.abdulhadiNight .purchaseInvoiceModal .purchaseSummaryRows>div{background:#20394b!important;border-color:#3a5b6d!important}
+@media(max-width:900px){
+ .purchaseInvoiceModal .purchaseInvoiceSidebar{grid-template-columns:minmax(0,1fr)!important}
+ .purchaseInvoiceModal .purchaseSummaryCard,.purchaseInvoiceModal .purchaseDiscountCard,.purchaseInvoiceModal .purchasePaymentCard,.purchaseInvoiceModal .purchaseSupplierLinkCard{grid-column:1!important}
+ .purchaseInvoiceModal .purchaseSummaryRows{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ .purchaseInvoiceModal .purchaseInvoiceStickyFooter{flex-wrap:wrap!important;padding:10px!important;gap:9px!important}
+ .purchaseInvoiceModal .purchaseStickyActions{width:100%!important}
+ .purchaseInvoiceModal .purchaseStickyActions button{flex:1!important}
+}
+@media(max-width:550px){.purchaseInvoiceModal .purchaseSummaryRows{grid-template-columns:minmax(0,1fr)!important}.purchaseInvoiceModal .purchaseStickyAmounts{gap:5px 12px!important}.purchaseInvoiceModal .purchaseStickyAmounts strong{font-size:15px!important}}
+
+
+/* Purchase Invoice Pro stability pass: one scrolling canvas, no nested clipped panels */
+.purchaseInvoiceModal{box-sizing:border-box!important;padding:8px!important;align-items:center!important;justify-content:center!important}
+.purchaseInvoiceModal .modalBox{width:min(1480px,calc(100vw - 20px))!important;max-width:calc(100vw - 20px)!important;height:min(94dvh,1050px)!important;max-height:94dvh!important;display:flex!important;flex-direction:column!important;overflow-y:auto!important;overflow-x:hidden!important;padding:0!important;background:#f5f9f7!important;scroll-padding-bottom:90px!important}
+.purchaseInvoiceModal .purchaseInvoiceHeader{flex:0 0 auto!important;padding:16px 22px!important;position:relative!important;z-index:1!important}
+.purchaseInvoiceModal .purchaseInvoiceLayout{flex:1 0 auto!important;max-height:none!important;height:auto!important;min-height:0!important;overflow:visible!important;display:flex!important;flex-direction:column!important;gap:14px!important;padding:14px 18px 0!important;background:transparent!important}
+.purchaseInvoiceModal .purchaseInvoiceMain{overflow:visible!important;max-height:none!important;height:auto!important;display:flex!important;flex-direction:column!important;gap:12px!important;padding:0!important;min-width:0!important}
+.purchaseInvoiceModal .purchaseInvoiceMain>.purchaseSection{width:100%!important;box-sizing:border-box!important;margin:0!important;padding:16px!important;border-radius:16px!important;background:#fff!important}
+.purchaseInvoiceModal .purchaseInvoiceSidebar{overflow:visible!important;max-height:none!important;height:auto!important;display:grid!important;grid-template-columns:repeat(12,minmax(0,1fr))!important;align-items:stretch!important;gap:12px!important;padding:0!important;background:transparent!important;border:0!important;box-sizing:border-box!important}
+.purchaseInvoiceModal .purchaseInvoiceSidebar>.purchaseSummaryCard{grid-column:1/-1!important;display:block!important;min-width:0!important;margin:0!important;padding:18px!important;background:#fff!important;box-shadow:0 4px 16px #183e2910!important}
+.purchaseInvoiceModal .purchaseInvoiceSidebar>.purchaseDiscountCard{grid-column:1/span 6!important;min-width:0!important;margin:0!important;padding:16px!important;box-sizing:border-box!important;background:#fff!important}
+.purchaseInvoiceModal .purchaseInvoiceSidebar>.purchasePaymentCard{grid-column:7/span 6!important;min-width:0!important;margin:0!important;padding:16px!important;box-sizing:border-box!important;background:#fff!important}
+.purchaseInvoiceModal .purchaseInvoiceSidebar>.purchaseSupplierLinkCard{grid-column:1/-1!important;margin:0!important;padding:14px 18px!important;background:#fff!important}
+.purchaseInvoiceModal .purchaseSummaryHead{font-size:15px!important;color:#244e3e!important}
+.purchaseInvoiceModal .purchaseSummaryTotal{background:linear-gradient(115deg,#e8f6ed,#f7fbf9)!important;border:1px solid #cde5d5!important;border-radius:12px!important;margin:12px 0!important;padding:14px 18px!important}
+.purchaseInvoiceModal .purchaseSummaryTotal small{font-size:12px!important;color:#416f5c!important}
+.purchaseInvoiceModal .purchaseSummaryTotal strong{font-size:27px!important;color:#10563d!important}
+.purchaseInvoiceModal .purchaseSummaryRows{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:9px!important;padding:0!important}
+.purchaseInvoiceModal .purchaseSummaryRows>div{display:flex!important;flex-direction:column!important;align-items:flex-start!important;justify-content:center!important;gap:6px!important;min-height:64px!important;box-sizing:border-box!important;padding:10px 12px!important;border:1px solid #d8e8de!important;background:#f8fbf9!important;border-radius:10px!important}
+.purchaseInvoiceModal .purchaseSummaryRows>div span{font-size:11px!important;font-weight:700!important;color:#527364!important}
+.purchaseInvoiceModal .purchaseSummaryRows>div b{font-size:16px!important;color:#184b37!important;line-height:1.4!important}
+.purchaseInvoiceModal .purchaseSummaryRows>div.due{background:#fff6ef!important;border-color:#f3d8c5!important}
+.purchaseInvoiceModal .purchaseSummaryRows>div.due b{color:#9c4b29!important}
+.purchaseInvoiceModal .purchasePaymentStatus{margin-top:12px!important}
+.purchaseInvoiceModal .purchaseProfessionalTable{max-height:none!important;height:auto!important;overflow-x:auto!important;overflow-y:visible!important}
+.purchaseInvoiceModal .purchaseProfessionalTable table{width:100%!important;min-width:0!important}
+.purchaseInvoiceModal .purchaseInvoiceStickyFooter{position:sticky!important;bottom:0!important;flex-shrink:0!important;margin:0 -18px!important;width:calc(100% + 36px)!important;border-radius:12px 12px 0 0!important}
+.purchaseInvoiceModal .purchaseStickyActions .purchaseCancelButton{margin-top:0!important}
+@media(max-width:900px){
+ .purchaseInvoiceModal .purchaseInvoiceSidebar{grid-template-columns:1fr!important}
+ .purchaseInvoiceModal .purchaseInvoiceSidebar>.purchaseSummaryCard,.purchaseInvoiceModal .purchaseInvoiceSidebar>.purchaseDiscountCard,.purchaseInvoiceModal .purchaseInvoiceSidebar>.purchasePaymentCard,.purchaseInvoiceModal .purchaseInvoiceSidebar>.purchaseSupplierLinkCard{grid-column:1!important}
+ .purchaseInvoiceModal .purchaseSummaryRows{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ .purchaseInvoiceModal .purchaseInvoiceLayout{padding:10px 9px 0!important}
+ .purchaseInvoiceModal .purchaseInvoiceStickyFooter{margin:0 -9px!important;width:calc(100% + 18px)!important}
+}
+@media(max-width:540px){.purchaseInvoiceModal .purchaseSummaryRows{grid-template-columns:1fr!important}.purchaseInvoiceModal .purchaseInvoiceMain>.purchaseSection{padding:10px!important}}
+
+
+/* Purchase invoice final layout correction: block flow regardless of sidebar state or viewport */
+body .modal.purchaseInvoiceModal>.modalBox.wide{display:block!important;position:relative!important;width:min(1460px,calc(100vw - 28px))!important;max-width:calc(100vw - 28px)!important;max-height:94dvh!important;height:auto!important;overflow-y:auto!important;overflow-x:hidden!important;box-sizing:border-box!important}
+body .modal.purchaseInvoiceModal>.modalBox.wide>.purchaseInvoiceLayout{display:block!important;grid-template-columns:none!important;flex-direction:initial!important;max-height:none!important;height:auto!important;min-height:0!important;overflow:visible!important;width:100%!important;max-width:100%!important;padding:16px!important;box-sizing:border-box!important}
+body .modal.purchaseInvoiceModal .purchaseInvoiceLayout>.purchaseInvoiceMain{display:block!important;float:none!important;position:static!important;width:100%!important;max-width:100%!important;min-width:0!important;height:auto!important;max-height:none!important;overflow:visible!important;padding:0!important;margin:0!important;box-sizing:border-box!important}
+body .modal.purchaseInvoiceModal .purchaseInvoiceLayout>.purchaseInvoiceSidebar{display:grid!important;float:none!important;position:static!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;grid-template-rows:auto!important;align-items:start!important;width:100%!important;max-width:100%!important;min-width:0!important;height:auto!important;max-height:none!important;overflow:visible!important;padding:0!important;margin:14px 0 0!important;box-sizing:border-box!important;gap:12px!important;border:0!important;background:transparent!important}
+body .modal.purchaseInvoiceModal .purchaseInvoiceSidebar>.purchaseSummaryCard{grid-column:1/-1!important;grid-row:auto!important;width:100%!important;box-sizing:border-box!important}
+body .modal.purchaseInvoiceModal .purchaseInvoiceSidebar>.purchaseDiscountCard,body .modal.purchaseInvoiceModal .purchaseInvoiceSidebar>.purchasePaymentCard{grid-column:auto!important;grid-row:auto!important;width:100%!important;box-sizing:border-box!important}
+body .modal.purchaseInvoiceModal .purchaseInvoiceSidebar>.purchaseSupplierLinkCard{grid-column:1/-1!important;grid-row:auto!important;width:100%!important;box-sizing:border-box!important}
+body .modal.purchaseInvoiceModal .purchaseInvoiceLayout>.purchaseInvoiceStickyFooter{display:flex!important;position:relative!important;float:none!important;clear:both!important;left:auto!important;right:auto!important;bottom:auto!important;top:auto!important;width:100%!important;max-width:100%!important;height:auto!important;min-height:65px!important;box-sizing:border-box!important;margin:14px 0 0!important;flex-direction:row!important;align-items:center!important;justify-content:space-between!important}
+body .modal.purchaseInvoiceModal .purchaseInvoiceMain>.purchaseSection{width:100%!important;max-width:100%!important;box-sizing:border-box!important;clear:both!important;margin-bottom:12px!important}
+body .modal.purchaseInvoiceModal .purchaseSupplierGrid{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:12px!important}
+body .modal.purchaseInvoiceModal .purchaseSupplierGrid>*{min-width:0!important}
+body .modal.purchaseInvoiceModal .purchaseProfessionalTable{width:100%!important;max-width:100%!important;overflow-x:auto!important}
+body .modal.purchaseInvoiceModal .purchaseProfessionalTable table{width:100%!important;table-layout:fixed!important}
+@media(max-width:800px){body .modal.purchaseInvoiceModal .purchaseInvoiceSidebar{grid-template-columns:1fr!important}body .modal.purchaseInvoiceModal .purchaseSupplierGrid{grid-template-columns:1fr!important}body .modal.purchaseInvoiceModal .purchaseInvoiceLayout>.purchaseInvoiceStickyFooter{flex-wrap:wrap!important}body .modal.purchaseInvoiceModal .purchaseInvoiceStickyFooter>.purchaseStickyActions{width:100%!important}}
+
+
+/* Purchase invoice V3: viewport-independent native dialog. Avoid inherited admin/sidebar geometry. */
+dialog.nativeTopDialog.purchaseInvoiceModal{position:fixed!important;inset:0!important;display:block!important;box-sizing:border-box!important;width:100vw!important;height:100dvh!important;max-width:none!important;max-height:none!important;margin:0!important;padding:clamp(8px,1.6vw,20px)!important;border:0!important;background:#061c15a8!important;overflow:hidden!important;direction:rtl!important}
+dialog.nativeTopDialog.purchaseInvoiceModal::backdrop{background:#061c15a8!important;backdrop-filter:blur(4px)}
+dialog.nativeTopDialog.purchaseInvoiceModal>.modalBox.wide{position:relative!important;display:block!important;box-sizing:border-box!important;width:100%!important;max-width:1480px!important;min-width:0!important;height:100%!important;max-height:100%!important;margin:0 auto!important;padding:0!important;overflow-y:auto!important;overflow-x:hidden!important;border-radius:18px!important;background:#f3f7f4!important;box-shadow:0 24px 80px #001c1470!important;scrollbar-width:thin!important}
+dialog.nativeTopDialog.purchaseInvoiceModal>.modalBox.wide>h2{margin:0!important;padding:12px 24px 10px!important;font-size:13px!important;font-weight:700!important;color:#49715e!important;border-bottom:1px solid #dbe9df!important}
+dialog.nativeTopDialog.purchaseInvoiceModal .purchaseInvoiceHeader{display:flex!important;flex-wrap:wrap!important;align-items:center!important;justify-content:space-between!important;gap:12px!important;box-sizing:border-box!important;width:100%!important;margin:0!important;padding:16px 24px!important;background:#fff!important}
+dialog.nativeTopDialog.purchaseInvoiceModal .purchaseInvoiceLayout{display:block!important;box-sizing:border-box!important;width:100%!important;max-width:100%!important;height:auto!important;max-height:none!important;min-height:0!important;margin:0!important;padding:16px 20px 0!important;overflow:visible!important;direction:rtl!important}
+dialog.nativeTopDialog.purchaseInvoiceModal .purchaseInvoiceMain{display:block!important;box-sizing:border-box!important;width:100%!important;max-width:100%!important;height:auto!important;min-height:0!important;max-height:none!important;margin:0!important;padding:0!important;overflow:visible!important;direction:rtl!important}
+dialog.nativeTopDialog.purchaseInvoiceModal .purchaseInvoiceMain>.purchaseSection{display:block!important;box-sizing:border-box!important;width:100%!important;max-width:100%!important;min-width:0!important;height:auto!important;margin:0 0 14px!important;padding:16px 18px!important;float:none!important;clear:both!important;border:1px solid #d7e5dc!important;border-radius:14px!important;background:#fff!important;box-shadow:0 3px 12px #154b2b0c!important}
+dialog.nativeTopDialog.purchaseInvoiceModal .purchaseSupplierGrid{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:12px!important;align-items:start!important;width:100%!important}
+dialog.nativeTopDialog.purchaseInvoiceModal .purchaseSupplierGrid>*{box-sizing:border-box!important;min-width:0!important;max-width:100%!important}
+dialog.nativeTopDialog.purchaseInvoiceModal .purchaseInvoiceSidebar{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;grid-auto-flow:row!important;grid-template-rows:auto!important;box-sizing:border-box!important;width:100%!important;max-width:100%!important;min-width:0!important;height:auto!important;max-height:none!important;position:static!important;float:none!important;margin:0!important;padding:0!important;overflow:visible!important;gap:14px!important;background:transparent!important;border:0!important;direction:rtl!important}
+dialog.nativeTopDialog.purchaseInvoiceModal .purchaseInvoiceSidebar>.purchaseSummaryCard{grid-column:1/-1!important;grid-row:auto!important;min-width:0!important;width:100%!important;margin:0!important;padding:18px!important;background:#fff!important}
+dialog.nativeTopDialog.purchaseInvoiceModal .purchaseInvoiceSidebar>.purchaseDiscountCard,dialog.nativeTopDialog.purchaseInvoiceModal .purchaseInvoiceSidebar>.purchasePaymentCard{grid-column:auto!important;grid-row:auto!important;min-width:0!important;width:100%!important;margin:0!important;padding:16px!important;background:#fff!important}
+dialog.nativeTopDialog.purchaseInvoiceModal .purchaseInvoiceSidebar>.purchaseSupplierLinkCard{grid-column:1/-1!important;grid-row:auto!important;min-width:0!important;width:100%!important;margin:0!important;padding:14px!important;background:#fff!important}
+dialog.nativeTopDialog.purchaseInvoiceModal .purchaseSummaryRows{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:9px!important}
+dialog.nativeTopDialog.purchaseInvoiceModal .purchaseSummaryRows>div{box-sizing:border-box!important;min-width:0!important;min-height:60px!important;padding:10px!important;border:1px solid #d7e7dc!important;border-radius:10px!important;background:#f6faf7!important}
+dialog.nativeTopDialog.purchaseInvoiceModal .purchaseProfessionalTable{box-sizing:border-box!important;width:100%!important;max-width:100%!important;min-width:0!important;overflow-x:auto!important;overflow-y:visible!important}
+dialog.nativeTopDialog.purchaseInvoiceModal .purchaseProfessionalTable table{table-layout:fixed!important;width:100%!important;min-width:0!important}
+dialog.nativeTopDialog.purchaseInvoiceModal .purchaseInvoiceStickyFooter{position:sticky!important;bottom:0!important;z-index:15!important;display:flex!important;align-items:center!important;justify-content:space-between!important;flex-wrap:wrap!important;gap:12px!important;box-sizing:border-box!important;width:100%!important;max-width:100%!important;height:auto!important;min-height:70px!important;margin:16px 0 0!important;padding:12px 18px!important;border-radius:12px 12px 0 0!important;background:#eaf4edf5!important;border:1px solid #b9d6c4!important;box-shadow:0 -6px 22px #154b2b18!important;direction:rtl!important}
+dialog.nativeTopDialog.purchaseInvoiceModal .purchaseStickyActions{display:flex!important;gap:10px!important;align-items:center!important}
+dialog.nativeTopDialog.purchaseInvoiceModal .purchaseStickyActions button{width:auto!important;min-height:38px!important}
+dialog.nativeTopDialog.purchaseInvoiceModal :is(input,select,textarea){box-sizing:border-box!important;max-width:100%!important}
+@media(max-width:800px){
+ dialog.nativeTopDialog.purchaseInvoiceModal{padding:5px!important}
+ dialog.nativeTopDialog.purchaseInvoiceModal>.modalBox.wide{border-radius:10px!important}
+ dialog.nativeTopDialog.purchaseInvoiceModal .purchaseInvoiceLayout{padding:10px 9px 0!important}
+ dialog.nativeTopDialog.purchaseInvoiceModal .purchaseInvoiceMain>.purchaseSection{padding:11px!important}
+ dialog.nativeTopDialog.purchaseInvoiceModal .purchaseSupplierGrid,dialog.nativeTopDialog.purchaseInvoiceModal .purchaseInvoiceSidebar{grid-template-columns:minmax(0,1fr)!important}
+ dialog.nativeTopDialog.purchaseInvoiceModal .purchaseInvoiceSidebar>*{grid-column:1!important}
+ dialog.nativeTopDialog.purchaseInvoiceModal .purchaseSummaryRows{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+}
+
+
+/* Purchase Invoice refinement: presentation-only, preserving the stable layout */
+dialog.nativeTopDialog.purchaseInvoiceModal>.modalBox.wide{background:#f4f8f5!important}
+dialog.nativeTopDialog.purchaseInvoiceModal .purchaseInvoiceHeader{background:linear-gradient(120deg,#ffffff,#eef7f1)!important;border-bottom:1px solid #c8ded0!important}
+dialog.nativeTopDialog.purchaseInvoiceModal .purchaseInvoiceMain>.purchaseSection,dialog.nativeTopDialog.purchaseInvoiceModal .purchaseInvoiceSidebar>.purchaseSummaryCard,dialog.nativeTopDialog.purchaseInvoiceModal .purchaseInvoiceSidebar>.purchaseDiscountCard,dialog.nativeTopDialog.purchaseInvoiceModal .purchaseInvoiceSidebar>.purchasePaymentCard,dialog.nativeTopDialog.purchaseInvoiceModal .purchaseInvoiceSidebar>.purchaseSupplierLinkCard{border:1px solid #d5e6db!important;border-radius:15px!important;box-shadow:0 5px 19px #12492d0b!important}
+dialog.nativeTopDialog.purchaseInvoiceModal .purchaseSectionHead{padding-bottom:10px!important;margin-bottom:13px!important;border-bottom:1px solid #e6f0e9!important;gap:12px!important}
+dialog.nativeTopDialog.purchaseInvoiceModal .purchaseSectionHead b{font-size:15px!important;letter-spacing:0!important;color:#1b573b!important}
+dialog.nativeTopDialog.purchaseInvoiceModal .purchaseSectionHead small{font-size:11px!important;color:#658373!important}
+dialog.nativeTopDialog.purchaseInvoiceModal .purchaseSectionBadge{background:#e2f2e8!important;color:#187248!important;border:1px solid #bfddca!important;border-radius:10px!important;min-width:28px!important;height:28px!important;display:inline-flex!important;align-items:center!important;justify-content:center!important}
+dialog.nativeTopDialog.purchaseInvoiceModal .purchaseSupplierGrid{gap:12px!important}
+dialog.nativeTopDialog.purchaseInvoiceModal .purchaseSupplierGrid label,dialog.nativeTopDialog.purchaseInvoiceModal .purchaseDiscountCard label,dialog.nativeTopDialog.purchaseInvoiceModal .purchasePaymentCard label{font-weight:650!important;color:#3c6550!important}
+dialog.nativeTopDialog.purchaseInvoiceModal :is(input:not([type="checkbox"]),select,textarea){border:1px solid #cbded2!important;border-radius:9px!important;background:#fbfdfb!important;min-height:36px!important;box-shadow:none!important;transition:border-color .16s,box-shadow .16s!important}
+dialog.nativeTopDialog.purchaseInvoiceModal :is(input:not([type="checkbox"]),select,textarea):focus{border-color:#21845b!important;box-shadow:0 0 0 3px #25885b1c!important;outline:none!important}
+dialog.nativeTopDialog.purchaseInvoiceModal .purchaseProfessionalTable{border:1px solid #d6e7db!important;border-radius:12px!important;background:#fff!important}
+dialog.nativeTopDialog.purchaseInvoiceModal .purchaseProfessionalTable table{border-collapse:separate!important;border-spacing:0!important}
+dialog.nativeTopDialog.purchaseInvoiceModal .purchaseProfessionalTable thead th{background:#e9f2eb!important;color:#28543d!important;font-size:10px!important;font-weight:800!important;line-height:1.45!important;padding:11px 4px!important;white-space:normal!important;vertical-align:middle!important;border-bottom:1px solid #c8ddcf!important}
+dialog.nativeTopDialog.purchaseInvoiceModal .purchaseProfessionalTable tbody td{padding:9px 4px!important;border-bottom:1px solid #e5eee7!important;vertical-align:middle!important;font-size:11px!important;background:#fff!important}
+dialog.nativeTopDialog.purchaseInvoiceModal .purchaseProfessionalTable tbody tr:nth-child(even) td{background:#f7faf7!important}
+dialog.nativeTopDialog.purchaseInvoiceModal .purchaseProfessionalTable tbody tr:hover td{background:#eef7f0!important}
+dialog.nativeTopDialog.purchaseInvoiceModal .purchaseProfessionalTable :is(input,select){min-height:33px!important;padding:5px 3px!important;font-size:11px!important;text-align:center!important;border-radius:7px!important}
+dialog.nativeTopDialog.purchaseInvoiceModal .purchaseProfessionalTable .purchaseProductDisplay b{color:#24553b!important;font-size:11px!important}
+dialog.nativeTopDialog.purchaseInvoiceModal .purchaseProfessionalTable .purchaseProductDisplay small{color:#738a7b!important;font-size:9px!important}
+dialog.nativeTopDialog.purchaseInvoiceModal .purchaseProfessionalTable th:nth-child(8){width:8%!important}
+dialog.nativeTopDialog.purchaseInvoiceModal .purchaseProfessionalTable th:nth-child(9){width:7%!important}
+dialog.nativeTopDialog.purchaseInvoiceModal .purchaseProfessionalTable td:nth-child(9) input{border-color:#a9d6b8!important;background:#f0faf3!important;color:#17633e!important;font-weight:700!important}
+dialog.nativeTopDialog.purchaseInvoiceModal .purchaseSummaryTotal{background:linear-gradient(110deg,#e5f3e9,#f8fcf9)!important}
+dialog.nativeTopDialog.purchaseInvoiceModal .purchaseStickyActions button{border-radius:9px!important;font-weight:750!important}
+@media(max-width:800px){dialog.nativeTopDialog.purchaseInvoiceModal .purchaseProfessionalTable{overflow-x:auto!important}}
