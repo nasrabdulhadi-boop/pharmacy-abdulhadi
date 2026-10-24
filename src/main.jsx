@@ -259,6 +259,7 @@ function Admin({onLogout}){
   {title:'المخزون والشراء',items:[['pharmacyProducts','منتجات الصيدلية',Package],['siteProducts','منتجات الموقع',ExternalLink],['inventory','المخزون',BarChart3],['smart','المخزون الذكي',Sparkles],['purchases','المشتريات',Receipt],['suppliers','الموردون',Truck],['supplierDebts','ديون الموردين',WalletCards]]},
   {title:'العملاء والخدمات',items:[['orders','الطلبات',ClipboardList],['prescriptions','الوصفات',Upload],['requests','طلبات الأدوية',SearchCheck],['customers','العملاء',Users],['debtors','المتدينين',Users],['offers','العروض',Tag]]},
   {title:'المال والتقارير',items:[['cashbox','الصندوق',Receipt],['returns','المرتجعات',Receipt],['reports','التقارير',TrendingUp],['profitCenterPreview','مركز الأرباح الذكي',BarChart3]]},
+  {title:'المساعد السريري — تجريبي',items:[['clinicalPreview','المساعد الصيدلاني التجريبي',ShieldCheck]]},
   {title:'الحماية',items:[['security','الأمان والتدقيق',ShieldCheck]]}
  ];
  const nav=navGroups.flatMap(g=>g.items);
@@ -275,10 +276,56 @@ function Admin({onLogout}){
   <main className="adminMain">
    <div className="adminTopbar"><div className="topbarTitle"><div className="topbarEyebrow">إدارة صيدلية عبدالهادي</div><strong>{nav.find(x=>x[0]===tab)?.[1]}</strong></div><div className="globalSearch"><Search size={17}/><input value={quickSearch} onChange={e=>setQuickSearch(e.target.value)} onKeyDown={e=>{if(e.key==='Enter')runQuickSearch()}} placeholder="ابحث في أقسام النظام…" aria-label="بحث سريع داخل النظام"/><kbd>Ctrl K</kbd></div><div className="topbarActions"><button type="button" className="topbarAction themeToggle" onClick={()=>setDarkMode(x=>!x)} title={darkMode?'تفعيل الوضع النهاري':'تفعيل الوضع الليلي'} aria-label={darkMode?'تفعيل الوضع النهاري':'تفعيل الوضع الليلي'}><span aria-hidden="true">{darkMode?'☀':'☾'}</span><span>{darkMode?'نهاري':'ليلي'}</span></button><button type="button" className="topbarAction sidebarToggle" onClick={()=>setSideCollapsed(x=>!x)} title={sideCollapsed?'توسيع القائمة':'طي القائمة'} aria-label={sideCollapsed?'توسيع القائمة':'طي القائمة'}><Menu size={17}/></button><button type="button" className="topbarAction" onClick={()=>go('pos')} title="بيع جديد"><ShoppingCart size={17}/><span>بيع جديد</span></button><button type="button" className="topbarAction accent" onClick={()=>go('purchases')} title="فاتورة شراء جديدة"><Plus size={17}/><span>شراء جديد</span></button><div className="topbarClock"><Clock size={15}/><SystemClock/></div></div></div>
    <div className="mobileBar"><button type="button" className="mobileThemeToggle" onClick={()=>setDarkMode(x=>!x)} aria-label={darkMode?'الوضع النهاري':'الوضع الليلي'}>{darkMode?'☀':'☾'}</button><button onClick={()=>setMobile(!mobile)} aria-label="فتح القائمة"><Menu/></button><div><small>صيدلية عبدالهادي</small><b>{nav.find(x=>x[0]===tab)?.[1]}</b></div></div>
-   {tab==='dashboard'&&<Dashboard go={go}/>} {tab==='pos'&&<POS/>}{tab==='pharmacyProducts'&&<ProductManager mode="pharmacy"/>}{tab==='siteProducts'&&<ProductManager mode="site"/>}{tab==='inventory'&&<Inventory focus={focus}/>}{tab==='smart'&&<SmartInventory/>}{tab==='orders'&&<Orders/>}{tab==='prescriptions'&&<Prescriptions/>}{tab==='requests'&&<Requests/>}{tab==='offers'&&<Offers/>}{tab==='reports'&&<Reports/>}{tab==='profitCenterPreview'&&<ProfitCenterPreview/>}{tab==='cashbox'&&<Cashbox/>}{tab==='debtors'&&<Debtors/>}{tab==='purchases'&&<Purchases focus={focus} go={go}/>} {tab==='supplierDebts'&&<SupplierDebts go={go}/>}{tab==='suppliers'&&<Suppliers/>}{tab==='customers'&&<Customers/>}{tab==='returns'&&<Returns/>}{tab==='security'&&<Security/>}
+   {tab==='dashboard'&&<Dashboard go={go}/>} {tab==='clinicalPreview'&&<ClinicalPreview/>} {tab==='pos'&&<POS/>}{tab==='pharmacyProducts'&&<ProductManager mode="pharmacy"/>}{tab==='siteProducts'&&<ProductManager mode="site"/>}{tab==='inventory'&&<Inventory focus={focus}/>}{tab==='smart'&&<SmartInventory/>}{tab==='orders'&&<Orders/>}{tab==='prescriptions'&&<Prescriptions/>}{tab==='requests'&&<Requests/>}{tab==='offers'&&<Offers/>}{tab==='reports'&&<Reports/>}{tab==='profitCenterPreview'&&<ProfitCenterPreview/>}{tab==='cashbox'&&<Cashbox/>}{tab==='debtors'&&<Debtors/>}{tab==='purchases'&&<Purchases focus={focus} go={go}/>} {tab==='supplierDebts'&&<SupplierDebts go={go}/>}{tab==='suppliers'&&<Suppliers/>}{tab==='customers'&&<Customers/>}{tab==='returns'&&<Returns/>}{tab==='security'&&<Security/>}
   </main>
  </div>
 }
+
+function ClinicalPreview(){
+ const [query,setQuery]=useState('');
+ const [results,setResults]=useState([]);
+ const [selected,setSelected]=useState([]);
+ const [busy,setBusy]=useState(false);
+ const [error,setError]=useState('');
+ const [checked,setChecked]=useState(false);
+ const [reviewed,setReviewed]=useState({});
+ const search=async()=>{
+  const q=query.trim();if(!q)return;
+  setBusy(true);setError('');
+  try{
+   const {data,error:e}=await supabase.rpc('admin_search_pos_products_currency',{p_query:q,p_limit:20});
+   if(e)throw e;
+   setResults(Array.isArray(data)?data:[]);
+  }catch(e){setError(e.message||'تعذر البحث');setResults([])}
+  finally{setBusy(false)}
+ };
+ const normalize=x=>String(x||'').toLowerCase().replace(/[أإآ]/g,'ا').replace(/[_-]/g,' ').replace(/\\s+/g,' ').trim();
+ const names=selected.map(p=>({id:p.id,name:p.name,ingredient:String(p.active_ingredient||'').trim(),strength:p.strength||'',form:p.dosage_form||''}));
+ const incomplete=names.filter(p=>!p.ingredient);
+ const pairs=[];
+ for(let i=0;i<names.length;i++)for(let j=i+1;j<names.length;j++){
+  if(names[i].ingredient&&normalize(names[i].ingredient)===normalize(names[j].ingredient))
+   pairs.push([names[i],names[j]]);
+ }
+ return <div className="clinicalPreview">
+  <PageHead title="المساعد الصيدلاني السريري — نسخة تجريبية" sub="مرحلة تدقيق وربط المنتجات • قراءة فقط • لا تتدخل في البيع أو المحاسبة"/>
+  <div className="clinicalPreviewNotice"><ShieldCheck size={20}/><div><b>وضع الاختبار فقط</b><p>هذه الصفحة لا تملك حالياً قاعدة تداخلات دوائية معتمدة. عدم ظهور تحذير لا يعني أمان الجمع بين الأدوية. لا تستخدم النتائج لاتخاذ قرار سريري.</p></div></div>
+  <section className="clinicalPreviewPanel"><h3>اختيار المنتجات من قاعدة الصيدلية</h3><div className="clinicalPreviewSearch"><input value={query} onChange={e=>setQuery(e.target.value)} onKeyDown={e=>e.key==='Enter'&&search()} placeholder="ابحث باسم الدواء أو الباركود"/><button onClick={search} disabled={busy||!query.trim()}><Search size={16}/>{busy?'جارٍ البحث':'بحث'}</button></div>
+   {error&&<p className="clinicalPreviewError">{error}</p>}
+   <div className="clinicalPreviewResults">{results.map(p=><button key={p.id} disabled={selected.some(x=>x.id===p.id)} onClick={()=>{setSelected(a=>[...a,p]);setChecked(false)}}><span><b>{p.name}</b><small>{p.active_ingredient||'المادة الفعالة غير مسجلة'} • {p.strength||'التركيز غير مسجل'}</small></span><Plus size={17}/></button>)}</div>
+  </section>
+  <section className="clinicalPreviewPanel"><h3>قائمة الأدوية للفحص الأولي ({selected.length})</h3>
+   {selected.length===0?<p>أضف دواءين أو أكثر لتجربة كشف تكرار النص المسجل للمادة الفعالة.</p>:<div className="clinicalPreviewChosen">{names.map(p=><div key={p.id}><span><b>{p.name}</b><small>{p.ingredient||'مادة فعالة غير معروفة'} — {p.strength||'تركيز غير مسجل'}</small></span><button onClick={()=>{setSelected(a=>a.filter(x=>x.id!==p.id));setChecked(false)}} aria-label="إزالة">×</button></div>)}</div>}
+   <button disabled={selected.length<2} onClick={()=>setChecked(true)}>فحص أولي للتكرار وجودة البيانات</button>
+  </section>
+  {checked&&<section className="clinicalPreviewPanel" aria-live="polite"><h3>نتيجة الفحص التجريبي</h3>
+   {incomplete.length>0&&<div className="clinicalPreviewWarning"><AlertTriangle size={18}/> تعذرت مطابقة المواد الفعالة لـ {incomplete.length} منتج/منتجات. لا يمكن اعتبار الفحص مكتملاً.</div>}
+   {pairs.length>0?pairs.map(([a,b],i)=><div className="clinicalPreviewWarning" key={i}><AlertTriangle size={18}/><span>تطابق نص المادة الفعالة بين «{a.name}» و«{b.name}»: {a.ingredient}. راجع الجرعة والتركيب وطريقة الإعطاء قبل الحكم على وجود تكرار علاجي.</span></div>):<p>لم يظهر تطابق نصي كامل بين المواد المسجلة. هذا لا يستبعد تكرار المواد بأسماء مرادفة أو وجود تداخلات دوائية.</p>}
+   <p className="clinicalPreviewDisclaimer">فحص التداخلات: غير متاح حتى اعتماد مصدر سريري مرخص أو قواعد موثقة ومراجعة. لا يتم حفظ بيانات المرضى أو تعديل الفواتير.</p>
+  </section>}
+ </div>;
+}
+
 function Card({title,value,icon:I,meta,alert}){return <div className={`kpi ${alert?'alertKpi':''}`}><div><span>{title}</span><strong>{value}</strong>{meta&&<small>{meta}</small>}</div><I/></div>}
 function DashboardDayDetails({day,dayErr,onClose}){
  const [section,setSection]=useState('sales');
