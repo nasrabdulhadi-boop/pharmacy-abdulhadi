@@ -192,3 +192,61 @@ body.abdulhadiNight :is(.modalOverlay,.modal-overlay,.dialogOverlay,.drawerOverl
 body.abdulhadiNight .dashboardDayOverlay .dashboardDayPanel :is(table,thead,tbody,tr,th,td){background:#172b3b!important;color:#e7f4fa!important;border-color:#38596b!important}
 body.abdulhadiNight .dashboardDayOverlay .dashboardDayPanel :is(input,select,textarea){background:#102333!important;color:#edfaff!important;border-color:#4b697a!important}
 body.abdulhadiNight .dashboardDayOverlay .dashboardDayPanel :is(.dashboardDaySummary,.dashboardDaySummary>div,.dashboardDayTabs,.dashboardDayContent,.dashboardDayPanelHead){background:#172b3b!important;color:#e8f5fa!important}
+
+
+/* Pharmacy Glass Mint — daylight-only admin skin. Night mode and customer site unaffected. */
+.adminShell:not(.adminDark){
+ --ui-green:#149f7e;--ui-green-dark:#0b866c;--ui-green-deep:#08765f;--ui-green-soft:#e5faf2;
+ --ui-bg:#f0faf6;--ui-card:#ffffff;--ui-line:#cde9df;--ui-line-soft:#e2f1ec;
+ --ui-text:#174d43;--ui-muted:#5c8278;--ui-shadow:0 12px 35px #247c6530;
+ --glass-mint:#e3faf1;--glass-edge:#b8e8d9;--glass-ink:#174b40;--glass-strong:#0a7963;
+ background:radial-gradient(ellipse at 18% 0%,#d8fae9 0%,transparent 36%),linear-gradient(145deg,#f5fcf9,#e9f7f3 75%,#f3fcf8)!important;
+ color:var(--glass-ink)!important;
+ color-scheme:light;
+}
+.adminShell:not(.adminDark) .adminMain{background:transparent!important;color:var(--glass-ink)!important}
+.adminShell:not(.adminDark) aside{background:linear-gradient(175deg,#28af91 0%,#149779 48%,#0d826e 100%)!important;border-left:1px solid #ffffff75!important;box-shadow:-12px 0 38px #16866b2b!important}
+.adminShell:not(.adminDark) aside .navGroup button.active{background:#effff4ed!important;color:#08634e!important;box-shadow:0 4px 16px #0c71592b!important}
+.adminShell:not(.adminDark) aside .navGroup button:not(.active):hover{background:#ffffff2b!important}
+.adminShell:not(.adminDark) .adminTopbar{background:#f4fff9de!important;backdrop-filter:blur(18px) saturate(145%);-webkit-backdrop-filter:blur(18px) saturate(145%);border-bottom:1px solid #b9e5d4!important;box-shadow:0 8px 26px #20846814!important}
+.adminShell:not(.adminDark) .topbarTitle strong,.adminShell:not(.adminDark) .pageHead h1{color:#155b49!important}
+.adminShell:not(.adminDark) .topbarEyebrow,.adminShell:not(.adminDark) .pageHead p{color:#598879!important}
+.adminShell:not(.adminDark) .globalSearch,.adminShell:not(.adminDark) .topbarAction,.adminShell:not(.adminDark) .secondaryAction,.adminShell:not(.adminDark) .refreshBtn{background:#ffffffb9!important;border:1px solid #bce4d6!important;color:#176954!important;box-shadow:0 3px 12px #20846c0b!important}
+.adminShell:not(.adminDark) .globalSearch input{background:transparent!important;color:#164f40!important}
+.adminShell:not(.adminDark) .topbarAction.accent,.adminShell:not(.adminDark) .primary{background:linear-gradient(135deg,#2ac69d,#129f82)!important;color:#fff!important;border-color:#21a98b!important;box-shadow:0 7px 20px #189b7b2c!important}
+.adminShell:not(.adminDark) .adminMain :is(.card,.kpi,.tableWrap,.modalBox,.purchaseSection,.posPanel,.posCard,.posInvoice,.posShortcutPanel,.inventoryCard,.reportPanel,.reportChartCard,.reportTabPanel,.reportKpis,.reportKpisPolished,.supplierSummary,.cashboxCard,.auditHeroStat,.serviceCard,.pageCard,.dataCard,.statCard,.v6Panel,.v6Kpi,.toolbar,.formCard,.tableCard,.invoiceCard,.summaryCard){
+ background:linear-gradient(145deg,#ffffffeb,#f4fff9d9)!important;
+ border:1px solid #c7e9dc!important;
+ color:#174b40!important;
+ box-shadow:0 8px 26px #217a5c12,inset 0 1px #ffffff!important;
+}
+.adminShell:not(.adminDark) .adminMain :is(.card,.kpi,.tableWrap,.modalBox,.purchaseSection,.posPanel,.posCard,.posInvoice,.posShortcutPanel,.inventoryCard,.reportPanel,.reportChartCard,.reportTabPanel,.reportKpis,.reportKpisPolished,.supplierSummary,.cashboxCard,.auditHeroStat,.serviceCard,.pageCard,.dataCard,.statCard,.v6Panel,.v6Kpi,.toolbar,.formCard,.tableCard,.invoiceCard,.summaryCard):hover{border-color:#a9dec9!important}
+.adminShell:not(.adminDark) .adminMain :is(.cardHead,.sectionTitle,.purchaseSectionHead,.reportChartHead,.reportHeader,.invoiceHeader,.posHeader) :is(h1,h2,h3,h4,b,strong){color:#135b49!important}
+.adminShell:not(.adminDark) .adminMain :is(.card,.tableWrap,.modalBox,.purchaseSection,.reportPanel,.posPanel,.posCard,.inventoryCard) :is(p,small,label){color:#5a8176}
+.adminShell:not(.adminDark) .adminMain :is(.kpi,.statCard,.reportKpis,.reportKpisPolished,.auditHeroStat,.summaryCard) :is(strong,b){color:#08775f!important;font-variant-numeric:tabular-nums}
+.adminShell:not(.adminDark) .adminMain :is(.kpi,.statCard,.reportKpis,.reportKpisPolished,.auditHeroStat,.summaryCard) svg{color:#13a384!important}
+.adminShell:not(.adminDark) .adminMain :is(.tableWrap,.tableWrapper,.tableContainer,.table-responsive,.productsTable,.purchaseTable,.stockTable,.dataTable){background:#fafffdf0!important;border-color:#c8e9db!important}
+.adminShell:not(.adminDark) .adminMain :is(table,.table,.dataTable){background:#ffffffd9!important;color:#174c40!important;border-color:#d2eadf!important}
+.adminShell:not(.adminDark) .adminMain :is(thead,thead tr,thead th){background:#d9f5e8!important;color:#155e4c!important;border-color:#b8dfce!important}
+.adminShell:not(.adminDark) .adminMain tbody tr{background:#ffffffed!important;border-color:#dcefe5!important}
+.adminShell:not(.adminDark) .adminMain tbody tr:nth-child(even){background:#f0fbf5!important}
+.adminShell:not(.adminDark) .adminMain tbody tr:hover{background:#dff6e9!important}
+.adminShell:not(.adminDark) .adminMain :is(td,th){border-color:#d4eadd!important;color:#245d4d!important}
+.adminShell:not(.adminDark) .adminMain :is(td,th) :is(b,strong){color:#12664f!important}
+.adminShell:not(.adminDark) .adminMain :is(input,textarea,select){background:#ffffffed!important;color:#174f40!important;border:1px solid #b9dfd0!important;box-shadow:inset 0 1px 3px #226b5110!important}
+.adminShell:not(.adminDark) .adminMain :is(input,textarea)::placeholder{color:#769b8e!important}
+.adminShell:not(.adminDark) .adminMain :is(input,textarea,select):focus{border-color:#16a885!important;outline:2px solid #44c9a74a!important;outline-offset:1px!important}
+.adminShell:not(.adminDark) .adminMain :is(.secondary,.secondaryBtn,.secondaryAction,.iconBtn,.miniBtn,.scanBtn,.filterBtn,.outlineBtn){background:#e8f9f1!important;color:#116d56!important;border-color:#b7e1d0!important}
+.adminShell:not(.adminDark) .adminMain :is(.secondary,.secondaryBtn,.secondaryAction,.iconBtn,.miniBtn,.scanBtn,.filterBtn,.outlineBtn):hover{background:#d6f3e5!important}
+.adminShell:not(.adminDark) .adminMain :is(.price,.amount,.total,.totalAmount,.money,.profit,.salePrice,.purchasePrice,.statValue,.metricValue,.kpiValue){color:#08745e!important;font-weight:800!important;font-variant-numeric:tabular-nums}
+.adminShell:not(.adminDark) .adminMain :is(.good,.positive,.success){color:#09866a!important}
+.adminShell:not(.adminDark) .adminMain :is(.danger,.dangerText,.negative,.error){color:#b84253!important}
+.adminShell:not(.adminDark) .adminMain :is(.warning,.lowStock,.expiring){color:#96610b!important}
+.adminShell:not(.adminDark) .adminMain :is(.muted,.hint,.helper,.caption){color:#618578!important}
+.adminShell:not(.adminDark) .adminMain :is(.posShortcutTile,.posQuickItem,.result,.quickManageRow){background:#effcf6!important;border-color:#bde5d4!important;color:#165644!important}
+.adminShell:not(.adminDark) .adminMain :is(.posShortcutTile,.posQuickItem,.result,.quickManageRow):hover{background:#ddf6e9!important}
+.adminShell:not(.adminDark) .adminMain :is(.modalBox,.searchDropdown,.searchResults,.quickManageResults){box-shadow:0 20px 60px #1b6f542d!important}
+.adminShell:not(.adminDark) .adminMain :is(svg){stroke-linecap:round}
+.adminShell:not(.adminDark) .mobileBar{background:#f1fff8!important;color:#125d48!important;border-color:#c3e8d7!important}
+@media(max-width:900px){.adminShell:not(.adminDark) .adminTopbar{backdrop-filter:none}}
+@media(prefers-reduced-transparency:reduce){.adminShell:not(.adminDark) .adminTopbar{background:#f2fff8!important;backdrop-filter:none}}
