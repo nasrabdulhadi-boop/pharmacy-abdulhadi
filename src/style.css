@@ -1647,3 +1647,32 @@ dialog.nativeTopDialog.purchaseInvoiceModal :is(input,select,textarea){box-sizin
  dialog.nativeTopDialog.purchaseInvoiceModal .purchaseInvoiceSidebar>*{grid-column:1!important}
  dialog.nativeTopDialog.purchaseInvoiceModal .purchaseSummaryRows{grid-template-columns:repeat(2,minmax(0,1fr))!important}
 }
+
+
+/* Purchase Invoice refinement: presentation-only, preserving the stable layout */
+dialog.nativeTopDialog.purchaseInvoiceModal>.modalBox.wide{background:#f4f8f5!important}
+dialog.nativeTopDialog.purchaseInvoiceModal .purchaseInvoiceHeader{background:linear-gradient(120deg,#ffffff,#eef7f1)!important;border-bottom:1px solid #c8ded0!important}
+dialog.nativeTopDialog.purchaseInvoiceModal .purchaseInvoiceMain>.purchaseSection,dialog.nativeTopDialog.purchaseInvoiceModal .purchaseInvoiceSidebar>.purchaseSummaryCard,dialog.nativeTopDialog.purchaseInvoiceModal .purchaseInvoiceSidebar>.purchaseDiscountCard,dialog.nativeTopDialog.purchaseInvoiceModal .purchaseInvoiceSidebar>.purchasePaymentCard,dialog.nativeTopDialog.purchaseInvoiceModal .purchaseInvoiceSidebar>.purchaseSupplierLinkCard{border:1px solid #d5e6db!important;border-radius:15px!important;box-shadow:0 5px 19px #12492d0b!important}
+dialog.nativeTopDialog.purchaseInvoiceModal .purchaseSectionHead{padding-bottom:10px!important;margin-bottom:13px!important;border-bottom:1px solid #e6f0e9!important;gap:12px!important}
+dialog.nativeTopDialog.purchaseInvoiceModal .purchaseSectionHead b{font-size:15px!important;letter-spacing:0!important;color:#1b573b!important}
+dialog.nativeTopDialog.purchaseInvoiceModal .purchaseSectionHead small{font-size:11px!important;color:#658373!important}
+dialog.nativeTopDialog.purchaseInvoiceModal .purchaseSectionBadge{background:#e2f2e8!important;color:#187248!important;border:1px solid #bfddca!important;border-radius:10px!important;min-width:28px!important;height:28px!important;display:inline-flex!important;align-items:center!important;justify-content:center!important}
+dialog.nativeTopDialog.purchaseInvoiceModal .purchaseSupplierGrid{gap:12px!important}
+dialog.nativeTopDialog.purchaseInvoiceModal .purchaseSupplierGrid label,dialog.nativeTopDialog.purchaseInvoiceModal .purchaseDiscountCard label,dialog.nativeTopDialog.purchaseInvoiceModal .purchasePaymentCard label{font-weight:650!important;color:#3c6550!important}
+dialog.nativeTopDialog.purchaseInvoiceModal :is(input:not([type="checkbox"]),select,textarea){border:1px solid #cbded2!important;border-radius:9px!important;background:#fbfdfb!important;min-height:36px!important;box-shadow:none!important;transition:border-color .16s,box-shadow .16s!important}
+dialog.nativeTopDialog.purchaseInvoiceModal :is(input:not([type="checkbox"]),select,textarea):focus{border-color:#21845b!important;box-shadow:0 0 0 3px #25885b1c!important;outline:none!important}
+dialog.nativeTopDialog.purchaseInvoiceModal .purchaseProfessionalTable{border:1px solid #d6e7db!important;border-radius:12px!important;background:#fff!important}
+dialog.nativeTopDialog.purchaseInvoiceModal .purchaseProfessionalTable table{border-collapse:separate!important;border-spacing:0!important}
+dialog.nativeTopDialog.purchaseInvoiceModal .purchaseProfessionalTable thead th{background:#e9f2eb!important;color:#28543d!important;font-size:10px!important;font-weight:800!important;line-height:1.45!important;padding:11px 4px!important;white-space:normal!important;vertical-align:middle!important;border-bottom:1px solid #c8ddcf!important}
+dialog.nativeTopDialog.purchaseInvoiceModal .purchaseProfessionalTable tbody td{padding:9px 4px!important;border-bottom:1px solid #e5eee7!important;vertical-align:middle!important;font-size:11px!important;background:#fff!important}
+dialog.nativeTopDialog.purchaseInvoiceModal .purchaseProfessionalTable tbody tr:nth-child(even) td{background:#f7faf7!important}
+dialog.nativeTopDialog.purchaseInvoiceModal .purchaseProfessionalTable tbody tr:hover td{background:#eef7f0!important}
+dialog.nativeTopDialog.purchaseInvoiceModal .purchaseProfessionalTable :is(input,select){min-height:33px!important;padding:5px 3px!important;font-size:11px!important;text-align:center!important;border-radius:7px!important}
+dialog.nativeTopDialog.purchaseInvoiceModal .purchaseProfessionalTable .purchaseProductDisplay b{color:#24553b!important;font-size:11px!important}
+dialog.nativeTopDialog.purchaseInvoiceModal .purchaseProfessionalTable .purchaseProductDisplay small{color:#738a7b!important;font-size:9px!important}
+dialog.nativeTopDialog.purchaseInvoiceModal .purchaseProfessionalTable th:nth-child(8){width:8%!important}
+dialog.nativeTopDialog.purchaseInvoiceModal .purchaseProfessionalTable th:nth-child(9){width:7%!important}
+dialog.nativeTopDialog.purchaseInvoiceModal .purchaseProfessionalTable td:nth-child(9) input{border-color:#a9d6b8!important;background:#f0faf3!important;color:#17633e!important;font-weight:700!important}
+dialog.nativeTopDialog.purchaseInvoiceModal .purchaseSummaryTotal{background:linear-gradient(110deg,#e5f3e9,#f8fcf9)!important}
+dialog.nativeTopDialog.purchaseInvoiceModal .purchaseStickyActions button{border-radius:9px!important;font-weight:750!important}
+@media(max-width:800px){dialog.nativeTopDialog.purchaseInvoiceModal .purchaseProfessionalTable{overflow-x:auto!important}}
