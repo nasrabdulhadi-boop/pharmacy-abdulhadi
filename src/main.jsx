@@ -9,6 +9,7 @@ import './REDESIGN_V6_3_REAL.css';
 import './V6_4_1_LAYOUT_POLISH.css';
 import './SMART_TOAST.css';
 import './CLINICAL_PREVIEW.css';
+import {screenExactIngredientOverlap} from './clinicalPreviewEngine.js';
 
 const url=import.meta.env.VITE_SUPABASE_URL; const key=import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 const supabase=url&&key?createClient(url,key):null;
@@ -300,14 +301,8 @@ function ClinicalPreview(){
   }catch(e){setError(e.message||'تعذر البحث');setResults([])}
   finally{setBusy(false)}
  };
- const normalize=x=>String(x||'').toLowerCase().replace(/[أإآ]/g,'ا').replace(/[_-]/g,' ').replace(/\\s+/g,' ').trim();
  const names=selected.map(p=>({id:p.id,name:p.name,ingredient:String(p.active_ingredient||'').trim(),strength:p.strength||'',form:p.dosage_form||''}));
- const incomplete=names.filter(p=>!p.ingredient);
- const pairs=[];
- for(let i=0;i<names.length;i++)for(let j=i+1;j<names.length;j++){
-  if(names[i].ingredient&&normalize(names[i].ingredient)===normalize(names[j].ingredient))
-   pairs.push([names[i],names[j]]);
- }
+ const {overlaps,unresolved}=screenExactIngredientOverlap(selected);
  return <div className="clinicalPreview">
   <PageHead title="المساعد الصيدلاني السريري — نسخة تجريبية" sub="مرحلة تدقيق وربط المنتجات • قراءة فقط • لا تتدخل في البيع أو المحاسبة"/>
   <div className="clinicalPreviewNotice"><ShieldCheck size={20}/><div><b>وضع الاختبار فقط</b><p>هذه الصفحة لا تملك حالياً قاعدة تداخلات دوائية معتمدة. عدم ظهور تحذير لا يعني أمان الجمع بين الأدوية. لا تستخدم النتائج لاتخاذ قرار سريري.</p></div></div>
@@ -316,12 +311,12 @@ function ClinicalPreview(){
    <div className="clinicalPreviewResults">{results.map(p=><button key={p.id} disabled={selected.some(x=>x.id===p.id)} onClick={()=>{setSelected(a=>[...a,p]);setChecked(false)}}><span><b>{p.name}</b><small>{p.active_ingredient||'المادة الفعالة غير مسجلة'} • {p.strength||'التركيز غير مسجل'}</small></span><Plus size={17}/></button>)}</div>
   </section>
   <section className="clinicalPreviewPanel"><h3>قائمة الأدوية للفحص الأولي ({selected.length})</h3>
-   {selected.length===0?<p>أضف دواءين أو أكثر لتجربة كشف تكرار النص المسجل للمادة الفعالة.</p>:<div className="clinicalPreviewChosen">{names.map(p=><div key={p.id}><span><b>{p.name}</b><small>{p.ingredient||'مادة فعالة غير معروفة'} — {p.strength||'تركيز غير مسجل'}</small></span><button onClick={()=>{setSelected(a=>a.filter(x=>x.id!==p.id));setChecked(false)}} aria-label="إزالة">×</button></div>)}</div>}
+   {selected.length===0?<p>أضف دواءين أو أكثر لتجربة كشف تداخل المكونات النصية المسجلة للمادة الفعالة.</p>:<div className="clinicalPreviewChosen">{names.map(p=><div key={p.id}><span><b>{p.name}</b><small>{p.ingredient||'مادة فعالة غير معروفة'} — {p.strength||'تركيز غير مسجل'}</small></span><button onClick={()=>{setSelected(a=>a.filter(x=>x.id!==p.id));setChecked(false)}} aria-label="إزالة">×</button></div>)}</div>}
    <button disabled={selected.length<2} onClick={()=>setChecked(true)}>فحص أولي للتكرار وجودة البيانات</button>
   </section>
   {checked&&<section className="clinicalPreviewPanel" aria-live="polite"><h3>نتيجة الفحص التجريبي</h3>
-   {incomplete.length>0&&<div className="clinicalPreviewWarning"><AlertTriangle size={18}/> تعذرت مطابقة المواد الفعالة لـ {incomplete.length} منتج/منتجات. لا يمكن اعتبار الفحص مكتملاً.</div>}
-   {pairs.length>0?pairs.map(([a,b],i)=><div className="clinicalPreviewWarning" key={i}><AlertTriangle size={18}/><span>تطابق نص المادة الفعالة بين «{a.name}» و«{b.name}»: {a.ingredient}. راجع الجرعة والتركيب وطريقة الإعطاء قبل الحكم على وجود تكرار علاجي.</span></div>):<p>لم يظهر تطابق نصي كامل بين المواد المسجلة. هذا لا يستبعد تكرار المواد بأسماء مرادفة أو وجود تداخلات دوائية.</p>}
+   {unresolved.map(p=><div className="clinicalPreviewWarning" key={p.id}><AlertTriangle size={18}/><span>«{p.name}»: {p.reason}. الفحص غير مكتمل.</span></div>)}
+   {overlaps.length>0?overlaps.map(({a,b,shared},i)=><div className="clinicalPreviewWarning" key={i}><AlertTriangle size={18}/><span>مكوّن مشترك نصياً بين «{a.name}» و«{b.name}»: {shared.join('، ')}. قد يشير إلى تكرار، لكنه يحتاج مراجعة صيدلانية للتأكد من التركيب والجرعة وطريقة الإعطاء.</span></div>):<p>لم يُكتشف مكوّن مشترك مطابق نصياً. هذا لا يستبعد تكرار المواد بأسماء مرادفة أو وجود تداخلات دوائية.</p>}
    <p className="clinicalPreviewDisclaimer">فحص التداخلات: غير متاح حتى اعتماد مصدر سريري مرخص أو قواعد موثقة ومراجعة. لا يتم حفظ بيانات المرضى أو تعديل الفواتير.</p>
   </section>}
  </div>;
