@@ -9,7 +9,7 @@ import './REDESIGN_V6_3_REAL.css';
 import './V6_4_1_LAYOUT_POLISH.css';
 import './SMART_TOAST.css';
 import './CLINICAL_PREVIEW.css';
-import {screenExactIngredientOverlap} from './clinicalPreviewEngine.js';
+import {screenExactIngredientOverlap,auditClinicalCatalog} from './clinicalPreviewEngine.js';
 
 const url=import.meta.env.VITE_SUPABASE_URL; const key=import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 const supabase=url&&key?createClient(url,key):null;
@@ -290,7 +290,18 @@ function ClinicalPreview(){
  const [busy,setBusy]=useState(false);
  const [error,setError]=useState('');
  const [checked,setChecked]=useState(false);
- const [reviewed,setReviewed]=useState({});
+ const [audit,setAudit]=useState(null);
+ const [auditBusy,setAuditBusy]=useState(false);
+ const [auditError,setAuditError]=useState('');
+ const runAudit=async()=>{
+  setAuditBusy(true);setAuditError('');
+  try{
+   const {data,error:e}=await supabase.rpc('admin_get_products_page',{p_limit:500,p_offset:0});
+   if(e)throw e;
+   setAudit(auditClinicalCatalog(data||[]));
+  }catch(e){setAuditError(e.message||'تعذر تدقيق العينة')}
+  finally{setAuditBusy(false)}
+ };
  const search=async()=>{
   const q=query.trim();if(!q)return;
   setBusy(true);setError('');
@@ -306,6 +317,21 @@ function ClinicalPreview(){
  return <div className="clinicalPreview">
   <PageHead title="المساعد الصيدلاني السريري — نسخة تجريبية" sub="مرحلة تدقيق وربط المنتجات • قراءة فقط • لا تتدخل في البيع أو المحاسبة"/>
   <div className="clinicalPreviewNotice"><ShieldCheck size={20}/><div><b>وضع الاختبار فقط</b><p>هذه الصفحة لا تملك حالياً قاعدة تداخلات دوائية معتمدة. عدم ظهور تحذير لا يعني أمان الجمع بين الأدوية. لا تستخدم النتائج لاتخاذ قرار سريري.</p></div></div>
+  <section className="clinicalPreviewPanel"><h3>تدقيق جودة بيانات المواد الفعالة</h3>
+   <p className="clinicalPreviewDisclaimer">فحص استكشافي لأول 500 سجل من قاعدة المنتجات، وليس إحصاءً شاملاً أو اعتماداً سريرياً. لا يُعدّل أي بيانات.</p>
+   <button onClick={runAudit} disabled={auditBusy}>{auditBusy?'جارٍ تدقيق العينة':'تدقيق عينة 500 منتج'}</button>
+   {auditError&&<p className="clinicalPreviewError">{auditError}</p>}
+   {audit&&<><div className="clinicalAuditMetrics">
+    <div><b>{audit.counts.total}</b><small>منتجاً في العينة</small></div>
+    <div><b>{audit.counts.missingIngredient}</b><small>بلا مادة فعالة</small></div>
+    <div><b>{audit.counts.manualReview}</b><small>صيغة تحتاج مراجعة</small></div>
+    <div><b>{audit.counts.missingStrength}</b><small>بلا تركيز</small></div>
+    <div><b>{audit.counts.missingForm}</b><small>بلا شكل دوائي</small></div>
+   </div>
+   <details className="clinicalAuditDetails"><summary>عرض أمثلة بيانات تحتاج مراجعة ({audit.issues.length} كحد أقصى)</summary>
+   {audit.issues.map(p=><div key={p.id}><b>{p.name}</b><small>{p.parsed.status!=='parsed'?p.parsed.reason:'مادة مسجلة'} | {p.strength?'':'تركيز ناقص'} {p.form?'':'شكل ناقص'}</small></div>)}
+   </details></>}
+  </section>
   <section className="clinicalPreviewPanel"><h3>اختيار المنتجات من قاعدة الصيدلية</h3><div className="clinicalPreviewSearch"><input value={query} onChange={e=>setQuery(e.target.value)} onKeyDown={e=>e.key==='Enter'&&search()} placeholder="ابحث باسم الدواء أو الباركود"/><button onClick={search} disabled={busy||!query.trim()}><Search size={16}/>{busy?'جارٍ البحث':'بحث'}</button></div>
    {error&&<p className="clinicalPreviewError">{error}</p>}
    <div className="clinicalPreviewResults">{results.map(p=><button key={p.id} disabled={selected.some(x=>x.id===p.id)} onClick={()=>{setSelected(a=>[...a,p]);setChecked(false)}}><span><b>{p.name}</b><small>{p.active_ingredient||'المادة الفعالة غير مسجلة'} • {p.strength||'التركيز غير مسجل'}</small></span><Plus size={17}/></button>)}</div>
