@@ -241,7 +241,7 @@ function DashboardDayDetails({day,dayErr,onClose}){
  const cashboxTypeLabel={sale_cash:'بيع نقدي',debtor_payment:'تحصيل دين',expense:'مصروف',income:'دخل',purchase_payment:'دفع شراء',withdrawal:'سحب',deposit:'إيداع',adjustment:'تسوية',customer_return_refund:'استرداد مرتجع'};
  const sections=[['sales','المبيعات',day.sales||[]],['purchases','المشتريات',day.purchases||[]],['cashbox','الصندوق',day.cashbox||[]],['returns','المرتجعات',day.returns||[]],['debtor_payments','تحصيل الديون',day.debtor_payments||[]],['supplier_payments','دفعات الموردين',day.supplier_payments||[]],['orders','الطلبات',day.orders||[]],['prescriptions','الوصفات',day.prescriptions||[]]];
  const active=sections.find(x=>x[0]===section)||sections[0];
- return <div className="dashboardDayOverlay" role="dialog" aria-modal="true" aria-label={`تفاصيل يوم ${day.dayKey}`}>
+ return createPortal(<div className="dashboardDayOverlay dashboardDayCentered" role="dialog" aria-modal="true" aria-label={`تفاصيل يوم ${day.dayKey}`}>
   <button className="dashboardDayBackdrop" aria-label="إغلاق تفاصيل اليوم" onClick={onClose}/>
   <aside className="dashboardDayPanel">
    <header className="dashboardDayPanelHead"><div><span>تفاصيل اليوم</span><h2>{day.dayKey}</h2><small>البيانات مرتبطة مباشرة بالمبيعات والمحاسبة والصندوق والمشتريات والمرتجعات</small></div><button className="dashboardDayClose" onClick={onClose}>×</button></header>
@@ -262,7 +262,7 @@ function DashboardDayDetails({day,dayErr,onClose}){
     {section==='prescriptions'&&<DayRows rows={active[2]} empty="لا توجد وصفات في هذا اليوم." render={x=><><div><b>وصفة طبية</b><small>{x.customer_name||'بدون اسم'} • {x.customer_phone||'—'} • {x.status||'جديدة'} • {x.file_name||'ملف'}</small></div><strong>—</strong><span>{localDateTime(x.created_at)}</span></>}/>}
    </div>
   </aside>
- </div>
+ </div>,document.body)
 }
 function DayRows({rows,empty,render}){return <section className="dashboardDayList">{rows.length?rows.map(x=><div className="dashboardActivityRow" key={x.id}>{render(x)}</div>):<div className="emptyCart">{empty}</div>}</section>}
 
