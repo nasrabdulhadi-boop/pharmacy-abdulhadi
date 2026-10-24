@@ -1521,3 +1521,41 @@ dialog.purchaseNewProductModal .modalBox{z-index:auto;box-shadow:0 35px 120px rg
  .purchaseInvoiceModal .purchaseProfessionalTable{max-width:100%!important;overflow-x:auto!important}
  .purchaseInvoiceModal .purchaseProfessionalTable table{min-width:930px!important}
 }
+
+
+/* Purchase Invoice Pro — full-width item grid, financial summary below items, sticky save strip */
+.purchaseInvoiceModal .modalBox{width:min(1540px,calc(100vw - 30px))!important;max-width:calc(100vw - 30px)!important;max-height:94dvh!important;overflow-y:auto!important;overflow-x:hidden!important;scrollbar-width:thin}
+.purchaseInvoiceModal .purchaseInvoiceLayout{display:flex!important;flex-direction:column!important;align-items:stretch!important;direction:rtl!important;width:100%!important;max-width:100%!important;box-sizing:border-box!important;padding:12px 10px 0!important;gap:16px!important}
+.purchaseInvoiceModal .purchaseInvoiceMain{display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:14px!important;width:100%!important;min-width:0!important}
+.purchaseInvoiceModal .purchaseInvoiceSidebar{display:grid!important;grid-template-columns:repeat(12,minmax(0,1fr))!important;align-items:start!important;gap:12px!important;width:100%!important;min-width:0!important;direction:rtl!important}
+.purchaseInvoiceModal .purchaseSummaryCard{grid-column:span 12!important;min-width:0!important;position:static!important}
+.purchaseInvoiceModal .purchaseDiscountCard{grid-column:span 6!important;min-width:0!important}
+.purchaseInvoiceModal .purchasePaymentCard{grid-column:span 6!important;min-width:0!important}
+.purchaseInvoiceModal .purchaseSupplierLinkCard{grid-column:span 12!important;min-width:0!important}
+.purchaseInvoiceModal .purchaseSummaryRows{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:10px!important}
+.purchaseInvoiceModal .purchaseSummaryRows>div{min-width:0!important;display:flex!important;flex-direction:column!important;align-items:flex-start!important;gap:5px!important;border:1px solid #bcd9c9!important;border-radius:11px!important;padding:10px 12px!important;background:#ffffff7d!important}
+.purchaseInvoiceModal .purchaseSummaryRows>div :is(span,b){overflow-wrap:anywhere!important}
+.purchaseInvoiceModal .purchaseSummaryTotal{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:12px!important;flex-wrap:wrap!important}
+.purchaseInvoiceModal .purchaseSummaryTotal strong{font-variant-numeric:tabular-nums!important}
+.purchaseInvoiceModal .purchaseProfessionalTable{width:100%!important;max-width:100%!important;min-width:0!important;overflow-x:auto!important}
+.purchaseInvoiceModal .purchaseInvoiceStickyFooter{position:sticky!important;bottom:-1px!important;z-index:25!important;display:flex!important;justify-content:space-between!important;align-items:center!important;gap:16px!important;width:100%!important;box-sizing:border-box!important;padding:12px 16px!important;margin:0!important;border:1px solid #aacdb9!important;border-radius:14px 14px 0 0!important;background:#f1faf3f5!important;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 -9px 26px #173c2920!important;direction:rtl!important}
+.purchaseInvoiceModal .purchaseStickyAmounts{display:flex!important;flex-wrap:wrap!important;align-items:center!important;gap:10px 22px!important;min-width:0!important}
+.purchaseInvoiceModal .purchaseStickyAmounts>span{display:flex!important;align-items:center!important;gap:8px!important;font-size:12px!important;color:#416958!important}
+.purchaseInvoiceModal .purchaseStickyAmounts strong{font-size:19px!important;color:#096946!important;font-weight:900!important;font-variant-numeric:tabular-nums!important}
+.purchaseInvoiceModal .purchaseStickyAmounts b{font-size:13px!important;color:#164e37!important;font-variant-numeric:tabular-nums!important}
+.purchaseInvoiceModal .purchaseStickyActions{display:flex!important;align-items:center!important;gap:9px!important;flex-shrink:0!important}
+.purchaseInvoiceModal .purchaseStickyActions button{min-height:39px!important;padding:8px 18px!important;white-space:nowrap!important}
+.adminShell.adminDark .purchaseInvoiceModal .purchaseInvoiceStickyFooter,body.abdulhadiNight .purchaseInvoiceModal .purchaseInvoiceStickyFooter{background:#162b3bf5!important;border-color:#3a596c!important;box-shadow:0 -9px 25px #0005!important}
+.adminShell.adminDark .purchaseInvoiceModal .purchaseStickyAmounts>span,body.abdulhadiNight .purchaseInvoiceModal .purchaseStickyAmounts>span{color:#bfd0da!important}
+.adminShell.adminDark .purchaseInvoiceModal .purchaseStickyAmounts strong,body.abdulhadiNight .purchaseInvoiceModal .purchaseStickyAmounts strong{color:#89e8d5!important}
+.adminShell.adminDark .purchaseInvoiceModal .purchaseStickyAmounts b,body.abdulhadiNight .purchaseInvoiceModal .purchaseStickyAmounts b{color:#e8f7fc!important}
+.adminShell.adminDark .purchaseInvoiceModal .purchaseSummaryRows>div,body.abdulhadiNight .purchaseInvoiceModal .purchaseSummaryRows>div{background:#20394b!important;border-color:#3a5b6d!important}
+@media(max-width:900px){
+ .purchaseInvoiceModal .purchaseInvoiceSidebar{grid-template-columns:minmax(0,1fr)!important}
+ .purchaseInvoiceModal .purchaseSummaryCard,.purchaseInvoiceModal .purchaseDiscountCard,.purchaseInvoiceModal .purchasePaymentCard,.purchaseInvoiceModal .purchaseSupplierLinkCard{grid-column:1!important}
+ .purchaseInvoiceModal .purchaseSummaryRows{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ .purchaseInvoiceModal .purchaseInvoiceStickyFooter{flex-wrap:wrap!important;padding:10px!important;gap:9px!important}
+ .purchaseInvoiceModal .purchaseStickyActions{width:100%!important}
+ .purchaseInvoiceModal .purchaseStickyActions button{flex:1!important}
+}
+@media(max-width:550px){.purchaseInvoiceModal .purchaseSummaryRows{grid-template-columns:minmax(0,1fr)!important}.purchaseInvoiceModal .purchaseStickyAmounts{gap:5px 12px!important}.purchaseInvoiceModal .purchaseStickyAmounts strong{font-size:15px!important}}
