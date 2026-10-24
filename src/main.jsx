@@ -270,7 +270,7 @@ function Dashboard({go}){
  const [d,load]=useDashboardData();
  const [visitorName,setVisitorName]=useState('نصر');
  const [clockNow,setClockNow]=useState(()=>new Date());
- useEffect(()=>{let active=true;supabase.auth.getUser().then(({data})=>{if(!active)return;const user=data?.user;const raw=user?.user_metadata?.full_name||user?.user_metadata?.name||user?.user_metadata?.display_name||'';if(String(raw).trim())setVisitorName(String(raw).trim().split(/\\s+/)[0]);}).catch(()=>{});const timer=setInterval(()=>setClockNow(new Date()),60000);return()=>{active=false;clearInterval(timer)}},[]);
+ useEffect(()=>{let active=true;supabase.auth.getUser().then(({data})=>{if(!active)return;const user=data?.user;const raw=user?.user_metadata?.full_name||user?.user_metadata?.name||user?.user_metadata?.display_name||'';if(String(raw).trim())setVisitorName(String(raw).trim().split(/\s+/)[0]);}).catch(()=>{});const timer=setInterval(()=>setClockNow(new Date()),60000);return()=>{active=false;clearInterval(timer)}},[]);
 
  const [day,setDay]=useState(null),[dayBusy,setDayBusy]=useState(false),[dayErr,setDayErr]=useState('');
  const max=Math.max(1,...d.chart.map(x=>Number(x.value)||0));
