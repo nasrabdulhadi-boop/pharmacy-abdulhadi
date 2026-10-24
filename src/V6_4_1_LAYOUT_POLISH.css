@@ -74,3 +74,67 @@
  .adminShell .mobileThemeToggle{display:inline-flex!important;align-items:center;justify-content:center;background:#1c6b59;color:white;border-radius:9px;width:36px;height:36px;font-size:21px}
  .adminShell.adminSideCollapsed aside.open{transform:none!important}
 }
+
+
+/* Night mode V2 — cohesive low-glare palette across admin modules, tables, forms and portals */
+.adminShell.adminDark{
+ --night-bg:#0b1420;--night-panel:#152333;--night-raised:#1b2e40;--night-hover:#23394b;
+ --night-border:#334b5c;--night-text:#e6edf5;--night-secondary:#b3c3d2;
+ --night-accent:#61dcc6;--night-positive:#6de1ac;--night-negative:#ff929e;--night-warning:#f5c879;
+ --ui-bg:#0b1420;--ui-surface:#152333;--ui-text:#e6edf5;--ui-line:#334b5c;
+ --ab-ink:#e6edf5;--ab-line:#334b5c;
+ --bg:#0b1420;--surface:#152333;--text:#e6edf5;--muted:#b3c3d2;
+ color-scheme:dark;
+}
+.adminShell.adminDark .adminMain{background:var(--night-bg)!important}
+.adminShell.adminDark .adminTopbar{background:#101d2bf2!important;border-color:var(--night-border)!important}
+.adminShell.adminDark .adminMain :is(section,article,div)[style*="background: rgb(255, 255, 255)"],
+.adminShell.adminDark .adminMain :is(section,article,div)[style*="background-color: rgb(255, 255, 255)"]{background:var(--night-panel)!important}
+.adminShell.adminDark .adminMain :is(.page,.pageContent,.content,.section,.tableWrapper,.tableWrap,.tableContainer,.table-responsive,.tableScroll,.tableCard,.listPanel,.listCard,.formPanel,.formCard,.formSection,.filters,.filterBar,.toolbar,.summary,.summaryCard,.stats,.statsCard,.dashboardCard,.purchaseCard,.purchasePanel,.inventoryCard,.posPanel,.posCard,.cashboxCard,.cashboxPanel,.debtsPanel,.reportPanel,.reportSection,.modal,.dialog,.drawer,.dropdown,.dropdown-menu,.popover,.searchResults,.searchDropdown,.searchModal,.suggestions,.suggestionList,.invoice,.invoiceCard,.invoicePanel,.cart,.cartPanel,.productsTable,.purchaseTable,.stockTable,.dataTable,.table-responsive,.v6Kpi,.v6KpiTop,.v6MiniStat,.v6Notice,.v6Action,.v6SideList,.dashboardSaleDetail,.dashboardSaleHead,.dashboardSaleItems,.dashboardActivityRow,.dashboardDayList){
+ background-color:var(--night-panel)!important;border-color:var(--night-border)!important;color:var(--night-text)!important;
+}
+.adminShell.adminDark .adminMain :is(.v6Kpi,.v6Panel,.panel,.card,.box,.modal-content,.modalContent,.pageCard,.reportCard,.statCard,.dataCard,.tableCard,.tableWrap,.formCard,.invoiceCard,.posCard,.inventoryCard,.cashboxCard,.dashboardCard){box-shadow:0 7px 24px #0003!important}
+.adminShell.adminDark .adminMain :is(table,.table,.dataTable){background:var(--night-panel)!important;color:var(--night-text)!important;border-color:var(--night-border)!important}
+.adminShell.adminDark .adminMain :is(thead,thead tr,thead th,.tableHeader){background:#24394b!important;color:#eaf6ff!important}
+.adminShell.adminDark .adminMain :is(tbody,tfoot){background:var(--night-panel)!important;color:var(--night-text)!important}
+.adminShell.adminDark .adminMain tbody tr{background:#152638!important;color:var(--night-text)!important;border-color:#324a5c!important}
+.adminShell.adminDark .adminMain tbody tr:nth-child(even){background:#1a2d3e!important}
+.adminShell.adminDark .adminMain tbody tr:hover{background:#274358!important}
+.adminShell.adminDark .adminMain :is(td,th){color:var(--night-text)!important;border-color:#344c5d!important}
+.adminShell.adminDark .adminMain :is(td,th) :is(strong,b){color:#f3faff!important}
+.adminShell.adminDark .adminMain :is(.total,.totalAmount,.price,.amount,.currency,.money,.number,.numeric,.profit,.salePrice,.purchasePrice,.totalValue,.statValue,.kpiValue,.metricValue){color:#91f2dd!important;font-weight:800!important;font-variant-numeric:tabular-nums}
+.adminShell.adminDark .adminMain :is(.danger,.dangerText,.error,.negative,.loss,.overdue,.expired){color:var(--night-negative)!important}
+.adminShell.adminDark .adminMain :is(.success,.positive,.paid,.available,.inStock){color:var(--night-positive)!important}
+.adminShell.adminDark .adminMain :is(.warning,.lowStock,.expiring,.pending){color:var(--night-warning)!important}
+.adminShell.adminDark .adminMain :is(.muted,.hint,.helper,.helperText,.subtitle,.description,.subtext,.secondaryText,.caption){color:var(--night-secondary)!important}
+.adminShell.adminDark .adminMain :is(p,span,div,small,label){border-color:var(--night-border)}
+.adminShell.adminDark .adminMain :is(input,select,textarea,[contenteditable="true"]){background:#0f2030!important;color:#f2f7fb!important;border:1px solid #416071!important;caret-color:#7af4db}
+.adminShell.adminDark .adminMain :is(input,select,textarea):focus{outline:2px solid #48d4bd7a!important;outline-offset:1px!important;border-color:#67ddc7!important}
+.adminShell.adminDark .adminMain :is(input,textarea)::placeholder{color:#a5b9c6!important}
+.adminShell.adminDark .adminMain :is(input,select,textarea):disabled{background:#1a2a37!important;color:#8298a8!important}
+.adminShell.adminDark .adminMain :is(button,.btn,[role="button"]){transition:background-color .15s,color .15s,border-color .15s}
+.adminShell.adminDark .adminMain :is(button,.btn,[role="button"]):focus-visible{outline:2px solid #71ebd2!important;outline-offset:2px}
+.adminShell.adminDark .adminMain :is(.secondary,.secondaryBtn,.secondaryAction,.outline,.outlineBtn,.ghost,.ghostBtn,.cancelBtn,.filterBtn,.tabButton,.pagination button){background:#223a4b!important;border-color:#466174!important;color:#e0f5f5!important}
+.adminShell.adminDark .adminMain :is(.secondary,.secondaryBtn,.secondaryAction,.outline,.outlineBtn,.ghost,.ghostBtn,.cancelBtn,.filterBtn,.tabButton,.pagination button):hover{background:#2b4c60!important}
+.adminShell.adminDark .adminMain :is(.primary,.primaryBtn,.saveBtn,.confirmBtn,.addBtn){background:#127e75!important;color:#f1ffff!important}
+.adminShell.adminDark .adminMain :is(.badge,.chip,.tag){border-color:#4d6a7b}
+.adminShell.adminDark .adminMain :is(svg){color:inherit}
+.adminShell.adminDark .adminMain :is(.v6KpiIcon,.v6ActionIcon,.intelKpiIcon,.intelInsightIcon){color:#7be9d4!important}
+.adminShell.adminDark .adminMain :is(.divider,hr){border-color:#385366!important}
+.adminShell.adminDark .adminMain :is(.v6BarTrack,.chartTrack,.progressTrack){background:#2a4051!important}
+.adminShell.adminDark .adminMain :is(.v6BarValue,.v6BarLabel,.v6BarDate){color:#d5e8f0!important}
+.adminShell.adminDark .adminMain :is(.v6BarFill){background:linear-gradient(180deg,#6be7d1,#158f87)!important}
+.adminShell.adminDark .adminMain :is(.intelV2){background-color:transparent}
+.adminShell.adminDark .adminMain :is(.intelNeo) :is(.intelKpi,.intelPanel,.intelSearchPanel,.intelHeroAdvisor){background-color:initial}
+.adminShell.adminDark .adminMain :is(.intelNeo) :is(.intelKpi strong,.intelPanelTitle h2,.intelHeroContent h2){color:#f0ffff!important}
+/* Portals mount outside adminShell: theme is mirrored on body while admin is mounted */
+body.abdulhadiNight .dashboardDayOverlay .dashboardDayPanel,
+body.abdulhadiNight :is(.modalOverlay,.modal-overlay,.dialogOverlay,.drawerOverlay) :is(.modal,.modalContent,.modal-content,.dialog,.drawer){background:#152637!important;color:#e8f5f8!important;border-color:#3b596c!important}
+body.abdulhadiNight .dashboardDayOverlay :is(.dashboardDayPanelHead,.dashboardDaySummary,.dashboardDaySummary>div,.dashboardDayTabs,.dashboardDayContent,.dashboardSaleDetail,.dashboardSaleHead,.dashboardSaleItems,.dashboardActivityRow){background:#172c3c!important;color:#e8f5f8!important;border-color:#38596c!important}
+body.abdulhadiNight .dashboardDayOverlay :is(h2,strong,b){color:#f4ffff!important}
+body.abdulhadiNight .dashboardDayOverlay :is(span,small){color:#c1d4df!important}
+body.abdulhadiNight .dashboardDayOverlay :is(button){color:#dff8f4!important}
+body.abdulhadiNight .dashboardDayOverlay .dashboardDayTabs button.active{background:#205c61!important;color:#a4ffe8!important}
+body.abdulhadiNight .dashboardDayOverlay .dashboardDayClose{background:#284657!important;color:#fff!important}
+body.abdulhadiNight :is(.modalOverlay,.modal-overlay,.dialogOverlay,.drawerOverlay) :is(input,textarea,select){background:#122b3b!important;color:#f4ffff!important;border-color:#476577!important}
+@media(prefers-reduced-motion:reduce){.adminShell.adminDark .adminMain :is(button,.btn,[role="button"]){transition:none}}
