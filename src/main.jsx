@@ -8,6 +8,7 @@ import './REDESIGN_V6_3.css';
 import './REDESIGN_V6_3_REAL.css';
 import './V6_4_1_LAYOUT_POLISH.css';
 import './SMART_TOAST.css';
+import './CLINICAL_PREVIEW.css';
 
 const url=import.meta.env.VITE_SUPABASE_URL; const key=import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 const supabase=url&&key?createClient(url,key):null;
