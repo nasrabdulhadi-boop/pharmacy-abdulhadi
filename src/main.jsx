@@ -212,7 +212,7 @@ function Admin({onLogout}){
  const [tab,setTab]=useState('dashboard'),[mobile,setMobile]=useState(false),[focus,setFocus]=useState(null),[quickSearch,setQuickSearch]=useState('');
  const [darkMode,setDarkMode]=useState(()=>{try{return localStorage.getItem('abdulhadi-theme')==='dark'}catch{return false}});
  const [sideCollapsed,setSideCollapsed]=useState(()=>{try{return localStorage.getItem('abdulhadi-sidebar')==='collapsed'}catch{return false}});
- useEffect(()=>{try{localStorage.setItem('abdulhadi-theme',darkMode?'dark':'light')}catch{}},[darkMode]);
+ useEffect(()=>{try{localStorage.setItem('abdulhadi-theme',darkMode?'dark':'light')}catch{}document.body.classList.toggle('abdulhadiNight',darkMode);return()=>document.body.classList.remove('abdulhadiNight')},[darkMode]);
  useEffect(()=>{try{localStorage.setItem('abdulhadi-sidebar',sideCollapsed?'collapsed':'expanded')}catch{}},[sideCollapsed]);
  const go=(next,target=null)=>{setFocus(target);setTab(next);setMobile(false);setQuickSearch('')};
  const navGroups=[
