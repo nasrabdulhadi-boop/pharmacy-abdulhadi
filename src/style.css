@@ -1559,3 +1559,40 @@ dialog.purchaseNewProductModal .modalBox{z-index:auto;box-shadow:0 35px 120px rg
  .purchaseInvoiceModal .purchaseStickyActions button{flex:1!important}
 }
 @media(max-width:550px){.purchaseInvoiceModal .purchaseSummaryRows{grid-template-columns:minmax(0,1fr)!important}.purchaseInvoiceModal .purchaseStickyAmounts{gap:5px 12px!important}.purchaseInvoiceModal .purchaseStickyAmounts strong{font-size:15px!important}}
+
+
+/* Purchase Invoice Pro stability pass: one scrolling canvas, no nested clipped panels */
+.purchaseInvoiceModal{box-sizing:border-box!important;padding:8px!important;align-items:center!important;justify-content:center!important}
+.purchaseInvoiceModal .modalBox{width:min(1480px,calc(100vw - 20px))!important;max-width:calc(100vw - 20px)!important;height:min(94dvh,1050px)!important;max-height:94dvh!important;display:flex!important;flex-direction:column!important;overflow-y:auto!important;overflow-x:hidden!important;padding:0!important;background:#f5f9f7!important;scroll-padding-bottom:90px!important}
+.purchaseInvoiceModal .purchaseInvoiceHeader{flex:0 0 auto!important;padding:16px 22px!important;position:relative!important;z-index:1!important}
+.purchaseInvoiceModal .purchaseInvoiceLayout{flex:1 0 auto!important;max-height:none!important;height:auto!important;min-height:0!important;overflow:visible!important;display:flex!important;flex-direction:column!important;gap:14px!important;padding:14px 18px 0!important;background:transparent!important}
+.purchaseInvoiceModal .purchaseInvoiceMain{overflow:visible!important;max-height:none!important;height:auto!important;display:flex!important;flex-direction:column!important;gap:12px!important;padding:0!important;min-width:0!important}
+.purchaseInvoiceModal .purchaseInvoiceMain>.purchaseSection{width:100%!important;box-sizing:border-box!important;margin:0!important;padding:16px!important;border-radius:16px!important;background:#fff!important}
+.purchaseInvoiceModal .purchaseInvoiceSidebar{overflow:visible!important;max-height:none!important;height:auto!important;display:grid!important;grid-template-columns:repeat(12,minmax(0,1fr))!important;align-items:stretch!important;gap:12px!important;padding:0!important;background:transparent!important;border:0!important;box-sizing:border-box!important}
+.purchaseInvoiceModal .purchaseInvoiceSidebar>.purchaseSummaryCard{grid-column:1/-1!important;display:block!important;min-width:0!important;margin:0!important;padding:18px!important;background:#fff!important;box-shadow:0 4px 16px #183e2910!important}
+.purchaseInvoiceModal .purchaseInvoiceSidebar>.purchaseDiscountCard{grid-column:1/span 6!important;min-width:0!important;margin:0!important;padding:16px!important;box-sizing:border-box!important;background:#fff!important}
+.purchaseInvoiceModal .purchaseInvoiceSidebar>.purchasePaymentCard{grid-column:7/span 6!important;min-width:0!important;margin:0!important;padding:16px!important;box-sizing:border-box!important;background:#fff!important}
+.purchaseInvoiceModal .purchaseInvoiceSidebar>.purchaseSupplierLinkCard{grid-column:1/-1!important;margin:0!important;padding:14px 18px!important;background:#fff!important}
+.purchaseInvoiceModal .purchaseSummaryHead{font-size:15px!important;color:#244e3e!important}
+.purchaseInvoiceModal .purchaseSummaryTotal{background:linear-gradient(115deg,#e8f6ed,#f7fbf9)!important;border:1px solid #cde5d5!important;border-radius:12px!important;margin:12px 0!important;padding:14px 18px!important}
+.purchaseInvoiceModal .purchaseSummaryTotal small{font-size:12px!important;color:#416f5c!important}
+.purchaseInvoiceModal .purchaseSummaryTotal strong{font-size:27px!important;color:#10563d!important}
+.purchaseInvoiceModal .purchaseSummaryRows{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:9px!important;padding:0!important}
+.purchaseInvoiceModal .purchaseSummaryRows>div{display:flex!important;flex-direction:column!important;align-items:flex-start!important;justify-content:center!important;gap:6px!important;min-height:64px!important;box-sizing:border-box!important;padding:10px 12px!important;border:1px solid #d8e8de!important;background:#f8fbf9!important;border-radius:10px!important}
+.purchaseInvoiceModal .purchaseSummaryRows>div span{font-size:11px!important;font-weight:700!important;color:#527364!important}
+.purchaseInvoiceModal .purchaseSummaryRows>div b{font-size:16px!important;color:#184b37!important;line-height:1.4!important}
+.purchaseInvoiceModal .purchaseSummaryRows>div.due{background:#fff6ef!important;border-color:#f3d8c5!important}
+.purchaseInvoiceModal .purchaseSummaryRows>div.due b{color:#9c4b29!important}
+.purchaseInvoiceModal .purchasePaymentStatus{margin-top:12px!important}
+.purchaseInvoiceModal .purchaseProfessionalTable{max-height:none!important;height:auto!important;overflow-x:auto!important;overflow-y:visible!important}
+.purchaseInvoiceModal .purchaseProfessionalTable table{width:100%!important;min-width:0!important}
+.purchaseInvoiceModal .purchaseInvoiceStickyFooter{position:sticky!important;bottom:0!important;flex-shrink:0!important;margin:0 -18px!important;width:calc(100% + 36px)!important;border-radius:12px 12px 0 0!important}
+.purchaseInvoiceModal .purchaseStickyActions .purchaseCancelButton{margin-top:0!important}
+@media(max-width:900px){
+ .purchaseInvoiceModal .purchaseInvoiceSidebar{grid-template-columns:1fr!important}
+ .purchaseInvoiceModal .purchaseInvoiceSidebar>.purchaseSummaryCard,.purchaseInvoiceModal .purchaseInvoiceSidebar>.purchaseDiscountCard,.purchaseInvoiceModal .purchaseInvoiceSidebar>.purchasePaymentCard,.purchaseInvoiceModal .purchaseInvoiceSidebar>.purchaseSupplierLinkCard{grid-column:1!important}
+ .purchaseInvoiceModal .purchaseSummaryRows{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ .purchaseInvoiceModal .purchaseInvoiceLayout{padding:10px 9px 0!important}
+ .purchaseInvoiceModal .purchaseInvoiceStickyFooter{margin:0 -9px!important;width:calc(100% + 18px)!important}
+}
+@media(max-width:540px){.purchaseInvoiceModal .purchaseSummaryRows{grid-template-columns:1fr!important}.purchaseInvoiceModal .purchaseInvoiceMain>.purchaseSection{padding:10px!important}}
