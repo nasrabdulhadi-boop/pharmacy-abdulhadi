@@ -138,3 +138,57 @@ body.abdulhadiNight .dashboardDayOverlay .dashboardDayTabs button.active{backgro
 body.abdulhadiNight .dashboardDayOverlay .dashboardDayClose{background:#284657!important;color:#fff!important}
 body.abdulhadiNight :is(.modalOverlay,.modal-overlay,.dialogOverlay,.drawerOverlay) :is(input,textarea,select){background:#122b3b!important;color:#f4ffff!important;border-color:#476577!important}
 @media(prefers-reduced-motion:reduce){.adminShell.adminDark .adminMain :is(button,.btn,[role="button"]){transition:none}}
+
+
+/* Dark Mode V3 — screenshot-based fixes: POS, products, inventory, purchases, reports */
+.adminShell.adminDark{--dm0:#0b1420;--dm1:#142332;--dm2:#1c3041;--dm3:#233b4c;--dmBorder:#395469;--dmText:#edf3f9;--dmSub:#bacbd8;--dmNumber:#d8f4ff;--dmTeal:#7be3d0;--dmGreen:#8be5b2;--dmAmber:#f3d08b;--dmRed:#ff9ba6}
+.adminShell.adminDark .adminMain{color:var(--dmText)!important}
+.adminShell.adminDark .adminMain :is(.card,.tableWrap,.modalBox,.kpi,.toolbar,.result,.mini,.notice,.emptyCart,.detailGrid,.formGrid,.posShortcutSlot,.quickManageResults,.quickManageRow,.productCardModal,.productCardHead,.posHint,.posBottomActions,.purchaseSection,.purchaseSectionHead,.purchaseSidebar,.purchaseSidebarTitle,.supplierSummary,.reportPanel,.reportChartCard,.reportChartHead,.reportTabPanel,.reportItem,.reportFilter,.reportGrid,.reportKpis,.reportKpisPolished,.reportGridPolished,.auditHeroStat,.auditField,.auditEmptyState,.serviceCard,.serviceIcon,.activeFilterHint,.search,.searchResults,.scanBtn,.sectionTitle,.cardHead,.modal,.purchaseSectionBadge,.iconBtn,.qtyInput,.filterRow,.formRow,.searchBar,.dataGrid,.stockGrid,.stockCard,.statsRow,.dateRange,.filtersRow,.invoiceSummary,.invoiceItems,.invoiceTotals,.invoiceHeader,.purchaseItems,.saleItems,.productsList,.purchaseForm,.reportSummary,.reportHeader,.stockSummary,.stockTable,.cashboxSummary,.cashboxTable,.profitSummary,.inventorySummary,.inventoryFilters,.inventoryTable,.smartInventoryPanel){
+ background-color:var(--dm1)!important;border-color:var(--dmBorder)!important;color:var(--dmText)!important;
+}
+.adminShell.adminDark .adminMain :is(.card,.tableWrap,.modalBox,.purchaseSection,.reportChartCard,.reportPanel,.posShortcutSlot,.productCardModal,.reportTabPanel,.supplierSummary,.auditHeroStat,.reportKpis){box-shadow:0 8px 26px #0004!important}
+.adminShell.adminDark .adminMain :is(.pos,.posDashboard,.posMain,.posInvoice,.posSearch,.posResults,.posShortcuts,.posShortcutPanel,.posLeftPanel,.posRightPanel,.posContent,.posCart,.posCartPanel,.posTable,.posForm,.posLayout,.posPanel,.posCard,.posShell,.posWorkspace,.posDashboardContent,.posSearchArea,.posInvoiceArea,.posActionBar,.posTopBar,.posMainPanel,.posSearchPanel,.posInvoicePanel,.posInvoiceTable,.posSummary,.posSidebar,.posQuickLists,.posShortcutList,.posShortcutCard,.posShortcutTile,.posInvoiceEmpty,.posEmpty,.posQuickItem,.posTotals,.posFooter,.posHeader,.posProductResults,.posSearchResults,.posQuickManage,.posQuickManageModal,.posQuickManageList){
+ border-color:var(--dmBorder)!important;
+}
+.adminShell.adminDark .adminMain :is(.posDashboard,.posInvoice,.posSearch,.posResults,.posShortcutPanel,.posLeftPanel,.posRightPanel,.posCartPanel,.posTable,.posForm,.posShell,.posWorkspace,.posSearchArea,.posInvoiceArea,.posMainPanel,.posSearchPanel,.posInvoicePanel,.posInvoiceTable,.posSummary,.posSidebar,.posQuickLists,.posShortcutList,.posShortcutCard,.posShortcutTile,.posInvoiceEmpty,.posEmpty,.posQuickItem,.posTotals,.posFooter,.posHeader,.posProductResults,.posSearchResults,.posQuickManage,.posQuickManageModal,.posQuickManageList){background-color:var(--dm1)!important;color:var(--dmText)!important}
+.adminShell.adminDark .adminMain :is(.posShortcutTile,.posQuickItem,.result,.quickManageRow,.purchaseSection,.reportItem,.reportFilter):hover{background-color:var(--dm3)!important}
+.adminShell.adminDark .adminMain :is(.cardHead,.sectionTitle,.purchaseSectionHead,.reportChartHead,.reportHeader,.invoiceHeader,.posHeader) :is(h1,h2,h3,h4,b,strong,span){color:var(--dmText)!important}
+.adminShell.adminDark .adminMain :is(.card,.tableWrap,.modalBox,.purchaseSection,.reportPanel,.reportChartCard,.reportTabPanel,.posPanel,.posCard,.posInvoice,.posShortcutPanel,.inventoryCard,.cashboxCard,.supplierSummary) :is(p,small,label){color:var(--dmSub)}
+.adminShell.adminDark .adminMain :is(.kpi,.reportKpis,.reportKpisPolished,.auditHeroStat,.statCard,.statValue,.metric,.summaryValue,.summaryCard) :is(strong,b){color:var(--dmNumber)!important}
+.adminShell.adminDark .adminMain :is(.kpi,.reportKpis,.reportKpisPolished,.auditHeroStat,.statCard,.statValue,.metric,.summaryValue,.summaryCard) :is(span,small){color:var(--dmSub)}
+.adminShell.adminDark .adminMain :is(.kpi,.reportKpis,.reportKpisPolished,.auditHeroStat,.statCard,.statValue,.metric,.summaryValue,.summaryCard) svg{color:var(--dmTeal)!important}
+.adminShell.adminDark .adminMain :is(.tableWrap,.tableWrapper,.tableContainer,.table-responsive,.productsTable,.purchaseTable,.stockTable,.dataTable){background:var(--dm1)!important}
+.adminShell.adminDark .adminMain :is(table,.table,.dataTable) :is(thead,tr,th,td){border-color:var(--dmBorder)!important}
+.adminShell.adminDark .adminMain :is(table,.table,.dataTable) thead :is(tr,th){background:#253c4e!important;color:#eaf6ff!important}
+.adminShell.adminDark .adminMain :is(table,.table,.dataTable) tbody tr{background:#152636!important}
+.adminShell.adminDark .adminMain :is(table,.table,.dataTable) tbody tr:nth-child(2n){background:#1b2e3f!important}
+.adminShell.adminDark .adminMain :is(table,.table,.dataTable) tbody tr:hover{background:#2b4759!important}
+.adminShell.adminDark .adminMain :is(table,.table,.dataTable) td{background:transparent!important;color:var(--dmText)!important}
+.adminShell.adminDark .adminMain :is(table,.table,.dataTable) :is(td,th) :is(span,small){color:var(--dmSub)}
+.adminShell.adminDark .adminMain :is(table,.table,.dataTable) :is(td,th) :is(b,strong){color:var(--dmNumber)!important;font-variant-numeric:tabular-nums}
+.adminShell.adminDark .adminMain :is(.price,.money,.amount,.total,.totalAmount,.priceValue,.currency,.profit,.profitValue,.netProfit,.salePrice,.purchasePrice,.invoiceTotal,.invoiceAmount,.totalPrice,.totalValue,.statValue,.metricValue,.kpiValue,.number,.numeric){color:var(--dmNumber)!important;font-weight:800!important;font-variant-numeric:tabular-nums}
+.adminShell.adminDark .adminMain :is(.positive,.profitPositive,.good,.success,.paid,.available){color:var(--dmGreen)!important}
+.adminShell.adminDark .adminMain :is(.negative,.loss,.dangerText,.error,.expired,.overdue){color:var(--dmRed)!important}
+.adminShell.adminDark .adminMain :is(.warning,.lowStock,.expiring,.pending){color:var(--dmAmber)!important}
+.adminShell.adminDark .adminMain :is(input,select,textarea){background:#102332!important;color:#f3f8ff!important;border-color:#486477!important}
+.adminShell.adminDark .adminMain :is(input,select,textarea)::placeholder{color:#afc0cf!important}
+.adminShell.adminDark .adminMain :is(option,optgroup){background:#142636!important;color:#f1f8fd!important}
+.adminShell.adminDark .adminMain :is(.secondaryAction,.secondary,.iconBtn,.miniBtn,.scanBtn,.x){background:#263d4e!important;color:#e7f7fa!important;border-color:#476378!important}
+.adminShell.adminDark .adminMain :is(.secondaryAction,.secondary,.iconBtn,.miniBtn,.scanBtn,.x):hover{background:#355469!important}
+.adminShell.adminDark .adminMain :is(.primary,.green){background:#147b72!important;color:#f4fffc!important}
+.adminShell.adminDark .adminMain :is(.emptyCart,.emptyState,.empty,.posHint,.muted){color:var(--dmSub)!important}
+.adminShell.adminDark .adminMain :is(.reportChartCard,.reportPanel,.reportTabPanel,.reportGrid,.reportKpis,.reportKpisPolished,.reportGridPolished,.reportItem,.reportFilter,.reportChartHead,.reportSummary,.reportHeader){border-color:var(--dmBorder)!important}
+.adminShell.adminDark .adminMain :is(.reportChartCard,.reportPanel,.reportTabPanel,.reportGrid,.reportKpis,.reportKpisPolished,.reportGridPolished,.reportItem,.reportFilter,.reportChartHead,.reportSummary,.reportHeader){background-color:var(--dm1)!important;color:var(--dmText)!important}
+.adminShell.adminDark .adminMain :is(.reportChartCard,.reportPanel,.reportTabPanel,.reportGrid,.reportKpis,.reportKpisPolished) :is(h2,h3,strong,b){color:#f1f8ff!important}
+.adminShell.adminDark .adminMain :is(.reportChartCard,.reportPanel,.reportTabPanel,.reportGrid,.reportKpis,.reportKpisPolished) :is(p,small,span){color:var(--dmSub)}
+/* Override legacy inline white surfaces without changing business logic. */
+.adminShell.adminDark .adminMain :is(div,section,article,aside,header,footer,form)[style*="background:#fff"],
+.adminShell.adminDark .adminMain :is(div,section,article,aside,header,footer,form)[style*="background: #fff"],
+.adminShell.adminDark .adminMain :is(div,section,article,aside,header,footer,form)[style*="background:white"],
+.adminShell.adminDark .adminMain :is(div,section,article,aside,header,footer,form)[style*="background: white"],
+.adminShell.adminDark .adminMain :is(div,section,article,aside,header,footer,form)[style*="background-color:#fff"],
+.adminShell.adminDark .adminMain :is(div,section,article,aside,header,footer,form)[style*="backgroundColor:"]{background:var(--dm1)!important;color:var(--dmText)!important}
+.adminShell.adminDark .adminMain :is(.formGrid,.detailGrid,.card,.modalBox,.purchaseSection,.tableWrap,.reportPanel) :is(svg){color:inherit}
+body.abdulhadiNight .dashboardDayOverlay .dashboardDayPanel :is(table,thead,tbody,tr,th,td){background:#172b3b!important;color:#e7f4fa!important;border-color:#38596b!important}
+body.abdulhadiNight .dashboardDayOverlay .dashboardDayPanel :is(input,select,textarea){background:#102333!important;color:#edfaff!important;border-color:#4b697a!important}
+body.abdulhadiNight .dashboardDayOverlay .dashboardDayPanel :is(.dashboardDaySummary,.dashboardDaySummary>div,.dashboardDayTabs,.dashboardDayContent,.dashboardDayPanelHead){background:#172b3b!important;color:#e8f5fa!important}
