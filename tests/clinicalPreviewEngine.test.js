@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {normalizeIngredientName,parseIngredientField,screenExactIngredientOverlap} from '../src/clinicalPreviewEngine.js';
+import {normalizeIngredientName,parseIngredientField,screenExactIngredientOverlap,auditClinicalCatalog} from '../src/clinicalPreviewEngine.js';
 
 test('camelCase and hamza are normalized without inventing synonyms',()=>{
  assert.equal(normalizeIngredientName('diclofenacSodium'),'diclofenac sodium');
@@ -27,4 +27,13 @@ test('ambiguous separators and doses require manual review',()=>{
 test('different names are not assumed equivalent',()=>{
  const r=screenExactIngredientOverlap([{id:1,name:'A',active_ingredient:'acetaminophen'},{id:2,name:'B',active_ingredient:'paracetamol'}]);
  assert.equal(r.overlaps.length,0);
+});
+
+test('catalog audit counts missing and ambiguous fields without editing inputs',()=>{
+ const products=[{id:'a',name:'A',active_ingredient:'',strength:'',dosage_form:'tablet'},{id:'b',name:'B',active_ingredient:'amoxicillin + clavulanicAcid',strength:'500 mg',dosage_form:''},{id:'c',name:'C',active_ingredient:'drugA/drugB',strength:'',dosage_form:''}];
+ const before=JSON.stringify(products);
+ const r=auditClinicalCatalog(products);
+ assert.deepEqual(r.counts,{total:3,missingIngredient:1,manualReview:1,missingStrength:2,missingForm:2,parseable:1});
+ assert.equal(r.issues.length,3);
+ assert.equal(JSON.stringify(products),before);
 });
