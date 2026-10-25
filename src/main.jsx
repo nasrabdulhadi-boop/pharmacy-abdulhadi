@@ -9,7 +9,7 @@ import './REDESIGN_V6_3_REAL.css';
 import './V6_4_1_LAYOUT_POLISH.css';
 import './SMART_TOAST.css';
 import './CLINICAL_PREVIEW.css';
-import {screenExactIngredientOverlap,auditClinicalCatalog,buildIngredientReviewQueue,clinicalAuditCsv} from './clinicalPreviewEngine.js';
+import {screenExactIngredientOverlap,auditClinicalCatalog,buildIngredientReviewQueue,clinicalAuditCsv,prioritizeClinicalReview} from './clinicalPreviewEngine.js';
 import {evaluateReviewedClinicalRules} from './clinicalRuleEngine.js';
 
 const url=import.meta.env.VITE_SUPABASE_URL; const key=import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
@@ -328,6 +328,7 @@ function ClinicalPreview(){
   finally{setBusy(false)}
  };
  const reviewQueue=useMemo(()=>buildIngredientReviewQueue(auditProducts),[auditProducts]);
+ const priorityQueue=useMemo(()=>prioritizeClinicalReview(auditProducts),[auditProducts]);
  const exportAudit=()=>{
   if(!auditProducts.length)return;
   const csv=clinicalAuditCsv(auditProducts);
@@ -343,11 +344,11 @@ function ClinicalPreview(){
   <PageHead title="المساعد الصيدلاني السريري — نسخة تجريبية" sub="مرحلة تدقيق وربط المنتجات • قراءة فقط • لا تتدخل في البيع أو المحاسبة"/>
   <div className="clinicalPreviewNotice"><ShieldCheck size={20}/><div><b>وضع الاختبار فقط</b><p>هذه الصفحة لا تملك حالياً قاعدة تداخلات دوائية معتمدة. عدم ظهور تحذير لا يعني أمان الجمع بين الأدوية. لا تستخدم النتائج لاتخاذ قرار سريري.</p></div></div>
   <section className="clinicalPreviewPanel"><h3>تدقيق جودة بيانات المواد الفعالة</h3>
-   <p className="clinicalPreviewDisclaimer">فحص قراءة فقط لمنتجات الصيدلية على دفعات من 500 سجل (حد أقصى 20 ألفاً). تُعرض حالة الاكتمال صراحةً؛ ولا يعني اكتمال العد اعتماداً سريرياً.</p>
+   <p className="clinicalPreviewDisclaimer">فحص قراءة فقط للمنتجات النشطة في الصيدلية على دفعات من 500 سجل (حد أقصى 20 ألفاً). تُعرض حالة الاكتمال صراحةً؛ ولا يعني اكتمال العد اعتماداً سريرياً.</p>
    <button onClick={runAudit} disabled={auditBusy}>{auditBusy?'جارٍ التدقيق: '+auditProgress+' منتج':'بدء تدقيق بيانات المنتجات'}</button>
    {auditError&&<p className="clinicalPreviewError">{auditError}</p>}
-   {audit&&<><p className="clinicalPreviewDisclaimer">{auditComplete?'اكتمل استرجاع جميع الصفحات المتاحة.':'تدقيق غير مكتمل؛ النتائج محدودة.'} عدد السجلات المقروءة: {audit.counts.total}.</p><button type="button" onClick={exportAudit}>تصدير بيانات التدقيق CSV</button><div className="clinicalAuditMetrics">
-    <div><b>{audit.counts.total}</b><small>منتجاً في العينة</small></div>
+   {audit&&<><p className="clinicalPreviewDisclaimer">{auditComplete?'اكتمل استرجاع جميع صفحات المنتجات النشطة المتاحة.':'تدقيق غير مكتمل؛ النتائج محدودة.'} عدد السجلات المقروءة: {audit.counts.total}.</p><button type="button" onClick={exportAudit}>تصدير بيانات التدقيق CSV</button><div className="clinicalAuditMetrics">
+    <div><b>{audit.counts.total}</b><small>منتجاً نشطاً تم فحصه</small></div>
     <div><b>{audit.counts.missingIngredient}</b><small>بلا مادة فعالة</small></div>
     <div><b>{audit.counts.manualReview}</b><small>صيغة تحتاج مراجعة</small></div>
     <div><b>{audit.counts.missingStrength}</b><small>بلا تركيز</small></div>
@@ -355,6 +356,10 @@ function ClinicalPreview(){
    </div>
    <details className="clinicalAuditDetails"><summary>قائمة المواد المرشحة للتوحيد ({reviewQueue.length} اسم نصي — غير معتمد سريرياً)</summary>
    {reviewQueue.slice(0,50).map(row=><div key={row.normalized}><b>{row.normalized}</b><small>عدد المنتجات في العينة: {row.productCount} | حالة المطابقة: غير معتمدة | أمثلة: {row.examples.join('، ')}</small></div>)}
+   </details>
+   <details className="clinicalAuditDetails"><summary>أولوية مراجعة البيانات ({priorityQueue.length} منتجاً)</summary>
+   <p className="clinicalPreviewDisclaimer">ترتيب إداري حسب نقص الحقول فقط، وليس تقديراً للخطورة السريرية.</p>
+   {priorityQueue.slice(0,100).map(row=><div key={row.id}><b>{row.name}</b><small>{row.reasons.join(' • ')}</small></div>)}
    </details>
    <details className="clinicalAuditDetails"><summary>عرض أمثلة بيانات تحتاج مراجعة ({audit.issues.length} كحد أقصى)</summary>
    {audit.issues.map(p=><div key={p.id}><b>{p.name}</b><small>{p.parsed.status!=='parsed'?p.parsed.reason:'مادة مسجلة'} | {p.strength?'':'تركيز ناقص'} {p.form?'':'شكل ناقص'}</small></div>)}
