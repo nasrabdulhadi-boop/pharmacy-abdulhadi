@@ -1,16 +1,17 @@
 // Experimental bilingual identity and reviewed-rule screening.
 // All inputs must be explicitly reviewed; incomplete composition fails closed.
 import {createBilingualAliasIndex,resolveBilingualIngredient} from './clinicalBilingualMapping.js';
-import {validateClinicalRule,validateIngredientMapping} from './clinicalRuleEngine.js';
+import {clinicalRuleReleaseReady,validateIngredientMapping} from './clinicalRuleEngine.js';
+import {nonemptyText,validClinicalId,hasReviewMetadata,hasSourceLocator} from './clinicalProvenance.js';
 export function screenBilingualReviewedPairs(products,aliases,mappings,rules){
  const aliasIndex=createBilingualAliasIndex(aliases);
  const rows=Array.isArray(products)?products:[];
  const mappingRows=Array.isArray(mappings)?mappings:[];
- const validatedRules=(Array.isArray(rules)?rules:[]).filter(rule=>validateClinicalRule(rule).valid);
+ const validatedRules=(Array.isArray(rules)?rules:[]).filter(rule=>clinicalRuleReleaseReady(rule));
  // Conflicting reviewed rules for the same unordered ingredient pair are quarantined.
  const byPair=new Map();
  for(const rule of validatedRules){
-  const pair=[String(rule.ingredient_a_id),String(rule.ingredient_b_id)].sort().join('::');
+  const pair=JSON.stringify([String(rule.ingredient_a_id),String(rule.ingredient_b_id)].sort());
   if(!byPair.has(pair))byPair.set(pair,[]);
   byPair.get(pair).push(rule);
  }
@@ -33,12 +34,12 @@ export function screenBilingualReviewedPairs(products,aliases,mappings,rules){
   // The manifest certifies the entire formulation, not merely one ingredient.
   const manifest=product.verified_composition;
   // Never infer completeness from a single reviewed ingredient mapping.
-  if(!manifest||manifest.status!=='approved'||!manifest.reviewer_id||!manifest.reviewed_at||!manifest.source_reference_id||!manifest.source_version||(!manifest.source_url&&!manifest.source_document_id)||!Array.isArray(manifest.ingredient_ids)||!manifest.ingredient_ids.length){
+  if(!manifest||manifest.status!=='approved'||!hasReviewMetadata(manifest)||!nonemptyText(manifest.source_reference_id)||!nonemptyText(manifest.source_version)||!hasSourceLocator(manifest)||!Array.isArray(manifest.ingredient_ids)||!manifest.ingredient_ids.length||manifest.ingredient_ids.some(id=>!validClinicalId(id))){
    unresolved.push({productId:id,reason:'composition_not_fully_verified'});continue;
   }
   const expected=new Set(manifest.ingredient_ids.map(String));
   if(expected.size!==manifest.ingredient_ids.length){unresolved.push({productId:id,reason:'duplicate_manifest_ingredients'});continue}
-  const validMappings=mappingRows.filter(m=>String(m.product_id)===id&&validateIngredientMapping(m).valid);
+  const validMappings=mappingRows.filter(m=>validateIngredientMapping(m).valid&&String(m.product_id)===id);
   const mapped=new Set(validMappings.map(m=>String(m.ingredient_id)));
   if(mapped.size!==expected.size||[...expected].some(x=>!mapped.has(x))){
    unresolved.push({productId:id,reason:'incomplete_ingredient_mappings'});continue;

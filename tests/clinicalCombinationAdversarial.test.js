@@ -5,7 +5,7 @@ const provenance={reviewer_id:'synthetic',reviewed_at:'2026-10-25',source_refere
 const alias=(alias,language,id)=>({...provenance,alias,language,canonical_ingredient_id:id,status:'approved'});
 const mapping=(product_id,ingredient_id)=>({...provenance,product_id,ingredient_id,status:'approved',composition_verified:true});
 const product=(id,ids,labels,active_ingredient='')=>({id,active_ingredient,verified_composition:{...provenance,status:'approved',ingredient_ids:ids,reviewed_ingredient_aliases:labels}});
-const rule={...provenance,id:'synthetic-rule',ingredient_a_id:'a',ingredient_b_id:'b',severity:'major',mechanism:'synthetic',recommendation:'synthetic',reference_id:'synthetic',status:'approved',active:true};
+const rule={...provenance,id:'synthetic-rule',ingredient_a_id:'a',ingredient_b_id:'b',severity:'major',mechanism:'synthetic',recommendation:'synthetic',reference_id:'synthetic',license_status:'verified',license_reference:'synthetic-test-license',status:'approved',active:true};
 const other=product('other',['b'],[],'Ingredient B');
 const aliases=[alias('مادة ا','ar','a'),alias('Ingredient C','en','c'),alias('Ingredient B','en','b')];
 const mappings=[mapping('combo','a'),mapping('combo','c'),mapping('other','b')];

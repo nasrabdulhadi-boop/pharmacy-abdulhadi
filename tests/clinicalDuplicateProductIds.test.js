@@ -5,7 +5,7 @@ const src={reviewer_id:'synthetic',reviewed_at:'2026-10-25',source_reference_id:
 const alias=(name,id)=>({...src,alias:name,language:'en',canonical_ingredient_id:id,status:'approved'});
 const mapping=(product_id,ingredient_id)=>({...src,product_id,ingredient_id,status:'approved',composition_verified:true});
 const product=(id,name,ingredient)=>({id,active_ingredient:name,verified_composition:{...src,status:'approved',ingredient_ids:[ingredient]}});
-const rule={...src,id:'synthetic-rule',ingredient_a_id:'a',ingredient_b_id:'b',severity:'major',mechanism:'synthetic',recommendation:'synthetic',reference_id:'synthetic',status:'approved',active:true};
+const rule={...src,id:'synthetic-rule',ingredient_a_id:'a',ingredient_b_id:'b',severity:'major',mechanism:'synthetic',recommendation:'synthetic',reference_id:'synthetic',license_status:'verified',license_reference:'synthetic-test-license',status:'approved',active:true};
 test('duplicate product IDs are quarantined even if one record looks valid',()=>{
  const r=screenBilingualReviewedPairs([product('dup','Ingredient A','a'),product('dup','Ingredient A','a'),product('other','Ingredient B','b')],
  [alias('Ingredient A','a'),alias('Ingredient B','b')],[mapping('dup','a'),mapping('other','b')],[rule]);

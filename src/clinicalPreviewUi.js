@@ -14,6 +14,12 @@ export function createLatestPreviewTask(){
 }
 
 const messages={
+ 'identity_selection_limit':'الحد الأقصى لمحاكاة الهوية 50 منتجاً في المرة الواحدة',
+ 'missing_product_id':'معرّف المنتج مفقود',
+ 'duplicate_product_id':'معرّف المنتج مكرر؛ تعذرت المطابقة',
+ 'composition_requires_review':'تركيب المادة الفعالة يحتاج مراجعة',
+ 'alias_missing_or_conflicting':'مرادف واحد أو أكثر مفقود أو متعارض في الملف المحلي',
+ 'duplicate_composition_identity':'عدة مكونات تشير إلى المعرّف نفسه؛ يلزم تصحيح الملف',
  'CSV exceeds 5 MB limit':'حجم ملف CSV يتجاوز الحد المسموح (5 ميغابايت)',
  'Malformed CSV quotation':'تنسيق علامات الاقتباس في CSV غير صالح',
  'Unexpected text after CSV quotation':'توجد أحرف غير متوقعة بعد إغلاق علامات الاقتباس',
@@ -25,7 +31,7 @@ const messages={
  'unsupported language':'اللغة يجب أن تكون ar أو en',
  'missing alias':'اسم المرادف مفقود',
  'alias not approved':'المرادف لم يستكمل حالة المراجعة المطلوبة في الملف',
- 'missing pharmacist review':'بيانات الصيدلاني المراجع أو تاريخ المراجعة مفقودة',
+ 'missing pharmacist review':'بيانات الصيدلاني المراجع أو تاريخ المراجعة مفقودة أو غير صالحة',
  'missing source traceability':'بيانات المصدر أو الإصدار أو رابط التوثيق مفقودة',
  'duplicate alias in review package':'المرادف مكرر ضمن ملف المراجعة',
  'missing_ingredient':'المادة الفعالة مفقودة',

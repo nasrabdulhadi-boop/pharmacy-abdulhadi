@@ -5,7 +5,7 @@ const source={reviewer_id:'synthetic',reviewed_at:'2026-10-25',source_reference_
 const alias=(alias,id)=>({...source,alias,language:'en',canonical_ingredient_id:id,status:'approved'});
 const mapping=(product_id,ingredient_id)=>({...source,product_id,ingredient_id,status:'approved',composition_verified:true});
 const product=(id,label,ingredient)=>({id,active_ingredient:label,verified_composition:{...source,status:'approved',ingredient_ids:[ingredient]}});
-const rule={...source,id:'synthetic-rule',ingredient_a_id:'a',ingredient_b_id:'b',severity:'major',mechanism:'synthetic',recommendation:'synthetic',reference_id:'synthetic',status:'approved',active:true};
+const rule={...source,id:'synthetic-rule',ingredient_a_id:'a',ingredient_b_id:'b',severity:'major',mechanism:'synthetic',recommendation:'synthetic',reference_id:'synthetic',license_status:'verified',license_reference:'synthetic-test-license',status:'approved',active:true};
 const products=[product('one','Ingredient A','a'),product('two','Ingredient B','b')];
 const aliases=[alias('Ingredient A','a'),alias('Ingredient B','b')];
 test('extraneous conflicting approved ingredient mapping quarantines product',()=>{

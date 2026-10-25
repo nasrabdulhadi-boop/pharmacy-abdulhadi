@@ -4,7 +4,7 @@ import {screenBilingualReviewedPairs} from '../src/clinicalBilingualScreening.js
 const src={reviewer_id:'synthetic',reviewed_at:'2026-10-25',source_reference_id:'synthetic',source_version:'1',source_document_id:'synthetic-doc'};
 const alias=(alias,language,id)=>({...src,alias,language,canonical_ingredient_id:id,status:'approved'});
 const mapping=(product_id,ingredient_id)=>({...src,product_id,ingredient_id,status:'approved',composition_verified:true});
-const rule={...src,id:'synthetic',ingredient_a_id:'a',ingredient_b_id:'b',severity:'major',mechanism:'synthetic',recommendation:'synthetic',reference_id:'synthetic',status:'approved',active:true};
+const rule={...src,id:'synthetic',ingredient_a_id:'a',ingredient_b_id:'b',severity:'major',mechanism:'synthetic',recommendation:'synthetic',reference_id:'synthetic',license_status:'verified',license_reference:'synthetic-test-license',status:'approved',active:true};
 const prod=(id,label,ids)=>({id,active_ingredient:label,verified_composition:{...src,status:'approved',ingredient_ids:ids}});
 const aliases=[alias('مادة ا','ar','a'),alias('Ingredient B','en','b')];
 test('missing composition manifest never yields a reassuring conclusion',()=>{

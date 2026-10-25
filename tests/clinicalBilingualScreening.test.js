@@ -45,3 +45,20 @@ test('combination with missing reviewed alias cannot be screened',()=>{
  assert.equal(result.findings.length,0);
  assert.equal(result.unresolved.some(x=>x.reason==='combination_aliases_not_fully_verified'),true);
 });
+
+test('unlicensed bilingual rules never create findings, even with complete reviewed synthetic inputs',()=>{
+ const inputs=[[product('ar','مادة ا',['ing-a']),product('en','Ingredient B',['ing-b'])],
+  [alias('مادة ا','ar','ing-a'),alias('Ingredient B','en','ing-b')],[mapping('ar','ing-a'),mapping('en','ing-b')]];
+ for(const patch of [{license_status:'unknown'},{license_reference:''},{license_reference:' '},{license_reference:{}}]){
+  const result=screenBilingualReviewedPairs(...inputs,[{...rule,...patch}]);
+  assert.equal(result.findings.length,0);assert.equal(result.approvedRuleCount,0);
+  assert.equal(result.status,'no_approved_rules');assert.equal(result.productionEnabled,false);
+ }
+ const result=screenBilingualReviewedPairs(...inputs,[{...rule,id:'unlicensed',license_status:'unknown'},rule]);
+ assert.equal(result.findings.length,1);assert.equal(result.approvedRuleCount,1);
+});
+
+test('malformed mapping rows do not crash or qualify for bilingual screening',()=>{
+ const result=screenBilingualReviewedPairs([product('ar','مادة ا',['ing-a'])],[alias('مادة ا','ar','ing-a')],[null,{},mapping('ar','ing-a')],[rule]);
+ assert.equal(result.findings.length,0);assert.equal(result.productionEnabled,false);
+});

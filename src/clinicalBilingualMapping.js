@@ -1,15 +1,16 @@
 // Explicit, pharmacist-reviewed Arabic/English aliases only.
 // No automatic transliteration or inferred chemical equivalence.
 import {normalizeIngredientName} from './clinicalPreviewEngine.js';
+import {nonemptyText,validClinicalId,hasReviewMetadata,hasSourceLocator} from './clinicalProvenance.js';
 export function validateBilingualAlias(row){
  const problems=[];
  if(!row||typeof row!=='object')return {valid:false,problems:['missing alias']};
- if(!String(row.canonical_ingredient_id||'').trim())problems.push('missing canonical ingredient');
+ if(!validClinicalId(row.canonical_ingredient_id))problems.push('missing canonical ingredient');
  if(!['ar','en'].includes(row.language))problems.push('unsupported language');
- if(!normalizeIngredientName(row.alias))problems.push('missing alias');
+ if(!nonemptyText(row.alias)||!normalizeIngredientName(row.alias))problems.push('missing alias');
  if(row.status!=='approved')problems.push('alias not approved');
- if(!row.reviewer_id||!row.reviewed_at)problems.push('missing pharmacist review');
- if(!row.source_reference_id||!row.source_version||(!row.source_url&&!row.source_document_id))problems.push('missing source traceability');
+ if(!hasReviewMetadata(row))problems.push('missing pharmacist review');
+ if(!nonemptyText(row.source_reference_id)||!nonemptyText(row.source_version)||!hasSourceLocator(row))problems.push('missing source traceability');
  return {valid:problems.length===0,problems};
 }
 export function createBilingualAliasIndex(aliases){
@@ -37,7 +38,7 @@ export function matchBilingualProducts(products,approvedMappings,aliases){
  const aliasData=createBilingualAliasIndex(aliases);
  const byProduct=new Map();
  for(const row of (Array.isArray(approvedMappings)?approvedMappings:[])){
-  if(row.status!=='approved'||row.composition_verified!==true||!row.reviewer_id||!row.reviewed_at||!row.source_reference_id||!row.source_version||(!row.source_url&&!row.source_document_id))continue;
+  if(!row||row.status!=='approved'||row.composition_verified!==true||!hasReviewMetadata(row)||!nonemptyText(row.source_reference_id)||!nonemptyText(row.source_version)||!hasSourceLocator(row)||!validClinicalId(row.ingredient_id))continue;
   const id=String(row.product_id);
   if(!byProduct.has(id))byProduct.set(id,new Set());
   byProduct.get(id).add(String(row.ingredient_id));

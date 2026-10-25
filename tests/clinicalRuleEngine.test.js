@@ -69,3 +69,13 @@ test('unlicensed synthetic rule cannot pass the clinical release gate',()=>{
  assert.equal(result.approvedRuleCount,0);
  assert.equal(clinicalReviewReadiness([mapped('p1','ing-a')],[unlicensed]).clinicallyReady,false);
 });
+
+test('readiness reports unlicensed evidence as incomplete even with approved structural metadata',()=>{
+ const state=clinicalReviewReadiness([mapped('p1','ing-a')],[{...rule,license_status:'unknown'}]);
+ assert.equal(state.rulesApproved,0);assert.equal(state.evidenceRecordsValid,false);
+ assert.equal(state.ruleProblems[0].problems.includes('missing verified license metadata'),true);
+});
+test('malformed input containers and mapping rows never crash the prototype',()=>{
+ assert.equal(evaluateReviewedClinicalRules({},null,{}).findings.length,0);
+ assert.equal(evaluateReviewedClinicalRules([{id:'p'}],[null,{}],[null]).status,'incomplete');
+});

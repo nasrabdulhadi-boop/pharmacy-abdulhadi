@@ -16,6 +16,7 @@ import {buildIngredientAliasCandidates,summarizeIngredientAliasCandidates,export
 import {exportBilingualReviewTemplateCsv} from './clinicalAliasReviewPackage.js';
 import {inspectBilingualReviewCsv} from './clinicalReviewCsvIntake.js';
 import {createLatestPreviewTask,clinicalPreviewMessage,clinicalReviewIssueMessages} from './clinicalPreviewUi.js';
+import {previewLocalBilingualIdentity,MAX_IDENTITY_PREVIEW_PRODUCTS} from './clinicalIdentitySandbox.js';
 
 const url=import.meta.env.VITE_SUPABASE_URL; const key=import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 const supabase=url&&key?createClient(url,key):null;
@@ -305,12 +306,13 @@ function ClinicalPreview(){
  const [auditComplete,setAuditComplete]=useState(false);
  const [reviewCsvResult,setReviewCsvResult]=useState(null);
  const [reviewCsvError,setReviewCsvError]=useState('');
+ const [identityPreview,setIdentityPreview]=useState(null);
  const searchTask=useMemo(()=>createLatestPreviewTask(),[]);
  const reviewTask=useMemo(()=>createLatestPreviewTask(),[]);
  const auditTask=useMemo(()=>createLatestPreviewTask(),[]);
  useEffect(()=>()=>{searchTask.invalidate();reviewTask.invalidate();auditTask.invalidate()},[searchTask,reviewTask,auditTask]);
  const runAudit=async()=>{
-  reviewTask.invalidate();setReviewCsvResult(null);setReviewCsvError('');
+  reviewTask.invalidate();setReviewCsvResult(null);setReviewCsvError('');setIdentityPreview(null);
   setAuditBusy(true);setAuditError('');setAudit(null);setAuditProducts([]);setAuditProgress(0);setAuditComplete(false);
   const rows=[];
   const pageSize=500,maxRows=20000;
@@ -390,11 +392,12 @@ function ClinicalPreview(){
  };
  const inspectReviewFile=async(event)=>{
   const input=event.target,file=input.files?.[0];if(!file)return;
-  input.value='';setReviewCsvResult(null);setReviewCsvError('');
-  await reviewTask.run(async()=>{
+  input.value='';setReviewCsvResult(null);setReviewCsvError('');setIdentityPreview(null);
+  await reviewTask.run(async(isCurrent)=>{
    if(!auditComplete)throw new Error('يجب إكمال تدقيق المنتجات أولاً');
    if(file.size>5*1024*1024)throw new Error('CSV exceeds 5 MB limit');
    const text=await file.text();
+   if(!isCurrent())return;
    return inspectBilingualReviewCsv(text,aliasCandidates);
   },{success:setReviewCsvResult,error:e=>setReviewCsvError(clinicalPreviewMessage(e.message))});
  };
@@ -451,11 +454,21 @@ function ClinicalPreview(){
   <section className="clinicalPreviewPanel"><h3>اختيار المنتجات من قاعدة الصيدلية</h3><div className="clinicalPreviewSearch"><input aria-label="البحث عن دواء في المساعد السريري" value={query} onChange={e=>changeQuery(e.target.value)} onKeyDown={e=>e.key==='Enter'&&search()} placeholder="ابحث باسم الدواء أو الباركود"/><button onClick={search} disabled={busy||!query.trim()}><Search size={16}/>{busy?'جارٍ البحث':'بحث'}</button></div>
    {error&&<p className="clinicalPreviewError">{error}</p>}
    {searchCompleted&&!busy&&!error&&results.length===0&&<p className="clinicalPreviewDisclaimer" role="status">لا توجد منتجات مطابقة للبحث. جرّب الاسم التجاري أو الباركود أو صيغة كتابة أخرى.</p>}
-   <div className="clinicalPreviewResults">{results.map(p=><button key={p.id} disabled={selected.some(x=>x.id===p.id)} onClick={()=>{setSelected(a=>[...a,p]);setChecked(false)}}><span><b>{p.name}</b><small>{p.active_ingredient||'المادة الفعالة غير مسجلة'} • {p.strength||'التركيز غير مسجل'}</small></span><Plus size={17}/></button>)}</div>
+   <div className="clinicalPreviewResults">{results.map(p=><button key={p.id} disabled={selected.some(x=>x.id===p.id)} onClick={()=>{setSelected(a=>[...a,p]);setChecked(false);setIdentityPreview(null)}}><span><b>{p.name}</b><small>{p.active_ingredient||'المادة الفعالة غير مسجلة'} • {p.strength||'التركيز غير مسجل'}</small></span><Plus size={17}/></button>)}</div>
   </section>
   <section className="clinicalPreviewPanel"><h3>قائمة الأدوية للفحص الأولي ({selected.length})</h3>
-   {selected.length===0?<p>أضف دواءين أو أكثر لتجربة كشف تداخل المكونات النصية المسجلة للمادة الفعالة.</p>:<div className="clinicalPreviewChosen">{names.map(p=><div key={p.id}><span><b>{p.name}</b><small>{p.ingredient||'مادة فعالة غير معروفة'} — {p.strength||'تركيز غير مسجل'}</small></span><button onClick={()=>{setSelected(a=>a.filter(x=>x.id!==p.id));setChecked(false)}} aria-label="إزالة">×</button></div>)}</div>}
+   {selected.length===0?<p>أضف دواءين أو أكثر لتجربة كشف تداخل المكونات النصية المسجلة للمادة الفعالة.</p>:<div className="clinicalPreviewChosen">{names.map(p=><div key={p.id}><span><b>{p.name}</b><small>{p.ingredient||'مادة فعالة غير معروفة'} — {p.strength||'تركيز غير مسجل'}</small></span><button onClick={()=>{setSelected(a=>a.filter(x=>x.id!==p.id));setChecked(false);setIdentityPreview(null)}} aria-label="إزالة">×</button></div>)}</div>}
    <button disabled={selected.length<2} onClick={()=>setChecked(true)}>فحص أولي للتكرار وجودة البيانات</button>
+  </section>
+  <section className="clinicalPreviewPanel" aria-labelledby="clinicalIdentityTitle"><h3 id="clinicalIdentityTitle">محاكاة المطابقة العربية والإنكليزية من ملف المراجعة</h3>
+   <p className="clinicalPreviewDisclaimer">تستخدم هذه المحاكاة المعرّفات والمرادفات الموجودة في ملف CSV المفحوص محلياً فقط. اكتمال الحقول لا يثبت صحة المصدر أو هوية المراجع أو صحة المطابقة. لا تُفعّل تداخلات دوائية ولا تُعدّل المنتجات.</p>
+   <p className="clinicalPreviewDisclaimer">أكمل التدقيق، ثم افحص ملف المرادفات بعد مراجعته، واختر من منتجين إلى 50 منتجاً. يجب توثيق جميع مكونات الدواء المركّب؛ لا تُستنتج المرادفات أو أملاح المواد تلقائياً.</p>
+   <button type="button" disabled={selected.length<2||selected.length>MAX_IDENTITY_PREVIEW_PRODUCTS||!reviewCsvResult?.sandboxAliases?.length} onClick={()=>setIdentityPreview(previewLocalBilingualIdentity(selected,reviewCsvResult.sandboxAliases))}>تشغيل محاكاة الهوية المحلية</button>
+   {identityPreview&&<div aria-live="polite"><p>منتجات اكتملت مطابقتها حسب الملف: {identityPreview.matched.length} • غير مكتملة: {identityPreview.unresolved.length} • أزواج لها معرّف مشترك: {identityPreview.identityOverlaps.length}</p>
+    {identityPreview.unresolved.slice(0,50).map((row,i)=><p className="clinicalPreviewError" key={i}>«{row.name||row.productId||'منتج غير محدد'}»: {clinicalPreviewMessage(row.reason)}</p>)}
+    {identityPreview.identityOverlaps.slice(0,50).map((row,i)=><p key={i}>«{row.a.name}» و«{row.b.name}»: معرّف مشترك حسب الملف المحلي: <bdi>{row.sharedIngredientIds.join('، ')}</bdi></p>)}
+    <p className="clinicalPreviewWarning">هذه نتيجة مطابقة بيانات تجريبية، وليست تداخلاً دوائياً أو اعتماداً للتركيب. عدم ظهور تطابق لا يعني أمان الجمع بين الأدوية.</p>
+   </div>}
   </section>
   {checked&&<section className="clinicalPreviewPanel" aria-live="polite"><h3>نتيجة الفحص التجريبي</h3>
    {unresolved.map(p=><div className="clinicalPreviewWarning" key={p.id}><AlertTriangle size={18}/><span>«{p.name}»: {p.reason}. الفحص غير مكتمل.</span></div>)}

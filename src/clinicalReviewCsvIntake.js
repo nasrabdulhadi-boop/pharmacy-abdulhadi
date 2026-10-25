@@ -39,7 +39,7 @@ export function parseBilingualReviewCsv(text){
 export function inspectBilingualReviewCsv(text,candidates){
  const records=parseBilingualReviewCsv(text);
  const result=inspectBilingualReviewPackage(records,candidates);
- return {total:records.length,acceptedCount:result.accepted.length,rejected:result.rejected,
+ return {total:records.length,acceptedCount:result.accepted.length,sandboxAliases:result.accepted,rejected:result.rejected,
   unrecognized:result.unrecognized,conflicts:result.conflicts,clinicalRulesActivated:0,
   productionEnabled:false};
 }
