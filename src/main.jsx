@@ -13,6 +13,7 @@ import {screenExactIngredientOverlap,auditClinicalCatalog,buildIngredientReviewQ
 import {evaluateReviewedClinicalRules,clinicalReviewReadiness} from './clinicalRuleEngine.js';
 import {buildClinicalReviewQueue,summarizeClinicalReviewQueue,exportClinicalReviewQueueCsv} from './clinicalCatalogReviewQueue.js';
 import {buildIngredientAliasCandidates,summarizeIngredientAliasCandidates,exportIngredientAliasCandidatesCsv} from './clinicalAliasCandidates.js';
+import {exportBilingualReviewTemplateCsv} from './clinicalAliasReviewPackage.js';
 
 const url=import.meta.env.VITE_SUPABASE_URL; const key=import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 const supabase=url&&key?createClient(url,key):null;
@@ -359,6 +360,13 @@ function ClinicalPreview(){
   link.href=href;link.download='clinical-ingredient-alias-candidates.csv';
   document.body.appendChild(link);link.click();link.remove();URL.revokeObjectURL(href);
  };
+ const exportAliasReviewTemplate=()=>{
+  if(!auditComplete||!aliasCandidates.length)return;
+  const blob=new Blob([exportBilingualReviewTemplateCsv(aliasCandidates)],{type:'text/csv;charset=utf-8'});
+  const link=document.createElement('a');const href=URL.createObjectURL(blob);
+  link.href=href;link.download='clinical-bilingual-alias-review-template.csv';
+  document.body.appendChild(link);link.click();link.remove();URL.revokeObjectURL(href);
+ };
  const names=selected.map(p=>({id:p.id,name:p.name,ingredient:String(p.active_ingredient||'').trim(),strength:p.strength||'',form:p.dosage_form||''}));
  const {overlaps,unresolved}=screenExactIngredientOverlap(selected);
  const clinicalRuleStatus=evaluateReviewedClinicalRules(selected,[],[]);
@@ -390,6 +398,7 @@ function ClinicalPreview(){
    <details className="clinicalAuditDetails"><summary>مرشحات توحيد أسماء المواد الفعالة بالعربي والإنكليزي ({aliasSummary.total} اسماً)</summary>
     <p className="clinicalPreviewDisclaimer">عربي: {aliasSummary.arabic} • إنكليزي: {aliasSummary.english} • مختلط: {aliasSummary.mixed}. هذه أسماء مرشحة فقط، ولم تتم ترجمتها أو اعتمادها سريرياً.</p>
     <button type="button" disabled={!auditComplete||!aliasCandidates.length} onClick={exportAliasCandidates}>تصدير مرشحات الأسماء CSV للمراجعة الصيدلانية</button>
+    <button type="button" disabled={!auditComplete||!aliasCandidates.length} onClick={exportAliasReviewTemplate}>تنزيل نموذج توثيق المرادفات ثنائي اللغة CSV</button>
     {aliasCandidates.slice(0,100).map(row=><div key={row.language+'-'+row.normalized_alias}><b>{row.alias}</b><small>اللغة: {row.language} • عدد المنتجات: {row.product_count} • غير معتمد</small></div>)}
    </details>
    <details className="clinicalAuditDetails"><summary>قائمة المواد المرشحة للتوحيد ({reviewQueue.length} اسم نصي — غير معتمد سريرياً)</summary>
