@@ -7,7 +7,13 @@ export function screenBilingualReviewedPairs(products,aliases,mappings,rules){
  const aliasIndex=createBilingualAliasIndex(aliases);
  const rows=Array.isArray(products)?products:[];
  const mappingRows=Array.isArray(mappings)?mappings:[];
- const validatedRules=(Array.isArray(rules)?rules:[]).filter(rule=>clinicalRuleReleaseReady(rule));
+ const eligibleRules=(Array.isArray(rules)?rules:[]).filter(rule=>clinicalRuleReleaseReady(rule));
+ // A rule identifier must uniquely identify one reviewed evidence record.
+ // Conflicting reuse of an ID is quarantined, even across different ingredient pairs.
+ const ruleIdCounts=new Map();
+ for(const rule of eligibleRules){const id=String(rule.id);ruleIdCounts.set(id,(ruleIdCounts.get(id)||0)+1)}
+ const duplicateRuleIds=[...ruleIdCounts].filter(([,count])=>count>1).map(([id])=>id);
+ const validatedRules=eligibleRules.filter(rule=>ruleIdCounts.get(String(rule.id))===1);
  // Conflicting reviewed rules for the same unordered ingredient pair are quarantined.
  const byPair=new Map();
  for(const rule of validatedRules){
@@ -87,7 +93,7 @@ export function screenBilingualReviewedPairs(products,aliases,mappings,rules){
    }
   }
  }
- return {status:unresolved.length||ruleConflicts.length?'incomplete':validRules.length?'limited_approved_rule_screening':'no_approved_rules',
-  findings,unresolved,approvedRuleCount:validRules.length,aliasConflicts:aliasIndex.conflicts,ruleConflicts,
+ return {status:unresolved.length||ruleConflicts.length||duplicateRuleIds.length?'incomplete':validRules.length?'limited_approved_rule_screening':'no_approved_rules',
+  findings,unresolved,approvedRuleCount:validRules.length,aliasConflicts:aliasIndex.conflicts,ruleConflicts,duplicateRuleIds,
   coverage:'not_exhaustive',safeToCombine:null,productionEnabled:false};
 }
