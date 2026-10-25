@@ -70,3 +70,21 @@ export function clinicalAuditCsv(products){
  const csvCell=v=>'"'+String(v??'').replace(/"/g,'""').replace(/^[=+@\-\t\r]/,m=>"'"+m)+'"';
  return '\uFEFF'+[['product_id','product_name','raw_ingredient','normalized_components','status','reason','strength','dosage_form'],...rows].map(row=>row.map(csvCell).join(',')).join('\r\n');
 }
+
+export function prioritizeClinicalReview(products){
+ const rows=[];
+ for(const p of Array.isArray(products)?products:[]){
+  const parsed=parseIngredientField(p.active_ingredient);
+  const missingStrength=!String(p.strength||'').trim();
+  const missingForm=!String(p.dosage_form||'').trim();
+  const reasons=[];
+  if(parsed.status==='missing')reasons.push('المادة الفعالة مفقودة');
+  else if(parsed.status==='review')reasons.push('صيغة المادة الفعالة غامضة');
+  if(missingStrength)reasons.push('التركيز مفقود');
+  if(missingForm)reasons.push('الشكل الدوائي مفقود');
+  if(!reasons.length)continue;
+  const score=(parsed.status==='missing'?100:parsed.status==='review'?80:0)+(missingStrength?10:0)+(missingForm?5:0);
+  rows.push({id:p.id,name:p.name||'',score,reasons});
+ }
+ return rows.sort((a,b)=>b.score-a.score||String(a.name).localeCompare(String(b.name))||String(a.id).localeCompare(String(b.id)));
+}
