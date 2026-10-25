@@ -19,11 +19,12 @@ export function validateIngredientMapping(mapping){
  if(mapping.status!=='approved')problems.push('mapping not approved');
  if(mapping.composition_verified!==true)problems.push('composition not verified');
  if(!mapping.source_reference_id||!mapping.source_version)problems.push('missing source evidence');
+ if(!mapping.source_url&&!mapping.source_document_id)problems.push('missing verifiable source locator');
  if(!mapping.reviewer_id||!mapping.reviewed_at)problems.push('missing reviewer metadata');
  return {valid:problems.length===0,problems};
 }
 export function evaluateReviewedClinicalRules(products,mappings,rules){
- const productIds=[...new Set((products||[]).map(p=>String(p.id)))];
+ const productIds=[...new Set((products||[]).filter(p=>p&&p.id!=null&&String(p.id).trim()).map(p=>String(p.id)))];
  const byProduct=new Map();
  const unmapped=[];
  for(const id of productIds){
@@ -43,7 +44,7 @@ export function evaluateReviewedClinicalRules(products,mappings,rules){
     findings.push({product_a_id:a,product_b_id:b,rule_id:rule.id,severity:rule.severity,reference_id:rule.reference_id});
   }
  }
- return {status:unmapped.length?'incomplete':usableRules.length?'rules_evaluated':'no_approved_rules',findings,unmappedProductIds:unmapped,approvedRuleCount:usableRules.length};
+ return {status:unmapped.length?'incomplete':usableRules.length?'limited_approved_rule_screening':'no_approved_rules',findings,unmappedProductIds:unmapped,approvedRuleCount:usableRules.length};
 }
 
 export function clinicalReviewReadiness(mappings,rules){
@@ -57,6 +58,7 @@ export function clinicalReviewReadiness(mappings,rules){
   rulesTotal:ruleRows.length,
   rulesApproved:ruleRows.length-ruleProblems.length,
   mappingProblems,ruleProblems,
-  clinicallyReady:mapRows.length>0&&ruleRows.length>0&&!mappingProblems.length&&!ruleProblems.length
+  evidenceRecordsValid:mapRows.length>0&&ruleRows.length>0&&!mappingProblems.length&&!ruleProblems.length,
+  clinicallyReady:false // Rule-list validity does not establish clinical coverage, licensing or release approval.
  };
 }
