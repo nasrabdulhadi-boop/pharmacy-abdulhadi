@@ -41,6 +41,11 @@ export function screenBilingualReviewedPairs(products,aliases,mappings,rules){
   if(expected.size!==manifest.ingredient_ids.length){unresolved.push({productId:id,reason:'duplicate_manifest_ingredients'});continue}
   const validMappings=mappingRows.filter(m=>validateIngredientMapping(m).valid&&String(m.product_id)===id);
   const mapped=new Set(validMappings.map(m=>String(m.ingredient_id)));
+  // Extra reviewed mappings are not evidence that the composition manifest is complete.
+  // Even when the extra row duplicates an existing ingredient ID, quarantine it for review.
+  if(validMappings.length!==expected.size){
+   unresolved.push({productId:id,reason:'unexpected_or_duplicate_ingredient_mappings'});continue;
+  }
   if(mapped.size!==expected.size||[...expected].some(x=>!mapped.has(x))){
    unresolved.push({productId:id,reason:'incomplete_ingredient_mappings'});continue;
   }
