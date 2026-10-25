@@ -6,7 +6,21 @@ export function screenBilingualReviewedPairs(products,aliases,mappings,rules){
  const aliasIndex=createBilingualAliasIndex(aliases);
  const rows=Array.isArray(products)?products:[];
  const mappingRows=Array.isArray(mappings)?mappings:[];
- const validRules=(Array.isArray(rules)?rules:[]).filter(rule=>validateClinicalRule(rule).valid);
+ const validatedRules=(Array.isArray(rules)?rules:[]).filter(rule=>validateClinicalRule(rule).valid);
+ // Conflicting reviewed rules for the same unordered ingredient pair are quarantined.
+ const byPair=new Map();
+ for(const rule of validatedRules){
+  const pair=[String(rule.ingredient_a_id),String(rule.ingredient_b_id)].sort().join('::');
+  if(!byPair.has(pair))byPair.set(pair,[]);
+  byPair.get(pair).push(rule);
+ }
+ const ruleConflicts=[];
+ const validRules=[];
+ for(const [pair,group] of byPair){
+  const signatures=new Set(group.map(r=>[r.severity,r.mechanism,r.recommendation].join('::')));
+  if(signatures.size>1){ruleConflicts.push({pair,ruleIds:group.map(r=>r.id)});continue}
+  validRules.push(group[0]);
+ }
  const unresolved=[],ingredientsByProduct=new Map();
  const idCounts=new Map();
  for(const product of rows){
@@ -67,7 +81,7 @@ export function screenBilingualReviewedPairs(products,aliases,mappings,rules){
    }
   }
  }
- return {status:unresolved.length?'incomplete':validRules.length?'limited_approved_rule_screening':'no_approved_rules',
-  findings,unresolved,approvedRuleCount:validRules.length,aliasConflicts:aliasIndex.conflicts,
+ return {status:unresolved.length||ruleConflicts.length?'incomplete':validRules.length?'limited_approved_rule_screening':'no_approved_rules',
+  findings,unresolved,approvedRuleCount:validRules.length,aliasConflicts:aliasIndex.conflicts,ruleConflicts,
   coverage:'not_exhaustive',safeToCombine:null,productionEnabled:false};
 }
