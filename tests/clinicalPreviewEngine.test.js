@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {normalizeIngredientName,parseIngredientField,screenExactIngredientOverlap,auditClinicalCatalog,buildIngredientReviewQueue,clinicalAuditCsv,prioritizeClinicalReview} from '../src/clinicalPreviewEngine.js';
+import {normalizeIngredientName,parseIngredientField,screenExactIngredientOverlap,auditClinicalCatalog,buildIngredientReviewQueue,clinicalAuditCsv,prioritizeClinicalReview,summarizeIngredientReview} from '../src/clinicalPreviewEngine.js';
 
 test('camelCase and hamza are normalized without inventing synonyms',()=>{
  assert.equal(normalizeIngredientName('diclofenacSodium'),'diclofenac sodium');
@@ -60,4 +60,12 @@ test('review priority never labels a product clinically safe',()=>{
  const p=prioritizeClinicalReview([{id:'1',name:'A',active_ingredient:'a/b',strength:'',dosage_form:''}]);
  assert.equal(p.length,1);
  assert.ok(p[0].reasons.includes('صيغة المادة الفعالة غامضة'));
+});
+
+test('readiness summary counts records needing review',()=>{
+ const rows=[{id:'1',name:'A',active_ingredient:'ibuprofen',strength:'400',dosage_form:'tablet'},{id:'2',name:'B',active_ingredient:'',strength:'',dosage_form:''}];
+ const result=summarizeIngredientReview(rows);
+ assert.equal(result.products,2);
+ assert.equal(result.needingReview,1);
+ assert.equal(result.reviewPercentage,50);
 });
