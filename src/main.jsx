@@ -295,14 +295,26 @@ function ClinicalPreview(){
  const [auditProducts,setAuditProducts]=useState([]);
  const [auditBusy,setAuditBusy]=useState(false);
  const [auditError,setAuditError]=useState('');
+ const [auditProgress,setAuditProgress]=useState(0);
+ const [auditComplete,setAuditComplete]=useState(false);
  const runAudit=async()=>{
-  setAuditBusy(true);setAuditError('');
+  setAuditBusy(true);setAuditError('');setAudit(null);setAuditProducts([]);setAuditProgress(0);setAuditComplete(false);
+  const rows=[];
+  const pageSize=500,maxRows=20000;
   try{
-   const {data,error:e}=await supabase.rpc('admin_get_products_page',{p_limit:500,p_offset:0});
-   if(e)throw e;
-   setAuditProducts(data||[]);
-   setAudit(auditClinicalCatalog(data||[]));
-  }catch(e){setAuditError(e.message||'تعذر تدقيق العينة')}
+   let complete=false;
+   for(let offset=0;offset<maxRows;offset+=pageSize){
+    const {data,error:e}=await supabase.rpc('admin_get_products_page',{p_limit:pageSize,p_offset:offset});
+    if(e)throw e;
+    if(!Array.isArray(data))throw new Error('استجابة غير صالحة من قاعدة البيانات');
+    rows.push(...data);setAuditProgress(rows.length);
+    if(data.length<pageSize){complete=true;break}
+   }
+   setAuditProducts(rows);
+   setAudit(auditClinicalCatalog(rows));
+   setAuditComplete(complete);
+   if(!complete)setAuditError('وصل الفحص إلى حد 20 ألف سجل؛ لا يمكن اعتبار النتائج شاملة.');
+  }catch(e){setAuditError('لم يكتمل التدقيق: '+(e.message||'خطأ غير معروف')+'. لم تُعتمد النتائج الجزئية.')}
   finally{setAuditBusy(false)}
  };
  const search=async()=>{
@@ -331,10 +343,10 @@ function ClinicalPreview(){
   <PageHead title="المساعد الصيدلاني السريري — نسخة تجريبية" sub="مرحلة تدقيق وربط المنتجات • قراءة فقط • لا تتدخل في البيع أو المحاسبة"/>
   <div className="clinicalPreviewNotice"><ShieldCheck size={20}/><div><b>وضع الاختبار فقط</b><p>هذه الصفحة لا تملك حالياً قاعدة تداخلات دوائية معتمدة. عدم ظهور تحذير لا يعني أمان الجمع بين الأدوية. لا تستخدم النتائج لاتخاذ قرار سريري.</p></div></div>
   <section className="clinicalPreviewPanel"><h3>تدقيق جودة بيانات المواد الفعالة</h3>
-   <p className="clinicalPreviewDisclaimer">فحص استكشافي لأول 500 سجل من قاعدة المنتجات، وليس إحصاءً شاملاً أو اعتماداً سريرياً. لا يُعدّل أي بيانات.</p>
-   <button onClick={runAudit} disabled={auditBusy}>{auditBusy?'جارٍ تدقيق العينة':'تدقيق عينة 500 منتج'}</button>
+   <p className="clinicalPreviewDisclaimer">فحص قراءة فقط لمنتجات الصيدلية على دفعات من 500 سجل (حد أقصى 20 ألفاً). تُعرض حالة الاكتمال صراحةً؛ ولا يعني اكتمال العد اعتماداً سريرياً.</p>
+   <button onClick={runAudit} disabled={auditBusy}>{auditBusy?'جارٍ التدقيق: '+auditProgress+' منتج':'بدء تدقيق بيانات المنتجات'}</button>
    {auditError&&<p className="clinicalPreviewError">{auditError}</p>}
-   {audit&&<><button type="button" onClick={exportAudit}>تصدير عينة التدقيق CSV</button><div className="clinicalAuditMetrics">
+   {audit&&<><p className="clinicalPreviewDisclaimer">{auditComplete?'اكتمل استرجاع جميع الصفحات المتاحة.':'تدقيق غير مكتمل؛ النتائج محدودة.'} عدد السجلات المقروءة: {audit.counts.total}.</p><button type="button" onClick={exportAudit}>تصدير بيانات التدقيق CSV</button><div className="clinicalAuditMetrics">
     <div><b>{audit.counts.total}</b><small>منتجاً في العينة</small></div>
     <div><b>{audit.counts.missingIngredient}</b><small>بلا مادة فعالة</small></div>
     <div><b>{audit.counts.manualReview}</b><small>صيغة تحتاج مراجعة</small></div>
