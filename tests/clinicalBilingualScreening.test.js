@@ -62,3 +62,13 @@ test('malformed mapping rows do not crash or qualify for bilingual screening',()
  const result=screenBilingualReviewedPairs([product('ar','مادة ا',['ing-a'])],[alias('مادة ا','ar','ing-a')],[null,{},mapping('ar','ing-a')],[rule]);
  assert.equal(result.findings.length,0);assert.equal(result.productionEnabled,false);
 });
+
+test('duplicate approved mapping rows fail closed rather than silently deduplicating',()=>{
+ const result=screenBilingualReviewedPairs(
+  [product('ar','مادة ا',['ing-a']),product('en','Ingredient B',['ing-b'])],
+  [alias('مادة ا','ar','ing-a'),alias('Ingredient B','en','ing-b')],
+  [mapping('ar','ing-a'),mapping('ar','ing-a'),mapping('en','ing-b')],[rule]);
+ assert.equal(result.findings.length,0);
+ assert.equal(result.status,'incomplete');
+ assert.equal(result.unresolved.some(x=>x.productId==='ar'&&x.reason==='unexpected_or_duplicate_ingredient_mappings'),true);
+});
