@@ -1,3 +1,4 @@
+import {clinicalCsvCell} from './clinicalCsv.js';
 // Offline review package validator. Never grants clinical approval or writes to Supabase.
 import {normalizeIngredientName} from './clinicalPreviewEngine.js';
 import {validateBilingualAlias,createBilingualAliasIndex} from './clinicalBilingualMapping.js';
@@ -30,7 +31,7 @@ export function inspectBilingualReviewPackage(records,candidates){
 }
 export function exportBilingualReviewTemplateCsv(candidates){
  const cols=['alias','language','canonical_ingredient_id','status','source_reference_id','source_version','source_url','source_document_id','reviewer_id','reviewed_at'];
- const quote=value=>'"'+String(value??'').replace(/"/g,'""').replace(/^[=+\-@\t\r]/,"'$&")+'"';
+ const quote=clinicalCsvCell;
  const rows=(Array.isArray(candidates)?candidates:[]).map(x=>({
   alias:x.alias,language:x.language==='ar'||x.language==='en'?x.language:'',
   canonical_ingredient_id:'',status:'candidate',source_reference_id:'',source_version:'',

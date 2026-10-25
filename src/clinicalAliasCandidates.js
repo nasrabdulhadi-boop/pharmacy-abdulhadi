@@ -1,3 +1,4 @@
+import {clinicalCsvCell} from './clinicalCsv.js';
 // Research-only bilingual alias candidate discovery. Candidates are never approved.
 import {normalizeIngredientName,parseIngredientField} from './clinicalPreviewEngine.js';
 export function buildIngredientAliasCandidates(products){
@@ -34,6 +35,6 @@ export function summarizeIngredientAliasCandidates(rows){
 }
 export function exportIngredientAliasCandidatesCsv(rows){
  const columns=['alias','normalized_alias','language','product_count','example_products','canonical_ingredient_id','source_reference_id','source_version','reviewer_id','reviewed_at','status'];
- const cell=value=>'"'+String(value??'').replace(/"/g,'""').replace(/^[=+\-@\t\r]/,"'$&")+'"';
+ const cell=clinicalCsvCell;
  return '\uFEFF'+[columns.join(','),...(Array.isArray(rows)?rows:[]).map(r=>columns.map(c=>cell(c==='example_products'?r.example_products.join(' | '):r[c])).join(','))].join('\r\n');
 }

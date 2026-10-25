@@ -1,3 +1,4 @@
+import {clinicalCsvCell} from './clinicalCsv.js';
 // Read-only prioritization of catalog composition review; never changes product records.
 import {parseIngredientField} from './clinicalPreviewEngine.js';
 export function buildClinicalReviewQueue(products){
@@ -29,6 +30,6 @@ export function summarizeClinicalReviewQueue(queue){
 }
 export function exportClinicalReviewQueueCsv(queue){
  const columns=['product_id','product_name','barcode','active_ingredient','priority','reasons','review_status'];
- const csvCell=value=>'"'+String(value??'').replace(/"/g,'""').replace(/^[=+\-@\t\r]/,'\u0027$&')+'"';
+ const csvCell=clinicalCsvCell;
  return '\uFEFF'+[columns.join(','),...(Array.isArray(queue)?queue:[]).map(row=>columns.map(c=>csvCell(c==='reasons'?row.reasons.join('|'):row[c])).join(','))].join('\r\n');
 }

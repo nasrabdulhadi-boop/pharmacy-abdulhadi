@@ -1,3 +1,4 @@
+import {clinicalCsvCell} from './clinicalCsv.js';
 // Preview-only deterministic ingredient parsing. Not a clinical interaction engine.
 // Never infer synonyms, salts, equivalence, dose or safety from text matching.
 export function normalizeIngredientName(value){
@@ -71,7 +72,7 @@ export function clinicalAuditCsv(products){
   const parsed=parseIngredientField(p.active_ingredient);
   return [p.id||'',p.name||'',p.active_ingredient||'',parsed.components.join(' + '),parsed.status,parsed.reason,p.strength||'',p.dosage_form||''];
  });
- const csvCell=v=>'"'+String(v??'').replace(/"/g,'""').replace(/^[=+@\-\t\r]/,m=>"'"+m)+'"';
+ const csvCell=clinicalCsvCell;
  return '\uFEFF'+[['product_id','product_name','raw_ingredient','normalized_components','status','reason','strength','dosage_form'],...rows].map(row=>row.map(csvCell).join(',')).join('\r\n');
 }
 

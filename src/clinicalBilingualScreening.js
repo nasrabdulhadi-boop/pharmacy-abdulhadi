@@ -1,33 +1,13 @@
 // Experimental bilingual identity and reviewed-rule screening.
 // All inputs must be explicitly reviewed; incomplete composition fails closed.
 import {createBilingualAliasIndex,resolveBilingualIngredient} from './clinicalBilingualMapping.js';
-import {clinicalRuleReleaseReady,validateIngredientMapping} from './clinicalRuleEngine.js';
+import {prepareClinicalRules,validateIngredientMapping} from './clinicalRuleEngine.js';
 import {nonemptyText,validClinicalId,hasReviewMetadata,hasSourceLocator} from './clinicalProvenance.js';
 export function screenBilingualReviewedPairs(products,aliases,mappings,rules){
  const aliasIndex=createBilingualAliasIndex(aliases);
  const rows=Array.isArray(products)?products:[];
  const mappingRows=Array.isArray(mappings)?mappings:[];
- const eligibleRules=(Array.isArray(rules)?rules:[]).filter(rule=>clinicalRuleReleaseReady(rule));
- // A rule identifier must uniquely identify one reviewed evidence record.
- // Conflicting reuse of an ID is quarantined, even across different ingredient pairs.
- const ruleIdCounts=new Map();
- for(const rule of eligibleRules){const id=String(rule.id);ruleIdCounts.set(id,(ruleIdCounts.get(id)||0)+1)}
- const duplicateRuleIds=[...ruleIdCounts].filter(([,count])=>count>1).map(([id])=>id);
- const validatedRules=eligibleRules.filter(rule=>ruleIdCounts.get(String(rule.id))===1);
- // Conflicting reviewed rules for the same unordered ingredient pair are quarantined.
- const byPair=new Map();
- for(const rule of validatedRules){
-  const pair=JSON.stringify([String(rule.ingredient_a_id),String(rule.ingredient_b_id)].sort());
-  if(!byPair.has(pair))byPair.set(pair,[]);
-  byPair.get(pair).push(rule);
- }
- const ruleConflicts=[];
- const validRules=[];
- for(const [pair,group] of byPair){
-  const signatures=new Set(group.map(r=>[r.severity,r.mechanism,r.recommendation].join('::')));
-  if(signatures.size>1){ruleConflicts.push({pair,ruleIds:group.map(r=>r.id)});continue}
-  validRules.push(group[0]);
- }
+ const {rules:validRules,ruleConflicts,duplicateRuleIds}=prepareClinicalRules(rules);
  const unresolved=[],ingredientsByProduct=new Map();
  const idCounts=new Map();
  for(const product of rows){
@@ -49,7 +29,7 @@ export function screenBilingualReviewedPairs(products,aliases,mappings,rules){
   const mapped=new Set(validMappings.map(m=>String(m.ingredient_id)));
   // Extra reviewed mappings are not evidence that the composition manifest is complete.
   // Even when the extra row duplicates an existing ingredient ID, quarantine it for review.
-  if(validMappings.length!==expected.size){
+  if(validMappings.length!==mapped.size){
    unresolved.push({productId:id,reason:'unexpected_or_duplicate_ingredient_mappings'});continue;
   }
   if(mapped.size!==expected.size||[...expected].some(x=>!mapped.has(x))){

@@ -17,6 +17,7 @@ import {exportBilingualReviewTemplateCsv} from './clinicalAliasReviewPackage.js'
 import {inspectBilingualReviewCsv} from './clinicalReviewCsvIntake.js';
 import {createLatestPreviewTask,clinicalPreviewMessage,clinicalReviewIssueMessages} from './clinicalPreviewUi.js';
 import {previewLocalBilingualIdentity,MAX_IDENTITY_PREVIEW_PRODUCTS} from './clinicalIdentitySandbox.js';
+import {buildClinicalSearchIndex,searchClinicalCatalog,mergeClinicalSearchResults} from './clinicalCatalogSearch.js';
 
 const url=import.meta.env.VITE_SUPABASE_URL; const key=import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 const supabase=url&&key?createClient(url,key):null;
@@ -298,6 +299,7 @@ function ClinicalPreview(){
  const [error,setError]=useState('');
  const [checked,setChecked]=useState(false);
  const [searchCompleted,setSearchCompleted]=useState(false);
+ const [searchOrigin,setSearchOrigin]=useState('');
  const [audit,setAudit]=useState(null);
  const [auditProducts,setAuditProducts]=useState([]);
  const [auditBusy,setAuditBusy]=useState(false);
@@ -312,6 +314,7 @@ function ClinicalPreview(){
  const auditTask=useMemo(()=>createLatestPreviewTask(),[]);
  useEffect(()=>()=>{searchTask.invalidate();reviewTask.invalidate();auditTask.invalidate()},[searchTask,reviewTask,auditTask]);
  const runAudit=async()=>{
+  searchTask.invalidate();setResults([]);setBusy(false);setSearchCompleted(false);setSearchOrigin('');
   reviewTask.invalidate();setReviewCsvResult(null);setReviewCsvError('');setIdentityPreview(null);
   setAuditBusy(true);setAuditError('');setAudit(null);setAuditProducts([]);setAuditProgress(0);setAuditComplete(false);
   const rows=[];
@@ -333,22 +336,24 @@ function ClinicalPreview(){
    settled:()=>setAuditBusy(false)
   });
  };
+ const searchIndex=useMemo(()=>auditComplete?buildClinicalSearchIndex(auditProducts):[],[auditProducts,auditComplete]);
  const search=async()=>{
   const q=query.trim();if(!q||busy)return;
-  setBusy(true);setError('');setResults([]);setSearchCompleted(false);
+  if(q.length>128){setError('عبارة البحث تتجاوز 128 حرفاً');setResults([]);setSearchCompleted(false);return}
+  setBusy(true);setError('');setResults([]);setSearchCompleted(false);setSearchOrigin('');
   await searchTask.run(async()=>{
    const {data,error:e}=await supabase.rpc('admin_search_pos_products_currency',{p_query:q,p_limit:20});
    if(e)throw e;
    if(!Array.isArray(data))throw new Error('استجابة غير صالحة من قاعدة البيانات');
-   return data;
+   return mergeClinicalSearchResults(data,auditComplete?searchClinicalCatalog(searchIndex,q):[]);
   },{
-   success:setResults,
+   success:rows=>{setResults(rows);setSearchOrigin(auditComplete?'البحث المباشر مع مطابقة نصية من آخر تدقيق مكتمل؛ بيانات التدقيق قد تكون أقدم من قاعدة البيانات.':'نتائج البحث المباشر من قاعدة البيانات.')},
    error:e=>{setError(e.message||'تعذر البحث');setResults([])},
    settled:()=>{setBusy(false);setSearchCompleted(true)}
   });
  };
  const changeQuery=value=>{
-  searchTask.invalidate();setQuery(value);setResults([]);setError('');setBusy(false);setSearchCompleted(false);
+  searchTask.invalidate();setQuery(value);setResults([]);setError('');setBusy(false);setSearchCompleted(false);setSearchOrigin('');
  };
  const reviewQueue=useMemo(()=>buildIngredientReviewQueue(auditProducts),[auditProducts]);
  const priorityQueue=useMemo(()=>prioritizeClinicalReview(auditProducts),[auditProducts]);
@@ -452,7 +457,8 @@ function ClinicalPreview(){
    </details></>}
   </section>
   <section className="clinicalPreviewPanel"><h3>اختيار المنتجات من قاعدة الصيدلية</h3><div className="clinicalPreviewSearch"><input aria-label="البحث عن دواء في المساعد السريري" value={query} onChange={e=>changeQuery(e.target.value)} onKeyDown={e=>e.key==='Enter'&&search()} placeholder="ابحث باسم الدواء أو الباركود"/><button onClick={search} disabled={busy||!query.trim()}><Search size={16}/>{busy?'جارٍ البحث':'بحث'}</button></div>
-   {error&&<p className="clinicalPreviewError">{error}</p>}
+   {error&&<p className="clinicalPreviewError" role="alert">{error}</p>}
+   {searchCompleted&&!error&&searchOrigin&&<p className="clinicalPreviewDisclaimer">{searchOrigin}</p>}
    {searchCompleted&&!busy&&!error&&results.length===0&&<p className="clinicalPreviewDisclaimer" role="status">لا توجد منتجات مطابقة للبحث. جرّب الاسم التجاري أو الباركود أو صيغة كتابة أخرى.</p>}
    <div className="clinicalPreviewResults">{results.map(p=><button key={p.id} disabled={selected.some(x=>x.id===p.id)} onClick={()=>{setSelected(a=>[...a,p]);setChecked(false);setIdentityPreview(null)}}><span><b>{p.name}</b><small>{p.active_ingredient||'المادة الفعالة غير مسجلة'} • {p.strength||'التركيز غير مسجل'}</small></span><Plus size={17}/></button>)}</div>
   </section>

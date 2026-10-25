@@ -7,7 +7,7 @@ export function validateClinicalRule(rule){
  if(!rule||typeof rule!=='object')return {valid:false,problems:['missing rule']};
  if(!validClinicalId(rule.id)||!validClinicalId(rule.ingredient_a_id)||!validClinicalId(rule.ingredient_b_id)||rule.ingredient_a_id===rule.ingredient_b_id)problems.push('invalid ingredient pair');
  if(!severities.has(rule.severity))problems.push('invalid severity');
- if(!String(rule.mechanism||'').trim()||!String(rule.recommendation||'').trim())problems.push('missing clinical explanation');
+ if(!nonemptyText(rule.mechanism)||!nonemptyText(rule.recommendation))problems.push('missing clinical explanation');
  if(!nonemptyText(rule.reference_id)||!nonemptyText(rule.source_version)||!hasReviewMetadata(rule))problems.push('missing source or review metadata');
  if(!hasSourceLocator(rule))problems.push('missing verifiable source locator');
  if(rule.status!=='approved')problems.push('not approved');
@@ -21,6 +21,27 @@ export function verifyClinicalSourceLicense(rule){
 export function clinicalRuleReleaseReady(rule){
  return validateClinicalRule(rule).valid&&verifyClinicalSourceLicense(rule);
 }
+// One consistent rule registry for both research engines. Conflicts never pick a winner.
+export function prepareClinicalRules(rules){
+ const eligible=(Array.isArray(rules)?rules:[]).filter(clinicalRuleReleaseReady);
+ const idCounts=new Map();
+ for(const rule of eligible)idCounts.set(rule.id,(idCounts.get(rule.id)||0)+1);
+ const duplicateRuleIds=[...idCounts].filter(([,count])=>count>1).map(([id])=>id);
+ const byPair=new Map();
+ for(const rule of eligible){
+  if(idCounts.get(rule.id)!==1)continue;
+  const pair=JSON.stringify([rule.ingredient_a_id,rule.ingredient_b_id].sort());
+  if(!byPair.has(pair))byPair.set(pair,[]);
+  byPair.get(pair).push(rule);
+ }
+ const usable=[],ruleConflicts=[];
+ for(const [pair,group] of byPair){
+  const signatures=new Set(group.map(rule=>JSON.stringify([rule.severity,rule.mechanism,rule.recommendation])));
+  if(signatures.size>1)ruleConflicts.push({pair,ruleIds:group.map(rule=>rule.id)});
+  else usable.push(group[0]);
+ }
+ return {rules:usable,duplicateRuleIds,ruleConflicts};
+}
 export function validateIngredientMapping(mapping){
  const problems=[];
  if(!mapping||typeof mapping!=='object')return {valid:false,problems:['missing mapping']};
@@ -33,16 +54,18 @@ export function validateIngredientMapping(mapping){
  return {valid:problems.length===0,problems};
 }
 export function evaluateReviewedClinicalRules(products,mappings,rules){
- const productIds=[...new Set((Array.isArray(products)?products:[]).filter(p=>p&&p.id!=null&&String(p.id).trim()).map(p=>String(p.id)))];
+ const productRows=(Array.isArray(products)?products:[]).filter(p=>p&&p.id!=null&&String(p.id).trim());
+ const productIds=[...new Set(productRows.map(p=>String(p.id)))];
+ const duplicateProductIds=productIds.filter(id=>productRows.filter(p=>String(p.id)===id).length>1);
  const byProduct=new Map();
  const unmapped=[];
  for(const id of productIds){
   const m=(Array.isArray(mappings)?mappings:[]).filter(x=>validateIngredientMapping(x).valid&&String(x.product_id)===id);
-  if(!m.length){unmapped.push(id);continue}
+  if(!m.length||duplicateProductIds.includes(id)||new Set(m.map(row=>row.ingredient_id)).size!==m.length){unmapped.push(id);continue}
   byProduct.set(id,[...new Set(m.map(x=>String(x.ingredient_id)))]);
  }
  // Research screening must not treat unlicensed evidence as an approved clinical finding.
- const usableRules=(Array.isArray(rules)?rules:[]).filter(x=>clinicalRuleReleaseReady(x));
+ const {rules:usableRules,duplicateRuleIds,ruleConflicts}=prepareClinicalRules(rules);
  const findings=[];
  for(let i=0;i<productIds.length;i++)for(let j=i+1;j<productIds.length;j++){
   const a=productIds[i],b=productIds[j];
@@ -54,7 +77,7 @@ export function evaluateReviewedClinicalRules(products,mappings,rules){
     findings.push({product_a_id:a,product_b_id:b,rule_id:rule.id,severity:rule.severity,reference_id:rule.reference_id});
   }
  }
- return {status:unmapped.length?'incomplete':usableRules.length?'limited_approved_rule_screening':'no_approved_rules',findings,unmappedProductIds:unmapped,approvedRuleCount:usableRules.length};
+ return {status:unmapped.length||duplicateRuleIds.length||ruleConflicts.length?'incomplete':usableRules.length?'limited_approved_rule_screening':'no_approved_rules',findings,unmappedProductIds:unmapped,approvedRuleCount:usableRules.length,duplicateProductIds,duplicateRuleIds,ruleConflicts,coverage:'not_exhaustive',safeToCombine:null,productionEnabled:false};
 }
 
 export function clinicalReviewReadiness(mappings,rules){

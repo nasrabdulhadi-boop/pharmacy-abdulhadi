@@ -79,3 +79,24 @@ test('malformed input containers and mapping rows never crash the prototype',()=
  assert.equal(evaluateReviewedClinicalRules({},null,{}).findings.length,0);
  assert.equal(evaluateReviewedClinicalRules([{id:'p'}],[null,{}],[null]).status,'incomplete');
 });
+
+test('both engine paths quarantine reused rule IDs and conflicting severity for the same pair',()=>{
+ const products=[{id:'p1'},{id:'p2'}],mappings=[mapped('p1','ing-a'),mapped('p2','ing-b')];
+ for(const rules of [[rule,{...rule,ingredient_a_id:'ing-c'}],[rule,{...rule,id:'different-id',severity:'minor'}]]){
+  const result=evaluateReviewedClinicalRules(products,mappings,rules);
+  assert.equal(result.status,'incomplete');assert.equal(result.findings.length,0);
+  assert.equal(result.productionEnabled,false);assert.equal(result.safeToCombine,null);
+ }
+});
+test('basic engine does not silently deduplicate conflicting product or mapping identities',()=>{
+ const mappings=[mapped('p1','ing-a'),mapped('p2','ing-b')];
+ const duplicateProduct=evaluateReviewedClinicalRules([{id:'p1'},{id:'p1'},{id:'p2'}],mappings,[rule]);
+ assert.equal(duplicateProduct.findings.length,0);assert.equal(duplicateProduct.status,'incomplete');
+ const duplicateMapping=evaluateReviewedClinicalRules([{id:'p1'},{id:'p2'}],[...mappings,mapped('p1','ing-a')],[rule]);
+ assert.equal(duplicateMapping.findings.length,0);assert.equal(duplicateMapping.status,'incomplete');
+});
+
+test('non-text clinical explanations cannot qualify a reviewed rule',()=>{
+ assert.equal(validateClinicalRule({...rule,mechanism:{}}).valid,false);
+ assert.equal(validateClinicalRule({...rule,recommendation:['synthetic']}).valid,false);
+});
