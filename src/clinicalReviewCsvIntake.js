@@ -3,23 +3,29 @@ import {inspectBilingualReviewPackage} from './clinicalAliasReviewPackage.js';
 const headers=['alias','language','canonical_ingredient_id','status','source_reference_id','source_version','source_url','source_document_id','reviewer_id','reviewed_at'];
 export function parseBilingualReviewCsv(text){
  const input=String(text||'').replace(/^\uFEFF/,'');
- const records=[];let cells=[],cell='',quoted=false;
+ const records=[];let cells=[],cell='',state='start';
+ const finishCell=()=>{cells.push(cell);cell='';state='start'};
+ const finishRow=()=>{finishCell();if(cells.some(x=>x!==''))records.push(cells);cells=[]};
  for(let i=0;i<input.length;i++){
   const c=input[i];
-  if(c==='"'){
-   if(quoted&&input[i+1]==='"'){cell+='"';i++}
-   else if(!quoted&&cell==='')quoted=true;
-   else if(quoted)quoted=false;
-   else throw new Error('Malformed CSV quotation');
-  }else if(c===','&&!quoted){cells.push(cell);cell=''}
-  else if((c==='\n'||c==='\r')&&!quoted){
-   if(c==='\r'&&input[i+1]==='\n')i++;
-   cells.push(cell);if(cells.some(x=>x!==''))records.push(cells);
-   cells=[];cell='';
-  }else cell+=c;
+  if(state==='quoted'){
+   if(c==='"'&&input[i+1]==='"'){cell+='"';i++}
+   else if(c==='"')state='closed';
+   else cell+=c;
+  }else if(c===','){finishCell()}
+  else if(c==='\\n'||c==='\\r'){
+   if(c==='\\r'&&input[i+1]==='\\n')i++;
+   finishRow();
+  }else if(c==='"'){
+   if(state!=='start')throw new Error('Malformed CSV quotation');
+   state='quoted';
+  }else{
+   if(state==='closed')throw new Error('Unexpected text after CSV quotation');
+   cell+=c;state='plain';
+  }
  }
- if(quoted)throw new Error('Unclosed CSV quotation');
- cells.push(cell);if(cells.some(x=>x!==''))records.push(cells);
+ if(state==='quoted')throw new Error('Unclosed CSV quotation');
+ finishRow();
  if(!records.length)throw new Error('Empty CSV');
  const [head,...body]=records;
  if(head.length!==headers.length||head.some((x,i)=>x!==headers[i]))throw new Error('Unexpected CSV headers');
