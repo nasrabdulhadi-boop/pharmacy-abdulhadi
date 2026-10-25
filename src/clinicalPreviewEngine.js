@@ -45,3 +45,28 @@ export function auditClinicalCatalog(products){
  }
  return {counts,issues:rows.filter(r=>r.parsed.status!=='parsed'||!String(r.strength).trim()||!String(r.form).trim()).slice(0,60)};
 }
+
+export function buildIngredientReviewQueue(products){
+ const grouped=new Map();
+ for(const p of Array.isArray(products)?products:[]){
+  const parsed=parseIngredientField(p.active_ingredient);
+  if(parsed.status!=='parsed')continue;
+  for(const component of parsed.components){
+   const row=grouped.get(component)||{normalized:component,productCount:0,examples:[],variants:new Set()};
+   row.productCount++;
+   row.variants.add(String(p.active_ingredient||'').trim());
+   if(row.examples.length<3)row.examples.push(String(p.name||''));
+   grouped.set(component,row);
+  }
+ }
+ return [...grouped.values()].map(row=>({...row,variants:[...row.variants].slice(0,5),status:'unverified'}))
+  .sort((a,b)=>b.productCount-a.productCount||a.normalized.localeCompare(b.normalized));
+}
+export function clinicalAuditCsv(products){
+ const rows=(Array.isArray(products)?products:[]).map(p=>{
+  const parsed=parseIngredientField(p.active_ingredient);
+  return [p.id||'',p.name||'',p.active_ingredient||'',parsed.components.join(' + '),parsed.status,parsed.reason,p.strength||'',p.dosage_form||''];
+ });
+ const csvCell=v=>'"'+String(v??'').replace(/"/g,'""').replace(/^[=+@\-\t\r]/,m=>"'"+m)+'"';
+ return '\uFEFF'+[['product_id','product_name','raw_ingredient','normalized_components','status','reason','strength','dosage_form'],...rows].map(row=>row.map(csvCell).join(',')).join('\r\n');
+}
