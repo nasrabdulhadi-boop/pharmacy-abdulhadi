@@ -72,3 +72,16 @@ test('duplicate approved mapping rows fail closed rather than silently deduplica
  assert.equal(result.status,'incomplete');
  assert.equal(result.unresolved.some(x=>x.productId==='ar'&&x.reason==='unexpected_or_duplicate_ingredient_mappings'),true);
 });
+
+test('reused approved rule ID across different ingredient pairs is quarantined',()=>{
+ const result=screenBilingualReviewedPairs(
+  [product('ar','مادة ا',['ing-a']),product('en','Ingredient B',['ing-b'])],
+  [alias('مادة ا','ar','ing-a'),alias('Ingredient B','en','ing-b')],
+  [mapping('ar','ing-a'),mapping('en','ing-b')],
+  [rule,{...rule,ingredient_a_id:'ing-c',ingredient_b_id:'ing-d'}]);
+ assert.deepEqual(result.duplicateRuleIds,['synthetic-interaction']);
+ assert.equal(result.approvedRuleCount,0);
+ assert.equal(result.findings.length,0);
+ assert.equal(result.status,'incomplete');
+ assert.equal(result.productionEnabled,false);
+});
