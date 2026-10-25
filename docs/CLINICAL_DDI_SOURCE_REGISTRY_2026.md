@@ -4,7 +4,7 @@ Updated 2026-10-25. **Do not import into production or use for clinical alerts w
 
 | Source | Coverage / role | Access | Licensing and clinical gate | URL |
 |---|---|---|---|---|
-| DDInter 2.0 | 302,516 DDIs; 857 drug-food; 8,359 drug-disease; 6,033 therapeutic duplication records | Web, category CSV download page | Open access is not automatically commercial redistribution permission; confirm terms and version/CSV completeness | https://ddinter2.scbdd.com/ |
+| DDInter 2.0 | 302,516 DDIs; 857 drug-food; 8,359 drug-disease; 6,033 therapeutic duplication records | Web, category CSV download page | Official terms: CC BY-NC-SA 4.0, non-commercial only; no production/commercial import without separate permission; confirm CSV completeness | https://ddinter2.scbdd.com/ |
 | DDInter 1.0 | 236,834 DDIs; historical comparison | Category CSV files | Older release; not additive to v2 | https://ddinter.scbdd.com/download/ |
 | DailyMed SPL | Original structured US label text, drug interactions section | Public REST/XML and label ZIP | Evidence source, NOT a normalized pairwise DDI knowledge base; review product/route/version | https://dailymed.nlm.nih.gov/dailymed/app-support-web-services.cfm |
 | openFDA labeling | Searchable label drug_interactions fields | Public API | Not a clinical DDI checker; API itself warns against care decisions | https://open.fda.gov/apis/drug/label/how-to-use-the-endpoint/ |
@@ -18,7 +18,7 @@ Updated 2026-10-25. **Do not import into production or use for clinical alerts w
 | KEGG DRUG | Drug and interaction research reference | Web/licensed | Nonacademic use requires commercial license | https://www.genome.jp/kegg/legal.html |
 
 ## Integration priority
-1. Verify DDInter 2.0 CSV accessibility, schema, version, terms and redistribution rights; keep downloaded records in isolated research staging only.
+1. DDInter 2.0 official terms explicitly require CC BY-NC-SA 4.0: do not ingest into a commercial pharmacy application without written permission; research and schema assessment only.
 2. Use RxNorm for reviewed identity alignment and DailyMed/openFDA to verify original label passages, including label date and exact product formulation.
 3. Evaluate 2026 DailyMed-derived dataset against primary labels and curated DDInter; quantify duplicate pairs, contradictions and unsupported claims.
 4. Keep TWOSIDES and ML datasets in **signal/research only** category, never convert directly into severity-ranked warnings.
@@ -29,3 +29,6 @@ source_id, source_url, source_license_status, source_version, downloaded_at, pub
 
 ## Release gate
 No database imports or production alerts until source terms are confirmed, ingredients are reconciled, high-risk cases clinically reviewed, false-positive/false-negative testing completed, and the user approves production rollout.
+
+## Verified restriction
+DDInter 2.0 official terms: https://ddinter2.scbdd.com/terms/ — CC BY-NC-SA 4.0. The site explicitly warns that no recorded interaction does not mean a combination is safe. The 2026 Zenodo DailyMed-derived dataset displays a license heading without a clearly rendered license value; obtain and verify rights before reuse.
