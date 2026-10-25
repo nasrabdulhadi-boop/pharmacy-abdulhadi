@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {validateClinicalRule,validateIngredientMapping,evaluateReviewedClinicalRules} from '../src/clinicalRuleEngine.js';
+import {validateClinicalRule,validateIngredientMapping,evaluateReviewedClinicalRules,clinicalReviewReadiness} from '../src/clinicalRuleEngine.js';
 const rule={id:'test-1',ingredient_a_id:'ing-a',ingredient_b_id:'ing-b',severity:'major',mechanism:'Synthetic test mechanism',recommendation:'Synthetic test recommendation',reference_id:'ref-test',source_version:'test-1',reviewed_at:'2026-10-25',reviewer_id:'reviewer-test',status:'approved',active:true};
 const mapped=(id,ingredient)=>({product_id:id,ingredient_id:ingredient,status:'approved',reviewer_id:'reviewer-test',reviewed_at:'2026-10-25',composition_verified:true,source_reference_id:'label-test',source_version:'test-1'});
 test('rejects rules lacking approval, reference or reviewer',()=>{
@@ -35,4 +35,16 @@ test('draft and inactive rules never generate findings',()=>{
 test('mapping requires evidence and approval',()=>{
  assert.equal(validateIngredientMapping(mapped('p1','ing-a')).valid,true);
  assert.equal(validateIngredientMapping({...mapped('p1','ing-a'),source_reference_id:null}).valid,false);
+});
+
+test('empty clinical evidence cannot be ready',()=>{
+ const state=clinicalReviewReadiness([],[]);
+ assert.equal(state.clinicallyReady,false);
+ assert.equal(state.rulesApproved,0);
+});
+test('unreviewed rules and mappings are reported separately',()=>{
+ const state=clinicalReviewReadiness([{...mapped('p1','ing-a'),status:'pending'}],[{...rule,status:'draft'}]);
+ assert.equal(state.mappingProblems.length,1);
+ assert.equal(state.ruleProblems.length,1);
+ assert.equal(state.clinicallyReady,false);
 });
