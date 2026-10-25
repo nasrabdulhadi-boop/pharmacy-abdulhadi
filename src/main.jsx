@@ -11,6 +11,7 @@ import './SMART_TOAST.css';
 import './CLINICAL_PREVIEW.css';
 import {screenExactIngredientOverlap,auditClinicalCatalog,buildIngredientReviewQueue,clinicalAuditCsv,prioritizeClinicalReview,summarizeIngredientReview} from './clinicalPreviewEngine.js';
 import {evaluateReviewedClinicalRules,clinicalReviewReadiness} from './clinicalRuleEngine.js';
+import {buildClinicalReviewQueue,summarizeClinicalReviewQueue,exportClinicalReviewQueueCsv} from './clinicalCatalogReviewQueue.js';
 
 const url=import.meta.env.VITE_SUPABASE_URL; const key=import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 const supabase=url&&key?createClient(url,key):null;
@@ -329,6 +330,8 @@ function ClinicalPreview(){
  };
  const reviewQueue=useMemo(()=>buildIngredientReviewQueue(auditProducts),[auditProducts]);
  const priorityQueue=useMemo(()=>prioritizeClinicalReview(auditProducts),[auditProducts]);
+ const bilingualReviewQueue=useMemo(()=>buildClinicalReviewQueue(auditProducts),[auditProducts]);
+ const bilingualReviewSummary=useMemo(()=>summarizeClinicalReviewQueue(bilingualReviewQueue),[bilingualReviewQueue]);
  const auditSummary=useMemo(()=>summarizeIngredientReview(auditProducts),[auditProducts]);
  const exportAudit=()=>{
   if(!auditProducts.length)return;
@@ -337,6 +340,14 @@ function ClinicalPreview(){
   const url=URL.createObjectURL(blob);
   const link=document.createElement('a');link.href=url;link.download='clinical-ingredient-audit-preview.csv';
   document.body.appendChild(link);link.click();link.remove();URL.revokeObjectURL(url);
+ };
+ const exportBilingualReview=()=>{
+  if(!auditComplete||!bilingualReviewQueue.length)return;
+  const csv=exportClinicalReviewQueueCsv(bilingualReviewQueue);
+  const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});
+  const link=document.createElement('a');const href=URL.createObjectURL(blob);
+  link.href=href;link.download='clinical-bilingual-review-queue.csv';
+  document.body.appendChild(link);link.click();link.remove();URL.revokeObjectURL(href);
  };
  const names=selected.map(p=>({id:p.id,name:p.name,ingredient:String(p.active_ingredient||'').trim(),strength:p.strength||'',form:p.dosage_form||''}));
  const {overlaps,unresolved}=screenExactIngredientOverlap(selected);
@@ -360,6 +371,12 @@ function ClinicalPreview(){
     <div><b>{audit.counts.missingStrength}</b><small>بلا تركيز</small></div>
     <div><b>{audit.counts.missingForm}</b><small>بلا شكل دوائي</small></div>
    </div>
+   <details className="clinicalAuditDetails"><summary>قائمة مراجعة المطابقة العربية والإنكليزية ({bilingualReviewSummary.needsReview} منتجاً)</summary>
+    <p className="clinicalPreviewDisclaimer">هذه قائمة مراجعة بيانات، وليست تداخلات دوائية. أولوية 1: نقص المادة الفعالة؛ 2: تركيب غير واضح؛ 3: أسماء عربية تحتاج توثيقاً؛ 4: نقص التركيز أو الشكل.</p>
+    <button type="button" disabled={!auditComplete||!bilingualReviewQueue.length} onClick={exportBilingualReview}>تصدير قائمة المراجعة الكاملة CSV</button>
+    {bilingualReviewSummary.priorities.map(p=><p key={p.priority}>الأولوية {p.priority}: {p.count} منتج</p>)}
+    {bilingualReviewQueue.slice(0,100).map(row=><div key={row.product_id}><b>{row.product_name}</b><small>الأولوية {row.priority} • {row.reasons.join('، ')} • لم يعتمد سريرياً</small></div>)}
+   </details>
    <details className="clinicalAuditDetails"><summary>قائمة المواد المرشحة للتوحيد ({reviewQueue.length} اسم نصي — غير معتمد سريرياً)</summary>
    {reviewQueue.slice(0,50).map(row=><div key={row.normalized}><b>{row.normalized}</b><small>عدد المنتجات في العينة: {row.productCount} | حالة المطابقة: غير معتمدة | أمثلة: {row.examples.join('، ')}</small></div>)}
    </details>
