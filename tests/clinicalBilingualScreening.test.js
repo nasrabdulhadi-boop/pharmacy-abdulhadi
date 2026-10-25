@@ -26,3 +26,22 @@ test('unknown Arabic alias fails closed despite otherwise approved composition',
  assert.equal(result.findings.length,0);
  assert.equal(result.status,'incomplete');
 });
+
+test('fully reviewed bilingual combination can be screened against synthetic rules',()=>{
+ const combo=product('combo','',['ing-a','ing-c']);
+ combo.verified_composition.reviewed_ingredient_aliases=['مادة ا','Ingredient C'];
+ const result=screenBilingualReviewedPairs([combo,product('other','Ingredient B',['ing-b'])],
+  [alias('مادة ا','ar','ing-a'),alias('Ingredient C','en','ing-c'),alias('Ingredient B','en','ing-b')],
+  [mapping('combo','ing-a'),mapping('combo','ing-c'),mapping('other','ing-b')],[rule]);
+ assert.equal(result.findings.length,1);
+ assert.equal(result.unresolved.length,0);
+});
+test('combination with missing reviewed alias cannot be screened',()=>{
+ const combo=product('combo','',['ing-a','ing-c']);
+ combo.verified_composition.reviewed_ingredient_aliases=['مادة ا'];
+ const result=screenBilingualReviewedPairs([combo,product('other','Ingredient B',['ing-b'])],
+  [alias('مادة ا','ar','ing-a'),alias('Ingredient B','en','ing-b')],
+  [mapping('combo','ing-a'),mapping('combo','ing-c'),mapping('other','ing-b')],[rule]);
+ assert.equal(result.findings.length,0);
+ assert.equal(result.unresolved.some(x=>x.reason==='combination_aliases_not_fully_verified'),true);
+});
