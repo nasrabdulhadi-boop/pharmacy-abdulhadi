@@ -28,4 +28,4 @@
 7. Preview build and authenticated QA, then explicit approval before any production merge.
 
 ## Preview audit
-The preview calls existing `admin_get_products_page(p_limit:500,p_offset:0)` read-only and reports **only the first 500 records**. It does not represent the full inventory or clinically validated ingredient coverage. The prototype flags exact ingredient text overlap, not proven therapeutic duplication.
+The preview calls existing `admin_get_products_page` read-only in pages of 500 records, up to a hard cap of 20,000. It reports incomplete coverage if the cap is reached or any page fails; no partial result is presented as complete. It does not establish clinically validated ingredient coverage. The prototype flags exact ingredient text overlap, not proven therapeutic duplication. CSV exports are local to the browser and do not write to the pharmacy database.
