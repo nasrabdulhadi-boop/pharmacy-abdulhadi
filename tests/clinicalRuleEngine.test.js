@@ -48,3 +48,13 @@ test('unreviewed rules and mappings are reported separately',()=>{
  assert.equal(state.ruleProblems.length,1);
  assert.equal(state.clinicallyReady,false);
 });
+
+test('source locator is mandatory',()=>{
+ assert.equal(validateClinicalRule({...rule,source_document_id:null}).valid,false);
+ assert.equal(validateIngredientMapping({...mapped('p1','ing-a'),source_document_id:null}).valid,false);
+});
+test('approved metadata does not alone authorize clinical release',()=>{
+ const state=clinicalReviewReadiness([mapped('p1','ing-a')],[rule]);
+ assert.equal(state.evidenceRecordsValid,true);
+ assert.equal(state.clinicallyReady,false);
+});
