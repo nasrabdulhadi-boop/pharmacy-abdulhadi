@@ -40,7 +40,8 @@ export function evaluateReviewedClinicalRules(products,mappings,rules){
   if(!m.length){unmapped.push(id);continue}
   byProduct.set(id,[...new Set(m.map(x=>String(x.ingredient_id)))]);
  }
- const usableRules=(rules||[]).filter(x=>validateClinicalRule(x).valid);
+ // Research screening must not treat unlicensed evidence as an approved clinical finding.
+ const usableRules=(rules||[]).filter(x=>clinicalRuleReleaseReady(x));
  const findings=[];
  for(let i=0;i<productIds.length;i++)for(let j=i+1;j<productIds.length;j++){
   const a=productIds[i],b=productIds[j];
