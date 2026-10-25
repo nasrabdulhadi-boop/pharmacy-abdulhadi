@@ -13,6 +13,7 @@ export function screenBilingualReviewedPairs(products,aliases,mappings,rules){
   const id=String(product.id);
   // The manifest certifies the entire formulation, not merely one ingredient.
   const manifest=product.verified_composition;
+  // Never infer completeness from a single reviewed ingredient mapping.
   if(!manifest||manifest.status!=='approved'||!manifest.reviewer_id||!manifest.reviewed_at||!manifest.source_reference_id||!manifest.source_version||(!manifest.source_url&&!manifest.source_document_id)||!Array.isArray(manifest.ingredient_ids)||!manifest.ingredient_ids.length){
    unresolved.push({productId:id,reason:'composition_not_fully_verified'});continue;
   }
@@ -24,10 +25,28 @@ export function screenBilingualReviewedPairs(products,aliases,mappings,rules){
    unresolved.push({productId:id,reason:'incomplete_ingredient_mappings'});continue;
   }
   // If an ingredient label is provided, it must resolve to a reviewed alias.
-  if(product.active_ingredient&&expected.size===1){
+  if(expected.size===1){
+   if(!String(product.active_ingredient||'').trim()){
+    unresolved.push({productId:id,reason:'ingredient_label_missing'});continue;
+   }
    const resolved=resolveBilingualIngredient(product.active_ingredient,aliasIndex.index);
    if(resolved.canonicalIngredientId!==[...expected][0]){
     unresolved.push({productId:id,reason:'ingredient_alias_unverified_or_conflicting'});continue;
+   }
+  }
+  if(expected.size>1){
+   // A multi-ingredient product must have every individual label explicitly reviewed.
+   const reviewedLabels=manifest.reviewed_ingredient_aliases;
+   if(!Array.isArray(reviewedLabels)||reviewedLabels.length!==expected.size){
+    unresolved.push({productId:id,reason:'combination_aliases_not_fully_verified'});continue;
+   }
+   const resolved=new Set();
+   for(const label of reviewedLabels){
+    const match=resolveBilingualIngredient(label,aliasIndex.index);
+    if(match.canonicalIngredientId)resolved.add(match.canonicalIngredientId);
+   }
+   if(resolved.size!==expected.size||[...expected].some(x=>!resolved.has(x))){
+    unresolved.push({productId:id,reason:'combination_aliases_unverified_or_conflicting'});continue;
    }
   }
   ingredientsByProduct.set(id,expected);
