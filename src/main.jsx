@@ -9,7 +9,7 @@ import './REDESIGN_V6_3_REAL.css';
 import './V6_4_1_LAYOUT_POLISH.css';
 import './SMART_TOAST.css';
 import './CLINICAL_PREVIEW.css';
-import {screenExactIngredientOverlap,auditClinicalCatalog} from './clinicalPreviewEngine.js';
+import {screenExactIngredientOverlap,auditClinicalCatalog,buildIngredientReviewQueue,clinicalAuditCsv} from './clinicalPreviewEngine.js';
 
 const url=import.meta.env.VITE_SUPABASE_URL; const key=import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 const supabase=url&&key?createClient(url,key):null;
@@ -291,6 +291,7 @@ function ClinicalPreview(){
  const [error,setError]=useState('');
  const [checked,setChecked]=useState(false);
  const [audit,setAudit]=useState(null);
+ const [auditProducts,setAuditProducts]=useState([]);
  const [auditBusy,setAuditBusy]=useState(false);
  const [auditError,setAuditError]=useState('');
  const runAudit=async()=>{
@@ -298,6 +299,7 @@ function ClinicalPreview(){
   try{
    const {data,error:e}=await supabase.rpc('admin_get_products_page',{p_limit:500,p_offset:0});
    if(e)throw e;
+   setAuditProducts(data||[]);
    setAudit(auditClinicalCatalog(data||[]));
   }catch(e){setAuditError(e.message||'تعذر تدقيق العينة')}
   finally{setAuditBusy(false)}
@@ -312,6 +314,15 @@ function ClinicalPreview(){
   }catch(e){setError(e.message||'تعذر البحث');setResults([])}
   finally{setBusy(false)}
  };
+ const reviewQueue=useMemo(()=>buildIngredientReviewQueue(auditProducts),[auditProducts]);
+ const exportAudit=()=>{
+  if(!auditProducts.length)return;
+  const csv=clinicalAuditCsv(auditProducts);
+  const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});
+  const url=URL.createObjectURL(blob);
+  const link=document.createElement('a');link.href=url;link.download='clinical-ingredient-audit-preview.csv';
+  document.body.appendChild(link);link.click();link.remove();URL.revokeObjectURL(url);
+ };
  const names=selected.map(p=>({id:p.id,name:p.name,ingredient:String(p.active_ingredient||'').trim(),strength:p.strength||'',form:p.dosage_form||''}));
  const {overlaps,unresolved}=screenExactIngredientOverlap(selected);
  return <div className="clinicalPreview">
@@ -321,13 +332,16 @@ function ClinicalPreview(){
    <p className="clinicalPreviewDisclaimer">فحص استكشافي لأول 500 سجل من قاعدة المنتجات، وليس إحصاءً شاملاً أو اعتماداً سريرياً. لا يُعدّل أي بيانات.</p>
    <button onClick={runAudit} disabled={auditBusy}>{auditBusy?'جارٍ تدقيق العينة':'تدقيق عينة 500 منتج'}</button>
    {auditError&&<p className="clinicalPreviewError">{auditError}</p>}
-   {audit&&<><div className="clinicalAuditMetrics">
+   {audit&&<><button type="button" onClick={exportAudit}>تصدير عينة التدقيق CSV</button><div className="clinicalAuditMetrics">
     <div><b>{audit.counts.total}</b><small>منتجاً في العينة</small></div>
     <div><b>{audit.counts.missingIngredient}</b><small>بلا مادة فعالة</small></div>
     <div><b>{audit.counts.manualReview}</b><small>صيغة تحتاج مراجعة</small></div>
     <div><b>{audit.counts.missingStrength}</b><small>بلا تركيز</small></div>
     <div><b>{audit.counts.missingForm}</b><small>بلا شكل دوائي</small></div>
    </div>
+   <details className="clinicalAuditDetails"><summary>قائمة المواد المرشحة للتوحيد (${reviewQueue.length} اسم نصي — غير معتمد سريرياً)</summary>
+   {reviewQueue.slice(0,50).map(row=><div key={row.normalized}><b>{row.normalized}</b><small>عدد المنتجات في العينة: {row.productCount} | حالة المطابقة: غير معتمدة | أمثلة: {row.examples.join('، ')}</small></div>)}
+   </details>
    <details className="clinicalAuditDetails"><summary>عرض أمثلة بيانات تحتاج مراجعة ({audit.issues.length} كحد أقصى)</summary>
    {audit.issues.map(p=><div key={p.id}><b>{p.name}</b><small>{p.parsed.status!=='parsed'?p.parsed.reason:'مادة مسجلة'} | {p.strength?'':'تركيز ناقص'} {p.form?'':'شكل ناقص'}</small></div>)}
    </details></>}
