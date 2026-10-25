@@ -45,3 +45,18 @@ export function evaluateReviewedClinicalRules(products,mappings,rules){
  }
  return {status:unmapped.length?'incomplete':usableRules.length?'rules_evaluated':'no_approved_rules',findings,unmappedProductIds:unmapped,approvedRuleCount:usableRules.length};
 }
+
+export function clinicalReviewReadiness(mappings,rules){
+ const mapRows=Array.isArray(mappings)?mappings:[];
+ const ruleRows=Array.isArray(rules)?rules:[];
+ const mappingProblems=mapRows.map((row,index)=>({index,problems:validateIngredientMapping(row).problems})).filter(row=>row.problems.length);
+ const ruleProblems=ruleRows.map((row,index)=>({index,problems:validateClinicalRule(row).problems})).filter(row=>row.problems.length);
+ return {
+  mappingsTotal:mapRows.length,
+  mappingsApproved:mapRows.length-mappingProblems.length,
+  rulesTotal:ruleRows.length,
+  rulesApproved:ruleRows.length-ruleProblems.length,
+  mappingProblems,ruleProblems,
+  clinicallyReady:mapRows.length>0&&ruleRows.length>0&&!mappingProblems.length&&!ruleProblems.length
+ };
+}
