@@ -32,3 +32,16 @@ No database imports or production alerts until source terms are confirmed, ingre
 
 ## Verified restriction
 DDInter 2.0 official terms: https://ddinter2.scbdd.com/terms/ — CC BY-NC-SA 4.0. The site explicitly warns that no recorded interaction does not mean a combination is safe. The 2026 Zenodo DailyMed-derived dataset displays a license heading without a clearly rendered license value; obtain and verify rights before reuse.
+
+## Additional candidates verified 2026-10-25
+
+| Source | Public reported coverage | Reuse / limitations | URL |
+|---|---|---|---|
+| MedLens DDI Evidence (Hugging Face) | 21,810 interaction pairs, 105,460 pair-level adverse-effect rows, 162,600 raw signals | Dataset card claims CC BY 4.0. Independently verify provenance, original-source rights, data quality and evidence before clinical use | https://huggingface.co/datasets/ASHu2/medlens |
+| Enzyme-resolved DDI severity resource (Noor 2026) | 1,900 pairs, 240 drugs, 35 enzymes/transporters | Repository claims CC BY 4.0, but harmonizes DDInter 2.0 and DrugBank; check upstream rights before commercial reuse; manuscript submitted, not necessarily peer-reviewed | https://github.com/adeebnoor/ddi-enzyme-severity-resource |
+| DailyMed-derived DDI 2026 earlier release | Over 90,000 interaction pairs across 2,038 drugs per dataset card | Automated sentence-level extraction; verify licensing, provenance and false positives; supersession relationship to 399,021-row record unclear | https://zenodo.org/doi/10.5281/zenodo.19685458 |
+| openFDA bulk drug labeling | Full zipped JSON drug label datasets; 14 label files listed as of 2026-10-08 | Primary labeling evidence, not a curated pairwise DDI database; snapshot/version required | https://open.fda.gov/data/downloads/ |
+| DrugBank DDI API | Product-level DDI endpoint supports severity, evidence level and management | Licensed service; request quote/rights before production; do not harvest without authorization | https://docs.drugbank.com/api-docs |
+
+### Important research distinction
+The MedLens and enzyme-resolved dataset licenses as stated by publishers do not automatically override licenses of embedded upstream content. Do not merge them into commercial runtime without provenance and counsel/licensing review. The DailyMed-derived 399,021 **rows** are not necessarily 399,021 independent validated drug pairs. Research datasets, automated extraction and pharmacovigilance signals cannot be equated to clinically validated rules.
