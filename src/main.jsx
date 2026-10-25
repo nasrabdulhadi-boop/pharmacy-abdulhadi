@@ -339,7 +339,7 @@ function ClinicalPreview(){
     <div><b>{audit.counts.missingStrength}</b><small>بلا تركيز</small></div>
     <div><b>{audit.counts.missingForm}</b><small>بلا شكل دوائي</small></div>
    </div>
-   <details className="clinicalAuditDetails"><summary>قائمة المواد المرشحة للتوحيد (${reviewQueue.length} اسم نصي — غير معتمد سريرياً)</summary>
+   <details className="clinicalAuditDetails"><summary>قائمة المواد المرشحة للتوحيد ({reviewQueue.length} اسم نصي — غير معتمد سريرياً)</summary>
    {reviewQueue.slice(0,50).map(row=><div key={row.normalized}><b>{row.normalized}</b><small>عدد المنتجات في العينة: {row.productCount} | حالة المطابقة: غير معتمدة | أمثلة: {row.examples.join('، ')}</small></div>)}
    </details>
    <details className="clinicalAuditDetails"><summary>عرض أمثلة بيانات تحتاج مراجعة ({audit.issues.length} كحد أقصى)</summary>
