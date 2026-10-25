@@ -69,3 +69,9 @@ test('readiness summary counts records needing review',()=>{
  assert.equal(result.needingReview,1);
  assert.equal(result.reviewPercentage,50);
 });
+
+test('dose units and parenthetical ingredient descriptions require review',()=>{
+ assert.equal(parseIngredientField('paracetamol (acetaminophen)').status,'review');
+ assert.equal(parseIngredientField('ibuprofen mg').status,'review');
+ assert.equal(parseIngredientField('amoxicillin + clavulanicAcid').status,'parsed');
+});
