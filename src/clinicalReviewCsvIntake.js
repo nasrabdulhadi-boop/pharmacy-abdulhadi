@@ -13,8 +13,8 @@ export function parseBilingualReviewCsv(text){
    else if(c==='"')state='closed';
    else cell+=c;
   }else if(c===','){finishCell()}
-  else if(c==='\\n'||c==='\\r'){
-   if(c==='\\r'&&input[i+1]==='\\n')i++;
+  else if(c==='\n'||c==='\r'){
+   if(c==='\r'&&input[i+1]==='\n')i++;
    finishRow();
   }else if(c==='"'){
    if(state!=='start')throw new Error('Malformed CSV quotation');
