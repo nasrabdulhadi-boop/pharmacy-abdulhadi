@@ -10,6 +10,7 @@ import './V6_4_1_LAYOUT_POLISH.css';
 import './SMART_TOAST.css';
 import './CLINICAL_PREVIEW.css';
 import {screenExactIngredientOverlap,auditClinicalCatalog,buildIngredientReviewQueue,clinicalAuditCsv} from './clinicalPreviewEngine.js';
+import {evaluateReviewedClinicalRules} from './clinicalRuleEngine.js';
 
 const url=import.meta.env.VITE_SUPABASE_URL; const key=import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 const supabase=url&&key?createClient(url,key):null;
@@ -325,6 +326,7 @@ function ClinicalPreview(){
  };
  const names=selected.map(p=>({id:p.id,name:p.name,ingredient:String(p.active_ingredient||'').trim(),strength:p.strength||'',form:p.dosage_form||''}));
  const {overlaps,unresolved}=screenExactIngredientOverlap(selected);
+ const clinicalRuleStatus=evaluateReviewedClinicalRules(selected,[],[]);
  return <div className="clinicalPreview">
   <PageHead title="المساعد الصيدلاني السريري — نسخة تجريبية" sub="مرحلة تدقيق وربط المنتجات • قراءة فقط • لا تتدخل في البيع أو المحاسبة"/>
   <div className="clinicalPreviewNotice"><ShieldCheck size={20}/><div><b>وضع الاختبار فقط</b><p>هذه الصفحة لا تملك حالياً قاعدة تداخلات دوائية معتمدة. عدم ظهور تحذير لا يعني أمان الجمع بين الأدوية. لا تستخدم النتائج لاتخاذ قرار سريري.</p></div></div>
@@ -357,6 +359,7 @@ function ClinicalPreview(){
   {checked&&<section className="clinicalPreviewPanel" aria-live="polite"><h3>نتيجة الفحص التجريبي</h3>
    {unresolved.map(p=><div className="clinicalPreviewWarning" key={p.id}><AlertTriangle size={18}/><span>«{p.name}»: {p.reason}. الفحص غير مكتمل.</span></div>)}
    {overlaps.length>0?overlaps.map(({a,b,shared},i)=><div className="clinicalPreviewWarning" key={i}><AlertTriangle size={18}/><span>مكوّن مشترك نصياً بين «{a.name}» و«{b.name}»: {shared.join('، ')}. قد يشير إلى تكرار، لكنه يحتاج مراجعة صيدلانية للتأكد من التركيب والجرعة وطريقة الإعطاء.</span></div>):<p>لم يُكتشف مكوّن مشترك مطابق نصياً. هذا لا يستبعد تكرار المواد بأسماء مرادفة أو وجود تداخلات دوائية.</p>}
+   <div className="clinicalPreviewWarning"><AlertTriangle size={18}/><span>حالة محرك التداخلات: {clinicalRuleStatus.status==='incomplete'?'بيانات المواد الفعالة غير معتمدة بعد':'لا توجد قواعد تداخلات معتمدة'}. عدد القواعد المعتمدة: {clinicalRuleStatus.approvedRuleCount}. لم يتم إجراء فحص سريري شامل.</span></div>
    <p className="clinicalPreviewDisclaimer">فحص التداخلات: غير متاح حتى اعتماد مصدر سريري مرخص أو قواعد موثقة ومراجعة. لا يتم حفظ بيانات المرضى أو تعديل الفواتير.</p>
   </section>}
  </div>;
