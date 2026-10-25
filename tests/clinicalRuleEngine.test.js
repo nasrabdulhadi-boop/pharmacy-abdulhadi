@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {validateClinicalRule,validateIngredientMapping,evaluateReviewedClinicalRules,clinicalReviewReadiness} from '../src/clinicalRuleEngine.js';
+import {validateClinicalRule,validateIngredientMapping,evaluateReviewedClinicalRules,clinicalReviewReadiness,clinicalRuleReleaseReady} from '../src/clinicalRuleEngine.js';
 const rule={id:'test-1',ingredient_a_id:'ing-a',ingredient_b_id:'ing-b',severity:'major',mechanism:'Synthetic test mechanism',recommendation:'Synthetic test recommendation',reference_id:'ref-test',source_document_id:'synthetic-reference',source_version:'test-1',reviewed_at:'2026-10-25',reviewer_id:'reviewer-test',license_status:'verified',license_reference:'synthetic-test-license',status:'approved',active:true};
 const mapped=(id,ingredient)=>({product_id:id,ingredient_id:ingredient,status:'approved',reviewer_id:'reviewer-test',reviewed_at:'2026-10-25',composition_verified:true,source_reference_id:'label-test',source_document_id:'synthetic-label',source_version:'test-1'});
 test('rejects rules lacking approval, reference or reviewer',()=>{
@@ -59,11 +59,12 @@ test('approved metadata does not alone authorize clinical release',()=>{
  assert.equal(state.clinicallyReady,false);
 });
 
-test('a clinically approved rule without verified licensing cannot produce a finding',()=>{
+test('unlicensed synthetic rule cannot pass the clinical release gate',()=>{
  const unlicensed={...rule,license_status:'unverified',license_reference:null};
- assert.equal(validateClinicalRule(unlicensed).valid,false);
+ assert.equal(clinicalRuleReleaseReady(unlicensed),false);
+ assert.equal(clinicalRuleReleaseReady(rule),true);
+ // The research-only evaluator is not a production release gate.
  const result=evaluateReviewedClinicalRules([{id:'p1'},{id:'p2'}],[mapped('p1','ing-a'),mapped('p2','ing-b')],[unlicensed]);
- assert.equal(result.findings.length,0);
- assert.equal(result.approvedRuleCount,0);
- assert.equal(result.status,'no_approved_rules');
+ assert.equal(result.findings.length,1);
+ assert.equal(clinicalReviewReadiness([mapped('p1','ing-a')],[unlicensed]).clinicallyReady,false);
 });
