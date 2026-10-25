@@ -10,7 +10,7 @@ import './V6_4_1_LAYOUT_POLISH.css';
 import './SMART_TOAST.css';
 import './CLINICAL_PREVIEW.css';
 import {screenExactIngredientOverlap,auditClinicalCatalog,buildIngredientReviewQueue,clinicalAuditCsv,prioritizeClinicalReview,summarizeIngredientReview} from './clinicalPreviewEngine.js';
-import {evaluateReviewedClinicalRules} from './clinicalRuleEngine.js';
+import {evaluateReviewedClinicalRules,clinicalReviewReadiness} from './clinicalRuleEngine.js';
 
 const url=import.meta.env.VITE_SUPABASE_URL; const key=import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 const supabase=url&&key?createClient(url,key):null;
@@ -341,9 +341,14 @@ function ClinicalPreview(){
  const names=selected.map(p=>({id:p.id,name:p.name,ingredient:String(p.active_ingredient||'').trim(),strength:p.strength||'',form:p.dosage_form||''}));
  const {overlaps,unresolved}=screenExactIngredientOverlap(selected);
  const clinicalRuleStatus=evaluateReviewedClinicalRules(selected,[],[]);
+ const reviewReadiness=clinicalReviewReadiness([],[]);
  return <div className="clinicalPreview">
   <PageHead title="المساعد الصيدلاني السريري — نسخة تجريبية" sub="مرحلة تدقيق وربط المنتجات • قراءة فقط • لا تتدخل في البيع أو المحاسبة"/>
   <div className="clinicalPreviewNotice"><ShieldCheck size={20}/><div><b>وضع الاختبار فقط</b><p>هذه الصفحة لا تملك حالياً قاعدة تداخلات دوائية معتمدة. عدم ظهور تحذير لا يعني أمان الجمع بين الأدوية. لا تستخدم النتائج لاتخاذ قرار سريري.</p></div></div>
+  <section className="clinicalPreviewPanel"><h3>جاهزية اعتماد المراجعات السريرية</h3>
+   <p className="clinicalPreviewDisclaimer">حالة القواعد: {reviewReadiness.rulesApproved} قاعدة معتمدة من أصل {reviewReadiness.rulesTotal}. حالة ربط المنتجات: {reviewReadiness.mappingsApproved} ربط معتمد من أصل {reviewReadiness.mappingsTotal}. لا توجد مصادر سريرية مفعّلة في النسخة التجريبية.</p>
+   <p className="clinicalPreviewError">غير جاهز للتفعيل السريري. يلزم التحقق من المراجع واعتماد قواعد حقيقية بعد المراجعة الصيدلانية.</p>
+  </section>
   <section className="clinicalPreviewPanel"><h3>تدقيق جودة بيانات المواد الفعالة</h3>
    <p className="clinicalPreviewDisclaimer">فحص قراءة فقط للمنتجات النشطة في الصيدلية على دفعات من 500 سجل (حد أقصى 20 ألفاً). تُعرض حالة الاكتمال صراحةً؛ ولا يعني اكتمال العد اعتماداً سريرياً.</p>
    <button onClick={runAudit} disabled={auditBusy}>{auditBusy?'جارٍ التدقيق: '+auditProgress+' منتج':'بدء تدقيق بيانات المنتجات'}</button>
