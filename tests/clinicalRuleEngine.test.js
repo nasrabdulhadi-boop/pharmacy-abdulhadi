@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {validateClinicalRule,validateIngredientMapping,evaluateReviewedClinicalRules,clinicalReviewReadiness} from '../src/clinicalRuleEngine.js';
-const rule={id:'test-1',ingredient_a_id:'ing-a',ingredient_b_id:'ing-b',severity:'major',mechanism:'Synthetic test mechanism',recommendation:'Synthetic test recommendation',reference_id:'ref-test',source_document_id:'synthetic-reference',source_version:'test-1',reviewed_at:'2026-10-25',reviewer_id:'reviewer-test',status:'approved',active:true};
+const rule={id:'test-1',ingredient_a_id:'ing-a',ingredient_b_id:'ing-b',severity:'major',mechanism:'Synthetic test mechanism',recommendation:'Synthetic test recommendation',reference_id:'ref-test',source_document_id:'synthetic-reference',source_version:'test-1',reviewed_at:'2026-10-25',reviewer_id:'reviewer-test',license_status:'verified',license_reference:'synthetic-test-license',status:'approved',active:true};
 const mapped=(id,ingredient)=>({product_id:id,ingredient_id:ingredient,status:'approved',reviewer_id:'reviewer-test',reviewed_at:'2026-10-25',composition_verified:true,source_reference_id:'label-test',source_document_id:'synthetic-label',source_version:'test-1'});
 test('rejects rules lacking approval, reference or reviewer',()=>{
  assert.equal(validateClinicalRule({...rule,status:'draft'}).valid,false);
