@@ -8,9 +8,14 @@ export function screenBilingualReviewedPairs(products,aliases,mappings,rules){
  const mappingRows=Array.isArray(mappings)?mappings:[];
  const validRules=(Array.isArray(rules)?rules:[]).filter(rule=>validateClinicalRule(rule).valid);
  const unresolved=[],ingredientsByProduct=new Map();
+ const idCounts=new Map();
+ for(const product of rows){
+  if(product?.id!=null){const key=String(product.id);idCounts.set(key,(idCounts.get(key)||0)+1)}
+ }
  for(const product of rows){
   if(!product||product.id==null){unresolved.push({productId:null,reason:'missing_product_id'});continue}
   const id=String(product.id);
+  if(idCounts.get(id)>1){unresolved.push({productId:id,reason:'duplicate_product_id'});continue}
   // The manifest certifies the entire formulation, not merely one ingredient.
   const manifest=product.verified_composition;
   // Never infer completeness from a single reviewed ingredient mapping.
