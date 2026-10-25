@@ -29,6 +29,7 @@ export function summarizeIngredientAliasCandidates(rows){
  const candidates=Array.isArray(rows)?rows:[];
  return {total:candidates.length,arabic:candidates.filter(r=>r.language==='ar').length,
   english:candidates.filter(r=>r.language==='en').length,mixed:candidates.filter(r=>r.language==='mixed').length,
+  other:candidates.filter(r=>!['ar','en','mixed'].includes(r.language)).length,
   approved:0,automaticallyTranslated:0};
 }
 export function exportIngredientAliasCandidatesCsv(rows){
