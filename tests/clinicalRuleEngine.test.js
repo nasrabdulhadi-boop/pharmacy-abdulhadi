@@ -63,8 +63,9 @@ test('unlicensed synthetic rule cannot pass the clinical release gate',()=>{
  const unlicensed={...rule,license_status:'unverified',license_reference:null};
  assert.equal(clinicalRuleReleaseReady(unlicensed),false);
  assert.equal(clinicalRuleReleaseReady(rule),true);
- // The research-only evaluator is not a production release gate.
+ // Research-only evaluation also refuses unlicensed rules.
  const result=evaluateReviewedClinicalRules([{id:'p1'},{id:'p2'}],[mapped('p1','ing-a'),mapped('p2','ing-b')],[unlicensed]);
- assert.equal(result.findings.length,1);
+ assert.equal(result.findings.length,0);
+ assert.equal(result.approvedRuleCount,0);
  assert.equal(clinicalReviewReadiness([mapped('p1','ing-a')],[unlicensed]).clinicallyReady,false);
 });
