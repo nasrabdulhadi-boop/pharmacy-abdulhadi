@@ -58,3 +58,12 @@ test('approved metadata does not alone authorize clinical release',()=>{
  assert.equal(state.evidenceRecordsValid,true);
  assert.equal(state.clinicallyReady,false);
 });
+
+test('a clinically approved rule without verified licensing cannot produce a finding',()=>{
+ const unlicensed={...rule,license_status:'unverified',license_reference:null};
+ assert.equal(validateClinicalRule(unlicensed).valid,false);
+ const result=evaluateReviewedClinicalRules([{id:'p1'},{id:'p2'}],[mapped('p1','ing-a'),mapped('p2','ing-b')],[unlicensed]);
+ assert.equal(result.findings.length,0);
+ assert.equal(result.approvedRuleCount,0);
+ assert.equal(result.status,'no_approved_rules');
+});
