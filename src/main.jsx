@@ -14,6 +14,7 @@ import {evaluateReviewedClinicalRules,clinicalReviewReadiness} from './clinicalR
 import {buildClinicalReviewQueue,summarizeClinicalReviewQueue,exportClinicalReviewQueueCsv} from './clinicalCatalogReviewQueue.js';
 import {buildIngredientAliasCandidates,summarizeIngredientAliasCandidates,exportIngredientAliasCandidatesCsv} from './clinicalAliasCandidates.js';
 import {exportBilingualReviewTemplateCsv} from './clinicalAliasReviewPackage.js';
+import {inspectBilingualReviewCsv} from './clinicalReviewCsvIntake.js';
 
 const url=import.meta.env.VITE_SUPABASE_URL; const key=import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 const supabase=url&&key?createClient(url,key):null;
@@ -300,6 +301,8 @@ function ClinicalPreview(){
  const [auditError,setAuditError]=useState('');
  const [auditProgress,setAuditProgress]=useState(0);
  const [auditComplete,setAuditComplete]=useState(false);
+ const [reviewCsvResult,setReviewCsvResult]=useState(null);
+ const [reviewCsvError,setReviewCsvError]=useState('');
  const runAudit=async()=>{
   setAuditBusy(true);setAuditError('');setAudit(null);setAuditProducts([]);setAuditProgress(0);setAuditComplete(false);
   const rows=[];
@@ -367,6 +370,17 @@ function ClinicalPreview(){
   link.href=href;link.download='clinical-bilingual-alias-review-template.csv';
   document.body.appendChild(link);link.click();link.remove();URL.revokeObjectURL(href);
  };
+ const inspectReviewFile=async(event)=>{
+  const file=event.target.files?.[0];if(!file)return;
+  setReviewCsvResult(null);setReviewCsvError('');
+  try{
+   if(!auditComplete)throw new Error('يجب إكمال تدقيق المنتجات أولاً');
+   if(file.size>5*1024*1024)throw new Error('حجم الملف يتجاوز 5 ميغابايت');
+   const text=await file.text();
+   setReviewCsvResult(inspectBilingualReviewCsv(text,aliasCandidates));
+  }catch(e){setReviewCsvError(e.message||'تعذر قراءة الملف')}
+  event.target.value='';
+ };
  const names=selected.map(p=>({id:p.id,name:p.name,ingredient:String(p.active_ingredient||'').trim(),strength:p.strength||'',form:p.dosage_form||''}));
  const {overlaps,unresolved}=screenExactIngredientOverlap(selected);
  const clinicalRuleStatus=evaluateReviewedClinicalRules(selected,[],[]);
@@ -399,6 +413,9 @@ function ClinicalPreview(){
     <p className="clinicalPreviewDisclaimer">عربي: {aliasSummary.arabic} • إنكليزي: {aliasSummary.english} • مختلط: {aliasSummary.mixed}. هذه أسماء مرشحة فقط، ولم تتم ترجمتها أو اعتمادها سريرياً.</p>
     <button type="button" disabled={!auditComplete||!aliasCandidates.length} onClick={exportAliasCandidates}>تصدير مرشحات الأسماء CSV للمراجعة الصيدلانية</button>
     <button type="button" disabled={!auditComplete||!aliasCandidates.length} onClick={exportAliasReviewTemplate}>تنزيل نموذج توثيق المرادفات ثنائي اللغة CSV</button>
+    <label className="clinicalPreviewDisclaimer">فحص ملف المراجعة محلياً (لا يتم حفظه أو اعتماده): <input type="file" accept=".csv,text/csv" disabled={!auditComplete} onChange={inspectReviewFile}/></label>
+    {reviewCsvError&&<p className="clinicalPreviewError">{reviewCsvError}</p>}
+    {reviewCsvResult&&<p className="clinicalPreviewDisclaimer">السجلات: {reviewCsvResult.total} • مستوفية لشروط البيانات الأولية: {reviewCsvResult.acceptedCount} • مرفوضة: {reviewCsvResult.rejected.length} • غير معروفة: {reviewCsvResult.unrecognized.length} • متعارضة: {reviewCsvResult.conflicts.length}. لا توجد موافقة سريرية أو تفعيل في نقطة البيع.</p>}
     {aliasCandidates.slice(0,100).map(row=><div key={row.language+'-'+row.normalized_alias}><b>{row.alias}</b><small>اللغة: {row.language} • عدد المنتجات: {row.product_count} • غير معتمد</small></div>)}
    </details>
    <details className="clinicalAuditDetails"><summary>قائمة المواد المرشحة للتوحيد ({reviewQueue.length} اسم نصي — غير معتمد سريرياً)</summary>
