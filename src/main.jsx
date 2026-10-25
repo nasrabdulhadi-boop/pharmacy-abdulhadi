@@ -9,7 +9,7 @@ import './REDESIGN_V6_3_REAL.css';
 import './V6_4_1_LAYOUT_POLISH.css';
 import './SMART_TOAST.css';
 import './CLINICAL_PREVIEW.css';
-import {screenExactIngredientOverlap,auditClinicalCatalog,buildIngredientReviewQueue,clinicalAuditCsv,prioritizeClinicalReview} from './clinicalPreviewEngine.js';
+import {screenExactIngredientOverlap,auditClinicalCatalog,buildIngredientReviewQueue,clinicalAuditCsv,prioritizeClinicalReview,summarizeIngredientReview} from './clinicalPreviewEngine.js';
 import {evaluateReviewedClinicalRules} from './clinicalRuleEngine.js';
 
 const url=import.meta.env.VITE_SUPABASE_URL; const key=import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
@@ -329,6 +329,7 @@ function ClinicalPreview(){
  };
  const reviewQueue=useMemo(()=>buildIngredientReviewQueue(auditProducts),[auditProducts]);
  const priorityQueue=useMemo(()=>prioritizeClinicalReview(auditProducts),[auditProducts]);
+ const auditSummary=useMemo(()=>summarizeIngredientReview(auditProducts),[auditProducts]);
  const exportAudit=()=>{
   if(!auditProducts.length)return;
   const csv=clinicalAuditCsv(auditProducts);
@@ -357,6 +358,7 @@ function ClinicalPreview(){
    <details className="clinicalAuditDetails"><summary>قائمة المواد المرشحة للتوحيد ({reviewQueue.length} اسم نصي — غير معتمد سريرياً)</summary>
    {reviewQueue.slice(0,50).map(row=><div key={row.normalized}><b>{row.normalized}</b><small>عدد المنتجات في العينة: {row.productCount} | حالة المطابقة: غير معتمدة | أمثلة: {row.examples.join('، ')}</small></div>)}
    </details>
+   <p className="clinicalPreviewDisclaimer">جاهزية البيانات للمراجعة: {auditSummary.needingReview} من أصل {auditSummary.products} منتجاً يحتاج استكمالاً أو تدقيقاً ({auditSummary.reviewPercentage}%). هذه النسبة ليست درجة أمان دوائي.</p>
    <details className="clinicalAuditDetails"><summary>أولوية مراجعة البيانات ({priorityQueue.length} منتجاً)</summary>
    <p className="clinicalPreviewDisclaimer">ترتيب إداري حسب نقص الحقول فقط، وليس تقديراً للخطورة السريرية.</p>
    {priorityQueue.slice(0,100).map(row=><div key={row.id}><b>{row.name}</b><small>{row.reasons.join(' • ')}</small></div>)}
