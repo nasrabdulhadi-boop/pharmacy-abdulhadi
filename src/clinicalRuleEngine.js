@@ -17,7 +17,7 @@ export function evaluateReviewedClinicalRules(products,mappings,rules){
  const byProduct=new Map();
  const unmapped=[];
  for(const id of productIds){
-  const m=(mappings||[]).filter(x=>String(x.product_id)===id&&x.status==='approved'&&x.ingredient_id&&x.reviewer_id&&x.reviewed_at);
+  const m=(mappings||[]).filter(x=>String(x.product_id)===id&&x.status==='approved'&&x.ingredient_id&&x.reviewer_id&&x.reviewed_at&&x.composition_verified===true);
   if(!m.length){unmapped.push(id);continue}
   byProduct.set(id,[...new Set(m.map(x=>String(x.ingredient_id)))]);
  }
