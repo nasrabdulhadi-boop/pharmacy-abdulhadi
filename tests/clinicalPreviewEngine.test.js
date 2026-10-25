@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {normalizeIngredientName,parseIngredientField,screenExactIngredientOverlap,auditClinicalCatalog,buildIngredientReviewQueue,clinicalAuditCsv} from '../src/clinicalPreviewEngine.js';
+import {normalizeIngredientName,parseIngredientField,screenExactIngredientOverlap,auditClinicalCatalog,buildIngredientReviewQueue,clinicalAuditCsv,prioritizeClinicalReview} from '../src/clinicalPreviewEngine.js';
 
 test('camelCase and hamza are normalized without inventing synonyms',()=>{
  assert.equal(normalizeIngredientName('diclofenacSodium'),'diclofenac sodium');
@@ -49,4 +49,15 @@ test('CSV export quotes values and mitigates spreadsheet formula injection',()=>
  const csv=clinicalAuditCsv([{id:'x',name:'=HYPERLINK("https://bad")',active_ingredient:'ibuprofen',strength:'400',dosage_form:'tablet'}]);
  assert.ok(csv.includes("'=HYPERLINK"));
  assert.ok(csv.includes('""https://bad""'));
+});
+
+test('review priority places missing ingredient before strength-only gaps',()=>{
+ const p=prioritizeClinicalReview([{id:'1',name:'strength only',active_ingredient:'ibuprofen',strength:'',dosage_form:'tablet'},{id:'2',name:'ingredient missing',active_ingredient:'',strength:'400',dosage_form:'tablet'},{id:'3',name:'complete',active_ingredient:'paracetamol',strength:'500',dosage_form:'tablet'}]);
+ assert.deepEqual(p.map(x=>x.id),['2','1']);
+ assert.equal(p[0].score,100);
+});
+test('review priority never labels a product clinically safe',()=>{
+ const p=prioritizeClinicalReview([{id:'1',name:'A',active_ingredient:'a/b',strength:'',dosage_form:''}]);
+ assert.equal(p.length,1);
+ assert.ok(p[0].reasons.includes('صيغة المادة الفعالة غامضة'));
 });
