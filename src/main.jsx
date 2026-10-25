@@ -379,7 +379,7 @@ function ClinicalPreview(){
    if(file.size>5*1024*1024)throw new Error('حجم الملف يتجاوز 5 ميغابايت');
    const text=await file.text();
    setReviewCsvResult(inspectBilingualReviewCsv(text,aliasCandidates));
-  }catch(e){setReviewCsvError(e.message||'تعذر قراءة الملف')}
+  }catch(e){const translations={'CSV exceeds 5 MB limit':'حجم ملف CSV يتجاوز الحد المسموح (5 ميغابايت)','Malformed CSV quotation':'تنسيق علامات الاقتباس في CSV غير صالح','Unexpected text after CSV quotation':'توجد أحرف غير متوقعة بعد إغلاق علامات الاقتباس','Unclosed CSV quotation':'توجد علامة اقتباس غير مغلقة في ملف CSV','Empty CSV':'ملف CSV فارغ','Unexpected CSV headers':'عناوين أعمدة CSV غير مطابقة للنموذج','CSV exceeds review limit':'ملف CSV يتجاوز حد 25 ألف سجل'};const message=e.message||'تعذر قراءة الملف';setReviewCsvError(translations[message]||message.replace(/^Invalid column count at row (\d+)$/,'عدد الأعمدة غير صحيح في الصف $1'))}
   event.target.value='';
  };
  const names=selected.map(p=>({id:p.id,name:p.name,ingredient:String(p.active_ingredient||'').trim(),strength:p.strength||'',form:p.dosage_form||''}));
@@ -416,7 +416,7 @@ function ClinicalPreview(){
     <button type="button" disabled={!auditComplete||!aliasCandidates.length} onClick={exportAliasReviewTemplate}>تنزيل نموذج توثيق المرادفات ثنائي اللغة CSV</button>
     <label className="clinicalPreviewDisclaimer">فحص ملف المراجعة محلياً (لا يتم حفظه أو اعتماده): <input type="file" accept=".csv,text/csv" disabled={!auditComplete} onChange={inspectReviewFile}/></label>
     {reviewCsvError&&<p className="clinicalPreviewError">{reviewCsvError}</p>}
-    {reviewCsvResult&&<p className="clinicalPreviewDisclaimer">السجلات: {reviewCsvResult.total} • مستوفية لشروط البيانات الأولية: {reviewCsvResult.acceptedCount} • مرفوضة: {reviewCsvResult.rejected.length} • غير معروفة: {reviewCsvResult.unrecognized.length} • متعارضة: {reviewCsvResult.conflicts.length}. لا توجد موافقة سريرية أو تفعيل في نقطة البيع.</p>}
+    {reviewCsvResult&&<><p className="clinicalPreviewDisclaimer">السجلات: {reviewCsvResult.total} • مستوفية لشروط البيانات الأولية: {reviewCsvResult.acceptedCount} • مرفوضة: {reviewCsvResult.rejected.length} • غير معروفة: {reviewCsvResult.unrecognized.length} • متعارضة: {reviewCsvResult.conflicts.length}. لا توجد موافقة سريرية أو تفعيل في نقطة البيع.</p>{(reviewCsvResult.rejected.length>0||reviewCsvResult.unrecognized.length>0||reviewCsvResult.conflicts.length>0)&&<details className="clinicalAuditDetails"><summary>تفاصيل السجلات التي تحتاج تصحيحاً (أول 50 حالة)</summary>{reviewCsvResult.rejected.slice(0,50).map((row,i)=><p key={'r'+i}>الصف {row.index+2}: {(row.problems||[]).join('، ')}</p>)}{reviewCsvResult.unrecognized.slice(0,50).map((row,i)=><p key={'u'+i}>الصف {row.index+2}: الاسم «{row.alias}» غير موجود ضمن مرشحات التدقيق</p>)}{reviewCsvResult.conflicts.slice(0,50).map((row,i)=><p key={'c'+i}>تعارض مرادف «{row.alias}» بين المعرّفين {row.first||'غير محدد'} و{row.second||'غير محدد'}</p>)}</details>}</>}
     {aliasCandidates.slice(0,100).map(row=><div key={row.language+'-'+row.normalized_alias}><b>{row.alias}</b><small>اللغة: {row.language} • عدد المنتجات: {row.product_count} • غير معتمد</small></div>)}
    </details>
    <details className="clinicalAuditDetails"><summary>قائمة المواد المرشحة للتوحيد ({reviewQueue.length} اسم نصي — غير معتمد سريرياً)</summary>
