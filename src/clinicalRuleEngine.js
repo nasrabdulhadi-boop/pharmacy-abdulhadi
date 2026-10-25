@@ -9,10 +9,16 @@ export function validateClinicalRule(rule){
  if(!String(rule.mechanism||'').trim()||!String(rule.recommendation||'').trim())problems.push('missing clinical explanation');
  if(!rule.reference_id||!rule.source_version||!rule.reviewed_at||!rule.reviewer_id)problems.push('missing source or review metadata');
  if(!rule.source_url&&!rule.source_document_id)problems.push('missing verifiable source locator');
- if(rule.license_status!=='verified'||!String(rule.license_reference||'').trim())problems.push('source license not verified');
  if(rule.status!=='approved')problems.push('not approved');
  if(rule.active!==true)problems.push('inactive');
  return {valid:problems.length===0,problems};
+}
+export function verifyClinicalSourceLicense(rule){
+ return Boolean(rule&&rule.license_status==='verified'&&String(rule.license_reference||'').trim());
+}
+// Release readiness is stricter than synthetic research-only screening.
+export function clinicalRuleReleaseReady(rule){
+ return validateClinicalRule(rule).valid&&verifyClinicalSourceLicense(rule);
 }
 export function validateIngredientMapping(mapping){
  const problems=[];
