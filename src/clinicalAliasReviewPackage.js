@@ -5,11 +5,14 @@ export function inspectBilingualReviewPackage(records,candidates){
  const rows=Array.isArray(records)?records:[];
  const known=new Set((Array.isArray(candidates)?candidates:[]).map(x=>normalizeIngredientName(x.alias)));
  const accepted=[],rejected=[],unrecognized=[];
+ const seen=new Set();
  rows.forEach((row,index)=>{
   const check=validateBilingualAlias(row);
   const key=normalizeIngredientName(row?.alias);
   if(!check.valid){rejected.push({index,problems:check.problems});return}
   if(!known.has(key)){unrecognized.push({index,alias:row.alias});return}
+  if(seen.has(key)){rejected.push({index,problems:['duplicate alias in review package']});return}
+  seen.add(key);
   accepted.push(row);
  });
  const index=createBilingualAliasIndex(accepted);
