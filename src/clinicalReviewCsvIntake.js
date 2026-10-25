@@ -3,6 +3,7 @@ import {inspectBilingualReviewPackage} from './clinicalAliasReviewPackage.js';
 const headers=['alias','language','canonical_ingredient_id','status','source_reference_id','source_version','source_url','source_document_id','reviewer_id','reviewed_at'];
 export function parseBilingualReviewCsv(text){
  const input=String(text||'').replace(/^\uFEFF/,'');
+ if(input.length>5*1024*1024)throw new Error('CSV exceeds 5 MB limit');
  const records=[];let cells=[],cell='',state='start';
  const finishCell=()=>{cells.push(cell);cell='';state='start'};
  const finishRow=()=>{finishCell();if(cells.some(x=>x!==''))records.push(cells);cells=[]};
