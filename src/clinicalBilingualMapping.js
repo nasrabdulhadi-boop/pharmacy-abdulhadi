@@ -21,7 +21,7 @@ export function createBilingualAliasIndex(aliases){
   const canonical=String(row.canonical_ingredient_id);
   if(index.has(key)&&index.get(key)!==canonical){
    conflicts.push({alias:row.alias,first:index.get(key),second:canonical});
-   index.set(key,null); // Ambiguous aliases fail closed.
+   index.set(key,null); // Ambiguous aliases fail closed permanently, regardless of later rows.
   }else if(!index.has(key))index.set(key,canonical);
  }
  return {index,conflicts,invalid};
