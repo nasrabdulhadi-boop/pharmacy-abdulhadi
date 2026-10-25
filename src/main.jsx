@@ -295,6 +295,7 @@ function ClinicalPreview(){
  const [busy,setBusy]=useState(false);
  const [error,setError]=useState('');
  const [checked,setChecked]=useState(false);
+ const [searchCompleted,setSearchCompleted]=useState(false);
  const [audit,setAudit]=useState(null);
  const [auditProducts,setAuditProducts]=useState([]);
  const [auditBusy,setAuditBusy]=useState(false);
@@ -325,13 +326,13 @@ function ClinicalPreview(){
  };
  const search=async()=>{
   const q=query.trim();if(!q)return;
-  setBusy(true);setError('');
+  setBusy(true);setError('');setResults([]);setSearchCompleted(false);
   try{
    const {data,error:e}=await supabase.rpc('admin_search_pos_products_currency',{p_query:q,p_limit:20});
    if(e)throw e;
    setResults(Array.isArray(data)?data:[]);
   }catch(e){setError(e.message||'تعذر البحث');setResults([])}
-  finally{setBusy(false)}
+  finally{setBusy(false);setSearchCompleted(true)}
  };
  const reviewQueue=useMemo(()=>buildIngredientReviewQueue(auditProducts),[auditProducts]);
  const priorityQueue=useMemo(()=>prioritizeClinicalReview(auditProducts),[auditProducts]);
@@ -341,7 +342,7 @@ function ClinicalPreview(){
  const aliasSummary=useMemo(()=>summarizeIngredientAliasCandidates(aliasCandidates),[aliasCandidates]);
  const auditSummary=useMemo(()=>summarizeIngredientReview(auditProducts),[auditProducts]);
  const exportAudit=()=>{
-  if(!auditProducts.length)return;
+  if(!auditComplete||!auditProducts.length)return;
   const csv=clinicalAuditCsv(auditProducts);
   const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});
   const url=URL.createObjectURL(blob);
@@ -396,7 +397,7 @@ function ClinicalPreview(){
    <p className="clinicalPreviewDisclaimer">فحص قراءة فقط للمنتجات النشطة في الصيدلية على دفعات من 500 سجل (حد أقصى 20 ألفاً). تُعرض حالة الاكتمال صراحةً؛ ولا يعني اكتمال العد اعتماداً سريرياً.</p>
    <button onClick={runAudit} disabled={auditBusy}>{auditBusy?'جارٍ التدقيق: '+auditProgress+' منتج':'بدء تدقيق بيانات المنتجات'}</button>
    {auditError&&<p className="clinicalPreviewError">{auditError}</p>}
-   {audit&&<><p className="clinicalPreviewDisclaimer">{auditComplete?'اكتمل استرجاع جميع صفحات المنتجات النشطة المتاحة.':'تدقيق غير مكتمل؛ النتائج محدودة.'} عدد السجلات المقروءة: {audit.counts.total}.</p><button type="button" onClick={exportAudit}>تصدير بيانات التدقيق CSV</button><div className="clinicalAuditMetrics">
+   {audit&&<><p className="clinicalPreviewDisclaimer">{auditComplete?'اكتمل استرجاع جميع صفحات المنتجات النشطة المتاحة.':'تدقيق غير مكتمل؛ النتائج محدودة.'} عدد السجلات المقروءة: {audit.counts.total}.</p><button type="button" disabled={!auditComplete} onClick={exportAudit}>تصدير بيانات التدقيق CSV</button><div className="clinicalAuditMetrics">
     <div><b>{audit.counts.total}</b><small>منتجاً نشطاً تم فحصه</small></div>
     <div><b>{audit.counts.missingIngredient}</b><small>بلا مادة فعالة</small></div>
     <div><b>{audit.counts.manualReview}</b><small>صيغة تحتاج مراجعة</small></div>
@@ -404,7 +405,7 @@ function ClinicalPreview(){
     <div><b>{audit.counts.missingForm}</b><small>بلا شكل دوائي</small></div>
    </div>
    <details className="clinicalAuditDetails"><summary>قائمة مراجعة المطابقة العربية والإنكليزية ({bilingualReviewSummary.needsReview} منتجاً)</summary>
-    <p className="clinicalPreviewDisclaimer">هذه قائمة مراجعة بيانات، وليست تداخلات دوائية. أولوية 1: نقص المادة الفعالة؛ 2: تركيب غير واضح؛ 3: أسماء عربية تحتاج توثيقاً؛ 4: نقص التركيز أو الشكل.</p>
+    <p className="clinicalPreviewDisclaimer">هذه قائمة مراجعة بيانات، وليست تداخلات دوائية. العدد في العنوان يخص المنتجات التي تحتاج مراجعة فقط، بينما ملف تدقيق جميع المنتجات يحتوي كل السجلات المقروءة. أولوية 1: نقص المادة الفعالة؛ 2: تركيب غير واضح؛ 3: أسماء عربية تحتاج توثيقاً؛ 4: نقص التركيز أو الشكل.</p>
     <button type="button" disabled={!auditComplete||!bilingualReviewQueue.length} onClick={exportBilingualReview}>تصدير قائمة المراجعة الكاملة CSV</button>
     {bilingualReviewSummary.priorities.map(p=><p key={p.priority}>الأولوية {p.priority}: {p.count} منتج</p>)}
     {bilingualReviewQueue.slice(0,100).map(row=><div key={row.product_id}><b>{row.product_name}</b><small>الأولوية {row.priority} • {row.reasons.join('، ')} • لم يعتمد سريرياً</small></div>)}
@@ -432,6 +433,7 @@ function ClinicalPreview(){
   </section>
   <section className="clinicalPreviewPanel"><h3>اختيار المنتجات من قاعدة الصيدلية</h3><div className="clinicalPreviewSearch"><input value={query} onChange={e=>setQuery(e.target.value)} onKeyDown={e=>e.key==='Enter'&&search()} placeholder="ابحث باسم الدواء أو الباركود"/><button onClick={search} disabled={busy||!query.trim()}><Search size={16}/>{busy?'جارٍ البحث':'بحث'}</button></div>
    {error&&<p className="clinicalPreviewError">{error}</p>}
+   {searchCompleted&&!busy&&!error&&results.length===0&&<p className="clinicalPreviewDisclaimer" role="status">لا توجد منتجات مطابقة للبحث. جرّب الاسم التجاري أو الباركود أو صيغة كتابة أخرى.</p>}
    <div className="clinicalPreviewResults">{results.map(p=><button key={p.id} disabled={selected.some(x=>x.id===p.id)} onClick={()=>{setSelected(a=>[...a,p]);setChecked(false)}}><span><b>{p.name}</b><small>{p.active_ingredient||'المادة الفعالة غير مسجلة'} • {p.strength||'التركيز غير مسجل'}</small></span><Plus size={17}/></button>)}</div>
   </section>
   <section className="clinicalPreviewPanel"><h3>قائمة الأدوية للفحص الأولي ({selected.length})</h3>
