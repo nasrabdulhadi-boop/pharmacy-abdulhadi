@@ -15,6 +15,8 @@ The example uses column grants plus a `security_invoker` view and a guarded admi
 
 Dependency: `@electric-sql/pglite` pinned at `0.5.11`, with a separate lockfile. No root application dependency was added.
 
+The suite also runs 14 tests for the opt-in `catalog-hardening.proposal.sql` candidate, for **23 SQL tests total**. These reproduce the broad-read exposure with synthetic costs, apply the exact proposal as a non-superuser owner, verify public/admin boundaries and exercise the frontend loader against actual in-process SQL. This proposal is outside automatic migrations and must not be applied to the live pharmacy. See [the staging report](../../docs/PUBLIC_CATALOG_HARDENING_STAGING_2026-10-26.md) for evidence and remaining API/browser checks.
+
 References:
 - https://pglite.dev/docs/
 - https://supabase.com/docs/guides/database/postgres/column-level-security
