@@ -88,3 +88,15 @@ export function prioritizeClinicalReview(products){
  }
  return rows.sort((a,b)=>b.score-a.score||String(a.name).localeCompare(String(b.name))||String(a.id).localeCompare(String(b.id)));
 }
+
+export function summarizeIngredientReview(products){
+ const rows=Array.isArray(products)?products:[];
+ const queue=buildIngredientReviewQueue(rows);
+ const needsReview=prioritizeClinicalReview(rows);
+ return {
+  products:rows.length,
+  unverifiedLabels:queue.length,
+  needingReview:needsReview.length,
+  reviewPercentage:rows.length?Math.round(needsReview.length*1000/rows.length)/10:0
+ };
+}
