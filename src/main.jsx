@@ -12,6 +12,7 @@ import './CLINICAL_PREVIEW.css';
 import {screenExactIngredientOverlap,auditClinicalCatalog,buildIngredientReviewQueue,clinicalAuditCsv,prioritizeClinicalReview,summarizeIngredientReview} from './clinicalPreviewEngine.js';
 import {evaluateReviewedClinicalRules,clinicalReviewReadiness} from './clinicalRuleEngine.js';
 import {buildClinicalReviewQueue,summarizeClinicalReviewQueue,exportClinicalReviewQueueCsv} from './clinicalCatalogReviewQueue.js';
+import {buildIngredientAliasCandidates,summarizeIngredientAliasCandidates,exportIngredientAliasCandidatesCsv} from './clinicalAliasCandidates.js';
 
 const url=import.meta.env.VITE_SUPABASE_URL; const key=import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 const supabase=url&&key?createClient(url,key):null;
@@ -332,6 +333,8 @@ function ClinicalPreview(){
  const priorityQueue=useMemo(()=>prioritizeClinicalReview(auditProducts),[auditProducts]);
  const bilingualReviewQueue=useMemo(()=>buildClinicalReviewQueue(auditProducts),[auditProducts]);
  const bilingualReviewSummary=useMemo(()=>summarizeClinicalReviewQueue(bilingualReviewQueue),[bilingualReviewQueue]);
+ const aliasCandidates=useMemo(()=>buildIngredientAliasCandidates(auditProducts),[auditProducts]);
+ const aliasSummary=useMemo(()=>summarizeIngredientAliasCandidates(aliasCandidates),[aliasCandidates]);
  const auditSummary=useMemo(()=>summarizeIngredientReview(auditProducts),[auditProducts]);
  const exportAudit=()=>{
   if(!auditProducts.length)return;
@@ -347,6 +350,13 @@ function ClinicalPreview(){
   const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});
   const link=document.createElement('a');const href=URL.createObjectURL(blob);
   link.href=href;link.download='clinical-bilingual-review-queue.csv';
+  document.body.appendChild(link);link.click();link.remove();URL.revokeObjectURL(href);
+ };
+ const exportAliasCandidates=()=>{
+  if(!auditComplete||!aliasCandidates.length)return;
+  const blob=new Blob([exportIngredientAliasCandidatesCsv(aliasCandidates)],{type:'text/csv;charset=utf-8'});
+  const link=document.createElement('a');const href=URL.createObjectURL(blob);
+  link.href=href;link.download='clinical-ingredient-alias-candidates.csv';
   document.body.appendChild(link);link.click();link.remove();URL.revokeObjectURL(href);
  };
  const names=selected.map(p=>({id:p.id,name:p.name,ingredient:String(p.active_ingredient||'').trim(),strength:p.strength||'',form:p.dosage_form||''}));
@@ -376,6 +386,11 @@ function ClinicalPreview(){
     <button type="button" disabled={!auditComplete||!bilingualReviewQueue.length} onClick={exportBilingualReview}>تصدير قائمة المراجعة الكاملة CSV</button>
     {bilingualReviewSummary.priorities.map(p=><p key={p.priority}>الأولوية {p.priority}: {p.count} منتج</p>)}
     {bilingualReviewQueue.slice(0,100).map(row=><div key={row.product_id}><b>{row.product_name}</b><small>الأولوية {row.priority} • {row.reasons.join('، ')} • لم يعتمد سريرياً</small></div>)}
+   </details>
+   <details className="clinicalAuditDetails"><summary>مرشحات توحيد أسماء المواد الفعالة بالعربي والإنكليزي ({aliasSummary.total} اسماً)</summary>
+    <p className="clinicalPreviewDisclaimer">عربي: {aliasSummary.arabic} • إنكليزي: {aliasSummary.english} • مختلط: {aliasSummary.mixed}. هذه أسماء مرشحة فقط، ولم تتم ترجمتها أو اعتمادها سريرياً.</p>
+    <button type="button" disabled={!auditComplete||!aliasCandidates.length} onClick={exportAliasCandidates}>تصدير مرشحات الأسماء CSV للمراجعة الصيدلانية</button>
+    {aliasCandidates.slice(0,100).map(row=><div key={row.language+'-'+row.normalized_alias}><b>{row.alias}</b><small>اللغة: {row.language} • عدد المنتجات: {row.product_count} • غير معتمد</small></div>)}
    </details>
    <details className="clinicalAuditDetails"><summary>قائمة المواد المرشحة للتوحيد ({reviewQueue.length} اسم نصي — غير معتمد سريرياً)</summary>
    {reviewQueue.slice(0,50).map(row=><div key={row.normalized}><b>{row.normalized}</b><small>عدد المنتجات في العينة: {row.productCount} | حالة المطابقة: غير معتمدة | أمثلة: {row.examples.join('، ')}</small></div>)}
