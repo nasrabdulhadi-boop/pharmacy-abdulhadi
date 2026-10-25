@@ -12,12 +12,22 @@ export function validateClinicalRule(rule){
  if(rule.active!==true)problems.push('inactive');
  return {valid:problems.length===0,problems};
 }
+export function validateIngredientMapping(mapping){
+ const problems=[];
+ if(!mapping||typeof mapping!=='object')return {valid:false,problems:['missing mapping']};
+ if(!mapping.product_id||!mapping.ingredient_id)problems.push('missing product or ingredient');
+ if(mapping.status!=='approved')problems.push('mapping not approved');
+ if(mapping.composition_verified!==true)problems.push('composition not verified');
+ if(!mapping.source_reference_id||!mapping.source_version)problems.push('missing source evidence');
+ if(!mapping.reviewer_id||!mapping.reviewed_at)problems.push('missing reviewer metadata');
+ return {valid:problems.length===0,problems};
+}
 export function evaluateReviewedClinicalRules(products,mappings,rules){
  const productIds=[...new Set((products||[]).map(p=>String(p.id)))];
  const byProduct=new Map();
  const unmapped=[];
  for(const id of productIds){
-  const m=(mappings||[]).filter(x=>String(x.product_id)===id&&x.status==='approved'&&x.ingredient_id&&x.reviewer_id&&x.reviewed_at&&x.composition_verified===true);
+  const m=(mappings||[]).filter(x=>String(x.product_id)===id&&validateIngredientMapping(x).valid);
   if(!m.length){unmapped.push(id);continue}
   byProduct.set(id,[...new Set(m.map(x=>String(x.ingredient_id)))]);
  }
