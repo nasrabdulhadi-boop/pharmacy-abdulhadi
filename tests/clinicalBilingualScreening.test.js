@@ -5,7 +5,7 @@ const source={reviewer_id:'synthetic-reviewer',reviewed_at:'2026-10-25',source_r
 const alias=(alias,language,id)=>({...source,alias,language,canonical_ingredient_id:id,status:'approved'});
 const mapping=(product_id,ingredient_id)=>({...source,product_id,ingredient_id,status:'approved',composition_verified:true});
 const product=(id,ingredient,ids)=>({id,active_ingredient:ingredient,verified_composition:{...source,status:'approved',ingredient_ids:ids}});
-const rule={...source,id:'synthetic-interaction',ingredient_a_id:'ing-a',ingredient_b_id:'ing-b',severity:'major',mechanism:'Synthetic mechanism',recommendation:'Synthetic recommendation',reference_id:'synthetic-reference',status:'approved',active:true};
+const rule={...source,id:'synthetic-interaction',ingredient_a_id:'ing-a',ingredient_b_id:'ing-b',severity:'major',mechanism:'Synthetic mechanism',recommendation:'Synthetic recommendation',reference_id:'synthetic-reference',license_status:'verified',license_reference:'synthetic-test-license',status:'approved',active:true};
 test('reviewed Arabic and English aliases can match a synthetic interaction rule',()=>{
  const result=screenBilingualReviewedPairs([product('ar','مادة ا',['ing-a']),product('en','Ingredient B',['ing-b'])],
   [alias('مادة ا','ar','ing-a'),alias('Ingredient B','en','ing-b')],[mapping('ar','ing-a'),mapping('en','ing-b')],[rule]);
