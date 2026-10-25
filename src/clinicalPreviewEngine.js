@@ -16,6 +16,10 @@ export function parseIngredientField(value){
  if(parts.some(x=>!x.trim()))return {components:[],status:'review',reason:'تركيب غير مكتمل'};
  const components=[...new Set(parts.map(normalizeIngredientName))];
  if(components.some(x=>!x||/\d/.test(x)))return {components:[],status:'review',reason:'المادة الفعالة تحتوي تركيزاً أو رقماً؛ يلزم التحقق'};
+ // The source field may contain descriptions, abbreviations or dose notation.
+ // Treat common high-risk free-text forms as unverified, not canonical ingredients.
+ if(components.some(x=>/[()[\]{}:%]/.test(x)||/\b(mg|mcg|g|ml|iu|units|tablet|capsule|syrup|cream|solution)\b/i.test(x)))
+  return {components:[],status:'review',reason:'حقل المادة الفعالة يتضمن وصفاً أو صيغة جرعة؛ يلزم التحقق'};
  return {components,status:'parsed',reason:parts.length>1?'تركيب متعدد المواد':'اسم مادة مفردة'};
 }
 export function screenExactIngredientOverlap(products){
