@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>فحص عرض المساعد السريري — تجريبي</title>
+<style>
+*{box-sizing:border-box}body{margin:0;padding:16px;font:16px system-ui;background:#edf3ef;color:#18372c}main{max-width:1200px;margin:auto}h1{font-size:22px}p{line-height:1.8}.controls{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}button{font:inherit;padding:9px 14px;background:#fff;border:1px solid #487b65;border-radius:8px;cursor:pointer}button[aria-pressed=true]{background:#176342;color:white}button:focus-visible{outline:3px solid #b56b00;outline-offset:2px}.stage{overflow:auto;padding:8px;border:1px solid #9bb6a9;border-radius:12px;background:#dce7e0}iframe{display:block;width:375px;height:1000px;border:1px solid #426b58;background:white;margin:auto}output{display:block;line-height:1.8;padding:12px;border:1px solid #b0c8ba;background:white;border-radius:8px;overflow-wrap:anywhere}
+</style>
+<main>
+ <h1>فحص العرض المتجاوب — بيئة تجريبية</h1>
+ <p>تُعرض واجهة النظام الفعلية داخل إطار من الأصل نفسه، وتبقى صلاحيات الدخول كما هي. افتح المساعد السريري من قائمة الأقسام داخل الإطار. هذا فحص عرض CSS، وليس محاكاة هاتف أو لمس أو اعتماداً سريرياً. تجنّب أي حفظ أو بيع أو شراء أثناء الاختبار.</p>
+ <div class="controls" aria-label="عرض إطار الاختبار">
+  <button type="button" data-width="320" aria-pressed="false">320 بكسل</button>
+  <button type="button" data-width="375" aria-pressed="true">375 بكسل</button>
+  <button type="button" data-width="430" aria-pressed="false">430 بكسل</button>
+  <button type="button" data-width="768" aria-pressed="false">768 بكسل</button>
+  <button type="button" data-width="1024" aria-pressed="false">1024 بكسل</button>
+  <button type="button" id="measure">فحص أبعاد الصفحة</button>
+ </div>
+ <output id="measurement" aria-live="polite">جارٍ تحميل الإطار…</output>
+ <div class="stage"><iframe id="clinicalViewport" src="/#admin" title="واجهة النظام بعرض الاختبار"></iframe></div>
+</main>
+<script>
+const frame=document.getElementById('clinicalViewport');
+const output=document.getElementById('measurement');
+function measure(){
+ try{
+  const doc=frame.contentDocument,root=doc.documentElement;
+  const width=root.clientWidth,scrollWidth=root.scrollWidth;
+  const clinical=doc.querySelector('.clinicalPreview');
+  output.textContent=`عرض الإطار: ${width} بكسل. عرض محتوى الصفحة: ${scrollWidth} بكسل. تجاوز أفقي: ${scrollWidth>width+1?'نعم':'لا'}. المساعد السريري مفتوح: ${clinical?'نعم':'لا'}.`;
+ }catch{output.textContent='تعذر قياس الإطار. يلزم تحميل واجهة النظام من الأصل نفسه.'}
+}
+for(const button of document.querySelectorAll('[data-width]'))button.addEventListener('click',()=>{
+ frame.style.width=button.dataset.width+'px';
+ for(const item of document.querySelectorAll('[data-width]'))item.setAttribute('aria-pressed',String(item===button));
+ requestAnimationFrame(measure);
+});
+document.getElementById('measure').addEventListener('click',measure);
+frame.addEventListener('load',measure);
+</script>
+</html>
