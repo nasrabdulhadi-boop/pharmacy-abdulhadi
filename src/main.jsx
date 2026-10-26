@@ -19,6 +19,7 @@ import {inspectBilingualReviewCsv} from './clinicalReviewCsvIntake.js';
 import {createLatestPreviewTask,clinicalPreviewMessage,clinicalReviewIssueMessages} from './clinicalPreviewUi.js';
 import {previewLocalBilingualIdentity,MAX_IDENTITY_PREVIEW_PRODUCTS} from './clinicalIdentitySandbox.js';
 import {buildClinicalSearchIndex,searchClinicalCatalog,mergeClinicalSearchResults} from './clinicalCatalogSearch.js';
+import {CLINICAL_AUDIT_FIELDS,loadClinicalAuditCatalog,clinicalAuditErrorMessage} from './clinicalAuditLoader.js';
 
 const url=import.meta.env.VITE_SUPABASE_URL; const key=import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 const supabase=url&&key?createClient(url,key):null;
@@ -314,27 +315,24 @@ function ClinicalPreview(){
  const searchTask=useMemo(()=>createLatestPreviewTask(),[]);
  const reviewTask=useMemo(()=>createLatestPreviewTask(),[]);
  const auditTask=useMemo(()=>createLatestPreviewTask(),[]);
- useEffect(()=>()=>{searchTask.invalidate();reviewTask.invalidate();auditTask.invalidate()},[searchTask,reviewTask,auditTask]);
+ const auditController=useRef(null);
+ useEffect(()=>()=>{searchTask.invalidate();reviewTask.invalidate();auditTask.invalidate();auditController.current?.abort()},[searchTask,reviewTask,auditTask]);
+ const cancelAudit=()=>{
+  auditTask.invalidate();auditController.current?.abort();setAuditBusy(false);
+  setAuditError(clinicalAuditErrorMessage({code:'audit_cancelled'}));
+ };
  const runAudit=async()=>{
+  auditController.current?.abort();
+  const controller=new AbortController();auditController.current=controller;
   searchTask.invalidate();setResults([]);setBusy(false);setSearchCompleted(false);setSearchOrigin('');
   reviewTask.invalidate();setReviewCsvResult(null);setReviewCsvError('');setIdentityPreview(null);
   setAuditBusy(true);setAuditError('');setAudit(null);setAuditProducts([]);setAuditProgress(0);setAuditComplete(false);
-  const rows=[];
-  const pageSize=500,maxRows=20000;
-  await auditTask.run(async(isCurrent)=>{
-   let complete=false;
-   for(let offset=0;offset<maxRows;offset+=pageSize){
-    const {data,error:e}=await supabase.rpc('admin_get_products_page',{p_limit:pageSize,p_offset:offset});
-    if(e)throw e;
-    if(!Array.isArray(data))throw new Error('استجابة غير صالحة من قاعدة البيانات');
-    if(!isCurrent())return;
-    rows.push(...data);setAuditProgress(rows.length);
-    if(data.length<pageSize){complete=true;break}
-   }
-   return {rows,complete};
-  },{
+  await auditTask.run(()=>loadClinicalAuditCatalog({
+   signal:controller.signal,onProgress:setAuditProgress,
+   fetchPage:({limit,offset,signal})=>supabase.rpc('admin_get_products_page',{p_limit:limit,p_offset:offset}).select(CLINICAL_AUDIT_FIELDS.join(',')).abortSignal(signal)
+  }),{
    success:({rows,complete})=>{setAuditProducts(rows);setAudit(auditClinicalCatalog(rows));setAuditComplete(complete);if(!complete)setAuditError('وصل الفحص إلى حد 20 ألف سجل؛ لا يمكن اعتبار النتائج شاملة.')},
-   error:e=>setAuditError('لم يكتمل التدقيق: '+(e.message||'خطأ غير معروف')+'. لم تُعتمد النتائج الجزئية.'),
+   error:e=>setAuditError('لم يكتمل التدقيق: '+clinicalAuditErrorMessage(e)+' لم تُعتمد النتائج الجزئية.'),
    settled:()=>setAuditBusy(false)
   });
  };
@@ -420,9 +418,10 @@ function ClinicalPreview(){
    <p className="clinicalPreviewError">غير جاهز للتفعيل السريري. يلزم التحقق من المراجع واعتماد قواعد حقيقية بعد المراجعة الصيدلانية.</p>
   </section>
   <section className="clinicalPreviewPanel"><h3>تدقيق جودة بيانات المواد الفعالة</h3>
-   <p className="clinicalPreviewDisclaimer">فحص قراءة فقط للمنتجات النشطة في الصيدلية على دفعات من 500 سجل (حد أقصى 20 ألفاً). تُعرض حالة الاكتمال صراحةً؛ ولا يعني اكتمال العد اعتماداً سريرياً.</p>
+   <p className="clinicalPreviewDisclaimer">فحص قراءة فقط للمنتجات النشطة على دفعات من 500 سجل، بحد أقصى 20 ألف منتج للمراجعة وطلب تحقق إضافي من سجل واحد عند بلوغ الحد. مهلة كل صفحة 30 ثانية. لا يعني اكتمال العد اعتماداً سريرياً.</p>
    <button onClick={runAudit} disabled={auditBusy}>{auditBusy?'جارٍ التدقيق: '+auditProgress+' منتج':'بدء تدقيق بيانات المنتجات'}</button>
-   {auditError&&<p className="clinicalPreviewError">{auditError}</p>}
+   {auditBusy&&<button type="button" onClick={cancelAudit}>إيقاف التدقيق</button>}
+   {auditError&&<p className="clinicalPreviewError" role="alert">{auditError}</p>}
    {audit&&<><p className="clinicalPreviewDisclaimer">{auditComplete?'اكتمل استرجاع جميع صفحات المنتجات النشطة المتاحة.':'تدقيق غير مكتمل؛ النتائج محدودة.'} عدد السجلات المقروءة: {audit.counts.total}.</p><button type="button" disabled={!auditComplete} onClick={exportAudit}>تصدير بيانات التدقيق CSV</button><div className="clinicalAuditMetrics">
     <div><b>{audit.counts.total}</b><small>منتجاً نشطاً تم فحصه</small></div>
     <div><b>{audit.counts.missingIngredient}</b><small>بلا مادة فعالة</small></div>
