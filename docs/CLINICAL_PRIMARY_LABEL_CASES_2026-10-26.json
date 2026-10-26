@@ -1,0 +1,91 @@
+{
+  "mode": "primary_label_review_candidates",
+  "clinicalRulesActivated": 0,
+  "productionEnabled": false,
+  "cases": [
+    {
+      "source_id": "DailyMed-SPL",
+      "source_record_id": "ed60a9e7-49f4-469c-bb7a-08e1bb6057e2:f2d17e72-edeb-4fe3-8bb6-dab081ad4d0b",
+      "source_version": "5",
+      "label_set_id": "de8b0b67-eb25-4684-83b5-7ad785314227",
+      "label_document_id": "ed60a9e7-49f4-469c-bb7a-08e1bb6057e2",
+      "effective_time": "20250530",
+      "retrieved_at": "2026-10-26T07:55:56.047+00:00",
+      "source_url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=de8b0b67-eb25-4684-83b5-7ad785314227",
+      "source_xml_url": "https://dailymed.nlm.nih.gov/dailymed/services/v2/spls/de8b0b67-eb25-4684-83b5-7ad785314227.xml",
+      "source_sha256": "e2fa73bd4988cdadf1bba6978c0c37de17bcd532b55d72085ae1b52be9e9dfe8",
+      "section_id": "f2d17e72-edeb-4fe3-8bb6-dab081ad4d0b",
+      "section_title": "7.2 CYP2C19 Inhibitors",
+      "ingredient_a": "clopidogrel",
+      "ingredient_b": "omeprazole",
+      "evidence_kind": "label",
+      "original_text": "Avoid concomitant use of Plavix with omeprazole or esomeprazole.",
+      "excerpt_is_not_full_guidance": true,
+      "route_names": [
+        "ORAL"
+      ],
+      "license_status": "unknown",
+      "license_reference": null,
+      "review_status": "pending",
+      "clinical_approved": false,
+      "source_check": "excerpt_matched_primary_spl",
+      "negative_safety_claim_allowed": false
+    },
+    {
+      "source_id": "DailyMed-SPL",
+      "source_record_id": "dcf22623-9736-40dd-8313-394101f02fdc:dc788d5a-c5a4-4916-8cd6-4d39fa84f623",
+      "source_version": "6",
+      "label_set_id": "d905dc8d-917f-4ea3-a4ee-a1ecf6967d4e",
+      "label_document_id": "dcf22623-9736-40dd-8313-394101f02fdc",
+      "effective_time": "20231117",
+      "retrieved_at": "2026-10-26T07:55:56.047+00:00",
+      "source_url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=d905dc8d-917f-4ea3-a4ee-a1ecf6967d4e",
+      "source_xml_url": "https://dailymed.nlm.nih.gov/dailymed/services/v2/spls/d905dc8d-917f-4ea3-a4ee-a1ecf6967d4e.xml",
+      "source_sha256": "ce1c4b34bd3137d749b7aa8ff6adeac27eccfa659b40a58441af9d4219b43437",
+      "section_id": "dc788d5a-c5a4-4916-8cd6-4d39fa84f623",
+      "section_title": "4.3 Concomitant Guanylate Cyclase (GC) Stimulators",
+      "ingredient_a": "sildenafil",
+      "ingredient_b": "riociguat",
+      "evidence_kind": "label",
+      "original_text": "Do not use VIAGRA in patients who are using a GC stimulator, such as riociguat.",
+      "excerpt_is_not_full_guidance": true,
+      "route_names": [
+        "ORAL"
+      ],
+      "license_status": "unknown",
+      "license_reference": null,
+      "review_status": "pending",
+      "clinical_approved": false,
+      "source_check": "excerpt_matched_primary_spl",
+      "negative_safety_claim_allowed": false
+    },
+    {
+      "source_id": "DailyMed-SPL",
+      "source_record_id": "a18fa357-b294-48b9-aabe-dad7d6259ba3:35eba31d-66f7-4938-be08-ed3537948351",
+      "source_version": "23",
+      "label_set_id": "b98b02bb-2609-49a0-b29f-e5911aa0cbc1",
+      "label_document_id": "a18fa357-b294-48b9-aabe-dad7d6259ba3",
+      "effective_time": "20230530",
+      "retrieved_at": "2026-10-26T07:55:56.047+00:00",
+      "source_url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=b98b02bb-2609-49a0-b29f-e5911aa0cbc1",
+      "source_xml_url": "https://dailymed.nlm.nih.gov/dailymed/services/v2/spls/b98b02bb-2609-49a0-b29f-e5911aa0cbc1.xml",
+      "source_sha256": "d337dd51c723cad12ff2a0d64c9b38fc89e72840b79549354ef793352856d01c",
+      "section_id": "35eba31d-66f7-4938-be08-ed3537948351",
+      "section_title": "5.4 Serious Adverse Reactions Due to Concomitant Use with Other Drugs",
+      "ingredient_a": "clarithromycin",
+      "ingredient_b": "simvastatin",
+      "evidence_kind": "label",
+      "original_text": "Concomitant use of clarithromycin tablets with lovastatin or simvastatin is contraindicated",
+      "excerpt_is_not_full_guidance": true,
+      "route_names": [
+        "ORAL"
+      ],
+      "license_status": "unknown",
+      "license_reference": null,
+      "review_status": "pending",
+      "clinical_approved": false,
+      "source_check": "excerpt_matched_primary_spl",
+      "negative_safety_claim_allowed": false
+    }
+  ]
+}

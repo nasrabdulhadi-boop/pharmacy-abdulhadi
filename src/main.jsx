@@ -20,6 +20,8 @@ import {createLatestPreviewTask,clinicalPreviewMessage,clinicalReviewIssueMessag
 import {previewLocalBilingualIdentity,MAX_IDENTITY_PREVIEW_PRODUCTS} from './clinicalIdentitySandbox.js';
 import {buildClinicalSearchIndex,searchClinicalCatalog,mergeClinicalSearchResults} from './clinicalCatalogSearch.js';
 import {CLINICAL_AUDIT_FIELDS,loadClinicalAuditCatalog,clinicalAuditErrorMessage} from './clinicalAuditLoader.js';
+import primaryLabelPacket from '../docs/CLINICAL_PRIMARY_LABEL_CASES_2026-10-26.json';
+import {reviewPrimaryLabelPacket,exportPrimaryLabelReviewCsv} from './clinicalPrimaryLabelReview.js';
 
 const url=import.meta.env.VITE_SUPABASE_URL; const key=import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 const supabase=url&&key?createClient(url,key):null;
@@ -316,6 +318,12 @@ function ClinicalPreview(){
  const reviewTask=useMemo(()=>createLatestPreviewTask(),[]);
  const auditTask=useMemo(()=>createLatestPreviewTask(),[]);
  const auditController=useRef(null);
+ const primaryLabelReview=useMemo(()=>reviewPrimaryLabelPacket(primaryLabelPacket),[]);
+ const exportSourceReview=()=>{
+  const blob=new Blob([exportPrimaryLabelReviewCsv(primaryLabelReview)],{type:'text/csv;charset=utf-8'});
+  const link=document.createElement('a'),href=URL.createObjectURL(blob);
+  link.href=href;link.download='clinical-primary-label-review.csv';document.body.appendChild(link);link.click();link.remove();URL.revokeObjectURL(href);
+ };
  useEffect(()=>()=>{searchTask.invalidate();reviewTask.invalidate();auditTask.invalidate();auditController.current?.abort()},[searchTask,reviewTask,auditTask]);
  const cancelAudit=()=>{
   auditTask.invalidate();auditController.current?.abort();setAuditBusy(false);
@@ -417,6 +425,17 @@ function ClinicalPreview(){
    <p className="clinicalPreviewDisclaimer">حالة القواعد: {reviewReadiness.rulesApproved} قاعدة معتمدة من أصل {reviewReadiness.rulesTotal}. حالة ربط المنتجات: {reviewReadiness.mappingsApproved} ربط معتمد من أصل {reviewReadiness.mappingsTotal}. لا توجد مصادر سريرية مفعّلة في النسخة التجريبية.</p>
    <p className="clinicalPreviewError">غير جاهز للتفعيل السريري. يلزم التحقق من المراجع واعتماد قواعد حقيقية بعد المراجعة الصيدلانية.</p>
   </section>
+  <section className="clinicalPreviewPanel"><details className="clinicalAuditDetails"><summary>مراجع نشرات أصلية للمراجعة فقط ({primaryLabelReview.cases.length})</summary>
+   <p className="clinicalPreviewDisclaimer">هذه مقتطفات مرجعية محدودة من DailyMed، وليست نتيجة فحص الأدوية المختارة أو قاعدة تداخلات شاملة. الأسماء تخص المرجع ولا تثبت مطابقة منتجات الصيدلية. يلزم قراءة النشرة كاملة والتحقق من حقوق الاستخدام والمراجعة الصيدلانية قبل أي اعتماد. لا تُفعّل هذه الحزمة تنبيهات سريرية.</p>
+   <button type="button" onClick={exportSourceReview} disabled={!primaryLabelReview.cases.length}>تنزيل حزمة مراجعة المراجع CSV</button>
+   {Boolean(primaryLabelReview.rejectedCount||primaryLabelReview.conflictCount)&&<p className="clinicalPreviewError" role="alert">استُبعدت سجلات مرجعية غير صالحة أو متعارضة من العرض.</p>}
+   {primaryLabelReview.cases.map(row=><div key={row.source_record_id}>
+    <p dir="ltr"><b>{row.ingredient_a} + {row.ingredient_b}</b></p>
+    <p className="clinicalPreviewDisclaimer">بانتظار المراجعة • حقوق الاستخدام السريري والتجاري غير متحقق منها • الإصدار {row.source_version} • تاريخ النشرة {row.effective_time.slice(0,4)+'-'+row.effective_time.slice(4,6)+'-'+row.effective_time.slice(6,8)}</p>
+    <p dir="ltr">{row.section_title}</p><blockquote dir="ltr">{row.original_text}</blockquote>
+    <a href={row.source_url} target="_blank" rel="noopener noreferrer">فتح النشرة الأصلية كاملة</a>
+   </div>)}
+  </details></section>
   <section className="clinicalPreviewPanel"><h3>تدقيق جودة بيانات المواد الفعالة</h3>
    <p className="clinicalPreviewDisclaimer">فحص قراءة فقط للمنتجات النشطة على دفعات من 500 سجل، بحد أقصى 20 ألف منتج للمراجعة وطلب تحقق إضافي من سجل واحد عند بلوغ الحد. مهلة كل صفحة 30 ثانية. لا يعني اكتمال العد اعتماداً سريرياً.</p>
    <button onClick={runAudit} disabled={auditBusy}>{auditBusy?'جارٍ التدقيق: '+auditProgress+' منتج':'بدء تدقيق بيانات المنتجات'}</button>

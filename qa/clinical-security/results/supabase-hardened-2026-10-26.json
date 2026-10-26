@@ -1,0 +1,122 @@
+{
+  "project_ref": "vpjxdsprfcpqclnhbeoh",
+  "phase": "hardened",
+  "synthetic_only": true,
+  "production_project_touched": false,
+  "passed": 28,
+  "failed": 0,
+  "results": [
+    {
+      "name": "real_auth_admin",
+      "status": "pass"
+    },
+    {
+      "name": "real_auth_user",
+      "status": "pass"
+    },
+    {
+      "name": "no_api_key_rejected",
+      "status": "pass"
+    },
+    {
+      "name": "anon_direct_cost_denied",
+      "status": "pass"
+    },
+    {
+      "name": "anon_cost_filter_denied",
+      "status": "pass"
+    },
+    {
+      "name": "non_admin_direct_cost_has_no_rows",
+      "status": "pass"
+    },
+    {
+      "name": "anon_admin_page_empty",
+      "status": "pass"
+    },
+    {
+      "name": "anon_public_catalog_safe",
+      "status": "pass"
+    },
+    {
+      "name": "user_admin_page_empty",
+      "status": "pass"
+    },
+    {
+      "name": "user_public_catalog_safe",
+      "status": "pass"
+    },
+    {
+      "name": "admin_direct_cost_and_all_products_preserved",
+      "status": "pass"
+    },
+    {
+      "name": "admin_audit_loader_real_api",
+      "status": "pass"
+    },
+    {
+      "name": "public_frontend_loader_real_api",
+      "status": "pass"
+    },
+    {
+      "name": "legacy_public_query_fails_without_fallback",
+      "status": "pass"
+    },
+    {
+      "name": "public_rpc_cost_projection_denied",
+      "status": "pass"
+    },
+    {
+      "name": "public_rpc_cost_filter_denied",
+      "status": "pass"
+    },
+    {
+      "name": "public_rpc_cost_order_denied",
+      "status": "pass"
+    },
+    {
+      "name": "private_schema_not_exposed_by_data_api",
+      "status": "pass"
+    },
+    {
+      "name": "user_metadata_admin_cannot_elevate",
+      "status": "pass"
+    },
+    {
+      "name": "tampered_real_jwt_rejected",
+      "status": "pass"
+    },
+    {
+      "name": "anon_insert_denied",
+      "status": "pass"
+    },
+    {
+      "name": "anon_update_denied_or_zero_rows",
+      "status": "pass"
+    },
+    {
+      "name": "anon_delete_denied_or_zero_rows",
+      "status": "pass"
+    },
+    {
+      "name": "user_insert_denied",
+      "status": "pass"
+    },
+    {
+      "name": "user_update_denied_or_zero_rows",
+      "status": "pass"
+    },
+    {
+      "name": "user_delete_denied_or_zero_rows",
+      "status": "pass"
+    },
+    {
+      "name": "admin_price_update_and_restore_on_synthetic_row",
+      "status": "pass"
+    },
+    {
+      "name": "synthetic_fixture_unchanged_after_all_checks",
+      "status": "pass"
+    }
+  ]
+}

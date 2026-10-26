@@ -1,0 +1,26 @@
+{
+  "project_ref": "vpjxdsprfcpqclnhbeoh",
+  "phase": "baseline",
+  "synthetic_only": true,
+  "production_project_touched": false,
+  "passed": 4,
+  "failed": 0,
+  "results": [
+    {
+      "name": "real_auth_admin",
+      "status": "pass"
+    },
+    {
+      "name": "real_auth_user",
+      "status": "pass"
+    },
+    {
+      "name": "baseline_reproduces_anon_cost_exposure",
+      "status": "pass"
+    },
+    {
+      "name": "baseline_reproduces_non_admin_cost_exposure",
+      "status": "pass"
+    }
+  ]
+}
