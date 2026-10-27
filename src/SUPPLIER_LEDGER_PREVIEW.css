@@ -49,3 +49,5 @@ dialog.supplierInvoiceDialog .modalBox{width:min(1080px,96vw)!important;max-widt
 .slp-discount-summary b{color:#61758e;font-size:12px}.slp-discount-summary span,.slp-discount-summary strong{color:#1d477c;font-size:16px;font-weight:900}
 .slp-invoice .tableWrap table{min-width:980px}
 @media(max-width:720px){dialog.supplierLedgerDialog .modalBox,dialog.supplierInvoiceDialog .modalBox{width:100%!important;max-height:calc(100dvh - 20px);padding:12px!important}.slp-discount-summary{grid-template-columns:1fr}}
+
+.slp-invoice .tableWrap table{min-width:1120px}.slp-line-net{font-variant-numeric:tabular-nums;font-weight:900!important;color:#155d49!important;white-space:nowrap}.slp-line-discount span{display:inline-block;padding:4px 8px;border-radius:8px;background:#fff4d8;color:#9c6312}
