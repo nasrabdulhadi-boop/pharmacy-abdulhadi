@@ -566,10 +566,37 @@ function POS(){
  const [usdRate,setUsdRate]=useState(1),[usdRateDraft,setUsdRateDraft]=useState('1'),[usdRateBusy,setUsdRateBusy]=useState(false); useEffect(()=>{supabase.rpc('admin_get_currency_settings').then(r=>{if(!r.error){const v=Number(r.data?.usd_to_syp||1);setUsdRate(v);setUsdRateDraft(String(v))}})},[]); const saveUsdRate=async()=>{const v=Number(usdRateDraft);if(!Number.isFinite(v)||v<=0)return notify('سعر الصرف يجب أن يكون أكبر من صفر');setUsdRateBusy(true);try{const {data,error}=await supabase.rpc('admin_set_usd_to_syp_rate',{p_rate:v,p_note:'تعديل من إعدادات نقطة البيع'});if(error)throw error;setUsdRate(Number(data?.usd_to_syp||v));notify('تم تحديث سعر الصرف. أسعار المنتجات المحفوظة بالدولار ستتحدث تلقائياً دون تعديل قيمتها الأصلية.')}catch(e){notify(e?.message||'تعذر تحديث سعر الصرف')}finally{setUsdRateBusy(false)}};
  const [paymentMethod,setPaymentMethod]=useState(()=>draft?.paymentMethod||'cash'),[debtorQ,setDebtorQ]=useState(''),[debtors,setDebtors]=useState([]),[selectedDebtor,setSelectedDebtor]=useState(()=>draft?.selectedDebtor||null),[newDebtor,setNewDebtor]=useState({name:'',phone:'',address:'',notes:''}),[newDebtorOpen,setNewDebtorOpen]=useState(false);
  const [posSettings,setPosSettings]=useState(()=>{try{return {defaultQty:Math.max(0,Number(localStorage.getItem('pos_default_qty')??1)),defaultPart:Math.max(0,Number(localStorage.getItem('pos_default_part')??0))}}catch{return {defaultQty:1,defaultPart:0}}});
- const [quickItems,setQuickItems]=useState(()=>{try{const v=JSON.parse(localStorage.getItem('pos_quick_items_v1')||'[]');return Array.isArray(v)?v.filter(x=>x&&x.id&&x.name).map(x=>({...x,section:[1,2,3].includes(Number(x.section))?Number(x.section):1})).slice(0,30):[]}catch{return []}});
+ const readLocalQuickItems=()=>{try{const v=JSON.parse(localStorage.getItem('pos_quick_items_v1')||'[]');return Array.isArray(v)?v.filter(x=>x&&x.id&&x.name).map(x=>({...x,section:[1,2,3].includes(Number(x.section))?Number(x.section):1})).slice(0,30):[]}catch{return []}};
+ const [quickItems,setQuickItems]=useState(readLocalQuickItems);
  const [quickTab,setQuickTab]=useState(1);
  const [quickManageOpen,setQuickManageOpen]=useState(false),[quickSearch,setQuickSearch]=useState(''),[quickResults,setQuickResults]=useState([]),[quickBusy,setQuickBusy]=useState(false),[quickError,setQuickError]=useState('');
- useEffect(()=>{try{localStorage.setItem('pos_quick_items_v1',JSON.stringify(quickItems))}catch(e){console.warn('quick POS items storage',e)}},[quickItems]);
+ const [quickSyncReady,setQuickSyncReady]=useState(false),[quickSyncError,setQuickSyncError]=useState('');
+ const quickUserRef=useRef(null),quickSavedRef=useRef('');
+ useEffect(()=>{
+  let cancelled=false;
+  (async()=>{try{
+   const {data:authData,error:authError}=await supabase.auth.getUser();if(authError)throw authError;
+   const uid=authData?.user?.id;if(!uid)throw new Error('لا توجد جلسة مستخدم');
+   const {data,error}=await supabase.from('pos_shortcut_preferences').select('items').eq('user_id',uid).maybeSingle();
+   if(error)throw error;
+   if(cancelled)return;
+   quickUserRef.current=uid;
+   const local=readLocalQuickItems();
+   if(data){const server=Array.isArray(data.items)?data.items.filter(x=>x&&x.id&&x.name).slice(0,30):[];quickSavedRef.current=JSON.stringify(server);setQuickItems(server)}
+   else if(local.length){const {error:saveError}=await supabase.from('pos_shortcut_preferences').upsert({user_id:uid,items:local,updated_at:new Date().toISOString()},{onConflict:'user_id'});if(saveError)throw saveError;if(cancelled)return;quickSavedRef.current=JSON.stringify(local);setQuickItems(local)}
+   else{quickSavedRef.current='[]';setQuickItems([])}
+   setQuickSyncReady(true);setQuickSyncError('');
+  }catch(e){if(!cancelled){setQuickSyncError('تعذّر مزامنة الاختصارات مع قاعدة البيانات. لم تُحذف الاختصارات المحلية.');console.warn('POS shortcut sync load',e)}}})();
+  return()=>{cancelled=true};
+ },[]);
+ useEffect(()=>{
+  try{localStorage.setItem('pos_quick_items_v1',JSON.stringify(quickItems))}catch(e){console.warn('quick POS items storage',e)}
+  if(!quickSyncReady||!quickUserRef.current)return;
+  const snapshot=JSON.stringify(quickItems);if(snapshot===quickSavedRef.current)return;
+  let cancelled=false;
+  const timer=setTimeout(async()=>{const {error}=await supabase.from('pos_shortcut_preferences').upsert({user_id:quickUserRef.current,items:quickItems,updated_at:new Date().toISOString()},{onConflict:'user_id'});if(cancelled)return;if(error){setQuickSyncError('تعذّر حفظ الاختصارات على الخادم؛ النسخة المحلية محفوظة.');console.warn('POS shortcut sync save',error)}else{quickSavedRef.current=snapshot;setQuickSyncError('')}},450);
+  return()=>{cancelled=true;clearTimeout(timer)};
+ },[quickItems,quickSyncReady]);
  const searchQuickItems=async(term)=>{const t=String(term||'').trim();setQuickSearch(term);setQuickError('');if(!t){setQuickResults([]);return}setQuickBusy(true);try{const {data,error}=await supabase.rpc('admin_search_pos_products_currency',{p_query:t,p_limit:30});if(error)throw error;setQuickResults(data||[])}catch(e){setQuickResults([]);setQuickError(e?.message||'تعذر البحث عن الصنف')}finally{setQuickBusy(false)}};
  const assignQuickItem=(p,section)=>{setQuickItems(old=>{const target=Number(section);if(![1,2,3].includes(target))return old;const existing=old.find(x=>x.id===p.id);if(existing&&Number(existing.section||1)===target)return old.filter(x=>x.id!==p.id);if(old.filter(x=>x.id!==p.id&&Number(x.section||1)===target).length>=10){notify('اللائحة '+target+' ممتلئة (10 خانات)');return old}if(existing)return old.map(x=>x.id===p.id?{...x,section:target}:x);return [...old,{id:p.id,name:p.name,barcode:p.barcode||'',strength:p.strength||'',dosage_form:p.dosage_form||'',sale_price:Number(p.sale_price_syp??p.sale_price??0),section:target}]})};
  const toggleQuickItem=(p)=>assignQuickItem(p,quickTab);
@@ -628,7 +655,7 @@ function POS(){
   <div className="posWorkspace posWorkspaceWithShortcuts">
   <aside className="posShortcutSidebar" aria-label="اختصارات الأدوية السريعة">
    <div className="posShortcutHead"><b>اختصارات الأدوية</b><button type="button" className="secondaryAction miniBtn" onClick={()=>{setQuickTab(quickTab);setQuickManageOpen(true)}}>⚙ إدارة</button></div>
-   <div className="posShortcutTabs" role="tablist" aria-label="لوائح الاختصارات">{[1,2,3].map(t=><button key={t} type="button" role="tab" aria-selected={quickTab===t} className={quickTab===t?'active':''} onClick={()=>setQuickTab(t)}>لائحة {t}</button>)}</div>
+   {quickSyncError&&<div role="status" className="error" style={{fontSize:11,padding:6}}>{quickSyncError}</div>}\n   <div className="posShortcutTabs" role="tablist" aria-label="لوائح الاختصارات">{[1,2,3].map(t=><button key={t} type="button" role="tab" aria-selected={quickTab===t} className={quickTab===t?'active':''} onClick={()=>setQuickTab(t)}>لائحة {t}</button>)}</div>
    <div className="posShortcutSlots">{Array.from({length:10},(_,i)=>{const item=quickItems.filter(x=>Number(x.section||1)===quickTab)[i];return item?<button key={quickTab+'-'+i} type="button" className="posShortcutSlot populated" disabled={quickBusy} title={item.name} onClick={()=>addQuickItem(item)}><span className="posShortcutIndex">{i+1}</span><span className="posShortcutName">{item.name}</span><small>{[item.strength,item.dosage_form].filter(Boolean).join(' · ')}</small></button>:<button key={quickTab+'-'+i} type="button" className="posShortcutSlot empty" onClick={()=>{setQuickManageOpen(true);setQuickSearch('');setQuickResults([])}}><span className="posShortcutIndex">{i+1}</span><span>+ إضافة دواء</span></button>})}</div>
    <small className="posShortcutHelp">الضغط على الدواء يضيفه مباشرة إلى فاتورة البيع، مع التحقق من السعر والمخزون.</small>
   </aside>
