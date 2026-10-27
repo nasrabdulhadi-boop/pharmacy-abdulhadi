@@ -1,0 +1,39 @@
+/* Supplier purchase history preview — isolated, read-only UI styles */
+.modal:has(.supplier-ledger-preview) .modalBox{width:min(1180px,96vw)!important;max-width:1180px!important;max-height:94vh;overflow:auto;border-radius:22px;padding:24px;background:#f7f9fc;box-shadow:0 25px 90px #142d4c35}
+.modal:has(.slp-invoice) .modalBox{width:min(1020px,96vw)!important;max-width:1020px!important}
+.supplier-ledger-preview{font-family:inherit;color:#14253e;font-size:14px;line-height:1.6}
+.supplier-ledger-preview *{box-sizing:border-box}
+.slp-hero,.slp-invoice-banner{display:flex;align-items:center;gap:16px;padding:20px 22px;border:1px solid #e2eaf6;border-radius:19px;background:linear-gradient(120deg,#fff,#eef5ff);margin:6px 0 18px}
+.slp-hero-icon{display:grid;place-items:center;width:54px;height:54px;flex-shrink:0;border-radius:17px;color:#1666d3;background:#e4efff}
+.slp-hero h2,.slp-invoice-banner h2{font-size:23px;margin:2px 0;color:#172b4d;letter-spacing:-.4px}
+.slp-hero p,.slp-invoice-banner p{color:#6d7f95;margin:0;font-size:12px}
+.slp-eyebrow{font-size:11px;font-weight:800;color:#3970b8}
+.slp-count{display:flex;gap:10px;align-items:center;margin-inline-start:auto;padding:11px 18px;background:#fff;border:1px solid #e4eaf4;border-radius:14px;color:#2675d2}
+.slp-count strong,.slp-count small{display:block}.slp-count strong{font-size:23px;color:#1b3358;line-height:1.2}.slp-count small{font-size:11px;color:#738198}
+.slp-currencies{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin:0 0 23px}
+.slp-currency{padding:19px;border:1px solid #dce8f6;border-radius:20px;background:#fff;box-shadow:0 7px 20px #20385c08;min-width:0}
+.slp-currency.slp-usd{background:linear-gradient(160deg,#f1f7ff,#fff 45%);border-color:#bfd9fa}
+.slp-currency.slp-syp{background:linear-gradient(160deg,#fff8f1,#fff 45%);border-color:#f4d8b8}
+.slp-currency-title{display:flex;align-items:center;gap:12px;margin-bottom:17px}
+.slp-currency-symbol{display:grid;place-items:center;flex-shrink:0;width:45px;height:45px;border-radius:14px;background:#e4efff;color:#1564d2;font-size:19px;font-weight:900}
+.slp-syp .slp-currency-symbol{background:#fff0de;color:#b9681d;font-size:14px}
+.slp-currency-title h3{font-size:17px;margin:0!important;color:#203b60!important}.slp-currency-title small{color:#748298;font-size:11px}
+.slp-financial-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:1px solid #e9eef5}
+.slp-financial-row span{color:#62748c;font-size:12px}.slp-financial-row strong{color:#21334f;font-size:15px;white-space:nowrap;font-variant-numeric:tabular-nums}
+.slp-outstanding{border:1px solid #ffc6c8;background:#fff0f0;padding:12px;border-radius:13px;margin-top:12px}.slp-outstanding span,.slp-outstanding strong{color:#c22939;font-weight:900}.slp-outstanding strong{font-size:19px}
+.slp-section-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px}.slp-section-head h3{margin:0!important;font-size:18px;color:#21395c!important}.slp-section-head p{margin:1px 0;color:#78869b;font-size:12px}.slp-results{padding:6px 12px;border-radius:999px;background:#e8f0ff;color:#2c65ac;font-size:12px;font-weight:800}
+.slp-filters{display:grid;grid-template-columns:1fr 1fr 1.5fr;gap:12px;margin:0 0 16px}
+.slp-filters label{display:flex;flex-direction:column;gap:6px;margin:0!important;color:#5c718c;font-size:12px;font-weight:700}
+.slp-filters input,.slp-filters select{height:43px;border:1px solid #d9e3f1!important;border-radius:11px!important;background:#fff!important;padding:8px 12px!important;font-size:13px!important}
+.slp-table{border:1px solid #e1e8f2;border-radius:14px;background:#fff;overflow-x:auto}
+.slp-table table{min-width:860px;width:100%;border-collapse:collapse}.slp-table th{background:#f0f5fb;color:#5c708a;font-size:11px;font-weight:900;white-space:nowrap;padding:13px 9px}.slp-table td{padding:12px 9px;border-bottom:1px solid #edf1f6;color:#263a56;font-size:12px;white-space:nowrap}.slp-table tbody tr:hover{background:#f7faff}
+.slp-invoice-link{border:0;background:transparent;color:#1768d0;cursor:pointer;font-weight:900;font-size:13px}.slp-view{display:inline-flex;align-items:center;gap:5px;background:#eff5ff;color:#1768d0;border:1px solid #cbdfff;border-radius:9px;padding:6px 10px;font-size:12px;font-weight:800;cursor:pointer}
+.slp-chip{display:inline-block;padding:3px 10px;border-radius:8px;font-size:11px;font-weight:900;letter-spacing:.2px}.slp-chip-usd{background:#e8f0ff;color:#1b64c9}.slp-chip-syp{background:#fff1e3;color:#b65f0c}
+.slp-due{color:#c52438!important;font-weight:900}.slp-status{display:inline-block;border-radius:999px;padding:3px 10px;font-size:11px;font-weight:900}.slp-status-paid{background:#e0f7eb;color:#16844b}.slp-status-partial{background:#fff2dd;color:#a66b09}.slp-status-unpaid{background:#ffe6e8;color:#bf2e42}
+.slp-state{text-align:center;padding:28px;color:#6c7f96}
+.slp-invoice-banner{justify-content:space-between}.slp-invoice-meta{grid-template-columns:repeat(3,minmax(0,1fr))!important;margin:0 0 20px!important}.slp-invoice-meta>div{background:#fff;border-color:#e1e9f4;padding:14px}
+.slp-detail-heading{display:flex;align-items:center;gap:8px;margin:20px 0 12px!important;font-size:17px!important;color:#21395c!important}
+.slp-invoice .tableWrap{border:1px solid #e1e8f2;border-radius:14px;overflow:auto;background:#fff}.slp-invoice table{min-width:850px}.slp-invoice th{background:#eff5fc;white-space:nowrap}.slp-invoice td{font-size:12px}
+.slp-invoice-totals{grid-template-columns:repeat(2,minmax(0,1fr))!important;margin-top:18px!important}.slp-invoice-totals>div{background:#fff;border:1px solid #e0e8f4}.slp-invoice-totals>div:last-child{background:#fff0f0;border-color:#ffd0d0}.slp-invoice-totals>div:last-child span{color:#be2839;font-size:19px}
+.slp-invoice .muted{font-size:12px;color:#78869b}
+@media(max-width:720px){.modal:has(.supplier-ledger-preview) .modalBox{padding:13px!important;width:99vw!important}.slp-hero,.slp-invoice-banner{padding:13px;gap:10px}.slp-hero h2,.slp-invoice-banner h2{font-size:18px}.slp-currencies{grid-template-columns:1fr;gap:10px}.slp-filters{grid-template-columns:1fr 1fr}.slp-search{grid-column:1/-1}.slp-invoice-meta,.slp-invoice-totals{grid-template-columns:repeat(2,minmax(0,1fr))!important}.slp-count{padding:8px}.slp-count strong{font-size:18px}}
