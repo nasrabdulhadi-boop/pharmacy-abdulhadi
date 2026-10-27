@@ -7,3 +7,18 @@
 .clinicalPreviewPanel input[type=file]{display:block;max-width:100%;margin-top:8px}
 .clinicalPreviewPanel button{max-width:100%;white-space:normal;overflow-wrap:anywhere}
 .clinicalPreview button:focus-visible,.clinicalPreview input:focus-visible,.clinicalPreview summary:focus-visible{outline:3px solid #d97706;outline-offset:3px}
+
+/* Licensed FEST source reference, independent of pharmacy product mappings. */
+.festReference{overflow-wrap:anywhere;min-width:0}
+.festReference input{display:block;box-sizing:border-box;width:100%;margin:8px 0;padding:10px}
+.festReference button{margin:4px;white-space:normal}
+.festReference p{white-space:pre-wrap}
+.festReference small{display:block;font-size:.8rem;color:#526578;overflow-wrap:anywhere}
+.festMember{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid #e2e8f0}
+.festMember>span{min-width:0;flex:1}
+.festMember button{flex-shrink:0;max-width:45%}
+.festRecord{margin-top:16px;padding:12px;border:1px solid #d7dee8;border-radius:10px;background:#fafcff}
+.festRecord h4{margin:0 0 10px}
+.festRecord summary{padding:8px 0;cursor:pointer}
+.festSearchResults{max-height:380px;overflow:auto}
+@media(max-width:400px){.festMember{align-items:flex-start;flex-direction:column}.festMember button{max-width:100%}}

@@ -20,6 +20,7 @@ import {createLatestPreviewTask,clinicalPreviewMessage,clinicalReviewIssueMessag
 import {previewLocalBilingualIdentity,MAX_IDENTITY_PREVIEW_PRODUCTS} from './clinicalIdentitySandbox.js';
 import {buildClinicalSearchIndex,searchClinicalCatalog,mergeClinicalSearchResults} from './clinicalCatalogSearch.js';
 import {CLINICAL_AUDIT_FIELDS,loadClinicalAuditCatalog,clinicalAuditErrorMessage} from './clinicalAuditLoader.js';
+import FestReferencePreview from './FestReferencePreview.jsx';
 import primaryLabelPacket from '../docs/CLINICAL_PRIMARY_LABEL_CASES_2026-10-26.json';
 import {reviewPrimaryLabelPacket,exportPrimaryLabelReviewCsv} from './clinicalPrimaryLabelReview.js';
 
@@ -420,10 +421,11 @@ function ClinicalPreview(){
  const reviewReadiness=clinicalReviewReadiness([],[]);
  return <div className="clinicalPreview">
   <PageHead title="المساعد الصيدلاني السريري — نسخة تجريبية" sub="مرحلة تدقيق وربط المنتجات • قراءة فقط • لا تتدخل في البيع أو المحاسبة"/>
-  <div className="clinicalPreviewNotice"><ShieldCheck size={20}/><div><b>وضع الاختبار فقط</b><p>هذه الصفحة لا تملك حالياً قاعدة تداخلات دوائية معتمدة. عدم ظهور تحذير لا يعني أمان الجمع بين الأدوية. لا تستخدم النتائج لاتخاذ قرار سريري.</p></div></div>
+  <div className="clinicalPreviewNotice"><ShieldCheck size={20}/><div><b>وضع الاختبار فقط</b><p>يتوفر مرجع FEST مستقل للمواد المختارة من المصدر. ربط منتجات الصيدلية بالتداخلات لم يُعتمد بعد. عدم ظهور تحذير لا يعني أمان الجمع بين الأدوية. لا تستخدم النتائج لاتخاذ قرار سريري.</p></div></div>
+  <FestReferencePreview/>
   <section className="clinicalPreviewPanel"><h3>جاهزية اعتماد المراجعات السريرية</h3>
-   <p className="clinicalPreviewDisclaimer">حالة القواعد: {reviewReadiness.rulesApproved} قاعدة معتمدة من أصل {reviewReadiness.rulesTotal}. حالة ربط المنتجات: {reviewReadiness.mappingsApproved} ربط معتمد من أصل {reviewReadiness.mappingsTotal}. لا توجد مصادر سريرية مفعّلة في النسخة التجريبية.</p>
-   <p className="clinicalPreviewError">غير جاهز للتفعيل السريري. يلزم التحقق من المراجع واعتماد قواعد حقيقية بعد المراجعة الصيدلانية.</p>
+   <p className="clinicalPreviewDisclaimer">حالة القواعد: {reviewReadiness.rulesApproved} قاعدة معتمدة من أصل {reviewReadiness.rulesTotal}. حالة ربط المنتجات: {reviewReadiness.mappingsApproved} ربط معتمد من أصل {reviewReadiness.mappingsTotal}. يتوفر مرجع FEST أدناه؛ لم تُفعّل تنبيهات تلقائية على منتجات الصيدلية.</p>
+   <p className="clinicalPreviewError">تنبيهات المنتجات غير جاهزة للتفعيل السريري. يلزم اعتماد مطابقة المواد ومراجعة تطبيق قواعد المصدر صيدلانياً.</p>
   </section>
   <section className="clinicalPreviewPanel"><details className="clinicalAuditDetails"><summary>مراجع نشرات أصلية للمراجعة فقط ({primaryLabelReview.cases.length})</summary>
    <p className="clinicalPreviewDisclaimer">هذه مقتطفات مرجعية محدودة من DailyMed، وليست نتيجة فحص الأدوية المختارة أو قاعدة تداخلات شاملة. الأسماء تخص المرجع ولا تثبت مطابقة منتجات الصيدلية. يلزم قراءة النشرة كاملة والتحقق من حقوق الاستخدام والمراجعة الصيدلانية قبل أي اعتماد. لا تُفعّل هذه الحزمة تنبيهات سريرية.</p>
@@ -500,7 +502,7 @@ function ClinicalPreview(){
    {unresolved.map(p=><div className="clinicalPreviewWarning" key={p.id}><AlertTriangle size={18}/><span>«{p.name}»: {p.reason}. الفحص غير مكتمل.</span></div>)}
    {overlaps.length>0?overlaps.map(({a,b,shared},i)=><div className="clinicalPreviewWarning" key={i}><AlertTriangle size={18}/><span>مكوّن مشترك نصياً بين «{a.name}» و«{b.name}»: {shared.join('، ')}. قد يشير إلى تكرار، لكنه يحتاج مراجعة صيدلانية للتأكد من التركيب والجرعة وطريقة الإعطاء.</span></div>):<p>لم يُكتشف مكوّن مشترك مطابق نصياً. هذا لا يستبعد تكرار المواد بأسماء مرادفة أو وجود تداخلات دوائية.</p>}
    <div className="clinicalPreviewWarning"><AlertTriangle size={18}/><span>حالة محرك التداخلات: {clinicalRuleStatus.status==='incomplete'?'بيانات المواد الفعالة غير معتمدة بعد':'لا توجد قواعد تداخلات معتمدة'}. عدد القواعد المعتمدة: {clinicalRuleStatus.approvedRuleCount}. لم يتم إجراء فحص سريري شامل.</span></div>
-   <p className="clinicalPreviewDisclaimer">فحص التداخلات: غير متاح حتى اعتماد مصدر سريري مرخص أو قواعد موثقة ومراجعة. لا يتم حفظ بيانات المرضى أو تعديل الفواتير.</p>
+   <p className="clinicalPreviewDisclaimer">الفحص التلقائي لتداخلات منتجات الصيدلية غير متاح حتى اعتماد مطابقة المواد؛ استخدم مرجع FEST المستقل لاختيار هويات المصدر يدوياً. لا يتم حفظ بيانات المرضى أو تعديل الفواتير.</p>
   </section>}
  </div>;
 }
