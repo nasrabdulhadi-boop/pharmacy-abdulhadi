@@ -844,7 +844,8 @@ function Suppliers(){
  const empty={name:'',phone:'',address:'',notes:''};
  const [rows,setRows]=useState([]),[show,setShow]=useState(false),[editId,setEditId]=useState(null),[form,setForm]=useState(empty),[busy,setBusy]=useState(false),[err,setErr]=useState('');
  const [detail,setDetail]=useState(null),[history,setHistory]=useState([]),[ledgers,setLedgers]=useState({USD:null,SYP:null}),[historyBusy,setHistoryBusy]=useState(false),[historyError,setHistoryError]=useState(''),[invoiceDetail,setInvoiceDetail]=useState(null),[historyCurrency,setHistoryCurrency]=useState('ALL'),[historyStatus,setHistoryStatus]=useState('ALL'),[historyQuery,setHistoryQuery]=useState('');
- const fmtCurrency=(amount,c)=>`${money(amount||0)} ${c==='USD'?'
+ const fmtCurrency=(amount,c)=>String(money(amount||0))+' '+(c==='USD'?'$':'ل.س');
+ const safeAmount=v=>{const n=Number(v);return Number.isFinite(n)?n:0};
  const load=async()=>{setErr('');const {data,error}=await supabase.rpc('admin_list_suppliers');if(error){setErr(error.message);throw error}setRows(Array.isArray(data)?data:[])};
  useEffect(()=>{load().catch(()=>{})},[]);
  const save=async()=>{if(!form.name.trim())return notify('أدخل اسم المورد');setBusy(true);setErr('');try{const rpc=editId?'admin_update_supplier':'admin_create_supplier';const args=editId?{p_id:editId,p_name:form.name.trim(),p_phone:form.phone.trim()||null,p_address:form.address.trim()||null,p_notes:form.notes.trim()||null}:{p_name:form.name.trim(),p_phone:form.phone.trim()||null,p_address:form.address.trim()||null,p_notes:form.notes.trim()||null};const {error}=await supabase.rpc(rpc,args);if(error)throw error;setShow(false);setEditId(null);setForm(empty);await load()}catch(e){notify(e?.message||'تعذر حفظ المورد')}finally{setBusy(false)}};
