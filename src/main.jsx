@@ -1062,8 +1062,6 @@ function Login(){const [email,setEmail]=useState(''),[password,setPassword]=useS
 const Root=()=>{const [s,setS]=useState(null),[checked,setChecked]=useState(false);useEffect(()=>{let alive=true;(async()=>{if(!supabase){if(alive)setChecked(true);return}const {data}=await supabase.auth.getSession();let ss=data?.session||null;if(ss){const role=ss.user?.app_metadata?.role; if(role!=='admin'&&ss.user?.email==='drnaser@pharmahadi.com'){try{const r=await supabase.auth.refreshSession();ss=r.data?.session||ss}catch{}}}if(alive){setS(ss);setChecked(true)}})();if(supabase){const {data:{subscription}}=supabase.auth.onAuthStateChange((_e,ss)=>setS(ss));return()=>{alive=false;subscription.unsubscribe()}}return()=>{alive=false}},[]);if(!checked)return <Splash/>;const admin=s?.user?.email==='drnaser@pharmahadi.com'||s?.user?.app_metadata?.role==='admin';if(admin)return <Admin onLogout={()=>supabase.auth.signOut()}/>;return <CustomerOrLogin/>};
 function CustomerOrLogin(){const [login,setLogin]=useState(location.hash==='#admin');return login?<><Login/><button className="back" onClick={()=>{location.hash='';setLogin(false)}}>العودة للموقع</button></>:<><Customer/><button className="adminLink" onClick={()=>{location.hash='admin';setLogin(true)}}>دخول الإدارة</button></>}
 createRoot(document.getElementById('root')).render(<><AppErrorBoundary><Root/></AppErrorBoundary><SmartToastHost/></>);
-:'ل.س'}</td><td>{x.status||'مستلمة'}</td></tr>)}</tbody></table>{!history.length&&<div className="emptyCart">لا توجد مشتريات مسجلة لهذا المورد بعد.</div>}</div>}</Modal>}
- </>}
 
 function expiryMonthValue(value){return value?String(value).slice(0,7):''}
 function expiryMonthToDate(value){
