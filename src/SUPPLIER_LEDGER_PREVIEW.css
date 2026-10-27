@@ -51,3 +51,6 @@ dialog.supplierInvoiceDialog .modalBox{width:min(1080px,96vw)!important;max-widt
 @media(max-width:720px){dialog.supplierLedgerDialog .modalBox,dialog.supplierInvoiceDialog .modalBox{width:100%!important;max-height:calc(100dvh - 20px);padding:12px!important}.slp-discount-summary{grid-template-columns:1fr}}
 
 .slp-invoice .tableWrap table{min-width:1120px}.slp-line-net{font-variant-numeric:tabular-nums;font-weight:900!important;color:#155d49!important;white-space:nowrap}.slp-line-discount span{display:inline-block;padding:4px 8px;border-radius:8px;background:#fff4d8;color:#9c6312}
+
+/* Purchase line product card entry; isolated visual-only style */
+.purchaseProductEditLink{display:inline-flex;align-items:center;gap:7px;padding:3px 4px;border:0;background:transparent;color:#1b62bd;font:inherit;font-weight:800;text-align:right;cursor:pointer;max-width:100%;white-space:normal}.purchaseProductEditLink:hover{text-decoration:underline;color:#12498e}.purchaseProductEditLink:disabled{color:#75879c;cursor:default}.purchaseProductEditLink svg{flex-shrink:0}
