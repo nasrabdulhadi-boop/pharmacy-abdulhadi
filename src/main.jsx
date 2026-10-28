@@ -11,6 +11,7 @@ import './SMART_TOAST.css';
 import './SUPPLIER_LEDGER_PREVIEW.css';
 import {CAPABILITIES,hasCapability} from './systemAccessPolicy.js';
 import {allowStagingAuthMutation} from './stagingAuthGuard.js';
+import {readAdminPreferences,writeAdminPreferences} from './systemAdminPreferences.js';
 
 const url=import.meta.env.VITE_SUPABASE_URL; const key=import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 const supabase=url&&key?createClient(url,key):null;
@@ -288,6 +289,8 @@ function Admin({onLogout}){
 }
 function SystemAdministrationPreview(){
  const [section,setSection]=useState('overview');
+ const [adminPrefs,setAdminPrefs]=useState(()=>readAdminPreferences(typeof window==='undefined'?null:window.localStorage));
+ const changeAdminPref=(field,value)=>{const next={...adminPrefs,[field]:value};setAdminPrefs(next);writeAdminPreferences(window.localStorage,next)};
  const [sessionUser,setSessionUser]=useState(null);
  const [newPassword,setNewPassword]=useState('');
  const [confirmPassword,setConfirmPassword]=useState('');
@@ -332,7 +335,7 @@ function SystemAdministrationPreview(){
   <div style={{overflowX:'auto'}}><table style={{width:'100%',textAlign:'right'}}><thead><tr><th>الصلاحية</th><th>المالك</th><th>المدير</th><th>الدعم الفني</th></tr></thead><tbody>{CAPABILITIES.map(cap=><tr key={cap}><td dir="ltr">{cap}</td>{['system_owner','system_admin','technical_support'].map(role=><td key={role} style={{fontWeight:600}}>{hasCapability(role,cap)?'مسموح':'ممنوع'}</td>)}</tr>)}</tbody></table></div>
   <p style={{opacity:.8}}>هذه المصفوفة مرجع للاختبارات فقط. لا تمنح أي صلاحية فعلية قبل تطبيق سياسات الخادم وقاعدة البيانات.</p></div>}
   {section==='backup'&&<div><h3>مركز النسخ الاحتياطي — Backup & Recovery</h3><p><b>الحالة: غير مهيّأ.</b> لم يتم إنشاء نسخة احتياطية من هذا المركز أو اختبار استعادتها.</p><p>خطة الحماية المعتمدة للتطوير المجاني:</p><ul><li>نسخة مشفرة لقاعدة البيانات تشمل الجداول والسياسات والدوال.</li><li>حماية ملفات الوصفات الطبية والبيانات الحساسة من حساب الدعم الفني.</li><li>تجربة الاستعادة على بيئة منفصلة ببيانات اختبار، وليس على قاعدة الصيدلية الأصلية.</li><li>التحقق من سلامة الأرصدة والعملات والفواتير بعد الاستعادة.</li></ul><p>لن يظهر زر نسخ أو استعادة فعلي قبل وجود خدمة آمنة ومختبرة، ولا توجد أي رسوم إضافية معتمدة.</p></div>}
-  {section==='preferences'&&<div><h3>اللغة والمظهر — Localization & Appearance</h3><p>العربية (RTL) هي اللغة الحالية. إضافة English (LTR) تحتاج ترجمة شاملة للأقسام والرسائل والتقارير؛ لن نعرض خيار لغة قبل جاهزيته.</p><p>الوضع الداكن والفاتح متاحان حالياً من الشريط العلوي.</p></div>}
+  {section==='preferences'&&<div><h3>اللغة والمظهر — Localization & Appearance</h3><p>هذه التفضيلات محفوظة محلياً على هذا الجهاز ولا تغيّر صلاحيات الحساب أو بيانات الصيدلية.</p><label style={{display:'grid',gap:6,maxWidth:320}}>لغة تفضيلات مركز الإدارة فقط<select value={adminPrefs.language} onChange={e=>changeAdminPref('language',e.target.value)}><option value="ar">العربية</option><option value="en">English (preferences only)</option></select></label><label style={{display:'grid',gap:6,maxWidth:320,marginTop:14}}>كثافة عرض مركز الإدارة<select value={adminPrefs.density} onChange={e=>changeAdminPref('density',e.target.value)}><option value="comfortable">مريح</option><option value="compact">مضغوط</option></select></label><p>{adminPrefs.language==='en'?'English preference saved for this device. Full translation is not yet available.':'تم حفظ تفضيل اللغة لهذا الجهاز. الترجمة الكاملة لم تكتمل بعد.'}</p><p>الوضع الداكن والفاتح متاحان من الشريط العلوي.</p></div>}
  </div>
 }
 function Card({title,value,icon:I,meta,alert}){return <div className={`kpi ${alert?'alertKpi':''}`}><div><span>{title}</span><strong>{value}</strong>{meta&&<small>{meta}</small>}</div><I/></div>}
