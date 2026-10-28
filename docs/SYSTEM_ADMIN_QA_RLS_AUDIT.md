@@ -53,3 +53,14 @@ Remaining release blockers: real signed-in technical-support account and HTTP RE
 ## Additional QA table-grant hardening — 2026-10-29
 
 Audited effective table privileges on isolated QA `public.products`. Discovered `TRUNCATE`, `TRIGGER`, and `REFERENCES` privileges granted to API roles, plus anonymous DML privileges. These are not justified by the read-only public catalog; importantly `TRUNCATE` bypasses RLS. Revoked `TRUNCATE`, `TRIGGER`, `REFERENCES` from PUBLIC, anon and authenticated, and revoked anonymous INSERT/UPDATE/DELETE. Post-change `information_schema.role_table_grants` confirmed authenticated retains only SELECT/INSERT/UPDATE/DELETE; anon has no direct table privileges. RLS policies still restrict authenticated DML by server-verified admin role. No rows were modified. These are QA-only changes, not production migration. Release remains blocked until real user-session REST/RPC tests and coverage of sensitive schema.
+
+## QA transactional regression tests — 2026-10-29
+
+Rechecked isolated QA using SQL transactions with `SET LOCAL ROLE authenticated` and synthetic request JWT claims derived from the server-stored QA user. Each transaction ended in `ROLLBACK`.
+
+| Scenario | `is_admin()` | Direct `products` SELECT | `admin_get_products_page(10,0,NULL)` |
+|---|---:|---:|---:|
+| Legacy admin account, unchanged app metadata | true | 4 rows | 3 active rows |
+| Same QA admin temporarily assigned explicit `system_role=technical_support` | false | 0 rows | 0 rows |
+
+Additional authenticated support privilege checks: `TRUNCATE=false`, `TRIGGER=false`, `REFERENCES=false`. QA products row count after tests: 4. These are transaction-scoped SQL authorization simulations, **not** real login or network-level REST/RPC tests. No production changes. Real signed-in role tests, role revocation/token freshness, and complete sensitive-schema coverage remain blockers.
