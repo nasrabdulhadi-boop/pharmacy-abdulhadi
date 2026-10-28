@@ -293,6 +293,8 @@ function SystemAdministrationPreview(){
  const [section,setSection]=useState('overview');
  const [adminPrefs,setAdminPrefs]=useState(()=>readAdminPreferences(typeof window==='undefined'?null:window.localStorage));
  const changeAdminPref=(field,value)=>{const next={...adminPrefs,[field]:value};setAdminPrefs(next);writeAdminPreferences(window.localStorage,next)};
+ const adminCenterEnglish=adminPrefs.language==='en';
+ const adminCenterLabels=adminCenterEnglish?{title:'System Administration Center',overview:'Overview',profile:'My Profile',access:'Roles & Access',backup:'Backup & Recovery',preferences:'Language & Appearance',preview:'Safe preview'}:{title:'مركز إدارة النظام',overview:'نظرة عامة',profile:'الملف الشخصي',access:'الأدوار والصلاحيات',backup:'النسخ الاحتياطي',preferences:'اللغة والمظهر',preview:'معاينة آمنة'};
  const [sessionUser,setSessionUser]=useState(null);
  const [newPassword,setNewPassword]=useState('');
  const [confirmPassword,setConfirmPassword]=useState('');
@@ -318,9 +320,9 @@ function SystemAdministrationPreview(){
   finally{setPasswordBusy(false)}
  };
  useEffect(()=>{let active=true;supabase.auth.getUser().then(({data,error})=>{if(active&&!error)setSessionUser(data?.user||null)});return()=>{active=false}},[]);
- const sections=[['overview','نظرة عامة'],['profile','الملف الشخصي'],['access','الأدوار والصلاحيات'],['backup','النسخ الاحتياطي'],['preferences','اللغة والمظهر']];
- return <div className="panel" dir="rtl" style={{padding:24,maxWidth:1100,margin:'18px auto'}}>
-  <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',gap:12,flexWrap:'wrap'}}><div><h2 style={{margin:'0 0 8px'}}>مركز إدارة النظام</h2><p style={{opacity:.75}}>System Administration Center — معاينة تصميمية، دون تعديل صلاحيات أو بيانات الإنتاج</p></div><span style={{border:'1px solid currentColor',borderRadius:16,padding:'5px 12px'}}>معاينة آمنة</span></div>
+ const sections=[['overview',adminCenterLabels.overview],['profile',adminCenterLabels.profile],['access',adminCenterLabels.access],['backup',adminCenterLabels.backup],['preferences',adminCenterLabels.preferences]];
+ return <div className="panel" dir={adminCenterEnglish?'ltr':'rtl'} style={{padding:adminPrefs.density==='compact'?12:24,maxWidth:1100,margin:'18px auto'}}>
+  <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',gap:12,flexWrap:'wrap'}}><div><h2 style={{margin:'0 0 8px'}}>{adminCenterLabels.title}</h2><p style={{opacity:.75}}>System Administration Center — معاينة تصميمية، دون تعديل صلاحيات أو بيانات الإنتاج</p></div><span style={{border:'1px solid currentColor',borderRadius:16,padding:'5px 12px'}}>{adminCenterLabels.preview}</span></div>
   <div style={{display:'flex',flexWrap:'wrap',gap:8,margin:'18px 0'}}>{sections.map(([id,label])=><button type="button" key={id} className={section===id?'primary':''} onClick={()=>setSection(id)}>{label}</button>)}</div>
   {section==='overview'&&<div><h3>لوحة التحكم الإدارية</h3><p>سيعرض هذا القسم حالة الخدمات والمستخدمين والنسخ الاحتياطية بعد إنشاء واجهات بيانات تقنية محدودة الصلاحيات.</p><div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(185px,1fr))',gap:12}}>{[['الهوية','Supabase Auth'],['التحكم بالوصول','تصميم قيد المراجعة'],['النسخ الاحتياطية','لم تُفعّل بعد'],['الدعم الفني','وصول تقني فقط'],['الحالة التقنية',summarizeTechnicalHealth(makeTechnicalHealthSnapshot())==='unknown'?'غير متحققة':'متحققة']].map(([a,b])=><div className="card" style={{padding:16}} key={a}><small>{a}</small><h3>{b}</h3></div>)}</div></div>}
   {section==='profile'&&<div><h3>الملف الشخصي — My Profile</h3><p>البريد الإلكتروني المسجل في جلسة المستخدم الحالي:</p><p><b dir="ltr">{sessionUser?.email||'جاري التحقق من الحساب...'}</b></p><p>معرّف المستخدم: <code dir="ltr">{sessionUser?.id||'—'}</code></p><form onSubmit={changeOwnPassword} style={{display:'grid',gap:10,maxWidth:440,marginTop:20}} autoComplete="off">
