@@ -3,7 +3,8 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 const source=readFileSync(new URL('../src/main.jsx',import.meta.url),'utf8');
 test('preview auth mutations are gated off by default',()=>{
- assert.match(source,/authMutationPreviewEnabled/);
+ assert.match(source,/authMutationPreviewEnabled=allowStagingAuthMutation\(/);
+ assert.match(source,/import \{allowStagingAuthMutation\} from '\.\/stagingAuthGuard\.js'/);
  assert.match(source,/if\(!authMutationPreviewEnabled\)/);
  assert.match(source,/disabled=\{!authMutationPreviewEnabled\|\|passwordBusy/);
  assert.match(source,/recovery&&!authMutationPreviewEnabled/);
