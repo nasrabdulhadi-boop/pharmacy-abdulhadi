@@ -64,3 +64,10 @@
 .panel.systemAdminModern .systemAdminReadinessState.state-verification_required{background:#fff3df;color:#90611e}
 @media(max-width:950px){.panel.systemAdminModern .systemAdminReadinessGrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:640px){.panel.systemAdminModern .systemAdminReadinessGrid{grid-template-columns:minmax(0,1fr)}}
+
+.panel.systemAdminModern .systemAdminManifestInspector{margin-top:20px;padding:20px;border:1px solid #dce8e4;background:#f7fbf9;border-radius:14px;display:grid;gap:12px}
+.panel.systemAdminModern .systemAdminManifestInspector h4{margin:0;color:#244d40}
+.panel.systemAdminModern .systemAdminManifestInspector p{margin:0;line-height:1.8;color:#52677a}
+.panel.systemAdminModern .systemAdminManifestInspector label{display:grid;gap:8px;font-weight:700;max-width:560px}
+.panel.systemAdminModern .systemAdminManifestInspector input[type=file]{max-width:100%;padding:12px;border:1px dashed #a8c8ba;border-radius:10px;background:white}
+.panel.systemAdminModern .systemAdminManifestInspector [role=status]{padding:12px;border:1px solid #c8dcd4;background:#fff;border-radius:10px}
