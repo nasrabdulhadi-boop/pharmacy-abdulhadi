@@ -49,3 +49,7 @@ Applied isolated QA migration `qa_enforce_explicit_system_role_precedence`:
 - A **transactional** QA test temporarily assigned `system_role=technical_support` to the existing QA admin **inside a rolled-back transaction**, then tested with the authenticated role: `is_admin()=false`, admin product RPC returned 0 rows. Post-rollback inspection confirmed both QA accounts have no persistent `system_role` changes.
 
 Remaining release blockers: real signed-in technical-support account and HTTP REST/RPC tests; token refresh/revocation; 2 authenticated SECURITY DEFINER advisor warnings; leaked-password protection warning. SQL simulation is not end-to-end proof.
+
+## Additional QA table-grant hardening — 2026-10-29
+
+Audited effective table privileges on isolated QA `public.products`. Discovered `TRUNCATE`, `TRIGGER`, and `REFERENCES` privileges granted to API roles, plus anonymous DML privileges. These are not justified by the read-only public catalog; importantly `TRUNCATE` bypasses RLS. Revoked `TRUNCATE`, `TRIGGER`, `REFERENCES` from PUBLIC, anon and authenticated, and revoked anonymous INSERT/UPDATE/DELETE. Post-change `information_schema.role_table_grants` confirmed authenticated retains only SELECT/INSERT/UPDATE/DELETE; anon has no direct table privileges. RLS policies still restrict authenticated DML by server-verified admin role. No rows were modified. These are QA-only changes, not production migration. Release remains blocked until real user-session REST/RPC tests and coverage of sensitive schema.
