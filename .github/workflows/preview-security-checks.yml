@@ -20,3 +20,25 @@ jobs:
         run: npm test
       - name: Build preview
         run: npm run build
+      - name: Reject auth mutation in production build
+        env:
+          VITE_ENABLE_AUTH_MUTATIONS: 'true'
+          VITE_SUPABASE_URL: https://eewjjzgwoaxhojnjvzgq.supabase.co
+          VITE_SUPABASE_PUBLISHABLE_KEY: dummy-key
+        run: |
+          if npm run build; then
+            echo 'SECURITY FAILURE: production auth mutation build was allowed'
+            exit 1
+          fi
+          echo 'Production auth mutation build correctly rejected'
+      - name: Reject auth mutation on wrong staging URL
+        env:
+          VITE_ENABLE_AUTH_MUTATIONS: 'true'
+          VITE_SUPABASE_URL: https://invalid.example.test
+          VITE_SUPABASE_PUBLISHABLE_KEY: dummy-key
+        run: |
+          if npm run build -- --mode staging; then
+            echo 'SECURITY FAILURE: non-isolated staging auth mutation build was allowed'
+            exit 1
+          fi
+          echo 'Non-isolated staging auth mutation build correctly rejected'
