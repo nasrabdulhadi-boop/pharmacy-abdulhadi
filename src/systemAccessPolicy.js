@@ -32,6 +32,6 @@ export function sanitizeTechnicalDiagnostic(input){
  // Strict allowlist: never pass raw errors, SQL messages, URLs, user IDs or free-text metadata.
  const status = ['healthy','degraded','unavailable','unknown'].includes(input?.status)?input.status:'unknown';
  const component = ['authentication','api','database','deployment'].includes(input?.component)?input.component:'unknown';
- const timestamp = typeof input?.observedAt === 'string' && Number.isFinite(Date.parse(input.observedAt)) ? input.observedAt : null;
+ const timestamp = typeof input?.observedAt === 'string' && input.observedAt.length <= 35 && input.observedAt.endsWith('Z') && Number.isFinite(Date.parse(input.observedAt)) && new Date(input.observedAt).toISOString().slice(0,19) === input.observedAt.slice(0,19) ? input.observedAt : null;
  return Object.freeze({status,component,observedAt:timestamp});
 }
