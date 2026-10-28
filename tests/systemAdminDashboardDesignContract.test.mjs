@@ -17,12 +17,12 @@ test('dashboard does not imply untested backup or diagnostics are healthy',()=>{
 });
 test('support-only role cannot navigate to sensitive administrative sections',()=>{
  assert.match(ui,/const restrictedPreview=isSupportPreview\|\|isUnverifiedPreview/);
- assert.match(ui,/\.filter\(\(\[id\]\)=>!restrictedPreview\|\|id==='overview'\)/);
- assert.match(ui,/!restrictedPreview&&section==='profile'/);
- assert.match(ui,/!restrictedPreview&&section==='backup'/);
+ assert.match(ui,/\.filter\(\(\[id\]\)=>canViewSystemAdminSection\(verifiedRole,id\)\|\|id==='overview'\)/);
+ assert.match(ui,/!restrictedPreview&&effectiveSection==='profile'/);
+ assert.match(ui,/!restrictedPreview&&effectiveSection==='backup'/);
 });
 test('navigation supports assistive technology and reduced motion',()=>{
- assert.match(ui,/aria-current=\{section===id\?'page':undefined\}/);
+ assert.match(ui,/aria-current=\{effectiveSection===id\?'page':undefined\}/);
  assert.match(css,/prefers-reduced-motion:reduce/);
  assert.match(css,/focus-visible/);
 });
