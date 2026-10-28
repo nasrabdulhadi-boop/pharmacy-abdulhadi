@@ -48,3 +48,19 @@
 .panel.systemAdminModern>.systemAdminMain>*{min-width:0!important;max-width:100%!important}
 .panel.systemAdminModern .systemAdminPageIntro{width:100%!important;min-width:0!important}
 @media(max-width:640px){.panel.systemAdminModern .systemAdminTabsTop{flex-wrap:nowrap!important;overflow-x:auto!important;padding:10px 12px!important}.panel.systemAdminModern>.systemAdminMain{padding:15px!important}}
+
+/* Admin implementation tracker: scoped to the authorized overview. */
+.panel.systemAdminModern .systemAdminReadiness{padding:20px;background:#fff;border:1px solid #e5ebf1;border-radius:16px}
+.panel.systemAdminModern .systemAdminReadinessHead{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:17px;flex-wrap:wrap}
+.panel.systemAdminModern .systemAdminReadinessHead h4{margin:0 0 5px;color:#24394f;font-size:1.08rem}
+.panel.systemAdminModern .systemAdminReadinessHead p{margin:0;color:#728295;font-size:.85rem}
+.panel.systemAdminModern .systemAdminReadinessHead>span{font-size:.78rem;font-weight:800;color:#247663;background:#eef7f3;padding:8px 12px;border-radius:20px}
+.panel.systemAdminModern .systemAdminReadinessGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.panel.systemAdminModern .systemAdminReadinessItem{min-width:0;display:flex;flex-direction:column;align-items:flex-start;gap:8px;padding:15px;border:1px solid #e9edf2;border-radius:12px;background:#fbfcfd}
+.panel.systemAdminModern .systemAdminReadinessItem strong{color:#2b4055;font-size:.9rem}
+.panel.systemAdminModern .systemAdminReadinessItem small{color:#758498;line-height:1.7;font-size:.77rem}
+.panel.systemAdminModern .systemAdminReadinessState{font-size:.7rem;font-weight:800;padding:4px 9px;border-radius:20px;background:#f0f2f5;color:#657486}
+.panel.systemAdminModern .systemAdminReadinessState.state-implemented{background:#e8f6ee;color:#1e7954}
+.panel.systemAdminModern .systemAdminReadinessState.state-verification_required{background:#fff3df;color:#90611e}
+@media(max-width:950px){.panel.systemAdminModern .systemAdminReadinessGrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:640px){.panel.systemAdminModern .systemAdminReadinessGrid{grid-template-columns:minmax(0,1fr)}}
