@@ -309,7 +309,7 @@ function SystemAdministrationPreview(){
  const [recoveryMessage,setRecoveryMessage]=useState('');
  const sendRecoveryEmail=async()=>{
   setRecoveryBusy(true);setRecoveryMessage('');
-  const result=await requestStagingPasswordRecovery({supabase,email:recoveryEmail,redirectTo:window.location.origin+'/admin',environment:{mode:import.meta.env.MODE,enabled:import.meta.env.VITE_ENABLE_AUTH_MUTATIONS,url,publishableKey:key}});
+  const result=await requestStagingPasswordRecovery({supabase,email:recoveryEmail,redirectTo:window.location.origin+'/admin',environment:{mode:import.meta.env.MODE,enabled:import.meta.env.VITE_ENABLE_AUTH_MUTATIONS,url,publishableKey:key,redirectOrigin:window.location.origin}});
   setRecoveryMessage(result.message);setRecoveryBusy(false);
  };
  const [passwordBusy,setPasswordBusy]=useState(false);
