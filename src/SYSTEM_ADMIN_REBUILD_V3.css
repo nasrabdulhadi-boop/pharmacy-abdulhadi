@@ -71,3 +71,18 @@
 .panel.systemAdminModern .systemAdminManifestInspector label{display:grid;gap:8px;font-weight:700;max-width:560px}
 .panel.systemAdminModern .systemAdminManifestInspector input[type=file]{max-width:100%;padding:12px;border:1px dashed #a8c8ba;border-radius:10px;background:white}
 .panel.systemAdminModern .systemAdminManifestInspector [role=status]{padding:12px;border:1px solid #c8dcd4;background:#fff;border-radius:10px}
+
+/* Functional quick actions: visible change in the owner dashboard. */
+.panel.systemAdminModern .systemAdminQuickActions{background:#fff;border:1px solid #e2eaf0;border-radius:18px;padding:22px;display:grid;gap:16px}
+.panel.systemAdminModern .systemAdminQuickActions h4{margin:0 0 6px;font-size:1.12rem;color:#1f3c4a}
+.panel.systemAdminModern .systemAdminQuickActions p{margin:0;color:#708394;font-size:.86rem}
+.panel.systemAdminModern .systemAdminQuickActionsGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.panel.systemAdminModern .systemAdminQuickAction{display:flex!important;align-items:center;gap:13px;text-align:start!important;min-height:88px;padding:16px!important;background:#f7fbfa!important;color:#254254!important;border:1px solid #dcebe6!important;border-radius:14px!important;cursor:pointer;transition:background .15s,border-color .15s,transform .15s}
+.panel.systemAdminModern .systemAdminQuickAction:hover{background:#eaf6f0!important;border-color:#8bbba8!important;transform:translateY(-2px)}
+.panel.systemAdminModern .systemAdminQuickAction:focus-visible{outline:3px solid #14836b;outline-offset:3px}
+.panel.systemAdminModern .systemAdminQuickAction>span:nth-child(2){display:grid;gap:5px;flex:1;min-width:0}
+.panel.systemAdminModern .systemAdminQuickAction strong{font-size:.95rem;color:#24453e}
+.panel.systemAdminModern .systemAdminQuickAction small{font-size:.76rem;color:#738493}
+.panel.systemAdminModern .systemAdminQuickActionIcon{display:grid;place-items:center;width:44px;height:44px;border-radius:12px;background:#ddf2e8;color:#166d55;font-size:1.5rem;flex:none}
+@media(max-width:650px){.panel.systemAdminModern .systemAdminQuickActionsGrid{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){.panel.systemAdminModern .systemAdminQuickAction{transition:none}.panel.systemAdminModern .systemAdminQuickAction:hover{transform:none}}
