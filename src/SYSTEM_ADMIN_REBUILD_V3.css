@@ -86,3 +86,9 @@
 .panel.systemAdminModern .systemAdminQuickActionIcon{display:grid;place-items:center;width:44px;height:44px;border-radius:12px;background:#ddf2e8;color:#166d55;font-size:1.5rem;flex:none}
 @media(max-width:650px){.panel.systemAdminModern .systemAdminQuickActionsGrid{grid-template-columns:1fr}}
 @media(prefers-reduced-motion:reduce){.panel.systemAdminModern .systemAdminQuickAction{transition:none}.panel.systemAdminModern .systemAdminQuickAction:hover{transform:none}}
+
+.panel.systemAdminModern .systemAdminSecurityAudit{display:grid;gap:12px;padding:20px;border-radius:16px;border:1px solid #efc8a6;background:#fff9f2;color:#70492a}
+.panel.systemAdminModern .systemAdminSecurityAudit h4{margin:0 0 5px;color:#754221}
+.panel.systemAdminModern .systemAdminSecurityAudit p{margin:0;font-size:.86rem;line-height:1.7}
+.panel.systemAdminModern .systemAdminSecurityAudit>strong{width:max-content;max-width:100%;padding:5px 11px;background:#f9e6d4;border-radius:999px;font-size:.82rem}
+.panel.systemAdminModern .systemAdminSecurityAudit ul{margin:0;padding-inline-start:24px;display:grid;gap:6px;font-size:.86rem}
