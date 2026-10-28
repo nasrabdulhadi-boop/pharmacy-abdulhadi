@@ -27,3 +27,15 @@ Applied migration `qa_restrict_anonymous_admin_rpc_execute` to isolated QA proje
 Verification query with `has_function_privilege`: `anon=false`, `authenticated=true` for both functions. Supabase security advisors no longer report `anon_security_definer_function_executable`. Remaining warnings: authenticated execution of the two SECURITY DEFINER functions, and leaked-password protection disabled.
 
 This **does not** prove role isolation: the email admin bypass remains, authenticated RPC exposure remains, and direct token-based deny tests are pending. Production was not changed.
+
+## SQL role-simulation checks — 2026-10-29
+
+Read-only tests in a transaction with `SET LOCAL ROLE authenticated` and synthetic `request.jwt.claims`; each transaction ended with `ROLLBACK`:
+
+| Simulated identity | `is_admin()` | Visible product count | Result |
+| --- | --- | --- | --- |
+| Nonexistent subject with `technical_support` metadata | false | 0 | Expected denial |
+| Existing QA admin user, server-stored legacy `admin` metadata | true | 4 | Existing admin compatibility preserved |
+| Nonexistent subject with claimed `admin` / `system_owner` metadata | false | RPC returned 0 | Claimed role alone insufficient |
+
+These tests do **not** use a real signed JWT or prove HTTP REST/RPC authorization, token revocation, or all sensitive schema coverage. Do not mark the release gate complete.
