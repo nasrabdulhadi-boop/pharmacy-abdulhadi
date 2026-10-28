@@ -9,6 +9,7 @@ import './REDESIGN_V6_3_REAL.css';
 import './V6_4_1_LAYOUT_POLISH.css';
 import './SMART_TOAST.css';
 import './SUPPLIER_LEDGER_PREVIEW.css';
+import {CAPABILITIES,hasCapability} from './systemAccessPolicy.js';
 
 const url=import.meta.env.VITE_SUPABASE_URL; const key=import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 const supabase=url&&key?createClient(url,key):null;
@@ -321,7 +322,10 @@ function SystemAdministrationPreview(){
    <button type="submit" className="primary" disabled={passwordBusy||!sessionUser||!newPassword||!confirmPassword}>{passwordBusy?'جارٍ تحديث كلمة المرور…':'تأكيد تغيير كلمة المرور'}</button>
    {passwordMessage&&<div role={passwordError?'alert':'status'} style={{padding:10,borderRadius:8,border:'1px solid currentColor'}}>{passwordMessage}</div>}
   </form><p style={{marginTop:16}}>تغيير البريد واسترداد الحساب عبر البريد قيد إعداد مسارات المصادقة ورسائل البريد، ولن تُفعّل قبل اختبارها.</p></div>}
-  {section==='access'&&<div><h3>إدارة الهوية والصلاحيات — IAM</h3><p><b>مالك النظام:</b> الصلاحية العليا بعد اعتماد آلية استرداد آمنة.</p><p><b>مدير النظام:</b> صلاحيات إدارية مفوضة.</p><p><b>الدعم الفني:</b> تشخيص تقني محدود، بلا تعديل أو وصول لبيانات المرضى والعملاء والماليات.</p><p>لا يمكن إنشاء مستخدم دعم فني قبل اعتماد سياسات RLS واختبارها بحساب منفصل.</p></div>}
+  {section==='access'&&<div><h3>إدارة الهوية والصلاحيات — IAM</h3><p><b>مالك النظام:</b> الصلاحية العليا بعد اعتماد آلية استرداد آمنة.</p><p><b>مدير النظام:</b> صلاحيات إدارية مفوضة.</p><p><b>الدعم الفني:</b> تشخيص تقني محدود، بلا تعديل أو وصول لبيانات المرضى والعملاء والماليات.</p><p>لا يمكن إنشاء مستخدم دعم فني قبل اعتماد سياسات RLS واختبارها بحساب منفصل.</p>
+  <h4>مصفوفة الصلاحيات المستهدفة (تصميم فقط)</h4>
+  <div style={{overflowX:'auto'}}><table style={{width:'100%',textAlign:'right'}}><thead><tr><th>الصلاحية</th><th>المالك</th><th>المدير</th><th>الدعم الفني</th></tr></thead><tbody>{CAPABILITIES.map(cap=><tr key={cap}><td dir="ltr">{cap}</td>{['system_owner','system_admin','technical_support'].map(role=><td key={role} style={{fontWeight:600}}>{hasCapability(role,cap)?'مسموح':'ممنوع'}</td>)}</tr>)}</tbody></table></div>
+  <p style={{opacity:.8}}>هذه المصفوفة مرجع للاختبارات فقط. لا تمنح أي صلاحية فعلية قبل تطبيق سياسات الخادم وقاعدة البيانات.</p></div>}
   {section==='backup'&&<div><h3>مركز النسخ الاحتياطي — Backup & Recovery</h3><p>لا توجد هنا أزرار نسخ أو استعادة وهمية. سنعرض الحالة الفعلية بعد فحص خطة Supabase وسياسة حفظ النسخ وتشفيرها، ثم اختبار الاستعادة في مشروع منفصل.</p></div>}
   {section==='preferences'&&<div><h3>اللغة والمظهر — Localization & Appearance</h3><p>العربية (RTL) هي اللغة الحالية. إضافة English (LTR) تحتاج ترجمة شاملة للأقسام والرسائل والتقارير؛ لن نعرض خيار لغة قبل جاهزيته.</p><p>الوضع الداكن والفاتح متاحان حالياً من الشريط العلوي.</p></div>}
  </div>
