@@ -6,5 +6,6 @@ test('admin dashboard reports account verification using getUser',()=>{
  assert.match(source,/const \[accountVerification,setAccountVerification\]=useState\('checking'\)/);
  assert.match(source,/supabase\.auth\.getUser\(\)\.then/);
  assert.match(source,/setAccountVerification\(error\?'unavailable':data\?\.user\?'verified':'signed_out'\)/);
- assert.match(source,/accountVerification==='verified'\?'جلسة مؤكدة من الخادم'/);
+ assert.match(source,/accountVerification==='verified'\?'مؤكدة'/);
+ assert.match(source,/accountVerification==='signed_out'\?'غير مسجل'/);
 });
