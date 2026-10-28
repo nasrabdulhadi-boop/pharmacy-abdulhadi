@@ -10,11 +10,12 @@ import './V6_4_1_LAYOUT_POLISH.css';
 import './SMART_TOAST.css';
 import './SUPPLIER_LEDGER_PREVIEW.css';
 import {CAPABILITIES,hasCapability} from './systemAccessPolicy.js';
+import {allowStagingAuthMutation} from './stagingAuthGuard.js';
 
 const url=import.meta.env.VITE_SUPABASE_URL; const key=import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 const supabase=url&&key?createClient(url,key):null;
 // Fail closed: account mutations are disabled unless explicitly enabled against an isolated Auth backend.
-const authMutationPreviewEnabled=import.meta.env.VITE_ENABLE_AUTH_MUTATIONS==='true' && !!url && !url.includes('eewjjzgwoaxhojnjvzgq');
+const authMutationPreviewEnabled=allowStagingAuthMutation({mode:import.meta.env.MODE,enabled:import.meta.env.VITE_ENABLE_AUTH_MUTATIONS,url,publishableKey:key});
 async function fetchAllAdminProducts({customerVisible=null,pageSize=500}={}){
  if(!supabase) throw new Error('اتصال قاعدة البيانات غير متاح');
  const out=[]; let offset=0;
