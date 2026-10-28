@@ -27,3 +27,15 @@ test('sanitization removes secrets, user data, and raw SQL errors',()=>{
  assert.deepEqual(result,{status:'healthy',component:'database',observedAt:'2026-10-28T12:00:00Z'});
  assert.equal(sanitizeTechnicalDiagnostic({status:'oops',component:'customers',observedAt:'bad'}).status,'unknown');
 });
+
+test('technical diagnostics reject malformed and non-UTC timestamps',()=>{
+ for(const observedAt of ['2026-13-28T12:00:00Z','2026-10-28T12:00:00+02:00','private-user-id','2026-10-28T12:00:00Z secret','2026-02-30T12:00:00Z']){
+  assert.equal(sanitizeTechnicalDiagnostic({status:'healthy',component:'api',observedAt}).observedAt,null,observedAt);
+ }
+ assert.equal(sanitizeTechnicalDiagnostic({status:'healthy',component:'api',observedAt:'2026-10-28T12:00:00Z'}).observedAt,'2026-10-28T12:00:00Z');
+});
+test('support cannot obtain any owner or pharmacy permissions',()=>{
+ const forbidden=CAPABILITIES.filter(cap=>!cap.startsWith('system.view_'));
+ for(const cap of forbidden)assert.equal(hasCapability('technical_support',cap),false);
+ assert.equal(hasCapability('technical_support','system.view_sanitized_diagnostics'),true);
+});
