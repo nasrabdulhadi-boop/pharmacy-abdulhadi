@@ -19,6 +19,7 @@ import {getBackupCenterStatus} from './systemBackupPolicy.js';
 import {verifiedSystemRole,canViewSystemAdminSection} from './systemAdminRoleGate.js';
 import {ADMIN_READINESS,readinessSummary} from './systemAdminReadiness.js';
 import {requestStagingPasswordRecovery} from './systemAdminAccountRecovery.js';
+import {makeBackupReadinessReport} from './systemAdminBackupManifest.js';
 
 const url=import.meta.env.VITE_SUPABASE_URL; const key=import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 const supabase=url&&key?createClient(url,key):null;
@@ -304,6 +305,15 @@ function SystemAdministrationPreview(){
  const [accountVerification,setAccountVerification]=useState('checking');
  const [newPassword,setNewPassword]=useState('');
  const [confirmPassword,setConfirmPassword]=useState('');
+ const [backupManifestReport,setBackupManifestReport]=useState(null);
+ const inspectBackupManifest=async event=>{
+  const file=event.target.files?.[0];setBackupManifestReport(null);
+  if(!file)return;
+  if(file.size>1024*1024){setBackupManifestReport({manifestValid:false,restoreTested:false,productionReady:false,errors:['الملف أكبر من 1 ميغابايت']});return}
+  try{const text=await file.text();setBackupManifestReport(makeBackupReadinessReport(JSON.parse(text)))}
+  catch{setBackupManifestReport({manifestValid:false,restoreTested:false,productionReady:false,errors:['ملف JSON غير صالح']})}
+  finally{event.target.value=''}
+ };
  const [recoveryEmail,setRecoveryEmail]=useState('');
  const [recoveryBusy,setRecoveryBusy]=useState(false);
  const [recoveryMessage,setRecoveryMessage]=useState('');
@@ -368,7 +378,7 @@ function SystemAdministrationPreview(){
   <h4>مصفوفة الصلاحيات المستهدفة (تصميم فقط)</h4>
   <div style={{overflowX:'auto'}}><table style={{width:'100%',textAlign:'right'}}><thead><tr><th>الصلاحية</th><th>المالك</th><th>المدير</th><th>الدعم الفني</th></tr></thead><tbody>{CAPABILITIES.map(cap=><tr key={cap}><td dir="ltr">{cap}</td>{['system_owner','system_admin','technical_support'].map(role=><td key={role} style={{fontWeight:600}}>{hasCapability(role,cap)?'مسموح':'ممنوع'}</td>)}</tr>)}</tbody></table></div>
   <p style={{opacity:.8}}>هذه المصفوفة مرجع للاختبارات فقط. لا تمنح أي صلاحية فعلية قبل تطبيق سياسات الخادم وقاعدة البيانات.</p></div>}
-  {!restrictedPreview&&section==='backup'&&<div><h3>مركز النسخ الاحتياطي — Backup & Recovery</h3><p><b>الحالة: {getBackupCenterStatus().state==='not_configured'?'غير مهيّأ':'قيد التحقق'}.</b> لم يتم إنشاء نسخة احتياطية من هذا المركز أو اختبار استعادتها.</p><p role="status">تنزيل النسخ والاستعادة معطّلان لحين إنشاء خدمة خادم آمنة واختبارها.</p><p>خطة الحماية المعتمدة للتطوير المجاني:</p><ul><li>نسخة مشفرة لقاعدة البيانات تشمل الجداول والسياسات والدوال.</li><li>حماية ملفات الوصفات الطبية والبيانات الحساسة من حساب الدعم الفني.</li><li>تجربة الاستعادة على بيئة منفصلة ببيانات اختبار، وليس على قاعدة الصيدلية الأصلية.</li><li>التحقق من سلامة الأرصدة والعملات والفواتير بعد الاستعادة.</li></ul><p>لن يظهر زر نسخ أو استعادة فعلي قبل وجود خدمة آمنة ومختبرة، ولا توجد أي رسوم إضافية معتمدة.</p></div>}
+  {!restrictedPreview&&section==='backup'&&<div><h3>مركز النسخ الاحتياطي — Backup & Recovery</h3><p><b>الحالة: {getBackupCenterStatus().state==='not_configured'?'غير مهيّأ':'قيد التحقق'}.</b> لم يتم إنشاء نسخة احتياطية من هذا المركز أو اختبار استعادتها.</p><p role="status">تنزيل النسخ والاستعادة معطّلان لحين إنشاء خدمة خادم آمنة واختبارها.</p><p>خطة الحماية المعتمدة للتطوير المجاني:</p><ul><li>نسخة مشفرة لقاعدة البيانات تشمل الجداول والسياسات والدوال.</li><li>حماية ملفات الوصفات الطبية والبيانات الحساسة من حساب الدعم الفني.</li><li>تجربة الاستعادة على بيئة منفصلة ببيانات اختبار، وليس على قاعدة الصيدلية الأصلية.</li><li>التحقق من سلامة الأرصدة والعملات والفواتير بعد الاستعادة.</li></ul><div className="systemAdminManifestInspector"><h4>فحص وصف نسخة احتياطية تجريبية (JSON)</h4><p>فحص محلي للملف فقط. لا يتم رفعه إلى الخادم أو إنشاء نسخة أو استعادة بيانات. لا تختَر ملفاً يحتوي على بيانات مرضى.</p><label>اختيار ملف وصف تجريبي<input type="file" accept=".json,application/json" onChange={inspectBackupManifest}/></label>{backupManifestReport&&<div role="status"><strong>{backupManifestReport.manifestValid?'البنية الأولية للملف صحيحة':'فشل فحص الملف'}</strong><p>اختبار الاستعادة: لم يُنفذ — جاهزية الإنتاج: غير معتمدة.</p>{backupManifestReport.errors.length>0&&<ul>{backupManifestReport.errors.map((error,i)=><li key={i}>{error}</li>)}</ul>}</div>}</div><p>لن يظهر زر نسخ أو استعادة فعلي قبل وجود خدمة آمنة ومختبرة، ولا توجد أي رسوم إضافية معتمدة.</p></div>}
   {!restrictedPreview&&section==='preferences'&&<div><h3>اللغة والمظهر — Localization & Appearance</h3><p>هذه التفضيلات محفوظة محلياً على هذا الجهاز ولا تغيّر صلاحيات الحساب أو بيانات الصيدلية.</p><label style={{display:'grid',gap:6,maxWidth:320}}>لغة تفضيلات مركز الإدارة فقط<select value={adminPrefs.language} onChange={e=>changeAdminPref('language',e.target.value)}><option value="ar">العربية</option><option value="en">English (preferences only)</option></select></label><label style={{display:'grid',gap:6,maxWidth:320,marginTop:14}}>كثافة عرض مركز الإدارة<select value={adminPrefs.density} onChange={e=>changeAdminPref('density',e.target.value)}><option value="comfortable">مريح</option><option value="compact">مضغوط</option></select></label><p>{adminPrefs.language==='en'?'English preference saved for this device. Full translation is not yet available.':'تم حفظ تفضيل اللغة لهذا الجهاز. الترجمة الكاملة لم تكتمل بعد.'}</p><p>الوضع الداكن والفاتح متاحان من الشريط العلوي.</p></div>}
  </main></div>
 }
