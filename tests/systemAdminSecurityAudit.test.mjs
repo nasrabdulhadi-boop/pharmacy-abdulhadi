@@ -5,7 +5,9 @@ const clean={environment:'isolated-staging',hasEmailAdminBypass:false,hasPublicD
 test('actual QA findings block release',()=>{
  const result=assessStagingAuthorization(QA_AUTHORIZATION_FINDINGS);
  assert.equal(result.ready,false);
- assert.ok(result.issues.includes('email_admin_bypass'));
+ assert.ok(!result.issues.includes('email_admin_bypass'));
+ assert.ok(result.issues.includes('missing_role_tests'));
+ assert.ok(result.issues.includes('direct_api_denials_unverified'));
  assert.ok(result.issues.includes('incomplete_sensitive_schema'));
 });
 test('missing data and incomplete checks always fail closed',()=>{
