@@ -64,3 +64,7 @@ Rechecked isolated QA using SQL transactions with `SET LOCAL ROLE authenticated`
 | Same QA admin temporarily assigned explicit `system_role=technical_support` | false | 0 rows | 0 rows |
 
 Additional authenticated support privilege checks: `TRUNCATE=false`, `TRIGGER=false`, `REFERENCES=false`. QA products row count after tests: 4. These are transaction-scoped SQL authorization simulations, **not** real login or network-level REST/RPC tests. No production changes. Real signed-in role tests, role revocation/token freshness, and complete sensitive-schema coverage remain blockers.
+
+## Fresh advisor and account inventory check — 2026-10-29
+
+GitHub Actions run 40777267836 for commit `6d038d4` passed. Isolated QA Auth has 2 existing accounts, 1 legacy admin and **0 actual technical_support accounts**; therefore no authenticated network-level support test has been performed. Supabase security advisors still report two `authenticated_security_definer_function_executable` warnings (`public.is_admin`, `public.admin_get_products_page`) and one `auth_leaked_password_protection` warning. Both definer functions have explicit admin gates; the linter still correctly flags their authenticated execution surface. Review before changing because `is_admin()` is used by RLS policies. Guidance: https://supabase.com/docs/guides/database/database-linter?lint=0029_authenticated_security_definer_function_executable and https://supabase.com/docs/guides/auth/password-security#password-strength-and-leaked-password-protection . No production changes; release remains blocked.
