@@ -14,9 +14,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - name: Install dependencies for preview
+        run: npm install --package-lock=false --ignore-scripts
       - name: Run permission and sanitization tests
         run: npm test
       - name: Build preview
-        run: |
-          npm ci
-          npm run build
+        run: npm run build
