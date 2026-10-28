@@ -19,3 +19,11 @@ Date: 2026-10-29. Read-only queries against **isolated QA** project `vpjxdsprfcp
 5. Verify revocation behavior and token refresh. Document HTTP status and denial evidence, excluding secrets or record contents.
 
 **Release gate: BLOCKED** until these tests pass. Never run these changes on production without separate approval and a reviewed migration.
+
+## Verified remediation — 2026-10-29
+
+Applied migration `qa_restrict_anonymous_admin_rpc_execute` to isolated QA project **only**. Revoked `EXECUTE` on `public.is_admin()` and `public.admin_get_products_page(integer,integer,boolean)` from `PUBLIC` and `anon`; retained `authenticated` EXECUTE for compatibility pending further testing.
+
+Verification query with `has_function_privilege`: `anon=false`, `authenticated=true` for both functions. Supabase security advisors no longer report `anon_security_definer_function_executable`. Remaining warnings: authenticated execution of the two SECURITY DEFINER functions, and leaked-password protection disabled.
+
+This **does not** prove role isolation: the email admin bypass remains, authenticated RPC exposure remains, and direct token-based deny tests are pending. Production was not changed.
