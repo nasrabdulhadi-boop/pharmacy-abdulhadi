@@ -42,3 +42,16 @@
 .systemAdminModern .systemAdminNotice{padding:13px 16px;border:1px solid var(--admin-line);border-radius:12px}
 @media(max-width:900px){.systemAdminModern .systemAdminMetrics{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:600px){.systemAdminModern .systemAdminMetrics,.systemAdminModern .systemAdminOverviewLower{grid-template-columns:minmax(0,1fr)}.systemAdminModern .systemAdminHeroMark{display:none}.systemAdminModern .systemAdminMetric{min-height:135px}.systemAdminModern .systemAdminInfoPanel p{min-height:0}}
+
+/* Visual refinements: readable contrast, balanced rhythm, and predictable dark-mode surfaces. */
+.systemAdminModern{--admin-surface:rgba(255,255,255,.78);--admin-ink:#173c33;--admin-muted:#5a746b}
+.systemAdminModern .systemAdminMetric,.systemAdminModern .systemAdminInfoPanel{background:var(--admin-surface);transition:border-color .18s ease,box-shadow .18s ease}
+.systemAdminModern .systemAdminMetric:hover,.systemAdminModern .systemAdminInfoPanel:hover{border-color:rgba(12,132,103,.35);box-shadow:0 10px 26px rgba(8,56,44,.07)}
+.systemAdminModern .systemAdminMetricTop{font-weight:600;opacity:1}
+.systemAdminModern .systemAdminMetric small{opacity:.8}
+.systemAdminModern .systemAdminInfoPanel p{opacity:.86}
+.systemAdminModern .systemAdminInfoLine b{font-weight:700}
+.systemAdminModern .systemAdminHero p{font-size:.94rem}
+.systemAdminModern .systemAdminNotice{background:rgba(193,142,55,.07);line-height:1.7}
+@media(prefers-color-scheme:dark){.systemAdminModern{--admin-surface:rgba(255,255,255,.045);--admin-line:rgba(170,217,197,.18)}.systemAdminModern .systemAdminHero{background:linear-gradient(115deg,#082d2b 0%,#125947 60%,#1b745e 100%)}.systemAdminModern .systemAdminMetricIcon{color:#83d7b4;background:rgba(95,211,160,.11)}.systemAdminModern .systemAdminMetric:hover,.systemAdminModern .systemAdminInfoPanel:hover{box-shadow:0 10px 26px rgba(0,0,0,.14)}}
+@media(prefers-reduced-motion:reduce){.systemAdminModern .systemAdminMetric,.systemAdminModern .systemAdminInfoPanel{transition:none}}
