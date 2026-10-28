@@ -9,6 +9,7 @@ import './REDESIGN_V6_3_REAL.css';
 import './V6_4_1_LAYOUT_POLISH.css';
 import './SMART_TOAST.css';
 import './SUPPLIER_LEDGER_PREVIEW.css';
+import './SYSTEM_ADMIN_WINDOW_POLISH.css';
 import {CAPABILITIES,hasCapability} from './systemAccessPolicy.js';
 import {allowStagingAuthMutation} from './stagingAuthGuard.js';
 import {readAdminPreferences,writeAdminPreferences} from './systemAdminPreferences.js';
@@ -327,7 +328,7 @@ function SystemAdministrationPreview(){
  const isUnverifiedPreview=!verifiedRole;
  const restrictedPreview=isSupportPreview||isUnverifiedPreview;
  const sections=[['overview',adminCenterLabels.overview],['profile',adminCenterLabels.profile],['access',adminCenterLabels.access],['backup',adminCenterLabels.backup],['preferences',adminCenterLabels.preferences]].filter(([id])=>!restrictedPreview||id==='overview');
- return <div className="panel" dir={adminCenterEnglish?'ltr':'rtl'} style={{padding:adminPrefs.density==='compact'?12:24,maxWidth:1100,margin:'18px auto'}}>
+ return <div className="panel systemAdminModern" dir={adminCenterEnglish?'ltr':'rtl'} style={{padding:adminPrefs.density==='compact'?12:24,maxWidth:1100,margin:'18px auto'}}>
   <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',gap:12,flexWrap:'wrap'}}><div><h2 style={{margin:'0 0 8px'}}>{adminCenterLabels.title}</h2><p style={{opacity:.75}}>System Administration Center — معاينة تصميمية، دون تعديل صلاحيات أو بيانات الإنتاج</p></div><span style={{border:'1px solid currentColor',borderRadius:16,padding:'5px 12px'}}>{adminCenterLabels.preview}</span></div>
   <div style={{display:'flex',flexWrap:'wrap',gap:8,margin:'18px 0'}}>{sections.map(([id,label])=><button type="button" key={id} className={section===id?'primary':''} onClick={()=>setSection(id)}>{label}</button>)}</div>
   {section==='overview'&&<div><h3>لوحة التحكم الإدارية</h3>{restrictedPreview&&<p role="status">{isSupportPreview?'الدعم الفني: عرض تقني محدود فقط.':'لا يمكن عرض الأقسام الإدارية قبل التحقق من دور الحساب عبر الخادم.'}</p>}<p>سيعرض هذا القسم حالة الخدمات والمستخدمين والنسخ الاحتياطية بعد إنشاء واجهات بيانات تقنية محدودة الصلاحيات.</p><div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(185px,1fr))',gap:12}}>{[['الهوية',accountVerification==='verified'?'جلسة مؤكدة من الخادم':accountVerification==='checking'?'جارٍ التحقق':accountVerification==='signed_out'?'لا توجد جلسة':'تعذر التحقق'],['التحكم بالوصول','تصميم قيد المراجعة'],['النسخ الاحتياطية','لم تُفعّل بعد'],['الدعم الفني','وصول تقني فقط'],['الحالة التقنية',summarizeTechnicalHealth(makeTechnicalHealthSnapshot())==='unknown'?'غير متحققة':'متحققة']].map(([a,b])=><div className="card" style={{padding:16}} key={a}><small>{a}</small><h3>{b}</h3></div>)}</div></div>}
