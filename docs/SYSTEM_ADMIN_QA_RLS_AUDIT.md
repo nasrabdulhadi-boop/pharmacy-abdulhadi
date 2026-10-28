@@ -39,3 +39,13 @@ Read-only tests in a transaction with `SET LOCAL ROLE authenticated` and synthet
 | Nonexistent subject with claimed `admin` / `system_owner` metadata | false | RPC returned 0 | Claimed role alone insufficient |
 
 These tests do **not** use a real signed JWT or prove HTTP REST/RPC authorization, token revocation, or all sensitive schema coverage. Do not mark the release gate complete.
+
+## QA role precedence and RLS hardening — 2026-10-29
+
+Applied isolated QA migration `qa_enforce_explicit_system_role_precedence`:
+- `public.is_admin()` uses trusted server-stored `auth.users.raw_app_meta_data`; explicit `system_role` takes precedence over legacy `role=admin`. Technical support cannot inherit legacy admin access.
+- `products` INSERT, UPDATE, DELETE RLS policies now all invoke `public.is_admin()` (UPDATE checks both old and new rows).
+- SQL inspection confirmed all three policy expressions.
+- A **transactional** QA test temporarily assigned `system_role=technical_support` to the existing QA admin **inside a rolled-back transaction**, then tested with the authenticated role: `is_admin()=false`, admin product RPC returned 0 rows. Post-rollback inspection confirmed both QA accounts have no persistent `system_role` changes.
+
+Remaining release blockers: real signed-in technical-support account and HTTP REST/RPC tests; token refresh/revocation; 2 authenticated SECURITY DEFINER advisor warnings; leaked-password protection warning. SQL simulation is not end-to-end proof.
