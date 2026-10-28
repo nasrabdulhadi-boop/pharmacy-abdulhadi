@@ -285,13 +285,42 @@ function Admin({onLogout}){
 function SystemAdministrationPreview(){
  const [section,setSection]=useState('overview');
  const [sessionUser,setSessionUser]=useState(null);
+ const [newPassword,setNewPassword]=useState('');
+ const [confirmPassword,setConfirmPassword]=useState('');
+ const [passwordBusy,setPasswordBusy]=useState(false);
+ const [passwordMessage,setPasswordMessage]=useState('');
+ const [passwordError,setPasswordError]=useState(false);
+ const changeOwnPassword=async e=>{
+  e.preventDefault();
+  setPasswordMessage('');setPasswordError(false);
+  if(!sessionUser){setPasswordError(true);setPasswordMessage('يجب تسجيل الدخول أولاً');return}
+  if(newPassword.length<12){setPasswordError(true);setPasswordMessage('اختر كلمة مرور لا تقل عن 12 محرفاً');return}
+  if(newPassword!==confirmPassword){setPasswordError(true);setPasswordMessage('تأكيد كلمة المرور غير مطابق');return}
+  setPasswordBusy(true);
+  try{
+   const {data:{user},error:verifyError}=await supabase.auth.getUser();
+   if(verifyError||!user||user.id!==sessionUser.id)throw new Error('تعذر التحقق من الجلسة الحالية');
+   const {error}=await supabase.auth.updateUser({password:newPassword});
+   if(error)throw error;
+   setNewPassword('');setConfirmPassword('');
+   setPasswordMessage('تم تحديث كلمة المرور. يُنصح بتسجيل الخروج ثم الدخول مجدداً.');
+  }catch(error){setPasswordError(true);setPasswordMessage(error?.message||'تعذر تغيير كلمة المرور. قد تتطلب العملية إعادة المصادقة.')}
+  finally{setPasswordBusy(false)}
+ };
  useEffect(()=>{let active=true;supabase.auth.getUser().then(({data,error})=>{if(active&&!error)setSessionUser(data?.user||null)});return()=>{active=false}},[]);
  const sections=[['overview','نظرة عامة'],['profile','الملف الشخصي'],['access','الأدوار والصلاحيات'],['backup','النسخ الاحتياطي'],['preferences','اللغة والمظهر']];
  return <div className="panel" dir="rtl" style={{padding:24,maxWidth:1100,margin:'18px auto'}}>
   <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',gap:12,flexWrap:'wrap'}}><div><h2 style={{margin:'0 0 8px'}}>مركز إدارة النظام</h2><p style={{opacity:.75}}>System Administration Center — معاينة تصميمية، دون تعديل صلاحيات أو بيانات الإنتاج</p></div><span style={{border:'1px solid currentColor',borderRadius:16,padding:'5px 12px'}}>معاينة آمنة</span></div>
   <div style={{display:'flex',flexWrap:'wrap',gap:8,margin:'18px 0'}}>{sections.map(([id,label])=><button type="button" key={id} className={section===id?'primary':''} onClick={()=>setSection(id)}>{label}</button>)}</div>
   {section==='overview'&&<div><h3>لوحة التحكم الإدارية</h3><p>سيعرض هذا القسم حالة الخدمات والمستخدمين والنسخ الاحتياطية بعد إنشاء واجهات بيانات تقنية محدودة الصلاحيات.</p><div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(185px,1fr))',gap:12}}>{[['الهوية','Supabase Auth'],['التحكم بالوصول','تصميم قيد المراجعة'],['النسخ الاحتياطية','لم تُفعّل بعد'],['الدعم الفني','وصول تقني فقط']].map(([a,b])=><div className="card" style={{padding:16}} key={a}><small>{a}</small><h3>{b}</h3></div>)}</div></div>}
-  {section==='profile'&&<div><h3>الملف الشخصي — My Profile</h3><p>البريد الإلكتروني المسجل في جلسة المستخدم الحالي:</p><p><b dir="ltr">{sessionUser?.email||'جاري التحقق من الحساب...'}</b></p><p>معرّف المستخدم: <code dir="ltr">{sessionUser?.id||'—'}</code></p><p>تغيير البريد وكلمة المرور واسترداد الحساب ستُفعّل بعد التحقق من إعدادات رسائل المصادقة وروابط إعادة التوجيه، دون تغيير الحساب الحالي تلقائياً.</p></div>}
+  {section==='profile'&&<div><h3>الملف الشخصي — My Profile</h3><p>البريد الإلكتروني المسجل في جلسة المستخدم الحالي:</p><p><b dir="ltr">{sessionUser?.email||'جاري التحقق من الحساب...'}</b></p><p>معرّف المستخدم: <code dir="ltr">{sessionUser?.id||'—'}</code></p><form onSubmit={changeOwnPassword} style={{display:'grid',gap:10,maxWidth:440,marginTop:20}} autoComplete="off">
+   <h4 style={{margin:0}}>تغيير كلمة المرور الخاصة بحسابك</h4>
+   <p style={{margin:0,opacity:.75}}>التغيير اختياري ولا يحدث إلا عند الضغط على تأكيد. قد تتطلب Supabase إعادة مصادقة حسب إعدادات الأمان.</p>
+   <label>كلمة المرور الجديدة<input type="password" minLength={12} required autoComplete="new-password" value={newPassword} onChange={e=>setNewPassword(e.target.value)} placeholder="12 محرفاً على الأقل"/></label>
+   <label>تأكيد كلمة المرور<input type="password" minLength={12} required autoComplete="new-password" value={confirmPassword} onChange={e=>setConfirmPassword(e.target.value)}/></label>
+   <button type="submit" className="primary" disabled={passwordBusy||!sessionUser||!newPassword||!confirmPassword}>{passwordBusy?'جارٍ تحديث كلمة المرور…':'تأكيد تغيير كلمة المرور'}</button>
+   {passwordMessage&&<div role={passwordError?'alert':'status'} style={{padding:10,borderRadius:8,border:'1px solid currentColor'}}>{passwordMessage}</div>}
+  </form><p style={{marginTop:16}}>تغيير البريد واسترداد الحساب عبر البريد قيد إعداد مسارات المصادقة ورسائل البريد، ولن تُفعّل قبل اختبارها.</p></div>}
   {section==='access'&&<div><h3>إدارة الهوية والصلاحيات — IAM</h3><p><b>مالك النظام:</b> الصلاحية العليا بعد اعتماد آلية استرداد آمنة.</p><p><b>مدير النظام:</b> صلاحيات إدارية مفوضة.</p><p><b>الدعم الفني:</b> تشخيص تقني محدود، بلا تعديل أو وصول لبيانات المرضى والعملاء والماليات.</p><p>لا يمكن إنشاء مستخدم دعم فني قبل اعتماد سياسات RLS واختبارها بحساب منفصل.</p></div>}
   {section==='backup'&&<div><h3>مركز النسخ الاحتياطي — Backup & Recovery</h3><p>لا توجد هنا أزرار نسخ أو استعادة وهمية. سنعرض الحالة الفعلية بعد فحص خطة Supabase وسياسة حفظ النسخ وتشفيرها، ثم اختبار الاستعادة في مشروع منفصل.</p></div>}
   {section==='preferences'&&<div><h3>اللغة والمظهر — Localization & Appearance</h3><p>العربية (RTL) هي اللغة الحالية. إضافة English (LTR) تحتاج ترجمة شاملة للأقسام والرسائل والتقارير؛ لن نعرض خيار لغة قبل جاهزيته.</p><p>الوضع الداكن والفاتح متاحان حالياً من الشريط العلوي.</p></div>}
