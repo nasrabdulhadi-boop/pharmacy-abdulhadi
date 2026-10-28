@@ -18,6 +18,7 @@ import {makeTechnicalHealthSnapshot,summarizeTechnicalHealth} from './systemAdmi
 import {getBackupCenterStatus} from './systemBackupPolicy.js';
 import {verifiedSystemRole,canViewSystemAdminSection} from './systemAdminRoleGate.js';
 import {ADMIN_READINESS,readinessSummary} from './systemAdminReadiness.js';
+import {requestStagingPasswordRecovery} from './systemAdminAccountRecovery.js';
 
 const url=import.meta.env.VITE_SUPABASE_URL; const key=import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 const supabase=url&&key?createClient(url,key):null;
@@ -303,6 +304,14 @@ function SystemAdministrationPreview(){
  const [accountVerification,setAccountVerification]=useState('checking');
  const [newPassword,setNewPassword]=useState('');
  const [confirmPassword,setConfirmPassword]=useState('');
+ const [recoveryEmail,setRecoveryEmail]=useState('');
+ const [recoveryBusy,setRecoveryBusy]=useState(false);
+ const [recoveryMessage,setRecoveryMessage]=useState('');
+ const sendRecoveryEmail=async()=>{
+  setRecoveryBusy(true);setRecoveryMessage('');
+  const result=await requestStagingPasswordRecovery({supabase,email:recoveryEmail,redirectTo:window.location.origin+'/admin',environment:{mode:import.meta.env.MODE,enabled:import.meta.env.VITE_ENABLE_AUTH_MUTATIONS,url,publishableKey:key}});
+  setRecoveryMessage(result.message);setRecoveryBusy(false);
+ };
  const [passwordBusy,setPasswordBusy]=useState(false);
  const [passwordMessage,setPasswordMessage]=useState('');
  const [passwordError,setPasswordError]=useState(false);
@@ -354,7 +363,7 @@ function SystemAdministrationPreview(){
    <label>تأكيد كلمة المرور<input type="password" minLength={12} required autoComplete="new-password" value={confirmPassword} onChange={e=>setConfirmPassword(e.target.value)}/></label>
    <button type="submit" className="primary" disabled={!authMutationPreviewEnabled||passwordBusy||!sessionUser||!newPassword||!confirmPassword}>{passwordBusy?'جارٍ تحديث كلمة المرور…':'تأكيد تغيير كلمة المرور'}</button>
    {passwordMessage&&<div role={passwordError?'alert':'status'} style={{padding:10,borderRadius:8,border:'1px solid currentColor'}}>{passwordMessage}</div>}
-  </form><p style={{marginTop:16}}>تغيير البريد واسترداد الحساب عبر البريد قيد إعداد مسارات المصادقة ورسائل البريد، ولن تُفعّل قبل اختبارها.</p></div>}
+  </form><div className="systemAdminRecovery"><h4>طلب استرداد كلمة المرور — نسخة اختبارية</h4><p>إرسال رابط استرداد إلى بريد حساب تجريبي فقط. لا يُفعّل على قاعدة الإنتاج، ويجب إعداد رابط العودة المسموح به في Supabase Auth.</p><label>البريد الإلكتروني<input type="email" autoComplete="email" value={recoveryEmail} onChange={e=>setRecoveryEmail(e.target.value)} placeholder="name@example.com" disabled={!authMutationPreviewEnabled||recoveryBusy}/></label><button type="button" disabled={!authMutationPreviewEnabled||recoveryBusy||!recoveryEmail} onClick={sendRecoveryEmail}>{recoveryBusy?'جارٍ الطلب…':'إرسال رابط الاسترداد التجريبي'}</button>{recoveryMessage&&<p role="status">{recoveryMessage}</p>}{!authMutationPreviewEnabled&&<p role="status">الاسترداد معطّل حتى تفعيل بيئة المصادقة التجريبية المعزولة.</p>}<p>تغيير البريد الإلكتروني وإنشاء حسابات جديدة ما زالا غير مفعّلين.</p></div></div>}
   {!restrictedPreview&&section==='access'&&<div><h3>إدارة الهوية والصلاحيات — IAM</h3><p><b>مالك النظام:</b> الصلاحية العليا بعد اعتماد آلية استرداد آمنة.</p><p><b>مدير النظام:</b> صلاحيات إدارية مفوضة.</p><p><b>الدعم الفني:</b> تشخيص تقني محدود، بلا تعديل أو وصول لبيانات المرضى والعملاء والماليات.</p><p>لا يمكن إنشاء مستخدم دعم فني قبل اعتماد سياسات RLS واختبارها بحساب منفصل.</p>
   <h4>مصفوفة الصلاحيات المستهدفة (تصميم فقط)</h4>
   <div style={{overflowX:'auto'}}><table style={{width:'100%',textAlign:'right'}}><thead><tr><th>الصلاحية</th><th>المالك</th><th>المدير</th><th>الدعم الفني</th></tr></thead><tbody>{CAPABILITIES.map(cap=><tr key={cap}><td dir="ltr">{cap}</td>{['system_owner','system_admin','technical_support'].map(role=><td key={role} style={{fontWeight:600}}>{hasCapability(role,cap)?'مسموح':'ممنوع'}</td>)}</tr>)}</tbody></table></div>
