@@ -13,3 +13,8 @@
 .systemAdminModern input,.systemAdminModern select{min-height:44px;border-radius:12px;max-width:100%}
 @media(max-width:640px){.systemAdminModern{border-radius:16px;margin:10px auto!important;padding:14px!important}.systemAdminModern h2{font-size:1.25rem}.systemAdminModern th,.systemAdminModern td{padding:10px 8px;font-size:.84rem}}
 @media(prefers-reduced-motion:reduce){.systemAdminModern button{transition:none}.systemAdminModern button:not(:disabled):hover{transform:none}}
+
+.systemAdminModern .systemAdminTabs{display:flex;gap:8px;overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:thin;padding:5px 2px 12px;margin:14px 0 18px;max-width:100%}
+.systemAdminModern .systemAdminTabs button{white-space:nowrap;flex:0 0 auto;padding-inline:16px}
+.systemAdminModern .systemAdminTabs button[aria-current="page"]{box-shadow:0 4px 16px rgba(12,132,103,.13)}
+@media(max-width:640px){.systemAdminModern .systemAdminTabs{margin-inline:-5px;padding-inline:5px}.systemAdminModern .systemAdminTabs button{min-height:44px}}
