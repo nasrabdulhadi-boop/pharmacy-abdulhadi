@@ -1,0 +1,42 @@
+/* Admin Center V3 — scoped design repair. Existing pharmacy navigation is the ONLY sidebar. */
+.panel.systemAdminModern{color-scheme:light!important;--admin-line:#e4eaf0!important;--admin-surface:#fff!important;--admin-workspace-bg:#f7f9fc!important;color:#23354b!important;background:#f7f9fc!important;border:1px solid #e3eaf1!important;border-radius:20px!important;box-shadow:0 12px 34px rgba(30,49,77,.07)!important;max-width:1160px!important;overflow:hidden!important}
+.panel.systemAdminModern .systemAdminTopbar{background:#fff!important;padding:20px 26px!important;border-bottom:1px solid #e6ebf2!important}
+.panel.systemAdminModern .systemAdminBrandIcon{background:#eaf4f1!important;color:#197967!important;border-radius:13px!important}
+.panel.systemAdminModern .systemAdminBrandOverline{color:#7c8b9b!important;font-size:.66rem!important;letter-spacing:.08em!important}
+.panel.systemAdminModern .systemAdminBrand h2{color:#1e3349!important;font-size:1.18rem!important;font-weight:800!important}
+.panel.systemAdminModern .systemAdminPreviewPill{background:#f2f8f6!important;color:#277563!important;border-color:#d9ece5!important;font-size:.76rem!important}
+.panel.systemAdminModern .systemAdminPreviewDot{background:#3aa889!important}
+.panel.systemAdminModern .systemAdminWorkspace{display:flex!important;flex-direction:column!important;min-height:0!important;background:#f7f9fc!important}
+.panel.systemAdminModern .systemAdminSidebar{display:block!important;background:#fff!important;border:0!important;border-bottom:1px solid #e6ebf2!important;padding:10px 24px!important}
+.panel.systemAdminModern .systemAdminSidebarCaption,.panel.systemAdminModern .systemAdminSidebarFooter{display:none!important}
+.panel.systemAdminModern .systemAdminTabs{display:flex!important;flex-direction:row!important;flex-wrap:wrap!important;overflow:visible!important;gap:8px!important;margin:0!important;padding:0!important}
+.panel.systemAdminModern .systemAdminTabs button{width:auto!important;flex:0 0 auto!important;min-height:42px!important;white-space:nowrap!important;border:1px solid transparent!important;border-radius:10px!important;padding:9px 15px!important;background:transparent!important;color:#65758a!important;font-weight:700!important;box-shadow:none!important}
+.panel.systemAdminModern .systemAdminTabs button[aria-current=page]{background:#eaf4f1!important;color:#146f60!important;border-color:#d7eae3!important;box-shadow:none!important}
+.panel.systemAdminModern .systemAdminTabs button:hover{background:#f1f6f9!important;color:#1c5c68!important;transform:none!important}
+.panel.systemAdminModern .systemAdminMain{display:flex!important;flex-direction:column!important;gap:22px!important;padding:26px!important;min-width:0!important;background:#f7f9fc!important;color:#23354b!important}
+.panel.systemAdminModern .systemAdminPageIntro{align-items:flex-start!important}
+.panel.systemAdminModern .systemAdminPageIntro h3{color:#23354b!important;font-size:1.5rem!important;margin:5px 0 8px!important}
+.panel.systemAdminModern .systemAdminPageIntro p{color:#758498!important;opacity:1!important}
+.panel.systemAdminModern .systemAdminPageKicker{color:#20846f!important}
+.panel.systemAdminModern .systemAdminOverview{display:grid!important;gap:17px!important}
+.panel.systemAdminModern .systemAdminHero{min-height:0!important;background:#eaf4f5!important;color:#23354b!important;border:1px solid #dbeae9!important;box-shadow:none!important;padding:22px 26px!important;border-radius:16px!important}
+.panel.systemAdminModern .systemAdminHero:before,.panel.systemAdminModern .systemAdminHeroMark{display:none!important}
+.panel.systemAdminModern .systemAdminHero h3{color:#1c4750!important;font-size:1.38rem!important;margin:7px 0!important}
+.panel.systemAdminModern .systemAdminHero p{color:#607785!important;line-height:1.7!important;font-size:.9rem!important}
+.panel.systemAdminModern .systemAdminEyebrow{color:#2c8275!important;letter-spacing:.06em!important}
+.panel.systemAdminModern .systemAdminMetrics{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:13px!important}
+.panel.systemAdminModern .systemAdminMetric,.panel.systemAdminModern .systemAdminInfoPanel{background:#fff!important;color:#25384d!important;border:1px solid #e5ebf1!important;box-shadow:0 2px 10px rgba(32,53,79,.035)!important;border-radius:15px!important}
+.panel.systemAdminModern .systemAdminMetric{min-height:148px!important;padding:18px!important}
+.panel.systemAdminModern .systemAdminMetricTop{color:#6c7e8f!important;font-size:.82rem!important}
+.panel.systemAdminModern .systemAdminMetric strong{color:#263c52!important;font-size:1.25rem!important}
+.panel.systemAdminModern .systemAdminMetric small{color:#8492a0!important;opacity:1!important}
+.panel.systemAdminModern .systemAdminMetricIcon{background:#eff5f9!important;color:#327c89!important}
+.panel.systemAdminModern .systemAdminInfoPanel{padding:21px!important}
+.panel.systemAdminModern .systemAdminInfoPanel h4{color:#24394f!important}
+.panel.systemAdminModern .systemAdminInfoPanel p,.panel.systemAdminModern .systemAdminInfoLine{color:#687b8e!important;opacity:1!important}
+.panel.systemAdminModern .systemAdminInfoLine b{color:#30485c!important}
+.panel.systemAdminModern .systemAdminNotice{background:#fff8ec!important;color:#825d28!important;border-color:#f2e4cb!important}
+.panel.systemAdminModern button:focus-visible,.panel.systemAdminModern select:focus-visible,.panel.systemAdminModern input:focus-visible{outline:3px solid #298a7b!important;outline-offset:2px!important}
+@media(max-width:950px){.panel.systemAdminModern .systemAdminMetrics{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
+@media(max-width:640px){.panel.systemAdminModern{border-radius:14px!important}.panel.systemAdminModern .systemAdminTopbar{padding:15px!important}.panel.systemAdminModern .systemAdminSidebar{padding:10px 12px!important}.panel.systemAdminModern .systemAdminTabs{flex-wrap:nowrap!important;overflow-x:auto!important;padding-bottom:5px!important}.panel.systemAdminModern .systemAdminMain{padding:16px!important}.panel.systemAdminModern .systemAdminMetrics,.panel.systemAdminModern .systemAdminOverviewLower{grid-template-columns:minmax(0,1fr)!important}.panel.systemAdminModern .systemAdminHero{padding:18px!important}}
+@media(prefers-reduced-motion:reduce){.panel.systemAdminModern *{transition:none!important}}
