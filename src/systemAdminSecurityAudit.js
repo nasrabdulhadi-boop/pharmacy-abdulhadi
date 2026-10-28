@@ -14,7 +14,7 @@ export function assessStagingAuthorization(snapshot){
  return {ready:issues.length===0,issues};
 }
 export const QA_AUTHORIZATION_FINDINGS=Object.freeze({
- environment:'isolated-staging',hasEmailAdminBypass:true,hasPublicDefinerExecute:false,
+ environment:'isolated-staging',hasEmailAdminBypass:false,hasPublicDefinerExecute:false,
  hasSensitiveSchemaCoverage:false,testedRoles:[],directApiDenyTestsPassed:false,
  rpcDenyTestsPassed:false,revocationTestsPassed:false
 });
