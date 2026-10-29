@@ -1310,6 +1310,15 @@ function Login(){
  </form></div>
 }
 // If a session exists but is not admin, show login instead of exposing admin.
-const Root=()=>{const [s,setS]=useState(null),[checked,setChecked]=useState(false);useEffect(()=>{let alive=true;(async()=>{if(!supabase){if(alive)setChecked(true);return}const {data}=await supabase.auth.getSession();let ss=data?.session||null;if(ss){const role=ss.user?.app_metadata?.role; if(role!=='admin'&&['system_owner','system_admin'].includes(ss.user?.app_metadata?.system_role)){try{const r=await supabase.auth.refreshSession();ss=r.data?.session||ss}catch{}}}if(alive){setS(ss);setChecked(true)}})();if(supabase){const {data:{subscription}}=supabase.auth.onAuthStateChange((_e,ss)=>setS(ss));return()=>{alive=false;subscription.unsubscribe()}}return()=>{alive=false}},[]);if(!checked)return <Splash/>;const admin=['system_owner','system_admin'].includes(verifiedSystemRole(s?.user));if(admin)return <Admin onLogout={()=>supabase.auth.signOut()}/>;return <CustomerOrLogin/>};
+const Root=()=>{const [s,setS]=useState(null),[checked,setChecked]=useState(false);useEffect(()=>{let alive=true;(async()=>{if(!supabase){if(alive)setChecked(true);return}const {data}=await supabase.auth.getSession();let ss=data?.session||null;if(ss){const role=ss.user?.app_metadata?.role; if(role!=='admin'&&['system_owner','system_admin'].includes(ss.user?.app_metadata?.system_role)){try{const r=await supabase.auth.refreshSession();ss=r.data?.session||ss}catch{}}}if(alive){setS(ss);setChecked(true)}})();if(supabase){const {data:{subscription}}=supabase.auth.onAuthStateChange((_e,ss)=>setS(ss));return()=>{alive=false;subscription.unsubscribe()}}return()=>{alive=false}},[]);if(!checked)return <Splash/>;const admin=['system_owner','system_admin'].includes(verifiedSystemRole(s?.user));if(admin)return <Admin onLogout={()=>supabase.auth.signOut()}/>;if(verifiedSystemRole(s?.user)==='technical_support')return <TechnicalSupportPortal onLogout={()=>supabase.auth.signOut()}/>;return <CustomerOrLogin/>};
+function TechnicalSupportPortal({onLogout}){
+ return <div className="login" dir="rtl"><div style={{maxWidth:560,margin:'8vh auto',padding:28,background:'var(--card,#fff)',borderRadius:16}}>
+  <h1>بوابة الدعم الفني التجريبية</h1>
+  <p>تم تسجيل الدخول بحساب الدعم الفني المحدود الصلاحيات.</p>
+  <p>لا تتوفر لهذا الحساب صلاحيات إدارة المنتجات أو المبيعات أو الموردين أو النسخ الاحتياطي أو بيانات المستخدمين.</p>
+  <p>لوحة التشخيصات التقنية المنقحة لم تُفعّل بعد؛ لا تعرض هذه البوابة أي بيانات تشغيلية أو معلومات حساسة.</p>
+  <button type="button" onClick={onLogout}>تسجيل الخروج</button>
+ </div></div>;
+}
 function CustomerOrLogin(){const [login,setLogin]=useState(location.hash==='#admin');return login?<><Login/><button className="back" onClick={()=>{location.hash='';setLogin(false)}}>العودة للموقع</button></>:<><Customer/><button className="adminLink" onClick={()=>{location.hash='admin';setLogin(true)}}>دخول الإدارة</button></>}
 createRoot(document.getElementById('root')).render(<><AppErrorBoundary><Root/></AppErrorBoundary><SmartToastHost/></>);
