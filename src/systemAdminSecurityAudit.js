@@ -11,10 +11,13 @@ export function assessStagingAuthorization(snapshot){
  if(snapshot.directApiDenyTestsPassed!==true)issues.push('direct_api_denials_unverified');
  if(snapshot.rpcDenyTestsPassed!==true)issues.push('rpc_denials_unverified');
  if(snapshot.revocationTestsPassed!==true)issues.push('revocation_unverified');
+ if(snapshot.realAuthSessionTestsPassed!==true)issues.push('real_auth_session_unverified');
+ if(snapshot.sessionRefreshTestsPassed!==true)issues.push('session_refresh_unverified');
  return {ready:issues.length===0,issues};
 }
 export const QA_AUTHORIZATION_FINDINGS=Object.freeze({
  environment:'isolated-staging',hasEmailAdminBypass:false,hasPublicDefinerExecute:false,
  hasSensitiveSchemaCoverage:false,testedRoles:[],directApiDenyTestsPassed:false,
- rpcDenyTestsPassed:false,revocationTestsPassed:false
+ rpcDenyTestsPassed:false,revocationTestsPassed:false,
+ realAuthSessionTestsPassed:false,sessionRefreshTestsPassed:false
 });
