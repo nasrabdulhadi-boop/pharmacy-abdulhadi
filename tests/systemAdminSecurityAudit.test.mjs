@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {assessStagingAuthorization,QA_AUTHORIZATION_FINDINGS} from '../src/systemAdminSecurityAudit.js';
-const clean={environment:'isolated-staging',hasEmailAdminBypass:false,hasPublicDefinerExecute:false,hasSensitiveSchemaCoverage:true,testedRoles:['system_owner','system_admin','technical_support'],directApiDenyTestsPassed:true,rpcDenyTestsPassed:true,revocationTestsPassed:true};
+const clean={environment:'isolated-staging',hasEmailAdminBypass:false,hasPublicDefinerExecute:false,hasSensitiveSchemaCoverage:true,testedRoles:['system_owner','system_admin','technical_support'],directApiDenyTestsPassed:true,rpcDenyTestsPassed:true,revocationTestsPassed:true,realAuthSessionTestsPassed:true,sessionRefreshTestsPassed:true};
 test('actual QA findings block release',()=>{
  const result=assessStagingAuthorization(QA_AUTHORIZATION_FINDINGS);
  assert.equal(result.ready,false);
@@ -9,6 +9,8 @@ test('actual QA findings block release',()=>{
  assert.ok(result.issues.includes('missing_role_tests'));
  assert.ok(result.issues.includes('direct_api_denials_unverified'));
  assert.ok(result.issues.includes('incomplete_sensitive_schema'));
+ assert.ok(result.issues.includes('real_auth_session_unverified'));
+ assert.ok(result.issues.includes('session_refresh_unverified'));
 });
 test('missing data and incomplete checks always fail closed',()=>{
  assert.equal(assessStagingAuthorization(null).ready,false);
