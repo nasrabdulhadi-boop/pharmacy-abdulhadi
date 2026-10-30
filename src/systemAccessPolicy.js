@@ -1,6 +1,6 @@
 // Preview-only access policy specification. This is NOT a database authorization mechanism.
-// No role is provisioned until RLS and SECURITY DEFINER RPC checks pass in isolated staging.
-export const ROLES = Object.freeze(['system_owner','system_admin','technical_support']);
+// Manifest only: employee operations remain disabled until dedicated audited RLS/RPC enforcement and manager approvals are implemented.
+export const ROLES = Object.freeze(['system_owner','system_admin','technical_support','employee']);
 export const CAPABILITIES = Object.freeze([
  'system.view_technical_health',
  'system.view_sanitized_diagnostics',
@@ -10,7 +10,9 @@ export const CAPABILITIES = Object.freeze([
  'pharmacy.read_sensitive',
  'pharmacy.write_operations',
  'finance.read',
- 'finance.write'
+ 'finance.write',
+ 'employee.pos_sale','employee.catalog_read','employee.inventory_read','employee.inventory_count_submit','employee.purchase_draft_create','employee.order_process','employee.return_request_create','employee.supplier_operational_read',
+ 'employee.price_change','employee.invoice_delete','employee.finance_manage','employee.user_manage'
 ]);
 const permissions = {
  system_owner: CAPABILITIES,
@@ -19,7 +21,8 @@ const permissions = {
   'system.manage_users','pharmacy.read_sensitive','pharmacy.write_operations',
   'finance.read','finance.write'
  ],
- technical_support: ['system.view_technical_health','system.view_sanitized_diagnostics']
+ technical_support: ['system.view_technical_health','system.view_sanitized_diagnostics'],
+ employee: ['employee.pos_sale','employee.catalog_read','employee.inventory_read','employee.inventory_count_submit','employee.purchase_draft_create','employee.order_process','employee.return_request_create','employee.supplier_operational_read']
 };
 export const ROLE_CAPABILITIES = Object.freeze(Object.fromEntries(
  Object.entries(permissions).map(([role,caps])=>[role,Object.freeze([...caps])])
