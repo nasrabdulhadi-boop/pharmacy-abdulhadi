@@ -1,5 +1,5 @@
 // Presentation-only guard. All database authorization must be enforced by RLS and RPC.
-const ROLE_ALLOWLIST=Object.freeze(['system_owner','system_admin','technical_support']);
+const ROLE_ALLOWLIST=Object.freeze(['system_owner','system_admin','technical_support','employee']);
 export function verifiedSystemRole(user){
  const role=user?.app_metadata?.system_role;
  if(ROLE_ALLOWLIST.includes(role))return role;
