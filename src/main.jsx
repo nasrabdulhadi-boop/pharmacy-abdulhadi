@@ -11,6 +11,7 @@ import './SMART_TOAST.css';
 import './SUPPLIER_LEDGER_PREVIEW.css';
 import './SYSTEM_ADMIN_WINDOW_POLISH.css';
 import './SYSTEM_ADMIN_REBUILD_V3.css';
+import QaOperationsWorkbench from './QaOperationsWorkbench.jsx';
 import {CAPABILITIES,hasCapability} from './systemAccessPolicy.js';
 import {allowStagingAuthMutation} from './stagingAuthGuard.js';
 import {readAdminPreferences,writeAdminPreferences} from './systemAdminPreferences.js';
@@ -1313,32 +1314,10 @@ function Login(){
 // If a session exists but is not admin, show login instead of exposing admin.
 const Root=()=>{const [s,setS]=useState(null),[checked,setChecked]=useState(false);useEffect(()=>{let alive=true;(async()=>{if(!supabase){if(alive)setChecked(true);return}const {data}=await supabase.auth.getSession();let ss=data?.session||null;if(ss){const role=ss.user?.app_metadata?.role; if(role!=='admin'&&['system_owner','system_admin'].includes(ss.user?.app_metadata?.system_role)){try{const r=await supabase.auth.refreshSession();ss=r.data?.session||ss}catch{}}}if(alive){setS(ss);setChecked(true)}})();if(supabase){const {data:{subscription}}=supabase.auth.onAuthStateChange((_e,ss)=>setS(ss));return()=>{alive=false;subscription.unsubscribe()}}return()=>{alive=false}},[]);if(!checked)return <Splash/>;const admin=['system_owner','system_admin'].includes(verifiedSystemRole(s?.user));if(admin&&import.meta.env.VITE_SUPABASE_URL?.includes('vpjxdsprfcpqclnhbeoh'))return <QaManagerPreviewPortal onLogout={()=>supabase.auth.signOut()}/>;if(admin)return <Admin onLogout={()=>supabase.auth.signOut()}/>;if(verifiedSystemRole(s?.user)==='technical_support')return <TechnicalSupportPortal onLogout={()=>supabase.auth.signOut()}/>;if(verifiedSystemRole(s?.user)==='employee')return <EmployeePreviewPortal onLogout={()=>supabase.auth.signOut()}/>;return <CustomerOrLogin/>};
 function QaManagerPreviewPortal({onLogout}){
- const [items,setItems]=useState([]),[busy,setBusy]=useState(false),[notice,setNotice]=useState('');
- const load=async()=>{const {data,error}=await supabase.rpc('qa_list_employee_operations');if(error){setItems([]);setNotice('تعذر قراءة طلبات QA')}else setItems(data||[])};
- useEffect(()=>{load()},[]);
- const decide=async(id,approve)=>{setBusy(true);const {data,error}=await supabase.rpc('qa_review_employee_operation',{p_id:id,p_approve:approve});if(error)setNotice('تعذر حفظ القرار ('+(error.code||'خطأ')+')');else setNotice(data?'تم تسجيل القرار التجريبي':'الطلب ليس قيد الانتظار');await load();setBusy(false)};
- const names={sale:'بيع',inventory_count:'جرد',purchase_draft:'مسودة شراء',order_process:'معالجة طلب',return_request:'مرتجع'};
- return <div className="login" dir="rtl"><div style={{maxWidth:720,margin:'5vh auto',padding:24,background:'var(--card,#fff)',borderRadius:16}}>
- <h1>لوحة مدير QA التجريبية</h1><p>الموافقة هنا تغيّر حالة الطلب التجريبي فقط، ولا تنفذ بيعاً أو حركة مخزون أو تعديلاً مالياً.</p>
- {notice&&<p role="status">{notice}</p>}<button type="button" onClick={load}>تحديث الطلبات</button>
- <ul>{items.map(x=><li key={x.id}>{names[x.operation]||'عملية'} — {x.status==='pending'?'بانتظار القرار':x.status==='approved'?'موافق عليه':'مرفوض'} {x.status==='pending'&&<><button disabled={busy} type="button" onClick={()=>decide(x.id,true)}>موافقة تجريبية</button><button disabled={busy} type="button" onClick={()=>decide(x.id,false)}>رفض تجريبي</button></>}</li>)}</ul>
- <button type="button" onClick={onLogout}>تسجيل الخروج</button></div></div>;
+ return <QaOperationsWorkbench client={supabase} manager onLogout={onLogout}/>;
 }
 function EmployeePreviewPortal({onLogout}){
- const [items,setItems]=useState([]),[busy,setBusy]=useState(false),[notice,setNotice]=useState('');
- const load=async()=>{const {data,error}=await supabase.rpc('qa_list_employee_operations');if(error){setItems([]);setNotice('تعذر تحميل الطلبات التجريبية')}else setItems(data||[])};
- useEffect(()=>{load()},[]);
- const submit=async action=>{setBusy(true);setNotice('');const {error}=await supabase.rpc('qa_submit_employee_operation',{p_action:action});if(error)setNotice('تعذر إرسال الطلب: '+(error.code||'خطأ'));else{setNotice('تم إرسال طلب الموافقة التجريبي دون تغيير بيانات الصيدلية');await load()}setBusy(false)};
- return <div className="login" dir="rtl"><div style={{maxWidth:620,margin:'5vh auto',padding:28,background:'var(--card,#fff)',borderRadius:16}}>
- <h1>بوابة الموظف التجريبية</h1><p>جميع العمليات التالية طلبات تجريبية للمراجعة في QA فقط؛ حتى البيع لا يخصم مخزوناً ولا ينشئ فاتورة فعلية.</p>
- <div style={{display:'flex',gap:8,flexWrap:'wrap'}}>
- <button type="button" disabled={busy} onClick={()=>submit('sale')}>تسجيل عملية بيع تجريبية للمراجعة</button><button type="button" disabled={busy} onClick={()=>submit('order_process')}>طلب معالجة طلب تجريبي</button><button type="button" disabled={busy} onClick={()=>submit('inventory_count')}>طلب اعتماد جرد</button>
- <button type="button" disabled={busy} onClick={()=>submit('purchase_draft')}>طلب اعتماد مسودة شراء</button>
- <button type="button" disabled={busy} onClick={()=>submit('return_request')}>طلب اعتماد مرتجع</button></div>
- {notice&&<p role="status">{notice}</p>}
- <h2>طلباتي التجريبية</h2><ul>{items.map(x=><li key={x.id}>{({'sale':'بيع','order_process':'معالجة طلب','inventory_count':'جرد','purchase_draft':'مسودة شراء','return_request':'مرتجع'})[x.operation]||'طلب'} — {x.status==='pending'?'بانتظار الموافقة':x.status==='approved'?'موافق عليه':'مرفوض'}</li>)}</ul>
- <p>البيع وتعديل المخزون والمشتريات الفعلية معطلة حتى اكتمال RLS/RPC واختبارات القبول.</p>
- <button type="button" onClick={onLogout}>تسجيل الخروج</button></div></div>
+ return <QaOperationsWorkbench client={supabase} onLogout={onLogout}/>;
 }
 function TechnicalSupportPortal({onLogout}){
  const [health,setHealth]=useState([]),[error,setError]=useState('');
