@@ -1,0 +1,30 @@
+{
+  "date": "2026-10-30",
+  "production_base": "901e0081e78396c7f4df62740d5b3074a1473f41",
+  "migration": "supplier_payment_tender_currency_atomic_accounting_20261030",
+  "migration_applied": true,
+  "business_tables_fingerprinted": 30,
+  "changed_business_tables_after_migration": [],
+  "changed_business_tables_after_rollback_acceptance": [],
+  "production_sql_acceptance": "PASS",
+  "staging_concurrent_overpayment": "PASS: one of two competing payments rejected",
+  "staging_concurrent_retry": "PASS: identical request committed once",
+  "node_tests": { "passed": 5, "failed": 0 },
+  "vite_build": "PASS",
+  "production_integrity": {
+    "missing_cash_sales": 0,
+    "missing_cash_debtor_payments": 0,
+    "missing_cash_supplier_payments": 0,
+    "missing_customer_refunds": 0,
+    "purchases_without_items": 0,
+    "sales_without_items": 0,
+    "purchase_balance_mismatches": 0,
+    "supplier_payments_without_allocations": 0,
+    "supplier_payment_cash_mismatches": 0,
+    "supplier_payment_allocation_mismatches": 0,
+    "returns_without_stock_movement": 0
+  },
+  "fixture_ordering": "Explicit invoice dates ensure deterministic oldest-invoice assertions.",
+  "preserved": ["original administrator authentication", "business records", "legacy payment functions", "product and inventory source", "inventory cost and selling prices"],
+  "visual_browser_test": "Not claimed; separate from SQL and server-rendering checks."
+}

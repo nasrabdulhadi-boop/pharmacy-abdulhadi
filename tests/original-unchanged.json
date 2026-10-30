@@ -1,0 +1,22 @@
+{
+  "auth_config": {
+    "start": "const url=",
+    "end": "async function fetchAllAdminProducts",
+    "sha256": "9f4ba080f93ca1c916776bc26ce92b89c941705eb61c3a1cab6391922833dff9"
+  },
+  "login_and_root": {
+    "start": "function Login(){",
+    "end": "createRoot(document",
+    "sha256": "699072a072cd59d65820379baaad96e55db98e5630b0dedf1c4e509767aad8aa"
+  },
+  "products": {
+    "start": "function ProductManager(",
+    "end": "function Inventory(",
+    "sha256": "f79f07dfb6f58e5a782ae9cd10fee5e839408d3c940050d562d7ccd045da3452"
+  },
+  "inventory": {
+    "start": "function Inventory(",
+    "end": "function POS(",
+    "sha256": "9a95f733c3de39121a16559598ffe58943ddab3b1cc1ea46b4182f584bd0b732"
+  }
+}
