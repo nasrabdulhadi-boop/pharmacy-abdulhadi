@@ -1314,10 +1314,10 @@ function Login(){
 // If a session exists but is not admin, show login instead of exposing admin.
 const Root=()=>{const [s,setS]=useState(null),[checked,setChecked]=useState(false);useEffect(()=>{let alive=true;(async()=>{if(!supabase){if(alive)setChecked(true);return}const {data}=await supabase.auth.getSession();let ss=data?.session||null;if(ss){const role=ss.user?.app_metadata?.role; if(role!=='admin'&&['system_owner','system_admin'].includes(ss.user?.app_metadata?.system_role)){try{const r=await supabase.auth.refreshSession();ss=r.data?.session||ss}catch{}}}if(alive){setS(ss);setChecked(true)}})();if(supabase){const {data:{subscription}}=supabase.auth.onAuthStateChange((_e,ss)=>setS(ss));return()=>{alive=false;subscription.unsubscribe()}}return()=>{alive=false}},[]);if(!checked)return <Splash/>;const admin=['system_owner','system_admin'].includes(verifiedSystemRole(s?.user));if(admin&&import.meta.env.VITE_SUPABASE_URL?.includes('vpjxdsprfcpqclnhbeoh'))return <QaManagerPreviewPortal onLogout={()=>supabase.auth.signOut()}/>;if(admin)return <Admin onLogout={()=>supabase.auth.signOut()}/>;if(verifiedSystemRole(s?.user)==='technical_support')return <TechnicalSupportPortal onLogout={()=>supabase.auth.signOut()}/>;if(verifiedSystemRole(s?.user)==='employee')return <EmployeePreviewPortal onLogout={()=>supabase.auth.signOut()}/>;return <CustomerOrLogin/>};
 function QaManagerPreviewPortal({onLogout}){
- return <QaOperationsWorkbench client={supabase} manager onLogout={onLogout}/>;
+ return <QaOperationsWorkbench client={supabase} manager allowPasswordChange={authMutationPreviewEnabled} projectUrl={url} onLogout={onLogout}/>;
 }
 function EmployeePreviewPortal({onLogout}){
- return <QaOperationsWorkbench client={supabase} onLogout={onLogout}/>;
+ return <QaOperationsWorkbench client={supabase} allowPasswordChange={authMutationPreviewEnabled} projectUrl={url} onLogout={onLogout}/>;
 }
 function TechnicalSupportPortal({onLogout}){
  const [health,setHealth]=useState([]),[error,setError]=useState('');

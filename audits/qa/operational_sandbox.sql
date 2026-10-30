@@ -69,7 +69,7 @@ begin
  if exists(select 1 from jsonb_object_keys(p_payload) k where not(k=any(allowed))) then raise exception 'unexpected_field' using errcode='22023'; end if;
  if p_operation<>'order_process' then
   q:=(p_payload->>'quantity')::numeric;
-  if q is null or q='NaN'::numeric or q<0 or q>10000 or q<>round(q,4) or (q=0 and p_operation<>'inventory_count') then raise exception 'invalid_quantity' using errcode='22023'; end if;
+  if q is null or q='NaN'::numeric or q<0 or q>10000 or q<>round(q,4) or (q=0 and p_operation not in ('inventory_count','purchase_draft')) then raise exception 'invalid_quantity' using errcode='22023'; end if;
   if p_operation<>'return_request' then
    select * into p from pharmacy_qa_private.catalog where id=(p_payload->>'product_id')::uuid;
    if not found or q*p.parts<>trunc(q*p.parts) then raise exception 'invalid_product_or_part' using errcode='22023'; end if;
@@ -78,7 +78,7 @@ begin
   end if;
  end if;
  if p_operation='purchase_draft' then
-  if not (p_payload ?& array['unit_cost','bonus','discount','expiry']) or
+  if not (p_payload ?& array['unit_cost','bonus','discount','expiry']) or q+coalesce((p_payload->>'bonus')::numeric,0)<=0 or
   (p_payload->>'unit_cost')::numeric not between 0 and 1000000 or
   (p_payload->>'bonus')::numeric not between 0 and 10000 or
   (p_payload->>'discount')::numeric not between 0 and q*(p_payload->>'unit_cost')::numeric or

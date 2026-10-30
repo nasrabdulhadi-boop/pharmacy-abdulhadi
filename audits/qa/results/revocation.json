@@ -1,0 +1,14 @@
+[
+  {
+    "name": "current server role overrides stale JWT after promotion",
+    "passed": true
+  },
+  {
+    "name": "demotion denies writes and hides formerly owned requests without JWT refresh",
+    "passed": true
+  },
+  {
+    "name": "global signout immediately rejects old signed manager JWT at database boundary",
+    "passed": true
+  }
+]

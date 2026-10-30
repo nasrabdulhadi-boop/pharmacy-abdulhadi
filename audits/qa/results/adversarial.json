@@ -1,0 +1,80 @@
+{
+  "results": [
+    {
+      "name": "legacy staff approval decision true",
+      "passed": true
+    },
+    {
+      "name": "legacy staff decision immutable true",
+      "passed": true
+    },
+    {
+      "name": "legacy staff approval decision false",
+      "passed": true
+    },
+    {
+      "name": "legacy staff decision immutable false",
+      "passed": true
+    },
+    {
+      "name": "simultaneous decisions execute exactly once",
+      "passed": true
+    },
+    {
+      "name": "bonus-only purchase accepted",
+      "passed": true
+    },
+    {
+      "name": "bonus-only creates no supplier charge",
+      "passed": true
+    },
+    {
+      "name": "zero purchase and zero bonus rejected",
+      "passed": true
+    },
+    {
+      "name": "concurrent oversell blocked by product serialization",
+      "passed": true
+    },
+    {
+      "name": "stock matches one winning concurrent sale",
+      "passed": true
+    },
+    {
+      "name": "expired batch cannot fill unavailable sale",
+      "passed": true
+    },
+    {
+      "name": "manager cannot impersonate employee submitter",
+      "passed": true
+    },
+    {
+      "name": "manager direct queue insert denied qa_staff_approval_requests",
+      "passed": true
+    },
+    {
+      "name": "employee direct queue insert denied qa_employee_operations",
+      "passed": true
+    },
+    {
+      "name": "employee direct queue insert denied qa_staff_approval_requests",
+      "passed": true
+    },
+    {
+      "name": "support direct queue insert denied qa_employee_operations",
+      "passed": true
+    },
+    {
+      "name": "support direct queue insert denied qa_staff_approval_requests",
+      "passed": true
+    },
+    {
+      "name": "manager direct queue insert denied qa_employee_operations",
+      "passed": true
+    },
+    {
+      "name": "concurrent request produced exactly one document",
+      "passed": true
+    }
+  ]
+}

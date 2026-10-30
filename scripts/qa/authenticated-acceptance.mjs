@@ -44,7 +44,7 @@ try{
  const bad=await request('/rest/v1/rpc/qa_submit_employee_operation',sessions.employee,{p_operation:'price_change',p_payload:{}});check('invalid operation rejected',()=>assert.equal(bad.status,400));
  const spoof=await request('/auth/v1/user',sessions.unprivileged,{data:{system_role:'system_admin',role:'admin'}},'PUT');check('untrusted user metadata may be updated',()=>assert.equal(spoof.status,200));
  const role=await request('/rest/v1/rpc/qa_my_role',sessions.unprivileged,{});check('user metadata cannot grant server role',()=>assert.equal(role.data,null));
-}finally{
+}catch(error){results.push({name:'acceptance run completed',passed:false,error:error.message});throw error}finally{
  writeFileSync(process.env.QA_RESULTS_FILE||'/tmp/pharmacy-qa-auth-results.json',JSON.stringify({timestamp:new Date().toISOString(),project:'vpjxdsprfcpqclnhbeoh',results},null,2));
  console.log(JSON.stringify({passed:results.filter(x=>x.passed).length,failed:results.filter(x=>!x.passed),total:results.length}));
 }

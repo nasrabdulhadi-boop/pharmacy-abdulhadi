@@ -1,0 +1,190 @@
+{
+  "timestamp": "2026-10-30T15:11:36.735Z",
+  "project": "vpjxdsprfcpqclnhbeoh",
+  "results": [
+    {
+      "name": "synthetic QA catalog supports USD/SYP and parts",
+      "passed": true
+    },
+    {
+      "name": "support isolated from qa_sandbox_catalog",
+      "passed": true
+    },
+    {
+      "name": "anonymous isolated from qa_sandbox_catalog",
+      "passed": true
+    },
+    {
+      "name": "anonymous isolated from qa_sandbox_documents",
+      "passed": true
+    },
+    {
+      "name": "unprivileged isolated from qa_sandbox_catalog",
+      "passed": true
+    },
+    {
+      "name": "unprivileged isolated from qa_sandbox_report",
+      "passed": true
+    },
+    {
+      "name": "support isolated from qa_sandbox_report",
+      "passed": true
+    },
+    {
+      "name": "anonymous isolated from qa_sandbox_report",
+      "passed": true
+    },
+    {
+      "name": "unprivileged isolated from qa_sandbox_documents",
+      "passed": true
+    },
+    {
+      "name": "anonymous isolated from qa_sandbox_requests",
+      "passed": true
+    },
+    {
+      "name": "unprivileged isolated from qa_sandbox_requests",
+      "passed": true
+    },
+    {
+      "name": "support isolated from qa_sandbox_requests",
+      "passed": true
+    },
+    {
+      "name": "support isolated from qa_sandbox_documents",
+      "passed": true
+    },
+    {
+      "name": "submit purchase_draft",
+      "passed": true
+    },
+    {
+      "name": "purchase approved",
+      "passed": true
+    },
+    {
+      "name": "bonus increases stock without invoice charge",
+      "passed": true
+    },
+    {
+      "name": "USD supplier debt is 2.00",
+      "passed": true
+    },
+    {
+      "name": "submit purchase_draft",
+      "passed": true
+    },
+    {
+      "name": "SYP purchase approved separately",
+      "passed": true
+    },
+    {
+      "name": "supplier currencies separated",
+      "passed": true
+    },
+    {
+      "name": "submit sale",
+      "passed": true
+    },
+    {
+      "name": "partial sale across FEFO batches",
+      "passed": true
+    },
+    {
+      "name": "cash uses server price and profit uses batch cost",
+      "passed": true
+    },
+    {
+      "name": "repeated approval returns false",
+      "passed": true
+    },
+    {
+      "name": "repeated approval has no accounting effects",
+      "passed": true
+    },
+    {
+      "name": "submit sale",
+      "passed": true
+    },
+    {
+      "name": "oversell rejected atomically",
+      "passed": true
+    },
+    {
+      "name": "manager can reject failed oversell",
+      "passed": true
+    },
+    {
+      "name": "submit return_request",
+      "passed": true
+    },
+    {
+      "name": "return restores original batch at original price",
+      "passed": true
+    },
+    {
+      "name": "return reverses revenue and actual cost",
+      "passed": true
+    },
+    {
+      "name": "submit return_request",
+      "passed": true
+    },
+    {
+      "name": "cumulative return cannot exceed sale",
+      "passed": true
+    },
+    {
+      "name": "submit inventory_count",
+      "passed": true
+    },
+    {
+      "name": "inventory count approved",
+      "passed": true
+    },
+    {
+      "name": "submit inventory_count",
+      "passed": true
+    },
+    {
+      "name": "stale inventory snapshot blocked",
+      "passed": true
+    },
+    {
+      "name": "invalid payload 4 rejected",
+      "passed": true
+    },
+    {
+      "name": "invalid payload 3 rejected",
+      "passed": true
+    },
+    {
+      "name": "invalid payload 0 rejected",
+      "passed": true
+    },
+    {
+      "name": "invalid payload 2 rejected",
+      "passed": true
+    },
+    {
+      "name": "invalid payload 1 rejected",
+      "passed": true
+    },
+    {
+      "name": "submit sale",
+      "passed": true
+    },
+    {
+      "name": "rejection leaves stock and accounting unchanged",
+      "passed": true
+    },
+    {
+      "name": "submit order_process",
+      "passed": true
+    },
+    {
+      "name": "order workflow metadata only, no financial entry",
+      "passed": true
+    }
+  ]
+}

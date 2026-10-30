@@ -1,0 +1,11 @@
+import test from 'node:test';import assert from 'node:assert/strict';
+import {updateOwnQaPassword} from '../src/qaAccountActions.js';
+import {ISOLATED_QA_PROJECT_URL} from '../src/stagingAuthGuard.js';
+const base={previewEnabled:true,projectUrl:ISOLATED_QA_PROJECT_URL,password:'unit-test-example-A123',confirmation:'unit-test-example-A123'};
+function fake({verifyError=false,updateError=false}={}){const calls=[];return {calls,auth:{getUser:async()=>{calls.push('verified');return {data:{user:{id:'synthetic-test'}},error:verifyError}},updateUser:async args=>{calls.push(Object.keys(args));return {error:updateError}}}}}
+test('QA password update is disabled without explicit staging gate',async()=>{const client=fake();await assert.rejects(updateOwnQaPassword({...base,client,previewEnabled:false}),/qa_auth_disabled/);assert.deepEqual(client.calls,[])});
+test('even an enabled password action rejects production or missing project URL',async()=>{for(const projectUrl of ['https://eewjjzgwoaxhojnjvzgq.supabase.co','',ISOLATED_QA_PROJECT_URL+'.example.invalid']){const client=fake();await assert.rejects(updateOwnQaPassword({...base,client,projectUrl}),/qa_auth_disabled/);assert.deepEqual(client.calls,[])}});
+test('short, oversized and mismatched passwords never reach Auth',async()=>{for(const values of [{password:'short'},{password:'a'.repeat(129),confirmation:'a'.repeat(129)},{confirmation:'does-not-match'}]){const client=fake();await assert.rejects(updateOwnQaPassword({...base,...values,client}),/invalid_password/);assert.deepEqual(client.calls,[])}});
+test('server verification is mandatory before changing own password',async()=>{const client=fake({verifyError:true});await assert.rejects(updateOwnQaPassword({...base,client}),/not_authorized/);assert.deepEqual(client.calls,['verified'])});
+test('QA password action updates only current user and does not return credentials',async()=>{const client=fake();assert.equal(await updateOwnQaPassword({...base,client}),true);assert.deepEqual(client.calls,['verified',['password']])});
+test('password action sanitizes server error',async()=>{const client=fake({updateError:{message:'private server information'}});await assert.rejects(updateOwnQaPassword({...base,client}),/^Error: password_update_failed$/)});
