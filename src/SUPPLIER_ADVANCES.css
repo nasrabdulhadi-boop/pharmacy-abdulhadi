@@ -1,0 +1,6 @@
+.supplierCreditBadge{display:inline-block;padding:5px 10px;border-radius:9px;background:#d1fae5;color:#065f46;font-weight:700;white-space:nowrap}
+.supplierCreditPanel{margin:14px 0;padding:16px;border:1px solid #6ee7b7;border-radius:14px;background:#ecfdf5;color:#064e3b}
+.supplierCreditPanel h3{margin:0 0 10px;color:inherit}.supplierCreditPanel p{margin:8px 0}
+.supplierCreditGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:12px}.supplierCreditGrid>div{padding:10px;border-radius:9px;background:#ffffffa6}.supplierCreditGrid b,.supplierCreditGrid span{display:block}.supplierCreditGrid span{margin-top:5px;font-weight:700}
+.adminDark .supplierCreditPanel,.abdulhadiNight .supplierCreditPanel{background:#052e26;color:#d1fae5;border-color:#047857}.adminDark .supplierCreditGrid>div,.abdulhadiNight .supplierCreditGrid>div{background:#064e3b}
+.adminDark .supplierCreditBadge,.abdulhadiNight .supplierCreditBadge{background:#064e3b;color:#a7f3d0}
