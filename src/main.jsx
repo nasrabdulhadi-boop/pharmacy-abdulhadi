@@ -1289,17 +1289,18 @@ function Login(){
     if(error)throw error;
     setMessage('إذا كان البريد مسجلاً وتسمح إعدادات البريد بذلك، ستصلك رسالة تحتوي رابط الاسترداد. افحص البريد غير المرغوب أيضاً.');
    }else{
-    const {error}=await supabase.auth.signInWithPassword({email,password});
+    const {error}=await supabase.auth.signInWithPassword({email:email.trim(),password});
     if(error)throw error;
    }
   }catch(error){
    if(recovery)setErr('تعذر إرسال طلب الاسترداد حالياً. تحقق من إعدادات البريد أو حاول لاحقاً.');
-   else setErr(error?.message||'تعذر تسجيل الدخول');
+   else setErr((error?.message||'تعذر تسجيل الدخول')+(error?.code?' (code: '+error.code+')':''));
   }finally{setBusy(false)}
  };
  return <div className="login"><form onSubmit={submit}>
   <img className="loginLogo" src="/logo.png" alt="شعار صيدلية عبدالهادي"/>
   <h1>صيدلية عبدالهادي</h1><p>{recovery?'استرداد حساب الإدارة':'تسجيل دخول الإدارة'}</p>
+  <p role="status" style={{fontSize:12,opacity:.8}}>اتصال المصادقة: {url?.includes('vpjxdsprfcpqclnhbeoh.supabase.co')?'QA / vpjxdsprfcpqclnhbeoh':'غير مطابق لمشروع QA — لا تدخل بيانات الحساب التجريبي'}</p>
   <input type="email" placeholder="البريد الإلكتروني" autoComplete="email" value={email} onChange={e=>setEmail(e.target.value)} required/>
   {!recovery&&<input type="password" placeholder="كلمة المرور" autoComplete="current-password" value={password} onChange={e=>setPassword(e.target.value)} required/>}
   <button className="primary full" disabled={busy||(recovery&&!authMutationPreviewEnabled)}>{busy?'يرجى الانتظار…':recovery?'إرسال رابط الاسترداد':<><LogIn/> دخول</>}</button>
