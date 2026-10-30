@@ -1314,7 +1314,7 @@ function Login(){
 const Root=()=>{const [s,setS]=useState(null),[checked,setChecked]=useState(false);useEffect(()=>{let alive=true;(async()=>{if(!supabase){if(alive)setChecked(true);return}const {data}=await supabase.auth.getSession();let ss=data?.session||null;if(ss){const role=ss.user?.app_metadata?.role; if(role!=='admin'&&['system_owner','system_admin'].includes(ss.user?.app_metadata?.system_role)){try{const r=await supabase.auth.refreshSession();ss=r.data?.session||ss}catch{}}}if(alive){setS(ss);setChecked(true)}})();if(supabase){const {data:{subscription}}=supabase.auth.onAuthStateChange((_e,ss)=>setS(ss));return()=>{alive=false;subscription.unsubscribe()}}return()=>{alive=false}},[]);if(!checked)return <Splash/>;const admin=['system_owner','system_admin'].includes(verifiedSystemRole(s?.user));if(admin)return <Admin onLogout={()=>supabase.auth.signOut()}/>;if(verifiedSystemRole(s?.user)==='technical_support')return <TechnicalSupportPortal onLogout={()=>supabase.auth.signOut()}/>;if(verifiedSystemRole(s?.user)==='employee')return <EmployeePreviewPortal onLogout={()=>supabase.auth.signOut()}/>;return <CustomerOrLogin/>};
 function EmployeePreviewPortal({onLogout}){
  const [items,setItems]=useState([]),[busy,setBusy]=useState(false),[notice,setNotice]=useState('');
- const load=async()=>{const {data,error}=await supabase.rpc('qa_my_staff_approvals');if(error)setNotice('تعذر تحميل الطلبات التجريبية');else setItems(data||[])};
+ const load=async()=>{const {data,error}=await supabase.rpc('qa_my_staff_approvals');if(error){setItems([]);setNotice('تعذر تحميل الطلبات التجريبية')}else setItems(data||[])};
  useEffect(()=>{load()},[]);
  const submit=async action=>{setBusy(true);setNotice('');const {error}=await supabase.rpc('qa_submit_staff_approval',{p_action:action});if(error)setNotice('تعذر إرسال الطلب: '+(error.code||'خطأ'));else{setNotice('تم إرسال طلب الموافقة التجريبي دون تغيير بيانات الصيدلية');await load()}setBusy(false)};
  return <div className="login" dir="rtl"><div style={{maxWidth:620,margin:'5vh auto',padding:28,background:'var(--card,#fff)',borderRadius:16}}>
@@ -1330,11 +1330,11 @@ function EmployeePreviewPortal({onLogout}){
 }
 function TechnicalSupportPortal({onLogout}){
  const [health,setHealth]=useState([]),[error,setError]=useState('');
- const load=async()=>{const {data,error:e}=await supabase.rpc('qa_support_health');if(e)setError('تعذر جلب الحالة التقنية ('+(e.code||'خطأ')+')');else{setError('');setHealth(data||[])}};
+ const load=async()=>{setHealth([]);const {data,error:e}=await supabase.rpc('qa_support_health');if(e)setError('تعذر جلب الحالة التقنية ('+(e.code||'خطأ')+')');else{setError('');setHealth((data||[]).filter(x=>['database','authentication','api','deployment'].includes(x.component)&&['healthy','degraded','unavailable','unknown'].includes(x.status)).map(x=>({...x,status:x.status==='healthy'?'unknown':x.status})))}};
  useEffect(()=>{load()},[]);
  const names={database:'قاعدة البيانات',authentication:'المصادقة',api:'واجهات API',deployment:'النشر'};
  return <div className="login" dir="rtl"><div style={{maxWidth:560,margin:'8vh auto',padding:28,background:'var(--card,#fff)',borderRadius:16}}>
- <h1>بوابة الدعم الفني التجريبية</h1><p>تشخيص تقني منقّح للقراءة فقط؛ الحالة «غير معروفة» لا تعني تعطّل الخدمة.</p>
+ <h1>بوابة الدعم الفني التجريبية</h1><p>تشخيص تقني منقّح للقراءة فقط. الحالات المعروضة تجريبية ولا تشكّل فحصاً حياً للخدمات؛ «غير معروفة» لا تعني تعطّل الخدمة.</p>
  <ul>{health.map(x=><li key={x.component}>{names[x.component]||'خدمة'}: {x.status==='healthy'?'متاحة':x.status==='degraded'?'متدهورة':x.status==='unavailable'?'غير متاحة':'غير معروفة'}</li>)}</ul>
  {error&&<p role="alert">{error}</p>}<button type="button" onClick={load}>تحديث التشخيص</button>
  <p>لا تعرض البوابة أي سجلات مستخدمين أو بيانات مالية أو مفاتيح اتصال أو رسائل خطأ خام.</p>
