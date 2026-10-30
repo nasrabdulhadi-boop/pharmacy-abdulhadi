@@ -1,0 +1,5 @@
+import test from 'node:test';import assert from 'node:assert/strict';import{vercelBuildArgs}from'../scripts/build-vercel.mjs';
+const qa={VERCEL_ENV:'preview',VERCEL_GIT_COMMIT_REF:'feature/system-administration-center-preview-20261028',VITE_ENABLE_AUTH_MUTATIONS:'true',VITE_SUPABASE_URL:'https://vpjxdsprfcpqclnhbeoh.supabase.co',VITE_SUPABASE_PUBLISHABLE_KEY:'public-test-key'};
+test('only exact QA preview branch selects staging build',()=>assert.deepEqual(vercelBuildArgs(qa),['run','build','--','--mode','staging']));
+test('production and other branches never select QA auth mutation build',()=>{for(const env of [{...qa,VERCEL_ENV:'production'},{...qa,VERCEL_GIT_COMMIT_REF:'main'},{...qa,VERCEL_GIT_COMMIT_REF:'other'},{...qa,VITE_SUPABASE_URL:'https://eewjjzgwoaxhojnjvzgq.supabase.co'}])assert.deepEqual(vercelBuildArgs(env),['run','build'])});
+test('disabled QA mutation setting keeps ordinary build mode',()=>assert.deepEqual(vercelBuildArgs({...qa,VITE_ENABLE_AUTH_MUTATIONS:'false'}),['run','build']));

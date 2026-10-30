@@ -18,6 +18,8 @@ jobs:
         run: npm ci --ignore-scripts
       - name: Run permission and sanitization tests
         run: npm test
+      - name: Verify shared original interface for all roles
+        run: node scripts/qa/render-workspace-contract.mjs
       - name: Build preview
         run: npm run build
       - name: Reject auth mutation in production build
