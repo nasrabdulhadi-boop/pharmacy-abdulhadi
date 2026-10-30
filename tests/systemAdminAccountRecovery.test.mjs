@@ -1,8 +1,16 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {requestStagingPasswordRecovery,isValidRecoveryEmail,isAllowedRecoveryRedirect} from '../src/systemAdminAccountRecovery.js';
+import {requestStagingPasswordRecovery,isValidRecoveryEmail,isAllowedRecoveryRedirect,recoveryRequestError} from '../src/systemAdminAccountRecovery.js';
 const staging={mode:'staging',enabled:'true',url:'https://vpjxdsprfcpqclnhbeoh.supabase.co',publishableKey:'qa-public-test-key',redirectOrigin:'https://pharmacy-qa.vercel.app'};
 const valid='https://pharmacy-qa.vercel.app/admin';
+test('recovery failures explain quota and recipient restrictions without exposing raw errors',async()=>{
+ assert.match(recoveryRequestError({code:'over_email_send_rate_limit',status:429}),/حد إرسال رسائل البريد/);
+ assert.match(recoveryRequestError({status:429}),/طلبات الاسترداد كثيرة/);
+ assert.match(recoveryRequestError({code:'email_address_not_authorized'}),/SMTP/);
+ assert.doesNotMatch(recoveryRequestError({message:'secret token'}),/secret|token/);
+ const result=await requestStagingPasswordRecovery({supabase:{auth:{resetPasswordForEmail:async()=>({error:{code:'over_email_send_rate_limit',status:429}})}},email:'test@example.com',redirectTo:valid,environment:staging});
+ assert.equal(result.ok,false);assert.match(result.message,/حد إرسال رسائل البريد/);
+});
 test('email normalization and redirect guard reject unsafe inputs',()=>{
  assert.equal(isValidRecoveryEmail(' test@example.com '),true);
  for(const value of ['invalid','a@b',''])assert.equal(isValidRecoveryEmail(value),false);

@@ -23,7 +23,7 @@ import {makeTechnicalHealthSnapshot,summarizeTechnicalHealth} from './systemAdmi
 import {getBackupCenterStatus} from './systemBackupPolicy.js';
 import {verifiedSystemRole,canViewSystemAdminSection} from './systemAdminRoleGate.js';
 import {ADMIN_READINESS,readinessSummary} from './systemAdminReadiness.js';
-import {requestStagingPasswordRecovery} from './systemAdminAccountRecovery.js';
+import {requestStagingPasswordRecovery,recoveryRequestError} from './systemAdminAccountRecovery.js';
 import {recoveryCallbackState,createRecoveryFlow} from './passwordRecoveryFlow.js';
 import RecoveryPasswordForm from './RecoveryPasswordForm.jsx';
 import {makeBackupReadinessReport} from './systemAdminBackupManifest.js';
@@ -1329,7 +1329,7 @@ function Login({initialRecovery=false,initialError='',onAuthenticated}={}){
     onAuthenticated?.();
    }
   }catch(error){
-   if(recovery)setErr('تعذر إرسال طلب الاسترداد حالياً. تحقق من إعدادات البريد أو حاول لاحقاً.');
+   if(recovery)setErr(recoveryRequestError(error));
    else setErr((error?.message||'تعذر تسجيل الدخول')+(error?.code?' (code: '+error.code+')':''));
   }finally{setBusy(false)}
  };
