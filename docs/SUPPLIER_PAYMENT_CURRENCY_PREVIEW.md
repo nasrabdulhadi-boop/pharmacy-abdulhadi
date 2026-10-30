@@ -1,42 +1,43 @@
-# Supplier payment currency preview — 2026-10-30
+# Full original-interface supplier payment preview
 
-Branch: `feature/supplier-payment-currency-preview-20261030`, based on production source commit `901e0081e78396c7f4df62740d5b3074a1473f41`.
+Updated 2026-10-30 on `feature/supplier-payment-currency-preview-20261030`.
 
-No production database migration, branch merge, production deployment, or historical data rewrite was performed.
+Uses the original `Admin` shell, navigation, screens, CSS and login form from production source `901e0081e78396c7f4df62740d5b3074a1473f41`. The separate two-screen workbench is removed. The currency selector is integrated into the original supplier ledger.
 
-## Behavior
+## Original administrator login
 
-- Select actual payment currency (USD/SYP), independently of invoice/debt currency.
-- Exchange rate means SYP per USD and is saved per payment; no later repricing.
-- Payment and allocations retain invoice currency; additive `tender_*` metadata records actual money paid.
-- Cash movements use actual currency/amount and a frozen SYP equivalent.
-- Invoice balances, supplier ledger, payment receipt and audit link to the same transaction.
-- Explicit invoice or oldest-invoice allocation stays within the selected debt currency.
-- Cash failure aborts the entire transaction. Noncash does not create a cash movement.
-- Request UUID prevents double submission, including retry after a lost response.
-- Amount supports 2 decimal places; cross-currency settlement rounds to 6 decimal places. Excess payments are rejected.
+Use the original administrator account, currently `drnaser@pharmahadi.com`, and its existing password. No new QA user, password copy, reset or email change was performed.
 
-## Isolated preview
+The browser authenticates directly with production Supabase Auth using a public key and separate browser session storage. The QA Edge Function validates the bearer token through production `/auth/v1/user`, requiring the exact original administrator ID and its server-managed administrator role. Passwords never pass through QA. The function implements this authentication itself, so the legacy QA-project JWT gate is disabled; anonymous/invalid tokens are denied by the handler.
 
-Uses existing QA project `vpjxdsprfcpqclnhbeoh`, private `supplier_currency_qa` schema and synthetic invoices (USD 150; SYP 14000). No pharmacy supplier records were copied. QA functions use the existing administrator/session check. Anonymous, staff and technical-support accounts cannot access this feature.
+All pharmacy data operations go to the fixed QA gateway, with no production data fallback. The QA service key remains in the Edge Function environment. The database gateway is callable only by `service_role`, validates the verified actor, restricts operation names/arguments, and dispatches only within `pharmacy_supplier_stage`.
 
-The preview intentionally exposes supplier debts and its own cash ledger only. It is independent of the administration-center preview. Sign in with an existing **QA administrator** account. Production credentials do not necessarily exist in QA.
+## Isolation
 
-Branch-scoped Vercel Preview variables select the QA database; a runtime guard rejects any other database URL when preview mode is enabled. Its RPC adapter permits only this feature's endpoints.
+- Existing QA project `vpjxdsprfcpqclnhbeoh`; new private schema `pharmacy_supplier_stage`.
+- Original structure: 30 tables, 129 operational functions plus staging authorization, constraints, 47 additional indexes and original triggers.
+- No real products, financial data, customers, passwords, users or sessions copied.
+- Three synthetic products and three linked purchase invoices: USD debt 150; SYP debt 14000.
+- RLS on every table; anonymous/authenticated direct schema access revoked. No direct policies is intentional: only the server gateway accesses these private tables.
+- Separate private Storage bucket `supplier-preview-prescriptions` for preview files.
+- No production database migration, merge, deployment, account change or historical rewrite.
 
-## Validation performed
+## Payment behavior
 
-- Standard and preview Vite production builds succeeded.
-- Real QA SQL suite passed all four currency combinations, explicit/oldest invoice allocation, debt/cash reconciliation, noncash handling and idempotent retry.
-- Eight invalid-input cases rejected without writes: overpayment, missing receipt, zero exchange rate, NaN, wrong invoice currency, changed duplicate request, sub-cent tender and unknown currency.
-- Missing session, revoked/nonexistent session and employee with forged admin claim rejected for reads and writes.
-- Injected cashbox INSERT error rolled back payment, allocations and invoice changes.
-- Anonymous execute permission and authenticated direct private-schema access verified absent.
-- Test writes rolled back; seed invoices remain unpaid for manual testing.
-- Automated browser UI test could not run locally: browser binary unavailable and browser download returned truncated archives. No browser pass is claimed.
+Tender currency is independent of debt currency. SYP-per-USD rate is frozen per payment. Allocations retain debt currency; additive tender fields retain actual money paid. The original cashbox, invoice balances, receipt, supplier ledger and audit share one transaction. Request UUID prevents duplicate retries. Cash-recording failure rolls back settlement.
 
-## Future integration review
+## Validation
 
-`supplier-payment-currency-v2.sql` and `supplier-payment-ledger-v2.sql` are prepared, **unapplied** production migrations. QA core is generated from the former by mapping tables into its private schema. Production integration still needs regression review of all accounting reports/exports, financial-integrity checks, the purchase-invoice payment entry path and currency display, using a full production-shaped staging database. Existing records keep their meanings and read with legacy fallback.
+- Production and full-preview Vite builds passed.
+- Eight Node tests passed: original navigation/login HTML rendering; routing isolation; session failures; query compatibility; gateway authorization; wrong account/role denial; production identity-only access.
+- Deployed Edge Function returned HTTP 401 to a real unauthenticated request.
+- Real QA SQL passed original dashboard/read APIs, inventory joins, table mutation, supplier ledger/cashbox/report integration, four currency combinations, retries and access isolation.
+- Original POS sale passed with stock/cash/report integration.
+- All test writes rolled back; seed invoices remain unpaid for manual testing.
+- Private function search paths pinned; unrelated QA advisories left unchanged.
 
-The preview is ready for isolated manual testing; it is not a claim that every production accounting report was regression-tested.
+The owner's actual password login and final visual browser inspection were not performed. Prior browser access was blocked by the automatic usage-limit review; no browser pass is claimed. Manual end-to-end review is still required before production integration.
+
+## Setup
+
+Full-system SQL files in this directory are QA-only. Edge Function: `supabase/functions/supplier-original-admin-preview/index.ts`. Branch-scoped Preview variables separate original Auth URL from QA data URL. Never enable this preview flag for Production.
