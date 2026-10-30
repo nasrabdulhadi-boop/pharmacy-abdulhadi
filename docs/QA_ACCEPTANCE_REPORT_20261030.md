@@ -48,7 +48,7 @@
 | SQL إضافي: NULL صريح مع legacy admin | ممنوع كما يجب | معاملة ملغاة، لم يتغير الحساب بعد الاختبار |
 | فحص الترابط | 6 مؤشرات أخطاء = صفر | الاستعلام أدناه |
 | البناء المحلي | ناجح | Vite؛ تنبيه حجم الحزمة موجود |
-| GitHub Actions للكود الأساسي | ناجح | run 41078156614، commit cb0ab2f |
+| GitHub Actions للكود الأساسي | ناجح | run 41079932116، commit 691e68b |
 | متصفح: صفحة الدخول المنشورة | تحققت | عرضت QA / vpjxdsprfcpqclnhbeoh |
 | متصفح: واجهات الأدوار بعد الدخول | غير مكتمل | يحتاج دخول المستخدم الآمن؛ لا يوجد نجاح بصري مُدّعى |
 
@@ -75,3 +75,12 @@
 تحتاج scripts/qa ملف حسابات اصطناعية خارج المستودع ومتغير QA_PUBLISHABLE_KEY. يجب تجهيز كلمات المرور عبر Auth Admin API على الخادم؛ لا تُنشأ حسابات بكلمات مخمنة ولا يُعدّل مستخدم إنتاج. تستخدم إعادة اختبارات العمليات مجموعة أصناف جديدة برصيد ابتدائي 35 منها 5 منتهية، وأسعار وتكلفة seed المطابقة للملف SQL؛ يدعم QA_FIXTURE_SUFFIX عزل كل تشغيل. لا تُصفّر سجلات سابقة أو بيانات المستخدم من أجل إعادة الاختبار.
 
 لا توجد كلمات مرور أو access/refresh tokens أو service-role keys في هذه الملفات. أداة تجهيز الحسابات المؤقتة أُغلقت بعد استخدامها، وأعيد تفعيل verify_jwt عليها.
+
+## النسخة المنشورة
+
+- كود التطبيق: `691e68be161f9e880a340479e55e09aef7fb23cf`.
+- Vercel Preview: https://pharmacy-abdulhadi-l52hdlytx-naser9.vercel.app/#admin
+- Deployment: `dpl_68bjFwZJLVE6ck4N6gjy5Gu1s1vZ`، READY، target=null (Preview).
+- تحقق المتصفح من هذه النسخة: شاشة الدخول تعرض مشروع QA الصحيح.
+- CI النهائي: https://github.com/nasrabdulhadi-boop/pharmacy-abdulhadi/actions/runs/41079932116 — success.
+- عنوان الإنتاج الأساسي ما زال يشير إلى نشره السابق `dpl_3xQygcdod1vLQGCe1n4FSjSFRbtA`؛ لم يتغير.

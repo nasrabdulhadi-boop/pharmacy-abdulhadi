@@ -19,7 +19,7 @@ Environment: QA Supabase project `vpjxdsprfcpqclnhbeoh`, GitHub branch `feature/
 - [x] Sign in with real QA manager JWT; approve and reject distinct pending requests; verify state transition and decided_by.
 - [x] Verify employee cannot approve, support cannot submit/read/approve, anonymous cannot invoke RPCs.
 - [x] Verify repeated approval/rejection is idempotent (returns false for decided requests).
-- [x] Verify role changes and refresh/revocation under real JWT sessions.
+- [x] Verify current server role changes and global session revocation under real JWT sessions. Refresh-token rotation/reuse remains untested.
 - [ ] Prepare QA operational schema without importing sensitive production records.
 - [ ] Build dedicated employee RLS/RPC for real sales and stock updates with FEFO, inventory and accounting invariants.
 - [ ] Verify regression tests across purchase, sale, stock, supplier debts, currencies, customer returns, cashbox, reporting.
