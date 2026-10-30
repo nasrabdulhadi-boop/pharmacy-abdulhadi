@@ -1,0 +1,32 @@
+{
+  "results": [
+    {
+      "name": "employee denied manager direct execution",
+      "passed": true
+    },
+    {
+      "name": "support denied manager direct execution",
+      "passed": true
+    },
+    {
+      "name": "anonymous denied manager direct execution",
+      "passed": true
+    },
+    {
+      "name": "manager can execute sale without employee approval queue",
+      "passed": true
+    },
+    {
+      "name": "manager direct sale changes QA stock exactly once",
+      "passed": true
+    },
+    {
+      "name": "manager can return own full converted sale",
+      "passed": true
+    },
+    {
+      "name": "manager full return restores original stock",
+      "passed": true
+    }
+  ]
+}

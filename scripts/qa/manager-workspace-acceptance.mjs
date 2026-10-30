@@ -1,0 +1,12 @@
+import{readFileSync,writeFileSync}from'node:fs';import assert from'node:assert/strict';const sessions=JSON.parse(readFileSync('/tmp/pharmacy-qa-sessions.json'));const key=process.env.QA_PUBLISHABLE_KEY;assert.ok(key);const results=[];
+async function rpc(role,name,body={}){const r=await fetch('https://vpjxdsprfcpqclnhbeoh.supabase.co/rest/v1/rpc/'+name,{method:'POST',headers:{apikey:key,...(sessions[role]?{Authorization:'Bearer '+sessions[role]}:{}),'Content-Type':'application/json'},body:JSON.stringify(body),signal:AbortSignal.timeout(60000)});return{status:r.status,data:await r.json()}}
+const check=(name,fn)=>{fn();results.push({name,passed:true});console.log('PASS '+name)};
+try{
+ const initial=await rpc('manager','qa_workspace_snapshot');const usd=initial.data.products.find(x=>x.barcode==='QA-USD');
+ await Promise.all(['employee','support','anonymous'].map(async role=>{const r=await rpc(role,'qa_manager_execute_workspace',{p_operation:'sale',p_payloads:[{product_id:usd.id,quantity:0.1}]});check(role+' denied manager direct execution',()=>assert.ok([401,403].includes(r.status)))}));
+ const sale=await rpc('manager','qa_manager_execute_workspace',{p_operation:'sale',p_payloads:[{product_id:usd.id,quantity:0.1}]});check('manager can execute sale without employee approval queue',()=>assert.equal(sale.status,200,JSON.stringify(sale.data)));
+ const after=await rpc('manager','qa_workspace_snapshot');check('manager direct sale changes QA stock exactly once',()=>assert.ok(Math.abs(Number(after.data.products.find(p=>p.id===usd.id).stock)-Number(usd.stock)+0.1)<0.0001));
+ const parent=after.data.requests.find(r=>r.id===sale.data);const doc=after.data.documents.find(d=>parent.payload.children.includes(d.request_id));
+ const ret=await rpc('manager','qa_manager_execute_workspace',{p_operation:'return_request',p_payloads:[{sale_id:doc.id,quantity:0.1}]});check('manager can return own full converted sale',()=>assert.equal(ret.status,200,JSON.stringify(ret.data)));
+ const final=await rpc('manager','qa_workspace_snapshot');check('manager full return restores original stock',()=>assert.equal(Number(final.data.products.find(p=>p.id===usd.id).stock),Number(usd.stock)));
+}catch(e){results.push({name:'manager acceptance',passed:false,error:e.message});throw e}finally{writeFileSync('/tmp/pharmacy-manager-workspace-results.json',JSON.stringify({results},null,2));console.log({passed:results.filter(x=>x.passed).length,failed:results.filter(x=>!x.passed)})}

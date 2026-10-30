@@ -102,7 +102,7 @@ begin
  if r.operation='return_request' then
   select * into source from pharmacy_qa_private.documents where id=(d->>'sale_id')::uuid for update;
   if not found or source.kind<>'sale' or source.employee_id<>r.employee_id then raise exception 'invalid_sale' using errcode='22023'; end if;
-  select * into p from pharmacy_qa_private.catalog where id=source.product_id;
+  select * into p from pharmacy_qa_private.catalog where id=source.product_id; p.currency:=source.currency;
  else select * into p from pharmacy_qa_private.catalog where id=(d->>'product_id')::uuid; end if;
  if r.operation<>'order_process' and (p.id is null or q*p.parts<>trunc(q*p.parts)) then raise exception 'invalid_product_or_part' using errcode='22023'; end if;
  -- Serialize all mutations for a product, including FEFO selection and stock counts.
@@ -141,7 +141,7 @@ begin
    insert into pharmacy_qa_private.movements(document_id,batch_id,quantity,cost) values(doc,b.id,needed,0);
   end if;
  elsif r.operation='return_request' then
-  select coalesce(sum(quantity),0) into returned from pharmacy_qa_private.documents where source_id=source.id and kind='return_request';
+  select coalesce(sum(quantity),0) into returned from pharmacy_qa_private.documents where source_id=source.id and kind='return_request' and id<>doc;
   if q+returned>source.quantity then raise exception 'return_exceeds_sale' using errcode='22023'; end if;
   needed:=q;
   for b in select m.batch_id,m.cost,-m.quantity-coalesce((select sum(rm.quantity) from pharmacy_qa_private.movements rm join pharmacy_qa_private.documents rd on rd.id=rm.document_id where rd.source_id=source.id and rm.batch_id=m.batch_id),0) available from pharmacy_qa_private.movements m where m.document_id=source.id order by m.id loop

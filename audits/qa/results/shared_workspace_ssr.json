@@ -1,0 +1,256 @@
+{
+  "results": [
+    {
+      "name": "system_admin original Admin dashboard SSR renders safely",
+      "passed": true
+    },
+    {
+      "name": "system_admin original Admin pos SSR renders safely",
+      "passed": true
+    },
+    {
+      "name": "system_admin original Admin pharmacyProducts SSR renders safely",
+      "passed": true
+    },
+    {
+      "name": "system_admin original Admin siteProducts SSR renders safely",
+      "passed": true
+    },
+    {
+      "name": "system_admin original Admin inventory SSR renders safely",
+      "passed": true
+    },
+    {
+      "name": "system_admin original Admin smart SSR renders safely",
+      "passed": true
+    },
+    {
+      "name": "system_admin original Admin purchases SSR renders safely",
+      "passed": true
+    },
+    {
+      "name": "system_admin original Admin suppliers SSR renders safely",
+      "passed": true
+    },
+    {
+      "name": "system_admin original Admin supplierDebts SSR renders safely",
+      "passed": true
+    },
+    {
+      "name": "system_admin original Admin orders SSR renders safely",
+      "passed": true
+    },
+    {
+      "name": "system_admin original Admin prescriptions SSR renders safely",
+      "passed": true
+    },
+    {
+      "name": "system_admin original Admin requests SSR renders safely",
+      "passed": true
+    },
+    {
+      "name": "system_admin original Admin customers SSR renders safely",
+      "passed": true
+    },
+    {
+      "name": "system_admin original Admin debtors SSR renders safely",
+      "passed": true
+    },
+    {
+      "name": "system_admin original Admin offers SSR renders safely",
+      "passed": true
+    },
+    {
+      "name": "system_admin original Admin cashbox SSR renders safely",
+      "passed": true
+    },
+    {
+      "name": "system_admin original Admin returns SSR renders safely",
+      "passed": true
+    },
+    {
+      "name": "system_admin original Admin reports SSR renders safely",
+      "passed": true
+    },
+    {
+      "name": "system_admin original Admin profitCenterPreview SSR renders safely",
+      "passed": true
+    },
+    {
+      "name": "system_admin original Admin systemCenter SSR renders safely",
+      "passed": true
+    },
+    {
+      "name": "system_admin original Admin security SSR renders safely",
+      "passed": true
+    },
+    {
+      "name": "employee original Admin dashboard SSR renders safely",
+      "passed": true
+    },
+    {
+      "name": "employee original Admin pos SSR renders safely",
+      "passed": true
+    },
+    {
+      "name": "employee original Admin pharmacyProducts SSR renders safely",
+      "passed": true
+    },
+    {
+      "name": "employee original Admin siteProducts SSR renders safely",
+      "passed": true
+    },
+    {
+      "name": "employee original Admin inventory SSR renders safely",
+      "passed": true
+    },
+    {
+      "name": "employee original Admin smart SSR renders safely",
+      "passed": true
+    },
+    {
+      "name": "employee original Admin purchases SSR renders safely",
+      "passed": true
+    },
+    {
+      "name": "employee original Admin suppliers SSR renders safely",
+      "passed": true
+    },
+    {
+      "name": "employee original Admin supplierDebts SSR renders safely",
+      "passed": true
+    },
+    {
+      "name": "employee original Admin orders SSR renders safely",
+      "passed": true
+    },
+    {
+      "name": "employee original Admin prescriptions SSR renders safely",
+      "passed": true
+    },
+    {
+      "name": "employee original Admin requests SSR renders safely",
+      "passed": true
+    },
+    {
+      "name": "employee original Admin customers SSR renders safely",
+      "passed": true
+    },
+    {
+      "name": "employee original Admin debtors SSR renders safely",
+      "passed": true
+    },
+    {
+      "name": "employee original Admin offers SSR renders safely",
+      "passed": true
+    },
+    {
+      "name": "employee original Admin cashbox SSR renders safely",
+      "passed": true
+    },
+    {
+      "name": "employee original Admin returns SSR renders safely",
+      "passed": true
+    },
+    {
+      "name": "employee original Admin reports SSR renders safely",
+      "passed": true
+    },
+    {
+      "name": "employee original Admin profitCenterPreview SSR renders safely",
+      "passed": true
+    },
+    {
+      "name": "employee original Admin systemCenter SSR renders safely",
+      "passed": true
+    },
+    {
+      "name": "employee original Admin security SSR renders safely",
+      "passed": true
+    },
+    {
+      "name": "technical_support original Admin dashboard SSR renders safely",
+      "passed": true
+    },
+    {
+      "name": "technical_support original Admin pos SSR renders safely",
+      "passed": true
+    },
+    {
+      "name": "technical_support original Admin pharmacyProducts SSR renders safely",
+      "passed": true
+    },
+    {
+      "name": "technical_support original Admin siteProducts SSR renders safely",
+      "passed": true
+    },
+    {
+      "name": "technical_support original Admin inventory SSR renders safely",
+      "passed": true
+    },
+    {
+      "name": "technical_support original Admin smart SSR renders safely",
+      "passed": true
+    },
+    {
+      "name": "technical_support original Admin purchases SSR renders safely",
+      "passed": true
+    },
+    {
+      "name": "technical_support original Admin suppliers SSR renders safely",
+      "passed": true
+    },
+    {
+      "name": "technical_support original Admin supplierDebts SSR renders safely",
+      "passed": true
+    },
+    {
+      "name": "technical_support original Admin orders SSR renders safely",
+      "passed": true
+    },
+    {
+      "name": "technical_support original Admin prescriptions SSR renders safely",
+      "passed": true
+    },
+    {
+      "name": "technical_support original Admin requests SSR renders safely",
+      "passed": true
+    },
+    {
+      "name": "technical_support original Admin customers SSR renders safely",
+      "passed": true
+    },
+    {
+      "name": "technical_support original Admin debtors SSR renders safely",
+      "passed": true
+    },
+    {
+      "name": "technical_support original Admin offers SSR renders safely",
+      "passed": true
+    },
+    {
+      "name": "technical_support original Admin cashbox SSR renders safely",
+      "passed": true
+    },
+    {
+      "name": "technical_support original Admin returns SSR renders safely",
+      "passed": true
+    },
+    {
+      "name": "technical_support original Admin reports SSR renders safely",
+      "passed": true
+    },
+    {
+      "name": "technical_support original Admin profitCenterPreview SSR renders safely",
+      "passed": true
+    },
+    {
+      "name": "technical_support original Admin systemCenter SSR renders safely",
+      "passed": true
+    },
+    {
+      "name": "technical_support original Admin security SSR renders safely",
+      "passed": true
+    }
+  ]
+}
