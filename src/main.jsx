@@ -1314,17 +1314,17 @@ function Login(){
 const Root=()=>{const [s,setS]=useState(null),[checked,setChecked]=useState(false);useEffect(()=>{let alive=true;(async()=>{if(!supabase){if(alive)setChecked(true);return}const {data}=await supabase.auth.getSession();let ss=data?.session||null;if(ss){const role=ss.user?.app_metadata?.role; if(role!=='admin'&&['system_owner','system_admin'].includes(ss.user?.app_metadata?.system_role)){try{const r=await supabase.auth.refreshSession();ss=r.data?.session||ss}catch{}}}if(alive){setS(ss);setChecked(true)}})();if(supabase){const {data:{subscription}}=supabase.auth.onAuthStateChange((_e,ss)=>setS(ss));return()=>{alive=false;subscription.unsubscribe()}}return()=>{alive=false}},[]);if(!checked)return <Splash/>;const admin=['system_owner','system_admin'].includes(verifiedSystemRole(s?.user));if(admin)return <Admin onLogout={()=>supabase.auth.signOut()}/>;if(verifiedSystemRole(s?.user)==='technical_support')return <TechnicalSupportPortal onLogout={()=>supabase.auth.signOut()}/>;if(verifiedSystemRole(s?.user)==='employee')return <EmployeePreviewPortal onLogout={()=>supabase.auth.signOut()}/>;return <CustomerOrLogin/>};
 function EmployeePreviewPortal({onLogout}){
  const [items,setItems]=useState([]),[busy,setBusy]=useState(false),[notice,setNotice]=useState('');
- const load=async()=>{const {data,error}=await supabase.rpc('qa_my_staff_approvals');if(error){setItems([]);setNotice('تعذر تحميل الطلبات التجريبية')}else setItems(data||[])};
+ const load=async()=>{const {data,error}=await supabase.rpc('qa_list_employee_operations');if(error){setItems([]);setNotice('تعذر تحميل الطلبات التجريبية')}else setItems(data||[])};
  useEffect(()=>{load()},[]);
- const submit=async action=>{setBusy(true);setNotice('');const {error}=await supabase.rpc('qa_submit_staff_approval',{p_action:action});if(error)setNotice('تعذر إرسال الطلب: '+(error.code||'خطأ'));else{setNotice('تم إرسال طلب الموافقة التجريبي دون تغيير بيانات الصيدلية');await load()}setBusy(false)};
+ const submit=async action=>{setBusy(true);setNotice('');const {error}=await supabase.rpc('qa_submit_employee_operation',{p_action:action});if(error)setNotice('تعذر إرسال الطلب: '+(error.code||'خطأ'));else{setNotice('تم إرسال طلب الموافقة التجريبي دون تغيير بيانات الصيدلية');await load()}setBusy(false)};
  return <div className="login" dir="rtl"><div style={{maxWidth:620,margin:'5vh auto',padding:28,background:'var(--card,#fff)',borderRadius:16}}>
- <h1>بوابة الموظف التجريبية</h1><p>طلبات الموافقة تعمل في QA فقط، ولا تنفذ عمليات فعلية في الصيدلية.</p>
+ <h1>بوابة الموظف التجريبية</h1><p>جميع العمليات التالية طلبات تجريبية للمراجعة في QA فقط؛ حتى البيع لا يخصم مخزوناً ولا ينشئ فاتورة فعلية.</p>
  <div style={{display:'flex',gap:8,flexWrap:'wrap'}}>
- <button type="button" disabled={busy} onClick={()=>submit('inventory_count')}>طلب اعتماد جرد</button>
+ <button type="button" disabled={busy} onClick={()=>submit('sale')}>تسجيل عملية بيع تجريبية للمراجعة</button><button type="button" disabled={busy} onClick={()=>submit('order_process')}>طلب معالجة طلب تجريبي</button><button type="button" disabled={busy} onClick={()=>submit('inventory_count')}>طلب اعتماد جرد</button>
  <button type="button" disabled={busy} onClick={()=>submit('purchase_draft')}>طلب اعتماد مسودة شراء</button>
  <button type="button" disabled={busy} onClick={()=>submit('return_request')}>طلب اعتماد مرتجع</button></div>
  {notice&&<p role="status">{notice}</p>}
- <h2>طلباتي التجريبية</h2><ul>{items.map(x=><li key={x.id}>{({'inventory_count':'جرد','purchase_draft':'مسودة شراء','return_request':'مرتجع'})[x.action_type]||'طلب'} — {x.status==='pending'?'بانتظار الموافقة':x.status==='approved'?'موافق عليه':'مرفوض'}</li>)}</ul>
+ <h2>طلباتي التجريبية</h2><ul>{items.map(x=><li key={x.id}>{({'sale':'بيع','order_process':'معالجة طلب','inventory_count':'جرد','purchase_draft':'مسودة شراء','return_request':'مرتجع'})[x.operation]||'طلب'} — {x.status==='pending'?'بانتظار الموافقة':x.status==='approved'?'موافق عليه':'مرفوض'}</li>)}</ul>
  <p>البيع وتعديل المخزون والمشتريات الفعلية معطلة حتى اكتمال RLS/RPC واختبارات القبول.</p>
  <button type="button" onClick={onLogout}>تسجيل الخروج</button></div></div>
 }
