@@ -21,5 +21,5 @@ test('original admin navigation and supplier-ledger root still render',()=>{
  const html=renderToStaticMarkup(React.createElement(module.exports.Admin,{onLogout:()=>{}}));
  for(const label of ['نقطة البيع','المشتريات','الموردون','ديون الموردين','الصندوق','التقارير','الأمان والتدقيق'])assert.ok(html.includes(label),label);
  assert.ok(renderToStaticMarkup(React.createElement(module.exports.SupplierDebts)).includes('ديون الموردين'));
- assert.match(source,/admin_record_supplier_payment_currency_v2/);assert.match(source,/إجمالي الدفعة الأصلية/);
+ assert.match(source,/admin_record_supplier_payment_advance_v3/);assert.match(source,/إجمالي الدفعة الأصلية/);
 });

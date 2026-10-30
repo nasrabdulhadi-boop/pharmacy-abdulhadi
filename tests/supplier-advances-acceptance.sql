@@ -74,6 +74,24 @@ BEGIN
   EXCEPTION WHEN OTHERS THEN v_failed:=true;END;
   IF NOT v_failed THEN RAISE EXCEPTION 'Unsafe operation accepted %',v_case;END IF;
  END LOOP;
+ -- Cross-currency surplus remains in the supplier account currency at the frozen rate.
+ DECLARE sx uuid:=gen_random_uuid();sy uuid:=gen_random_uuid();x jsonb;cb numeric; BEGIN
+ INSERT INTO public.suppliers(id,name) VALUES(sx,'QA FX USD advance'),(sy,'QA FX SYP advance');
+ PERFORM public.admin_create_purchase_usd_v1(sx,null,'QA-FX-USD',current_date,null,jsonb_build_array(jsonb_build_object('product_id',p,'quantity',10,'purchase_price',1,'sale_price',2,'sale_currency','USD','expiry_date',current_date+730)),0,'cash',null,'none',0);
+ x:=public.admin_record_supplier_payment_advance_v3(sx,2100,'USD','SYP',140,gen_random_uuid(),null,'cash','رقم وصل الاستلام: FX-USD');
+ IF (x->>'settled_amount')::numeric<>10 OR (x->>'advance_amount')::numeric<>5 THEN RAISE EXCEPTION 'SYP paid on USD account surplus failed'; END IF;
+ SELECT sum(coalesce(amount_syp,amount)) INTO cb FROM public.cashbox_entries;
+ UPDATE public.pharmacy_currency_settings SET usd_to_syp=150 WHERE id=1;
+ x:=public.admin_create_purchase_usd_v1(sx,null,'QA-FX-USD-USE',current_date,null,jsonb_build_array(jsonb_build_object('product_id',p,'quantity',10,'purchase_price',1,'sale_price',2,'sale_currency','USD','expiry_date',current_date+730)),0,'cash',null,'none',0);
+ IF (x->>'applied_advance')::numeric<>5 OR (x->>'due_amount')::numeric<>5 OR (SELECT sum(coalesce(amount_syp,amount)) FROM public.cashbox_entries)<>cb THEN RAISE EXCEPTION 'Rate change revalued advance/cash'; END IF;
+ UPDATE public.pharmacy_currency_settings SET usd_to_syp=v_fx WHERE id=1;
+ PERFORM public.admin_create_purchase_syp_v1(sy,null,'QA-FX-SYP',current_date,null,jsonb_build_array(jsonb_build_object('product_id',p,'quantity',1,'purchase_price',1000,'sale_price',2000,'sale_currency','SYP','expiry_date',current_date+730)),0,'cash',null,'none',0);
+ x:=public.admin_record_supplier_payment_advance_v3(sy,10,'SYP','USD',140,gen_random_uuid(),null,'cash','رقم وصل الاستلام: FX-SYP');
+ IF (x->>'settled_amount')::numeric<>1000 OR (x->>'advance_amount')::numeric<>400 THEN RAISE EXCEPTION 'USD paid on SYP account surplus failed'; END IF;
+ x:=public.admin_create_purchase_syp_v1(sy,null,'QA-FX-SYP-USE',current_date,null,jsonb_build_array(jsonb_build_object('product_id',p,'quantity',1,'purchase_price',600,'sale_price',1200,'sale_currency','SYP','expiry_date',current_date+730)),0,'cash',null,'none',0);
+ IF (x->>'applied_advance')::numeric<>400 OR (x->>'due_amount')::numeric<>200 THEN RAISE EXCEPTION 'Converted SYP advance reuse failed'; END IF;
+ END;
+ IF has_function_privilege('anon','public.admin_record_supplier_payment_advance_v3(uuid,numeric,text,text,numeric,uuid,uuid,text,text)','execute') OR has_function_privilege('anon','public.admin_create_purchase_with_advance_v3(text,uuid,jsonb,text,date,text,jsonb,numeric,text,text,text,numeric,uuid,numeric)','execute') OR has_function_privilege('authenticated','public.apply_supplier_advances_to_purchase_v1(uuid)','execute') OR has_function_privilege('authenticated','public._ab_create_purchase_usd_core_v1(uuid,jsonb,text,date,text,jsonb,numeric,text,text,text,numeric)','execute') THEN RAISE EXCEPTION 'Private/anonymous financial endpoint exposed'; END IF;
  -- Settlements/advances do not change gross profit or add extra stock.
  v_result:=public.admin_dashboard_financial_summary(v_start,v_end);
  IF (v_result->>'profit')::numeric<>v_profit THEN RAISE EXCEPTION 'Advance treated as operating expense'; END IF;
