@@ -19,9 +19,9 @@ BEGIN
   (v_product,'QA ROLLBACK product',gen_random_uuid()::text,'USD',1.5),
   (v_product2,'QA ROLLBACK product2',gen_random_uuid()::text,'USD',1.5),
   (v_product3,'QA ROLLBACK product3',gen_random_uuid()::text,'SYP',210);
- v_data:=public.admin_create_purchase_usd_v1(v_supplier,null,'QA-RB-USD-1',current_date,'ROLLBACK ONLY',jsonb_build_array(jsonb_build_object('product_id',v_product,'quantity',100,'purchase_price',1,'sale_price',1.5,'sale_currency','USD','expiry_date',current_date+730)),0,'cash',null,'none',0);
+ v_data:=public.admin_create_purchase_usd_v1(v_supplier,null,'QA-RB-USD-1',current_date-2,'ROLLBACK ONLY',jsonb_build_array(jsonb_build_object('product_id',v_product,'quantity',100,'purchase_price',1,'sale_price',1.5,'sale_currency','USD','expiry_date',current_date+730)),0,'cash',null,'none',0);
  SELECT id INTO STRICT v_invoice FROM public.purchases WHERE supplier_id=v_supplier AND invoice_number='QA-RB-USD-1';
- v_data:=public.admin_create_purchase_usd_v1(v_supplier,null,'QA-RB-USD-2',current_date,'ROLLBACK ONLY',jsonb_build_array(jsonb_build_object('product_id',v_product2,'quantity',50,'purchase_price',1,'sale_price',1.5,'sale_currency','USD','expiry_date',current_date+730)),0,'cash',null,'none',0);
+ v_data:=public.admin_create_purchase_usd_v1(v_supplier,null,'QA-RB-USD-2',current_date-1,'ROLLBACK ONLY',jsonb_build_array(jsonb_build_object('product_id',v_product2,'quantity',50,'purchase_price',1,'sale_price',1.5,'sale_currency','USD','expiry_date',current_date+730)),0,'cash',null,'none',0);
  SELECT id INTO STRICT v_invoice2 FROM public.purchases WHERE supplier_id=v_supplier AND invoice_number='QA-RB-USD-2';
  v_data:=public.admin_create_purchase_syp_v1(v_supplier,null,'QA-RB-SYP',current_date,'ROLLBACK ONLY',jsonb_build_array(jsonb_build_object('product_id',v_product3,'quantity',100,'purchase_price',140,'sale_price',210,'sale_currency','SYP','expiry_date',current_date+730)),0,'cash',null,'none',0);
  SELECT id INTO STRICT v_syp_invoice FROM public.purchases WHERE supplier_id=v_supplier AND currency='SYP';
