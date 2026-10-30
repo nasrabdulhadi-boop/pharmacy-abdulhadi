@@ -24,11 +24,18 @@ import {getBackupCenterStatus} from './systemBackupPolicy.js';
 import {verifiedSystemRole,canViewSystemAdminSection} from './systemAdminRoleGate.js';
 import {ADMIN_READINESS,readinessSummary} from './systemAdminReadiness.js';
 import {requestStagingPasswordRecovery} from './systemAdminAccountRecovery.js';
+import {recoveryCallbackState,createRecoveryFlow} from './passwordRecoveryFlow.js';
+import RecoveryPasswordForm from './RecoveryPasswordForm.jsx';
 import {makeBackupReadinessReport} from './systemAdminBackupManifest.js';
 import {assessStagingAuthorization,QA_AUTHORIZATION_FINDINGS} from './systemAdminSecurityAudit.js';
 
 const url=import.meta.env.VITE_SUPABASE_URL; const key=import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+const recoveryEnvironment={mode:import.meta.env.MODE,enabled:import.meta.env.VITE_ENABLE_AUTH_MUTATIONS,url,publishableKey:key};
+const recoveryEnabled=allowStagingAuthMutation(recoveryEnvironment);
+const recoveryFlow=createRecoveryFlow(recoveryCallbackState(typeof window==='undefined'?null:window.location,recoveryEnabled));
 const rawSupabase=url&&key?createClient(url,key):null;
+// Subscribe before React mounts, so a fast callback cannot lose PASSWORD_RECOVERY.
+if(recoveryEnabled&&rawSupabase?.auth?.onAuthStateChange)rawSupabase.auth.onAuthStateChange((event,session)=>recoveryFlow.onAuthEvent(event,session));
 let workspaceRole=null,workspaceIdentity=null,workspaceRedacted=false;
 const supabase=createQaWorkspaceClient(rawSupabase,{url,getRole:()=>workspaceRole,getIdentity:()=>workspaceIdentity,isRedacted:()=>workspaceRedacted});
 const WorkspaceRoleContext=React.createContext('system_admin');
@@ -336,7 +343,7 @@ function SystemAdministrationPreview(){
  const [recoveryMessage,setRecoveryMessage]=useState('');
  const sendRecoveryEmail=async()=>{
   setRecoveryBusy(true);setRecoveryMessage('');
-  const result=await requestStagingPasswordRecovery({supabase,email:recoveryEmail,redirectTo:window.location.origin+'/admin',environment:{mode:import.meta.env.MODE,enabled:import.meta.env.VITE_ENABLE_AUTH_MUTATIONS,url,publishableKey:key,redirectOrigin:window.location.origin}});
+  const result=await requestStagingPasswordRecovery({supabase,email:recoveryEmail,redirectTo:window.location.origin+'/#admin',environment:{mode:import.meta.env.MODE,enabled:import.meta.env.VITE_ENABLE_AUTH_MUTATIONS,url,publishableKey:key,redirectOrigin:window.location.origin}});
   setRecoveryMessage(result.message);setRecoveryBusy(false);
  };
  const [passwordBusy,setPasswordBusy]=useState(false);
@@ -1304,9 +1311,9 @@ function AuditDetailsModal({log,close,actionLabel}){
 function Security(){const [logs,setLogs]=useState([]),[err,setErr]=useState(''),[selected,setSelected]=useState(null),[health,setHealth]=useState(null),[integrity,setIntegrity]=useState(null),[healthBusy,setHealthBusy]=useState(false);const load=async()=>{setErr('');const {data,error}=await supabase.from('audit_logs').select('*').order('created_at',{ascending:false}).limit(150);if(error){setErr(error.message);throw error}setLogs(data||[])};const checkHealth=async()=>{setHealthBusy(true);try{const [h,i]=await Promise.all([supabase.rpc('admin_system_healthcheck'),supabase.rpc('admin_financial_integrity_check')]);if(h.error)throw h.error;if(i.error)throw i.error;setHealth(h.data);setIntegrity(i.data)}catch(e){notify(e?.message||'تعذر إتمام فحص ترابط النظام')}finally{setHealthBusy(false)}};useEffect(()=>{load().catch(console.warn)},[]);const actionLabel={complete_sale:'إتمام بيع',admin_create_batch:'إضافة دفعة',admin_create_purchase:'إضافة فاتورة شراء',admin_delete_purchase:'حذف فاتورة شراء',create_public_order:'إنشاء طلب',admin_update_order_status:'تغيير حالة طلب',admin_delete_order:'حذف طلب',admin_delete_batch:'حذف دفعة',adjust_stock:'تعديل مخزون',admin_create_supplier:'إضافة مورد',admin_update_supplier:'تعديل مورد',admin_delete_supplier:'حذف مورد',inventory_count_complete:'اعتماد جرد',admin_dispose_stock:'إتلاف مخزون',customer_return:'مرتجع من الزبون',supplier_return:'مرتجع إلى المورد',admin_update_product_price:'تعديل أسعار منتج',supplier_payment:'دفعة لمورد',debtor_payment:'تحصيل دين',cashbox_entry:'حركة صندوق',cashbox_count:'جرد درج الكاشير',admin_create_debtor:'إضافة متدين'};return <><PageHead title="الأمان والتدقيق" sub="صلاحيات الإدارة وسجل العمليات وفحص ترابط الحسابات" refresh={load} actions={<button className="secondaryAction" onClick={checkHealth} disabled={healthBusy}><Activity/> {healthBusy?'جارٍ الفحص…':'فحص ترابط النظام'}</button>}/>{health&&<div className="card securityHealthCard"><div className="cardHead"><div><h2>حالة النظام</h2><p>{health.admin?'جلسة الإدارة والصلاحيات سليمة':'تحقق من صلاحية الإدارة'}</p></div><span className={health.admin?'activePill':'mutedPill'}>{health.admin?'سليم':'يحتاج تحقق'}</span></div><div className="detailGrid"><div><b>الجداول الأساسية</b><span>{Object.values(health.tables||{}).filter(Boolean).length} / {Object.keys(health.tables||{}).length}</span></div><div><b>الأعمدة الأساسية</b><span>{Object.values(health.columns||{}).filter(Boolean).length} / {Object.keys(health.columns||{}).length}</span></div><div><b>الدوال الأساسية</b><span>{Object.values(health.functions||{}).filter(Boolean).length} / {Object.keys(health.functions||{}).length}</span></div></div>{integrity&&<div className="integrityChecksGrid">{[['مبيعات نقدية مرتبطة بالصندوق','missing_cash_sales'],['تحصيل ديون نقدي مرتبط بالصندوق','missing_cash_debtor_payments'],['دفعات موردين نقدية مرتبطة بالصندوق','missing_cash_supplier_payments'],['مرتجعات زبائن نقدية مرتبطة بالاسترداد','missing_customer_refunds'],['فواتير بيع بدون أصناف','sales_without_items'],['فواتير شراء بدون أصناف','purchases_without_items'],['دفعات موردين بدون توزيع على فاتورة','supplier_payments_without_allocations'],['مرتجعات بدون حركة مخزون','returns_without_stock_movement'],['تعارض أرصدة فواتير الموردين','purchase_balance_mismatches']].map(([label,key])=><div key={key}><span>{label}</span><b className={Number(integrity[key]||0)===0?'good':'bad'}>{Number(integrity[key]||0)===0?'سليم':integrity[key]}</b></div>)}</div>}</div>}
  <div className="card securityIntro"><h2>حماية النظام</h2><p>الوصول الإداري يعتمد على Supabase Auth ودور الإدارة. كل عملية مالية مهمة يجب أن ترتبط بالمخزون أو الصندوق أو الذمم وسجل التدقيق حسب نوعها.</p></div>{err&&<div className="error" style={{marginTop:12}}>{err}</div>}<div className="tableWrap"><table><thead><tr><th>العملية</th><th>نوع السجل</th><th>التاريخ والوقت</th><th>التفاصيل</th></tr></thead><tbody>{logs.map(r=><tr key={r.id}><td>{actionLabel[r.action]||r.action||'—'}</td><td>{r.entity_type||'—'}</td><td>{localDateTime(r.created_at)}</td><td className="auditDetails"><button type="button" className="auditDocBtn" title="فتح تفاصيل العملية" aria-label="فتح تفاصيل العملية" onClick={(e)=>{e.stopPropagation();setSelected(r)}}><FileText size={18}/><span>التفاصيل</span></button></td></tr>)}</tbody></table>{!logs.length&&!err&&<div className="emptyCart">لا توجد عمليات مسجلة بعد.</div>}</div>{selected&&<AuditDetailsModal log={selected} close={()=>setSelected(null)} actionLabel={actionLabel}/>}</>}
 
-function Login(){
- const [email,setEmail]=useState(''),[password,setPassword]=useState(''),[err,setErr]=useState('');
- const [recovery,setRecovery]=useState(false),[busy,setBusy]=useState(false),[message,setMessage]=useState('');
+function Login({initialRecovery=false,initialError='',onAuthenticated}={}){
+ const [email,setEmail]=useState(''),[password,setPassword]=useState(''),[err,setErr]=useState(initialError);
+ const [recovery,setRecovery]=useState(initialRecovery),[busy,setBusy]=useState(false),[message,setMessage]=useState('');
  const submit=async e=>{
   e.preventDefault();if(busy)return;setErr('');setMessage('');setBusy(true);
   try{
@@ -1319,6 +1326,7 @@ function Login(){
    }else{
     const {error}=await supabase.auth.signInWithPassword({email:email.trim(),password});
     if(error)throw error;
+    onAuthenticated?.();
    }
   }catch(error){
    if(recovery)setErr('تعذر إرسال طلب الاسترداد حالياً. تحقق من إعدادات البريد أو حاول لاحقاً.');
@@ -1340,13 +1348,18 @@ function Login(){
 }
 // If a session exists but is not admin, show login instead of exposing admin.
 const Root=()=>{
+ const [recoveryState,setRecoveryState]=useState(()=>recoveryFlow.getState());
+ useEffect(()=>{const unsubscribe=recoveryFlow.subscribe(setRecoveryState);setRecoveryState(recoveryFlow.getState());return unsubscribe},[]);
  const [s,setS]=useState(null),[checked,setChecked]=useState(false),[serverRole,setServerRole]=useState(null),[roleChecked,setRoleChecked]=useState(false);
- useEffect(()=>{let alive=true;(async()=>{if(!supabase){if(alive)setChecked(true);return}const {data}=await supabase.auth.getSession();let ss=data?.session||null;if(ss){const role=ss.user?.app_metadata?.role;if(role!=='admin'&&['system_owner','system_admin'].includes(ss.user?.app_metadata?.system_role)){try{const r=await supabase.auth.refreshSession();ss=r.data?.session||ss}catch{}}}if(alive){setS(ss);setChecked(true)}})();if(supabase){const {data:{subscription}}=supabase.auth.onAuthStateChange((_e,ss)=>setS(ss));return()=>{alive=false;subscription.unsubscribe()}}return()=>{alive=false}},[]);
+ useEffect(()=>{let alive=true;(async()=>{if(!supabase){if(alive)setChecked(true);return}const {data}=await supabase.auth.getSession();let ss=data?.session||null;if(ss){const role=ss.user?.app_metadata?.role;if(role!=='admin'&&['system_owner','system_admin'].includes(ss.user?.app_metadata?.system_role)){try{const r=await supabase.auth.refreshSession();ss=r.data?.session||ss}catch{}}}if(alive){setS(ss);setChecked(true);recoveryFlow.initialized()}})();if(supabase){const {data:{subscription}}=supabase.auth.onAuthStateChange((_e,ss)=>setS(ss));return()=>{alive=false;subscription.unsubscribe()}}return()=>{alive=false}},[]);
  useEffect(()=>{let alive=true;setRoleChecked(false);setServerRole(null);if(!isolatedQaWorkspace||!s){setRoleChecked(true);return}
   const check=async()=>{try{const {data,error}=await rawSupabase.rpc('qa_my_role');if(alive){setServerRole(!error&&['system_owner','system_admin','employee','technical_support'].includes(data)?data:null);setRoleChecked(true)}}catch{if(alive){setServerRole(null);setRoleChecked(true)}}};
   check();const timer=setInterval(check,30000);window.addEventListener('focus',check);return()=>{alive=false;clearInterval(timer);window.removeEventListener('focus',check)};
  },[s?.user?.id,s?.access_token]);
- if(!checked||(s&&isolatedQaWorkspace&&!roleChecked))return <Splash/>;
+ const finishRecovery=()=>{window.history.replaceState(null,'',window.location.pathname+window.location.search+'#admin');recoveryFlow.reset()};
+ if(recoveryEnabled&&recoveryState==='invalid')return <Login initialRecovery initialError="رابط الاسترداد منتهي الصلاحية أو استُخدم سابقاً. أدخل بريدك واطلب رابطاً جديداً، ثم افتح أحدث رسالة مرة واحدة." onAuthenticated={finishRecovery}/>;
+ if(recoveryEnabled&&recoveryState==='ready')return <RecoveryPasswordForm auth={rawSupabase.auth} enabled={recoveryEnabled} recoveryState={recoveryState} onDone={finishRecovery} onRestart={()=>{window.history.replaceState(null,'',window.location.pathname+'#admin');recoveryFlow.restart()}}/>;
+ if(!checked||recoveryState==='pending'||(s&&isolatedQaWorkspace&&!roleChecked))return <Splash/>;
  const admin=['system_owner','system_admin'].includes(verifiedSystemRole(s?.user));
  workspaceRole=isolatedQaWorkspace?serverRole:verifiedSystemRole(s?.user);workspaceIdentity=s?.user?.id||null;workspaceRedacted=false;
  if((isolatedQaWorkspace&&['system_owner','system_admin'].includes(workspaceRole))||(!isolatedQaWorkspace&&admin))return <Admin key={workspaceIdentity+':'+workspaceRole} role={workspaceRole} onLogout={()=>supabase.auth.signOut()}/>;

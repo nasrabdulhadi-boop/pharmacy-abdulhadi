@@ -8,6 +8,7 @@ test('email normalization and redirect guard reject unsafe inputs',()=>{
  for(const value of ['invalid','a@b',''])assert.equal(isValidRecoveryEmail(value),false);
  for(const value of ['http://pharmacy-qa.vercel.app/admin','https://evil.com/admin','https://pharmacy-qa.vercel.app.evil.com/admin','https://pharmacy-qa.vercel.app/settings'])assert.equal(isAllowedRecoveryRedirect(value,staging.redirectOrigin),false);
  assert.equal(isAllowedRecoveryRedirect(valid,staging.redirectOrigin),true);
+ assert.equal(isAllowedRecoveryRedirect('https://pharmacy-qa.vercel.app/#admin',staging.redirectOrigin),true);
  for(const value of ['https://other.vercel.app/admin','https://pharmacy-qa.vercel.app/admin/extra','https://pharmacy-qa.vercel.app/admin?token=x','https://pharmacy-qa.vercel.app/admin#x'])assert.equal(isAllowedRecoveryRedirect(value,staging.redirectOrigin),false);
 });
 test('production configuration cannot send recovery mail',async()=>{

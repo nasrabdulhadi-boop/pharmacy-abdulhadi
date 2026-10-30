@@ -2,7 +2,7 @@ import {allowStagingAuthMutation} from './stagingAuthGuard.js';
 
 export function normalizeRecoveryEmail(value){return typeof value==='string'?value.trim().toLowerCase():'';}
 export function isValidRecoveryEmail(value){const email=normalizeRecoveryEmail(value);return email.length<=254&&/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);}
-export function isAllowedRecoveryRedirect(value,expectedOrigin){if(typeof value!=='string'||typeof expectedOrigin!=='string')return false;try{const url=new URL(value);const origin=new URL(expectedOrigin);return url.protocol==='https:'&&origin.protocol==='https:'&&url.origin===origin.origin&&url.hostname.endsWith('.vercel.app')&&url.pathname==='/admin'&&!url.search&&!url.hash&&!url.username&&!url.password;}catch{return false}}
+export function isAllowedRecoveryRedirect(value,expectedOrigin){if(typeof value!=='string'||typeof expectedOrigin!=='string')return false;try{const url=new URL(value);const origin=new URL(expectedOrigin);return url.protocol==='https:'&&origin.protocol==='https:'&&url.origin===origin.origin&&url.hostname.endsWith('.vercel.app')&&((url.pathname==='/admin'&&!url.hash)||(url.pathname==='/'&&url.hash==='#admin'))&&!url.search&&!url.username&&!url.password;}catch{return false}}
 export async function requestStagingPasswordRecovery({supabase,email,redirectTo,environment}){
  if(!allowStagingAuthMutation(environment))return {ok:false,message:'استرداد الحساب معطّل خارج بيئة المصادقة التجريبية المعتمدة.'};
  if(!isValidRecoveryEmail(email))return {ok:false,message:'يرجى إدخال بريد إلكتروني صحيح.'};
