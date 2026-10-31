@@ -11,5 +11,7 @@ export function workspaceCanReadMoney(role){return hasCapability(role,'finance.r
 export function workspaceCanReadStock(role){return ['system_owner','system_admin','employee'].includes(role)}
 export function workspaceCanWrite(role,operation){
  if(['system_owner','system_admin'].includes(role))return true;
- return role==='employee'&&['sale','purchase_draft','inventory_count','return_request','order_process'].includes(operation);
+ return role==='employee'&&['sale','purchase_draft','product_create','inventory_count','return_request','order_process'].includes(operation);
 }
+
+export function workspaceOperationRequiresApproval(role,operation){return role==='employee'&&['inventory_count','return_request','order_process','price_change','stock_adjustment'].includes(operation)}

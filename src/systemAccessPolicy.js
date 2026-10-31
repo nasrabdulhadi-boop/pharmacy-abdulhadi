@@ -1,5 +1,5 @@
 // Preview-only access policy specification. This is NOT a database authorization mechanism.
-// Manifest only: employee operations remain disabled until dedicated audited RLS/RPC enforcement and manager approvals are implemented.
+// Manifest only: QA daily operations use narrow server RPCs; sensitive operations retain manager approval.
 export const ROLES = Object.freeze(['system_owner','system_admin','technical_support','employee']);
 export const CAPABILITIES = Object.freeze([
  'system.view_technical_health',
@@ -11,7 +11,7 @@ export const CAPABILITIES = Object.freeze([
  'pharmacy.write_operations',
  'finance.read',
  'finance.write',
- 'employee.pos_sale','employee.catalog_read','employee.inventory_read','employee.inventory_count_submit','employee.purchase_draft_create','employee.order_process','employee.return_request_create','employee.supplier_operational_read',
+ 'employee.product_create','employee.pos_sale','employee.catalog_read','employee.inventory_read','employee.inventory_count_submit','employee.purchase_draft_create','employee.order_process','employee.return_request_create','employee.supplier_operational_read',
  'employee.price_change','employee.invoice_delete','employee.finance_manage','employee.user_manage'
 ]);
 const permissions = {
@@ -22,7 +22,7 @@ const permissions = {
   'finance.read','finance.write'
  ],
  technical_support: ['system.view_technical_health','system.view_sanitized_diagnostics'],
- employee: ['employee.pos_sale','employee.catalog_read','employee.inventory_read','employee.inventory_count_submit','employee.purchase_draft_create','employee.order_process','employee.return_request_create','employee.supplier_operational_read']
+ employee: ['employee.product_create','employee.pos_sale','employee.catalog_read','employee.inventory_read','employee.inventory_count_submit','employee.purchase_draft_create','employee.order_process','employee.return_request_create','employee.supplier_operational_read']
 };
 export const ROLE_CAPABILITIES = Object.freeze(Object.fromEntries(
  Object.entries(permissions).map(([role,caps])=>[role,Object.freeze([...caps])])

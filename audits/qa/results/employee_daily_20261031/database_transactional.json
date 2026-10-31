@@ -1,0 +1,206 @@
+{
+  "mode": "transactional QA with synthetic Auth-session claims; not an HTTP/browser test",
+  "passed": 50,
+  "results": [
+    {
+      "name": "private execution helper is not API-callable",
+      "passed": true
+    },
+    {
+      "name": "anonymous cannot call daily RPC",
+      "passed": true
+    },
+    {
+      "name": "support cannot execute daily operations",
+      "passed": true
+    },
+    {
+      "name": "support cannot create product",
+      "passed": true
+    },
+    {
+      "name": "unprivileged cannot execute daily operations",
+      "passed": true
+    },
+    {
+      "name": "unprivileged cannot create product",
+      "passed": true
+    },
+    {
+      "name": "anonymous cannot execute daily operations",
+      "passed": true
+    },
+    {
+      "name": "anonymous cannot create product",
+      "passed": true
+    },
+    {
+      "name": "synthetic employee session is live",
+      "passed": true
+    },
+    {
+      "name": "direct sensitive operation denied: inventory_count",
+      "passed": true
+    },
+    {
+      "name": "direct sensitive operation denied: return_request",
+      "passed": true
+    },
+    {
+      "name": "direct sensitive operation denied: order_process",
+      "passed": true
+    },
+    {
+      "name": "direct sensitive operation denied: price_change",
+      "passed": true
+    },
+    {
+      "name": "employee creates a new product directly",
+      "passed": true
+    },
+    {
+      "name": "card replay is idempotent",
+      "passed": true
+    },
+    {
+      "name": "duplicate primary barcode rejected",
+      "passed": true
+    },
+    {
+      "name": "employee cannot edit an existing price",
+      "passed": true
+    },
+    {
+      "name": "unapproved initial price rejected",
+      "passed": true
+    },
+    {
+      "name": "zero-price card cannot be sold",
+      "passed": true
+    },
+    {
+      "name": "initial product purchase cost is retained for manager",
+      "passed": true
+    },
+    {
+      "name": "manager can activate product price",
+      "passed": true
+    },
+    {
+      "name": "new product metadata is present",
+      "passed": true
+    },
+    {
+      "name": "inline product category is retained",
+      "passed": true
+    },
+    {
+      "name": "employee never receives purchase cost",
+      "passed": true
+    },
+    {
+      "name": "purchase immediately receives quantity plus bonus",
+      "passed": true
+    },
+    {
+      "name": "purchase is executed rather than queued",
+      "passed": true
+    },
+    {
+      "name": "invoice header is preserved",
+      "passed": true
+    },
+    {
+      "name": "purchase retry returns original request",
+      "passed": true
+    },
+    {
+      "name": "purchase retry does not duplicate stock",
+      "passed": true
+    },
+    {
+      "name": "purchase debt excludes free bonus",
+      "passed": true
+    },
+    {
+      "name": "duplicate supplier invoice number rejected",
+      "passed": true
+    },
+    {
+      "name": "financial payment injection denied",
+      "passed": true
+    },
+    {
+      "name": "backdated purchase requires manager",
+      "passed": true
+    },
+    {
+      "name": "sale directly deducts fractional quantity",
+      "passed": true
+    },
+    {
+      "name": "sale uses server price and SYP settlement",
+      "passed": true
+    },
+    {
+      "name": "sale enters cash ledger atomically",
+      "passed": true
+    },
+    {
+      "name": "sale retry is idempotent",
+      "passed": true
+    },
+    {
+      "name": "changed payload cannot reuse successful key",
+      "passed": true
+    },
+    {
+      "name": "overselling multi-line sale fails",
+      "passed": true
+    },
+    {
+      "name": "failed sale rolls back all stock",
+      "passed": true
+    },
+    {
+      "name": "failed sale creates no documents",
+      "passed": true
+    },
+    {
+      "name": "count remains pending",
+      "passed": true
+    },
+    {
+      "name": "count does not change stock before approval",
+      "passed": true
+    },
+    {
+      "name": "employee cannot approve own count",
+      "passed": true
+    },
+    {
+      "name": "return remains pending",
+      "passed": true
+    },
+    {
+      "name": "return leaves stock unchanged until approved",
+      "passed": true
+    },
+    {
+      "name": "manager-approved return restores stock",
+      "passed": true
+    },
+    {
+      "name": "sale and full return have zero net cash",
+      "passed": true
+    },
+    {
+      "name": "support snapshot still contains only health and role",
+      "passed": true
+    },
+    {
+      "name": "support cannot read requests",
+      "passed": true
+    }
+  ]
+}
