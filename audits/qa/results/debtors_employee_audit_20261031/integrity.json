@@ -1,0 +1,29 @@
+{
+  "new_tables": [
+    {
+      "rls": true,
+      "table": "audit_events",
+      "api_access": false
+    },
+    {
+      "rls": true,
+      "table": "debtor_cash_receipts",
+      "api_access": false
+    },
+    {
+      "rls": true,
+      "table": "debtor_entries",
+      "api_access": false
+    },
+    {
+      "rls": true,
+      "table": "debtors",
+      "api_access": false
+    }
+  ],
+  "negative_stock": 0,
+  "old_columns_hash": "d3272c6ddafa46b5d121ff30e177a2a4",
+  "overpaid_accounts": 0,
+  "orphan_cash_receipts": 0,
+  "temporary_auth_users": 0
+}

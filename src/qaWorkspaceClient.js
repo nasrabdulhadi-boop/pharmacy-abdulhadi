@@ -2,7 +2,7 @@ import {ISOLATED_QA_PROJECT_URL} from './stagingAuthGuard.js';
 const denied=()=>({data:null,error:{code:'42501',message:'هذه العملية غير متاحة لصلاحيات الحساب أو لم تُربط بعد ببيئة QA.'}});
 const ok=data=>({data,error:null});
 const privileged=r=>['system_admin','system_owner'].includes(r);
-const dailyErrors={sale_price_not_approved:'سعر بيع المنتج الجديد غير معتمد بعد. يحدده المدير قبل البيع.',new_product_price_requires_manager:'احفظ بطاقة المنتج الجديد دون سعر بيع؛ يعتمد المدير سعره قبل البيع.',price_or_product_edit_requires_manager:'تعديل منتج موجود أو سعره يحتاج المدير.',duplicate_barcode:'الباركود موجود لمنتج آخر؛ لم يُحفظ أي تغيير.',duplicate_purchase_invoice:'رقم فاتورة المورد مسجل مسبقاً؛ لم تُحفظ فاتورة أخرى.',backdated_purchase_requires_manager:'الفواتير المؤرخة بتاريخ سابق تحتاج المدير.',additional_barcodes_not_supported_in_qa:'الباركودات الإضافية غير مربوطة في QA بعد؛ استخدم الباركود الأساسي فقط.',idempotency_conflict:'تغيّرت بيانات محاولة حفظ سابقة؛ حدّث الحالة قبل إعادة الحفظ.'};
+const dailyErrors={payment_exceeds_debt:'الدفعة أكبر من الدين المتبقي؛ لم تُحفظ أي حركة.',invalid_payment:'أدخل مبلغاً موجباً وطريقة دفع صحيحة.',duplicate_debtor:'يوجد ملف بالاسم ورقم الهاتف نفسيهما؛ استخدم الملف الموجود.',debtor_not_found:'ملف المتدين غير موجود.',sale_price_not_approved:'سعر بيع المنتج الجديد غير معتمد بعد. يحدده المدير قبل البيع.',new_product_price_requires_manager:'احفظ بطاقة المنتج الجديد دون سعر بيع؛ يعتمد المدير سعره قبل البيع.',price_or_product_edit_requires_manager:'تعديل منتج موجود أو سعره يحتاج المدير.',duplicate_barcode:'الباركود موجود لمنتج آخر؛ لم يُحفظ أي تغيير.',duplicate_purchase_invoice:'رقم فاتورة المورد مسجل مسبقاً؛ لم تُحفظ فاتورة أخرى.',backdated_purchase_requires_manager:'الفواتير المؤرخة بتاريخ سابق تحتاج المدير.',additional_barcodes_not_supported_in_qa:'الباركودات الإضافية غير مربوطة في QA بعد؛ استخدم الباركود الأساسي فقط.',idempotency_conflict:'تغيّرت بيانات محاولة حفظ سابقة؛ حدّث الحالة قبل إعادة الحفظ.'};
 const syntheticSupplier={id:'00000000-0000-4000-8000-000000009001',name:'مورد QA اصطناعي',phone:null,address:null,notes:null};
 function query(run){
  const filters=[];let limit=null,offset=0,single=false,count=false,head=false,sort=null,mutation=false;
@@ -31,6 +31,7 @@ export function createQaWorkspaceClient(raw,{url,getRole,getIdentity=()=>null,is
   const task=Promise.resolve().then(()=>identity===String(getIdentity())+':'+getRole()?raw.rpc(name,{...args,p_request_id:retries.get(fingerprint)}):denied()).then(r=>{if(r.error&&dailyErrors[r.error.message])r={...r,error:{...r.error,message:dailyErrors[r.error.message]}};if(!r.error){retries.delete(fingerprint);pending=null}return identity===String(getIdentity())+':'+getRole()?r:denied()}).finally(()=>writes.delete(fingerprint));
   writes.set(fingerprint,task);return task;
  };
+ const scopedRead=async(name,args)=>{const identity=String(getIdentity())+':'+getRole();const r=await raw.rpc(name,args);return identity===String(getIdentity())+':'+getRole()?r:denied()};
  const snapshot=()=>{
   const identity=String(getIdentity())+':'+getRole();
   if(!pending||pending.identity!==identity){
@@ -59,7 +60,7 @@ export function createQaWorkspaceClient(raw,{url,getRole,getIdentity=()=>null,is
   const sum=a=>a.reduce((n,d)=>n+toSyp(d,s),0),cost=a=>a.reduce((n,d)=>n+Number(d.cost||0)*(d.currency==='USD'?s.fx_rate:1),0);
   return {summary:{sales:sum(sales),net_sales:sum(sales)-sum(returns),profit:sum(sales)-sum(returns)-cost(sales)+cost(returns),purchases:sum(purchases),sales_count:sales.length},sales_rows:sales,purchase_rows:purchases,return_rows:returns,debt_rows:[],comparison:{},checks:{}};
  };
- const mapRead=(name,args={})=>view(s=>{
+ const mapRead=(name,args={})=>['admin_list_debtors','admin_search_debtors'].includes(name)?scopedRead('qa_list_debtors',{p_query:args.p_query||null}):name==='admin_debtor_ledger'?scopedRead('qa_debtor_ledger',{p_debtor_id:args.p_debtor_id}):view(s=>{
   const rows=products(s),search=String(args.p_query||'').toLowerCase();const match=p=>[p.name,p.barcode,p.id].some(x=>String(x).toLowerCase().includes(search));
   if(['admin_get_products','admin_get_products_page','admin_product_catalog_currency','admin_search_purchase_products_currency','admin_search_inventory_products','admin_search_pos_products_currency'].includes(name))return rows.filter(match).slice(Number(args.p_offset||0),Number(args.p_offset||0)+Number(args.p_limit||500));
   if(name==='admin_get_inventory')return batches(s);
@@ -83,19 +84,21 @@ export function createQaWorkspaceClient(raw,{url,getRole,getIdentity=()=>null,is
   if(name==='admin_list_purchases_currency_v1')return purchases(s);
   if(name==='admin_currency_purchase_detail_v1')return purchases(s).find(d=>d.id===args.p_purchase_id)||null;
   if(['admin_dashboard_day_details','admin_dashboard_sales_day','admin_accounting_report'].includes(name))return report(s,args);
-  if(name==='admin_cashbox_summary_v2'){const cash=(s.report?.balances||[]).filter(x=>x.kind==='cash').reduce((n,x)=>n+Number(x.amount)*(x.currency==='USD'?s.fx_rate:1),0);return {cash_in:cash,cash_out:0,net:cash,balance:cash,entries:[]}}
+  if(name==='admin_cashbox_summary_v2'){const all=(s.report?.cash_entries||[]).map(x=>({...x,amount:Number(x.amount)*(x.currency==='USD'?s.fx_rate:1)}));const entries=all.filter(x=>(!args.p_start||x.created_at>=args.p_start)&&(!args.p_end||x.created_at<=args.p_end));const cash=(s.report?.balances||[]).filter(x=>x.kind==='cash').reduce((n,x)=>n+Number(x.amount)*(x.currency==='USD'?s.fx_rate:1),0);const cash_in=entries.reduce((n,x)=>n+Math.max(x.amount,0),0),cash_out=entries.reduce((n,x)=>n+Math.max(-x.amount,0),0);return {cash_in:all.length?cash_in:cash,cash_out,net:all.length?cash_in-cash_out:cash,balance:cash,entries}}
   if(name==='admin_currency_supplier_debt_list_v1')return (s.report?.balances||[]).filter(b=>b.kind==='supplier_debt').map(b=>({...syntheticSupplier,currency:b.currency,balance:b.amount,invoice_total:b.amount,paid_total:0,invoice_count:purchases(s).filter(d=>d.currency===b.currency).length,last_payment:null}));
   if(name==='admin_currency_supplier_ledger_v1'){const invoices=purchases(s).filter(d=>d.currency===args.p_currency);return {supplier:syntheticSupplier,summary:{currency:args.p_currency,balance:invoices.reduce((n,d)=>n+Number(d.total),0)},invoices,payments:[]}}
-  if(['admin_list_debtors','admin_search_debtors','admin_customer_profiles','admin_cashbox_count_history','admin_currency_supplier_debt_list_v1'].includes(name))return [];
+  if(['admin_list_debtors','admin_search_debtors','admin_debtor_ledger','admin_customer_profiles','admin_cashbox_count_history','admin_currency_supplier_debt_list_v1'].includes(name))return [];
   return null;
  });
- const reads=new Set(['admin_get_products','admin_get_products_page','admin_product_catalog_currency','admin_search_purchase_products_currency','admin_search_inventory_products','admin_search_pos_products_currency','admin_get_inventory','admin_products_count','admin_get_currency_settings','admin_cashbox_reconcile','admin_currency_supplier_ledger_v1','admin_resolve_product_barcode','admin_product_search_key_for_barcode','admin_get_product_barcodes','admin_pos_stock_unavailable_reason','admin_smart_summary','admin_inventory_count_items','admin_reorder_recommendations','admin_latest_inventory_count_result','admin_inventory_count_sales_summary','admin_inventory_count_result','admin_list_suppliers','admin_list_sales','admin_list_sale_items','admin_return_list','admin_supplier_return_options','get_admin_orders','admin_list_purchases_currency_v1','admin_currency_purchase_detail_v1','admin_dashboard_day_details','admin_dashboard_sales_day','admin_accounting_report','admin_cashbox_summary_v2','admin_list_debtors','admin_search_debtors','admin_customer_profiles','admin_cashbox_count_history','admin_currency_supplier_debt_list_v1','admin_currency_supplier_ledger_v1']);
+ const reads=new Set(['admin_get_products','admin_get_products_page','admin_product_catalog_currency','admin_search_purchase_products_currency','admin_search_inventory_products','admin_search_pos_products_currency','admin_get_inventory','admin_products_count','admin_get_currency_settings','admin_cashbox_reconcile','admin_currency_supplier_ledger_v1','admin_resolve_product_barcode','admin_product_search_key_for_barcode','admin_get_product_barcodes','admin_pos_stock_unavailable_reason','admin_smart_summary','admin_inventory_count_items','admin_reorder_recommendations','admin_latest_inventory_count_result','admin_inventory_count_sales_summary','admin_inventory_count_result','admin_list_suppliers','admin_list_sales','admin_list_sale_items','admin_return_list','admin_supplier_return_options','get_admin_orders','admin_list_purchases_currency_v1','admin_currency_purchase_detail_v1','admin_dashboard_day_details','admin_dashboard_sales_day','admin_accounting_report','admin_cashbox_summary_v2','admin_list_debtors','admin_search_debtors','admin_debtor_ledger','admin_customer_profiles','admin_cashbox_count_history','admin_currency_supplier_debt_list_v1','admin_currency_supplier_ledger_v1']);
  const finance=new Set(['admin_accounting_report','admin_dashboard_day_details','admin_dashboard_sales_day','admin_cashbox_summary_v2','admin_cashbox_count_history','admin_currency_supplier_debt_list_v1','admin_currency_supplier_ledger_v1']);
  async function write(name,args){
   if(!['employee','system_admin','system_owner'].includes(getRole()))return denied();
   const execute=privileged(getRole());
   const command=execute?'qa_manager_execute_workspace':'qa_submit_workspace_bundle';
   const response=r=>r.error?r:ok({qa_pending:!execute,qa_executed:execute,request_id:r.data});
+  if(name==='admin_create_debtor')return dailyCall('qa_create_debtor',{p_name:args.p_name,p_phone:args.p_phone||null,p_address:args.p_address||null,p_notes:args.p_notes||null});
+  if(name==='admin_record_debtor_payment')return dailyCall('qa_record_debtor_payment',{p_debtor_id:args.p_debtor_id,p_amount:args.p_amount,p_notes:args.p_notes||null,p_payment_method:args.p_payment_method});
   if(name==='admin_save_product_with_barcodes'){
    if(getRole()==='employee'&&args.p_product_id)return denied();
    const r=await dailyCall('qa_save_workspace_product',{p_product_id:args.p_product_id||null,p_payload:args.p_payload,p_barcodes:args.p_barcodes||[]});return r.error?r:ok({...args.p_payload,id:r.data,barcode:args.p_payload?.barcode||'QA-'+r.data,active:true,customer_visible:false});
@@ -146,6 +149,7 @@ export function createQaWorkspaceClient(raw,{url,getRole,getIdentity=()=>null,is
   if(prop==='from')return name=>{
    const role=getRole();if(isRedacted())return query(async()=>ok([]));if(url!==ISOLATED_QA_PROJECT_URL)return role&&!privileged(role)?query(async()=>denied()):target.from(name);
    if(!role)return target.from(name);
+   if(name==='audit_logs')return query(()=>privileged(getRole())?scopedRead('qa_security_audit',{p_limit:150}):Promise.resolve(denied()));
    return query(()=>role==='technical_support'?Promise.resolve(denied()):view(s=>{
     if(name==='products')return products(s);if(name==='batches')return batches(s);if(name==='sale_items')return docs(s,'sale');
     if(['orders','prescriptions','medicine_requests','offers','audit_logs','pos_shortcut_preferences'].includes(name))return [];

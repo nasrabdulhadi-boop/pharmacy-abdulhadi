@@ -1,7 +1,7 @@
 import {hasCapability} from './systemAccessPolicy.js';
 export const MASKED_VALUE='••••';
 export const ROLE_NAMES={system_owner:'مدير النظام',system_admin:'مدير النظام',employee:'موظف',technical_support:'الدعم الفني'};
-const employeeSections=new Set(['dashboard','pos','pharmacyProducts','inventory','smart','purchases','suppliers','orders','returns']);
+const employeeSections=new Set(['dashboard','pos','pharmacyProducts','inventory','smart','purchases','suppliers','orders','returns','debtors']);
 export function workspaceSectionAllowed(role,section){
  if(['system_owner','system_admin'].includes(role))return true;
  if(role==='employee')return employeeSections.has(section);
@@ -11,7 +11,7 @@ export function workspaceCanReadMoney(role){return hasCapability(role,'finance.r
 export function workspaceCanReadStock(role){return ['system_owner','system_admin','employee'].includes(role)}
 export function workspaceCanWrite(role,operation){
  if(['system_owner','system_admin'].includes(role))return true;
- return role==='employee'&&['sale','purchase_draft','product_create','inventory_count','return_request','order_process'].includes(operation);
+ return role==='employee'&&['sale','purchase_draft','product_create','debtor_create','debtor_payment','inventory_count','return_request','order_process'].includes(operation);
 }
 
 export function workspaceOperationRequiresApproval(role,operation){return role==='employee'&&['inventory_count','return_request','order_process','price_change','stock_adjustment'].includes(operation)}

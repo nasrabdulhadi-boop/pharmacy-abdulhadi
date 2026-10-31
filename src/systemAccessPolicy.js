@@ -11,7 +11,7 @@ export const CAPABILITIES = Object.freeze([
  'pharmacy.write_operations',
  'finance.read',
  'finance.write',
- 'employee.product_create','employee.pos_sale','employee.catalog_read','employee.inventory_read','employee.inventory_count_submit','employee.purchase_draft_create','employee.order_process','employee.return_request_create','employee.supplier_operational_read',
+ 'employee.debtor_create','employee.debtor_read','employee.debtor_payment','employee.product_create','employee.pos_sale','employee.catalog_read','employee.inventory_read','employee.inventory_count_submit','employee.purchase_draft_create','employee.order_process','employee.return_request_create','employee.supplier_operational_read',
  'employee.price_change','employee.invoice_delete','employee.finance_manage','employee.user_manage'
 ]);
 const permissions = {
@@ -22,7 +22,7 @@ const permissions = {
   'finance.read','finance.write'
  ],
  technical_support: ['system.view_technical_health','system.view_sanitized_diagnostics'],
- employee: ['employee.product_create','employee.pos_sale','employee.catalog_read','employee.inventory_read','employee.inventory_count_submit','employee.purchase_draft_create','employee.order_process','employee.return_request_create','employee.supplier_operational_read']
+ employee: ['employee.debtor_create','employee.debtor_read','employee.debtor_payment','employee.product_create','employee.pos_sale','employee.catalog_read','employee.inventory_read','employee.inventory_count_submit','employee.purchase_draft_create','employee.order_process','employee.return_request_create','employee.supplier_operational_read']
 };
 export const ROLE_CAPABILITIES = Object.freeze(Object.fromEntries(
  Object.entries(permissions).map(([role,caps])=>[role,Object.freeze([...caps])])

@@ -1,0 +1,262 @@
+{
+  "mode": "rolled-back database tests with synthetic Auth users and claims; not HTTP/browser",
+  "passed": 64,
+  "results": [
+    {
+      "name": "no direct API access to debtors",
+      "passed": true
+    },
+    {
+      "name": "no direct API access to debtor_entries",
+      "passed": true
+    },
+    {
+      "name": "no direct API access to debtor_cash_receipts",
+      "passed": true
+    },
+    {
+      "name": "no direct API access to audit_events",
+      "passed": true
+    },
+    {
+      "name": "private audit writer is not callable",
+      "passed": true
+    },
+    {
+      "name": "support cannot create debtors",
+      "passed": true
+    },
+    {
+      "name": "support cannot read debtor accounts",
+      "passed": true
+    },
+    {
+      "name": "support cannot read a ledger",
+      "passed": true
+    },
+    {
+      "name": "support cannot record payments",
+      "passed": true
+    },
+    {
+      "name": "support cannot read security events",
+      "passed": true
+    },
+    {
+      "name": "unknown cannot create debtors",
+      "passed": true
+    },
+    {
+      "name": "unknown cannot read debtor accounts",
+      "passed": true
+    },
+    {
+      "name": "unknown cannot read a ledger",
+      "passed": true
+    },
+    {
+      "name": "unknown cannot record payments",
+      "passed": true
+    },
+    {
+      "name": "unknown cannot read security events",
+      "passed": true
+    },
+    {
+      "name": "anonymous cannot create debtors",
+      "passed": true
+    },
+    {
+      "name": "anonymous cannot read debtor accounts",
+      "passed": true
+    },
+    {
+      "name": "anonymous cannot read a ledger",
+      "passed": true
+    },
+    {
+      "name": "anonymous cannot record payments",
+      "passed": true
+    },
+    {
+      "name": "anonymous cannot read security events",
+      "passed": true
+    },
+    {
+      "name": "employee creates debtor directly",
+      "passed": true
+    },
+    {
+      "name": "create retry returns same debtor",
+      "passed": true
+    },
+    {
+      "name": "duplicate debtor is not created",
+      "passed": true
+    },
+    {
+      "name": "changed payload cannot replay creation key",
+      "passed": true
+    },
+    {
+      "name": "new debtor starts at zero balance",
+      "passed": true
+    },
+    {
+      "name": "zero-balance account cannot be overpaid",
+      "passed": true
+    },
+    {
+      "name": "creation is logged with actual actor",
+      "passed": true
+    },
+    {
+      "name": "employee can list debtor balance",
+      "passed": true
+    },
+    {
+      "name": "employee can open detailed account",
+      "passed": true
+    },
+    {
+      "name": "cash payment reduces debt to 70",
+      "passed": true
+    },
+    {
+      "name": "cash receipt linked to same payment",
+      "passed": true
+    },
+    {
+      "name": "payment replay returns same entry",
+      "passed": true
+    },
+    {
+      "name": "payment replay does not deduct twice",
+      "passed": true
+    },
+    {
+      "name": "changed payment cannot reuse key",
+      "passed": true
+    },
+    {
+      "name": "invalid payment rejected: 0",
+      "passed": true
+    },
+    {
+      "name": "invalid payment rejected: -1",
+      "passed": true
+    },
+    {
+      "name": "invalid payment rejected: NaN",
+      "passed": true
+    },
+    {
+      "name": "invalid payment rejected: 100000001",
+      "passed": true
+    },
+    {
+      "name": "invalid payment rejected: 0.00001",
+      "passed": true
+    },
+    {
+      "name": "noncash payment reduces debt without cash receipt",
+      "passed": true
+    },
+    {
+      "name": "cash failure aborts payment",
+      "passed": true
+    },
+    {
+      "name": "cash failure leaves debt entries unchanged",
+      "passed": true
+    },
+    {
+      "name": "cash failure leaves receipts unchanged",
+      "passed": true
+    },
+    {
+      "name": "rolled-back payment has no false success audit",
+      "passed": true
+    },
+    {
+      "name": "audit failure blocks an unaudited payment",
+      "passed": true
+    },
+    {
+      "name": "audit failure rolls back financial mutation",
+      "passed": true
+    },
+    {
+      "name": "payment greater than remaining debt rejected",
+      "passed": true
+    },
+    {
+      "name": "full payment closes balance exactly",
+      "passed": true
+    },
+    {
+      "name": "ledger contains server running balances",
+      "passed": true
+    },
+    {
+      "name": "payment audit identifies employee and amount",
+      "passed": true
+    },
+    {
+      "name": "employee cannot read security logs",
+      "passed": true
+    },
+    {
+      "name": "snapshot does not expose audit or global financial report",
+      "passed": true
+    },
+    {
+      "name": "navigation provenance cannot masquerade as server mutation",
+      "passed": true
+    },
+    {
+      "name": "arbitrary client audit labels rejected",
+      "passed": true
+    },
+    {
+      "name": "cash report increases by cash collections only",
+      "passed": true
+    },
+    {
+      "name": "debt collections never inflate sales profit",
+      "passed": true
+    },
+    {
+      "name": "cashbox shows debtor collection entry",
+      "passed": true
+    },
+    {
+      "name": "manager can view audit trail",
+      "passed": true
+    },
+    {
+      "name": "product creation is audited",
+      "passed": true
+    },
+    {
+      "name": "purchase and inventory addition are audited",
+      "passed": true
+    },
+    {
+      "name": "sale action and stock movement are audited",
+      "passed": true
+    },
+    {
+      "name": "pending employee request preserves submitted quantity in audit",
+      "passed": true
+    },
+    {
+      "name": "manager approval is attributed to manager",
+      "passed": true
+    },
+    {
+      "name": "support remains sanitized",
+      "passed": true
+    }
+  ]
+}
