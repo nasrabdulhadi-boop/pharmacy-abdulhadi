@@ -93,6 +93,7 @@ export function createQaWorkspaceClient(raw,{url,getRole,getIdentity=()=>null,is
    const r=await raw.rpc(command,{p_operation:'inventory_count',p_payloads:draft.items.map(x=>({product_id:x.product_id,quantity:x.actual_quantity,expected_quantity:x.expected_quantity}))});if(!r.error)counts.delete(args.p_count_id);return response(r);
   }
   if(name==='complete_sale_accounting_currency'){
+   if(!Number.isFinite(Number(args.p_discount??0))||Number(args.p_discount??0)!==0)return {data:null,error:{code:'QA_PENDING',message:'خصم فاتورة البيع غير مفعّل في QA؛ لم يُحفظ أي جزء من الفاتورة.'}};
    if(args.p_payment_method!=='cash'||args.p_debtor_id)return {data:null,error:{code:'QA_PENDING',message:'البيع الآجل غير مفعّل في QA؛ لم يتم حفظ أي جزء من الفاتورة.'}};
    const payloads=(args.p_items||[]).map(i=>({product_id:i.product_id,quantity:i.quantity}));
    const r=await raw.rpc(command,{p_operation:'sale',p_payloads:payloads});return response(r);
