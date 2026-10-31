@@ -11,7 +11,9 @@ export function createRecoveryFlow(initial='idle'){
  const set=next=>{state=next;for(const fn of listeners)fn(state)};
  return {getState:()=>state,subscribe(fn){listeners.add(fn);return()=>listeners.delete(fn)},
   onAuthEvent(event,session){if(event==='PASSWORD_RECOVERY'&&session?.user)set('ready');else if(event==='SIGNED_OUT'&&state==='ready')set('invalid')},
-  initialized(){if(state==='pending')set('invalid')},restart(){set('invalid')},reset(){set('idle')}};
+  // Auth SDK queues PASSWORD_RECOVERY after initialization, on the next event-loop turn.
+  // getSession() finishing first is not evidence of an expired link.
+  initialized(){},timeout(){if(state==='pending')set('failed')},restart(){set('invalid')},reset(){set('idle')}};
 }
 export async function saveRecoveredPassword({auth,password,confirmation,enabled,recoveryState}){
  if(!enabled||recoveryState!=='ready')return {ok:false,message:'رابط الاسترداد غير صالح. اطلب رابطاً جديداً.'};

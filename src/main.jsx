@@ -23,7 +23,7 @@ import {makeTechnicalHealthSnapshot,summarizeTechnicalHealth} from './systemAdmi
 import {getBackupCenterStatus} from './systemBackupPolicy.js';
 import {verifiedSystemRole,canViewSystemAdminSection} from './systemAdminRoleGate.js';
 import {ADMIN_READINESS,readinessSummary} from './systemAdminReadiness.js';
-import {requestStagingPasswordRecovery,recoveryRequestError} from './systemAdminAccountRecovery.js';
+import {requestStagingPasswordRecovery,recoveryRequestError,verifyStagingRecoveryCode} from './systemAdminAccountRecovery.js';
 import {recoveryCallbackState,createRecoveryFlow} from './passwordRecoveryFlow.js';
 import RecoveryPasswordForm from './RecoveryPasswordForm.jsx';
 import {makeBackupReadinessReport} from './systemAdminBackupManifest.js';
@@ -1314,15 +1314,21 @@ function Security(){const [logs,setLogs]=useState([]),[err,setErr]=useState(''),
 function Login({initialRecovery=false,initialError='',onAuthenticated}={}){
  const [email,setEmail]=useState(''),[password,setPassword]=useState(''),[err,setErr]=useState(initialError);
  const [recovery,setRecovery]=useState(initialRecovery),[busy,setBusy]=useState(false),[message,setMessage]=useState('');
+ const [codeMode,setCodeMode]=useState(false),[recoveryCode,setRecoveryCode]=useState('');
  const submit=async e=>{
   e.preventDefault();if(busy)return;setErr('');setMessage('');setBusy(true);
   try{
    if(recovery){
     if(!authMutationPreviewEnabled)throw new Error('preview_auth_disabled');
+    if(codeMode){
+     const result=await verifyStagingRecoveryCode({auth:rawSupabase.auth,email,token:recoveryCode,environment:recoveryEnvironment});
+     if(!result.ok)setErr(result.message);else{setRecoveryCode('');setMessage(result.message)}
+     return;
+    }
     const redirectTo=window.location.origin+'/#admin';
     const {error}=await supabase.auth.resetPasswordForEmail(email.trim(),{redirectTo});
     if(error)throw error;
-    setMessage('إذا كان البريد مسجلاً وتسمح إعدادات البريد بذلك، ستصلك رسالة تحتوي رابط الاسترداد. افحص البريد غير المرغوب أيضاً.');
+    setMessage('إذا كان البريد مسجلاً، ستصلك رسالة الاسترداد. إن احتوت رمزاً فاكتبه هنا؛ وإن احتوت رابطاً فقط، يلزم تحديث قالب رسالة QA.');setCodeMode(true);
    }else{
     const {error}=await supabase.auth.signInWithPassword({email:email.trim(),password});
     if(error)throw error;
@@ -1338,18 +1344,20 @@ function Login({initialRecovery=false,initialError='',onAuthenticated}={}){
   <h1>صيدلية عبدالهادي</h1><p>{recovery?'استرداد حساب الإدارة':'تسجيل دخول الإدارة'}</p>
   <p role="status" style={{fontSize:12,opacity:.8}}>اتصال المصادقة: {url?.includes('vpjxdsprfcpqclnhbeoh.supabase.co')?'QA / vpjxdsprfcpqclnhbeoh':'غير مطابق لمشروع QA — لا تدخل بيانات الحساب التجريبي'}</p>
   <input type="email" placeholder="البريد الإلكتروني" autoComplete="email" value={email} onChange={e=>setEmail(e.target.value)} required/>
+  {recovery&&codeMode&&<label>رمز الاسترداد من البريد<input type="text" inputMode="numeric" autoComplete="one-time-code" maxLength={10} value={recoveryCode} onChange={e=>setRecoveryCode(e.target.value)} required disabled={busy}/></label>}
   {!recovery&&<input type="password" placeholder="كلمة المرور" autoComplete="current-password" value={password} onChange={e=>setPassword(e.target.value)} required/>}
-  <button className="primary full" disabled={busy||(recovery&&!authMutationPreviewEnabled)}>{busy?'يرجى الانتظار…':recovery?'إرسال رابط الاسترداد':<><LogIn/> دخول</>}</button>
+  <button className="primary full" disabled={busy||(recovery&&!authMutationPreviewEnabled)}>{busy?'يرجى الانتظار…':recovery?(codeMode?'تأكيد رمز الاسترداد':'إرسال رسالة الاسترداد'):<><LogIn/> دخول</>}</button>
   {recovery&&!authMutationPreviewEnabled&&<div role="status">إرسال رسائل الاسترداد معطّل في المعاينة لحماية حساب الإنتاج.</div>}
+  {recovery&&<button type="button" disabled={busy} onClick={()=>{setCodeMode(x=>!x);setRecoveryCode('');setErr('');setMessage('')}}>{codeMode?'طلب رسالة جديدة':'لدي رمز استرداد من البريد'}</button>}
   {message&&<div role="status" style={{marginTop:12}}>{message}</div>}
   {err&&<div className="error" role="alert">{err}</div>}
-  <button type="button" style={{marginTop:12}} onClick={()=>{setRecovery(x=>!x);setErr('');setMessage('')}}>{recovery?'العودة إلى تسجيل الدخول':'نسيت كلمة المرور؟'}</button>
+  <button type="button" style={{marginTop:12}} onClick={()=>{setRecovery(x=>!x);setCodeMode(false);setRecoveryCode('');setErr('');setMessage('')}}>{recovery?'العودة إلى تسجيل الدخول':'نسيت كلمة المرور؟'}</button>
  </form></div>
 }
 // If a session exists but is not admin, show login instead of exposing admin.
 const Root=()=>{
  const [recoveryState,setRecoveryState]=useState(()=>recoveryFlow.getState());
- useEffect(()=>{const unsubscribe=recoveryFlow.subscribe(setRecoveryState);setRecoveryState(recoveryFlow.getState());return unsubscribe},[]);
+ useEffect(()=>{const unsubscribe=recoveryFlow.subscribe(setRecoveryState);setRecoveryState(recoveryFlow.getState());const timer=setTimeout(()=>recoveryFlow.timeout(),15000);return()=>{unsubscribe();clearTimeout(timer)}},[]);
  const [s,setS]=useState(null),[checked,setChecked]=useState(false),[serverRole,setServerRole]=useState(null),[roleChecked,setRoleChecked]=useState(false);
  useEffect(()=>{let alive=true;(async()=>{if(!supabase){if(alive)setChecked(true);return}const {data}=await supabase.auth.getSession();let ss=data?.session||null;if(ss){const role=ss.user?.app_metadata?.role;if(role!=='admin'&&['system_owner','system_admin'].includes(ss.user?.app_metadata?.system_role)){try{const r=await supabase.auth.refreshSession();ss=r.data?.session||ss}catch{}}}if(alive){setS(ss);setChecked(true);recoveryFlow.initialized()}})();if(supabase){const {data:{subscription}}=supabase.auth.onAuthStateChange((_e,ss)=>setS(ss));return()=>{alive=false;subscription.unsubscribe()}}return()=>{alive=false}},[]);
  useEffect(()=>{let alive=true;setRoleChecked(false);setServerRole(null);if(!isolatedQaWorkspace||!s){setRoleChecked(true);return}
@@ -1357,6 +1365,7 @@ const Root=()=>{
   check();const timer=setInterval(check,30000);window.addEventListener('focus',check);return()=>{alive=false;clearInterval(timer);window.removeEventListener('focus',check)};
  },[s?.user?.id,s?.access_token]);
  const finishRecovery=()=>{window.history.replaceState(null,'',window.location.pathname+window.location.search+'#admin');recoveryFlow.reset()};
+ if(recoveryEnabled&&recoveryState==='failed')return <Login initialRecovery initialError="تعذر تأكيد جلسة الرابط. استخدم رمز الاسترداد من البريد، أو اطلب رسالة جديدة." onAuthenticated={finishRecovery}/>;
  if(recoveryEnabled&&recoveryState==='invalid')return <Login initialRecovery initialError="رابط الاسترداد منتهي الصلاحية أو استُخدم سابقاً. أدخل بريدك واطلب رابطاً جديداً، ثم افتح أحدث رسالة مرة واحدة." onAuthenticated={finishRecovery}/>;
  if(recoveryEnabled&&recoveryState==='ready')return <RecoveryPasswordForm auth={rawSupabase.auth} enabled={recoveryEnabled} recoveryState={recoveryState} onDone={finishRecovery} onRestart={()=>{window.history.replaceState(null,'',window.location.pathname+'#admin');recoveryFlow.restart()}}/>;
  if(!checked||recoveryState==='pending'||(s&&isolatedQaWorkspace&&!roleChecked))return <Splash/>;

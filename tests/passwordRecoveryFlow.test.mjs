@@ -11,8 +11,8 @@ test('expired callbacks in fragment or query open recovery, without reflecting p
 test('recovery intent alone never enables password updates; a verified SDK event is required',()=>{
  const flow=createRecoveryFlow(recoveryCallbackState({hash:'#type=recovery&access_token=secret'},true));
  assert.equal(flow.getState(),'pending');flow.onAuthEvent('SIGNED_IN',{user:{id:'test'}});
- flow.initialized();assert.equal(flow.getState(),'invalid');
- flow.onAuthEvent('PASSWORD_RECOVERY',null);assert.equal(flow.getState(),'invalid');
+ flow.initialized();assert.equal(flow.getState(),'pending');flow.timeout();assert.equal(flow.getState(),'failed');
+ flow.onAuthEvent('PASSWORD_RECOVERY',null);assert.equal(flow.getState(),'failed');
  flow.onAuthEvent('PASSWORD_RECOVERY',{user:{id:'test'}});assert.equal(flow.getState(),'ready');
  flow.initialized();assert.equal(flow.getState(),'ready');
  flow.onAuthEvent('SIGNED_OUT',null);assert.equal(flow.getState(),'invalid');
