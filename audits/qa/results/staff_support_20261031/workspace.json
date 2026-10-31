@@ -1,0 +1,92 @@
+{
+  "results": [
+    {
+      "name": "support snapshot contains only role and sanitized health",
+      "passed": true
+    },
+    {
+      "name": "manager receives financial fields for QA",
+      "passed": true
+    },
+    {
+      "name": "employee snapshot omits costs and aggregate financial report",
+      "passed": true
+    },
+    {
+      "name": "unprivileged snapshot denied",
+      "passed": true
+    },
+    {
+      "name": "anonymous snapshot denied",
+      "passed": true
+    },
+    {
+      "name": "multi-line pending invoice leaves stock unchanged",
+      "passed": true
+    },
+    {
+      "name": "support cannot approve invoice",
+      "passed": true
+    },
+    {
+      "name": "employee cannot approve invoice",
+      "passed": true
+    },
+    {
+      "name": "manager approves whole invoice",
+      "passed": true
+    },
+    {
+      "name": "all invoice lines deducted exactly once",
+      "passed": true
+    },
+    {
+      "name": "POS settles mixed USD/SYP products in SYP using server prices and FX",
+      "passed": true
+    },
+    {
+      "name": "whole invoice approval is idempotent",
+      "passed": true
+    },
+    {
+      "name": "one invalid invoice line rolls back every line",
+      "passed": true
+    },
+    {
+      "name": "failed invoice leaves every stock quantity unchanged",
+      "passed": true
+    },
+    {
+      "name": "settled sale document records SYP currency",
+      "passed": true
+    },
+    {
+      "name": "return of converted sale is accepted",
+      "passed": true
+    },
+    {
+      "name": "refund keeps original SYP settlement and amount",
+      "passed": true
+    },
+    {
+      "name": "support cannot submit invoice bundle",
+      "passed": true
+    },
+    {
+      "name": "purchase currency mismatch rejected on server",
+      "passed": true
+    },
+    {
+      "name": "client price injection rejected",
+      "passed": true
+    },
+    {
+      "name": "stale count rolls back all products",
+      "passed": true
+    },
+    {
+      "name": "stale count has no partial stock change",
+      "passed": true
+    }
+  ]
+}

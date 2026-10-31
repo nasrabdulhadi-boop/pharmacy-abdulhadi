@@ -1,0 +1,74 @@
+{
+  "project": "vpjxdsprfcpqclnhbeoh",
+  "timestamp": "2026-10-31T15:30:47.256Z",
+  "results": [
+    {
+      "name": "original employee catalog omits purchase prices",
+      "passed": true
+    },
+    {
+      "name": "original inventory omits batch costs",
+      "passed": true
+    },
+    {
+      "name": "support adapter denies admin_get_products_page",
+      "passed": true
+    },
+    {
+      "name": "support adapter denies admin_get_inventory",
+      "passed": true
+    },
+    {
+      "name": "support adapter denies admin_accounting_report",
+      "passed": true
+    },
+    {
+      "name": "support adapter denies admin_cashbox_summary_v2",
+      "passed": true
+    },
+    {
+      "name": "server support response contains only role and health",
+      "passed": true
+    },
+    {
+      "name": "server denies manager execution bypass by support",
+      "passed": true
+    },
+    {
+      "name": "original POS adapter queues employee sale",
+      "passed": true
+    },
+    {
+      "name": "pending original POS sale does not change stock",
+      "passed": true
+    },
+    {
+      "name": "new employee tracking lists pending own request",
+      "passed": true
+    },
+    {
+      "name": "tracking shows manager rejection",
+      "passed": true
+    },
+    {
+      "name": "rejected original POS sale leaves stock unchanged",
+      "passed": true
+    },
+    {
+      "name": "unsupported discount cannot silently change total",
+      "passed": true
+    },
+    {
+      "name": "unsupported credit sale fails before queuing",
+      "passed": true
+    },
+    {
+      "name": "manager queue includes employee request",
+      "passed": true
+    },
+    {
+      "name": "request tracking never exposes payload fields",
+      "passed": true
+    }
+  ]
+}

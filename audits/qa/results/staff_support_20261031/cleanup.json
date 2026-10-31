@@ -1,0 +1,20 @@
+{
+  "results": [
+    {
+      "name": "manager revoked test session cannot read workspace",
+      "passed": true
+    },
+    {
+      "name": "employee revoked test session cannot read workspace",
+      "passed": true
+    },
+    {
+      "name": "support revoked test session cannot read workspace",
+      "passed": true
+    },
+    {
+      "name": "unprivileged revoked test session cannot read workspace",
+      "passed": true
+    }
+  ]
+}
