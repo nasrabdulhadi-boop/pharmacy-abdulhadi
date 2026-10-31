@@ -31,3 +31,14 @@ The user must enter the received OTP and choose their own password. No successfu
 - Shared workspace React SSR contract: 63 role/section cases.
 - QA staging build: passes; existing bundle-size warning remains.
 - Browser inspection verifies the deployed QA recovery-code input; actual email-to-password end-to-end test remains pending template configuration and user entry.
+
+## Confirmed continuation — 2026-10-31
+
+- User confirmed creating and saving the Gmail application password in QA SMTP.
+- One recovery request to QA returned HTTP 200; the user then confirmed the application opened and everything worked after the password-setting instructions. This is user-reported recovery/login success, not an independently observed browser trace. No password or OTP was collected.
+- The OTP-only template was already saved through the dashboard. Earlier instructions above to apply the template are superseded.
+- Verified remote branch and latest ready Preview both remained at d71e344 before these changes.
+- QA sale adapter now explicitly rejects unsupported invoice discounts (including malformed values) before sending any operation; previously a supplied discount could silently disappear. This does not enable discounts in the QA backend.
+- Updated obsolete browser acceptance expectations to the shared original Admin shell. Interactive rerun remains pending: prior temporary account/session files are absent. No personal account password was requested or changed.
+- Validation: 98 passed, zero failed, one skipped; 63 section/role render checks passed; build passed with existing chunk-size warning.
+- No production database, main branch, or original administrator was modified.
