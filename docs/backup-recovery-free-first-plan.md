@@ -22,3 +22,17 @@
 
 ## Admin center UI
 Until a real secure backup service exists, show 'not configured' and an explanation, not a misleading 'backup now' button.
+
+## Execution prerequisites checked in continuation
+
+No full backup or restore has been performed in this continuation. `psql`, `pg_dump` and Docker were unavailable, and no protected database connection was configured. SQL access through the connector does not replace a consistent database dump.
+
+Use the existing QA project first; do not buy a plan, enable PITR, or create a billed branch. Install compatible PostgreSQL/Supabase CLI tooling on a trusted host and discover its actual `db dump --help` flags before execution. Supply credentials through a protected local mechanism, never chat, Git, frontend configuration or command logs.
+
+The official CLI procedure exports roles, schema and data separately (`--role-only`, ordinary schema dump, and `--data-only --use-copy`). Take exports during a controlled QA write pause so separately exported files cannot disagree. Include custom application schemas explicitly and verify the actual dump contents; default internal-schema exclusions must be reviewed for Auth/Storage recovery needs. Retain encrypted off-site copies with hashes and a manifest identifying source project, versions, scope and timestamp.
+
+Restore only into a disposable compatible local Supabase/Postgres target, with error-on-failure and transaction handling. Do not run any restore command against either hosted project. Check row counts and content hashes, foreign keys, supplier USD/SYP separation, cash/profit separation, debtor balances, stock quantities, role grants, RLS, trigger behavior and Auth recovery before accepting the result. Test a corrupt/truncated dump is rejected. Record actual elapsed recovery time rather than estimating success.
+
+Storage database metadata does not contain file bytes: inventory and copy restricted objects separately, verify their hashes and access policies, and never expose prescription files to support. SMTP, Auth redirects/providers, API keys and deployment secrets need separately secured configuration recovery.
+
+Official references reviewed: https://supabase.com/docs/guides/platform/backups and https://supabase.com/docs/guides/self-hosting/restore-from-platform . The admin-center backup gate must stay disabled until a real artifact and an isolated restore have passed.

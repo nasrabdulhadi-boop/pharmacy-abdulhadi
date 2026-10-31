@@ -1,4 +1,4 @@
--- QA only; inject synthetic Auth session claims at TEST_CLAIMS. Everything rolls back.
+-- QA only. Creates transaction-only synthetic users/sessions; all changes roll back.
 begin;
 create temp table qa_daily_test_results(name text,passed boolean) on commit drop;
 create function pg_temp.qa_check(label text,condition boolean) returns void language plpgsql as $$begin
@@ -6,8 +6,14 @@ create function pg_temp.qa_check(label text,condition boolean) returns void lang
  insert into qa_daily_test_results values(label,true);
 end $$;
 do $$
-declare claims jsonb:='{}'::jsonb /* TEST_CLAIMS */; label text; denied boolean; card uuid:=gen_random_uuid(); sale_key uuid:=gen_random_uuid(); purchase_key uuid:=gen_random_uuid(); request uuid; repeated uuid; count_request uuid; return_request uuid; doc uuid; body jsonb; header jsonb; sale_lines jsonb; before_report jsonb; after_report jsonb; before_count int; current_stock numeric; row record;
+declare claims jsonb:='{}'::jsonb; fixture_label text; fixture_role text; fixture_user uuid; fixture_session uuid; label text; denied boolean; card uuid:=gen_random_uuid(); sale_key uuid:=gen_random_uuid(); purchase_key uuid:=gen_random_uuid(); request uuid; repeated uuid; count_request uuid; return_request uuid; doc uuid; body jsonb; header jsonb; sale_lines jsonb; before_report jsonb; after_report jsonb; before_count int; current_stock numeric; row record;
 begin
+ for fixture_label,fixture_role in select * from (values ('employee','employee'),('manager','system_admin'),('support','technical_support'),('unprivileged',null::text)) f(label,role_name) loop
+ fixture_user:=gen_random_uuid(); fixture_session:=gen_random_uuid();
+ insert into auth.users(id,aud,role,email,email_confirmed_at,raw_app_meta_data,raw_user_meta_data,created_at,updated_at) values(fixture_user,'authenticated','authenticated','qa-daily-'||fixture_user||'@example.invalid',now(),case when fixture_role is null then '{}'::jsonb else jsonb_build_object('system_role',fixture_role) end,'{}',now(),now());
+ insert into auth.sessions(id,user_id,aal,created_at,updated_at,not_after) values(fixture_session,fixture_user,'aal1',now(),now(),now()+interval '1 hour');
+ claims:=claims||jsonb_build_object(fixture_label,jsonb_build_object('sub',fixture_user,'session_id',fixture_session,'role','authenticated'));
+ end loop;
  perform pg_temp.qa_check('private execution helper is not API-callable',not has_function_privilege('authenticated','pharmacy_qa_private.apply_employee_daily_operation(uuid,boolean)','execute'));
  perform pg_temp.qa_check('anonymous cannot call daily RPC',not has_function_privilege('anon','public.qa_employee_execute_workspace(text,jsonb,text,uuid)','execute'));
  for label in select unnest(array['support','unprivileged','anonymous']) loop

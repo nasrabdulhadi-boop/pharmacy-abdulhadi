@@ -14,9 +14,21 @@ test('staging technical support cannot read privileged product RPC', {skip:!enab
  assert.equal(claims?.app_metadata?.system_role,'technical_support','Must use a real technical-support token, never admin');
  assert.notEqual(claims?.app_metadata?.role,'admin','Support token must not carry legacy admin access');
  assert.ok(typeof claims?.exp==='number'&&claims.exp>Date.now()/1000,'Support token must not be expired');
+ // A rejected/invalid JWT must not count as proof that support authorization works.
+ const headers={'apikey':key,'Authorization':`Bearer ${supportToken}`,'Content-Type':'application/json'};
+ const userResponse=await fetch(`${STAGING_URL}/auth/v1/user`,{headers,signal:AbortSignal.timeout(15000)});
+ assert.equal(userResponse.status,200,'A real, currently accepted QA Auth session is required');
+ const user=await userResponse.json();
+ assert.equal(user.id,claims.sub,'Auth must verify the same support identity');
+ assert.equal(user.app_metadata?.system_role,'technical_support','Auth must verify support metadata');
+ const roleResponse=await fetch(`${STAGING_URL}/rest/v1/rpc/qa_my_role`,{
+  method:'POST',headers,body:'{}',signal:AbortSignal.timeout(15000)
+ });
+ assert.equal(roleResponse.status,200,'Database role verification must succeed');
+ assert.equal(await roleResponse.json(),'technical_support','Database must accept the live support session');
  const response=await fetch(`${STAGING_URL}/rest/v1/rpc/admin_get_products_page`,{
   method:'POST',headers:{'apikey':key,'Authorization':`Bearer ${supportToken}`,'Content-Type':'application/json'},
-  body:JSON.stringify({p_limit:5,p_offset:0})
+  body:JSON.stringify({p_limit:5,p_offset:0}),signal:AbortSignal.timeout(15000)
  });
  const body=await response.text();
  assert.ok(response.status===401||response.status===403||(response.ok&&JSON.parse(body)?.length===0),
