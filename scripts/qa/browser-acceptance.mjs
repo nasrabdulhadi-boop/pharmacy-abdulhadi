@@ -10,9 +10,18 @@ try{
  for(const label of ['owner','manager','employee','support']){
   const user=users.find(u=>u.label===label);const context=await browser.newContext({ignoreHTTPSErrors:!!proxy,viewport:{width:label==='employee'?390:1440,height:1000}});const page=await context.newPage();const errors=[];
   const unexpected=[];
-  await context.route('**/*',route=>{
+  await context.route('**/*',async route=>{
    const host=new URL(route.request().url()).hostname;
    if(host==='fonts.googleapis.com')return route.fulfill({status:200,contentType:'text/css',body:''});
+   // Optional transport bridge for restricted test runners. This still calls real
+   // QA Auth/RPC endpoints, but does not verify browser TLS/CORS transport.
+   if(host==='vpjxdsprfcpqclnhbeoh.supabase.co'&&process.env.QA_NODE_NETWORK==='true'){
+    try{const request=route.request();const headers={...request.headers()};for(const k of ['host','content-length','connection','accept-encoding'])delete headers[k];
+     const r=await fetch(request.url(),{method:request.method(),headers,...(['GET','HEAD'].includes(request.method())?{}:{body:request.postData()}),signal:AbortSignal.timeout(30000)});
+     const responseHeaders=Object.fromEntries(r.headers);for(const k of ['content-length','content-encoding','transfer-encoding'])delete responseHeaders[k];
+     return route.fulfill({status:r.status,headers:responseHeaders,body:Buffer.from(await r.arrayBuffer())});
+    }catch{return route.abort();}
+   }
    if(['127.0.0.1','localhost','vpjxdsprfcpqclnhbeoh.supabase.co'].includes(host))return route.continue();
    unexpected.push(host);return route.abort();
   });
@@ -26,6 +35,23 @@ try{
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false,'Page must not overflow viewport');
   assert.deepEqual(errors,[]);assert.deepEqual(unexpected,[],'No production or external host may be contacted');results.push({name:label+' actual browser login and responsive shared workspace',passed:true});
   if(label==='support'){assert.equal(await page.getByText('سعر شراء العبوة').count(),0);assert.equal(await page.getByRole('heading',{name:'المخزون التجريبي القابل للبيع'}).count(),0)}
+  if(['owner','manager'].includes(label)){
+   await page.getByRole('button',{name:'مركز إدارة النظام',exact:true}).click();
+   await page.getByRole('button',{name:'الأدوار والصلاحيات',exact:true}).click();
+   const accounts=page.getByRole('region',{name:'إدارة حسابات QA'});
+   await accounts.getByText(user.email,{exact:true}).waitFor({timeout:30000});
+   const self=accounts.getByRole('row').filter({hasText:user.email});
+   assert.equal(await self.getByRole('button').isDisabled(),true,'Own account must be protected');
+   results.push({name:label+' account management loads and protects self',passed:true});
+   if(label==='owner'){
+    const employee=users.find(u=>u.label==='employee');const target=accounts.getByRole('row').filter({hasText:employee.email});
+    await target.getByRole('combobox').selectOption('technical_support');await target.getByRole('button').click();
+    await target.locator('td').nth(1).getByText('دعم فني',{exact:true}).waitFor({timeout:30000});
+    await target.getByRole('combobox').selectOption('employee');await target.getByRole('button').click();
+    await target.locator('td').nth(1).getByText('موظف',{exact:true}).waitFor({timeout:30000});
+    results.push({name:'owner changes disposable employee role and restores it through real QA RPC',passed:true});
+   }
+  }
   await page.screenshot({path:'/tmp/pharmacy-qa-'+label+'.png',fullPage:true});
   await context.close();
  }
