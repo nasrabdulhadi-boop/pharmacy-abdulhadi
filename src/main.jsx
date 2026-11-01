@@ -13,6 +13,7 @@ import './SYSTEM_ADMIN_WINDOW_POLISH.css';
 import './SYSTEM_ADMIN_REBUILD_V3.css';
 import QaOperationsWorkbench from './QaOperationsWorkbench.jsx';
 import QaEmployeeRequestStatus from './QaEmployeeRequestStatus.jsx';
+import QaAccountRoleManager from './QaAccountRoleManager.jsx';
 import {createQaWorkspaceClient} from './qaWorkspaceClient.js';
 import {workspaceSectionAllowed,workspaceCanReadMoney,workspaceCanReadStock,ROLE_NAMES,MASKED_VALUE} from './workspaceAccess.js';
 import {WorkspaceSectionFrame,WorkspaceOperationSurface} from './WorkspacePermissionViews.jsx';
@@ -413,6 +414,7 @@ function SystemAdministrationPreview(){
    {passwordMessage&&<div role={passwordError?'alert':'status'} style={{padding:10,borderRadius:8,border:'1px solid currentColor'}}>{passwordMessage}</div>}
   </form><div className="systemAdminRecovery"><h4>طلب استرداد كلمة المرور — نسخة اختبارية</h4><p>إرسال رابط استرداد إلى بريد حساب تجريبي فقط. لا يُفعّل على قاعدة الإنتاج، ويجب إعداد رابط العودة المسموح به في Supabase Auth.</p><label>البريد الإلكتروني<input type="email" autoComplete="email" value={recoveryEmail} onChange={e=>setRecoveryEmail(e.target.value)} placeholder="name@example.com" disabled={!authMutationPreviewEnabled||recoveryBusy}/></label><button type="button" disabled={!authMutationPreviewEnabled||recoveryBusy||!recoveryEmail} onClick={sendRecoveryEmail}>{recoveryBusy?'جارٍ الطلب…':'إرسال رابط الاسترداد التجريبي'}</button>{recoveryMessage&&<p role="status">{recoveryMessage}</p>}{!authMutationPreviewEnabled&&<p role="status">الاسترداد معطّل حتى تفعيل بيئة المصادقة التجريبية المعزولة.</p>}<p>تغيير البريد الإلكتروني وإنشاء حسابات جديدة ما زالا غير مفعّلين.</p></div></div>}
   {!restrictedPreview&&effectiveSection==='access'&&<div><h3>إدارة الهوية والصلاحيات — IAM</h3><p><b>مالك النظام:</b> الصلاحية العليا بعد اعتماد آلية استرداد آمنة.</p><p><b>مدير النظام:</b> صلاحيات إدارية مفوضة.</p><p><b>الدعم الفني:</b> تشخيص تقني محدود، بلا تعديل أو وصول لبيانات المرضى والعملاء والماليات.</p><p>لا يمكن إنشاء مستخدم دعم فني قبل اعتماد سياسات RLS واختبارها بحساب منفصل.</p>
+  <QaAccountRoleManager client={rawSupabase} projectUrl={url} actorId={sessionUser?.id} actorRole={verifiedRole}/>
   <h4>مصفوفة الصلاحيات المستهدفة (تصميم فقط)</h4>
   <div style={{overflowX:'auto'}}><table style={{width:'100%',textAlign:'right'}}><thead><tr><th>الصلاحية</th><th>المالك</th><th>المدير</th><th>الدعم الفني</th></tr></thead><tbody>{CAPABILITIES.map(cap=><tr key={cap}><td dir="ltr">{cap}</td>{['system_owner','system_admin','technical_support'].map(role=><td key={role} style={{fontWeight:600}}>{hasCapability(role,cap)?'مسموح':'ممنوع'}</td>)}</tr>)}</tbody></table></div>
   <p style={{opacity:.8}}>هذه المصفوفة مرجع للاختبارات فقط. لا تمنح أي صلاحية فعلية قبل تطبيق سياسات الخادم وقاعدة البيانات.</p></div>}

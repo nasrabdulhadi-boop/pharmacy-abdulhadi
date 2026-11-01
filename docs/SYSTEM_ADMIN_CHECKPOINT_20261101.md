@@ -10,4 +10,8 @@ Browser acceptance has not passed: earlier login attempts failed to fetch Auth t
 
 Remaining: connect and thoroughly test account management; complete owner protection/security requirements; real mailbox delivery and own-email change verification; full center localization; complete browser regression; hosted database backup plus separate Storage bytes and isolated full restore. The local PGlite drill uses QA application metadata and synthetic rows with a minimal Auth fixture; it is not a production/Supabase backup or proof of Auth/Storage recovery. Keep browser backup/restore disabled until an audited server path and hosted-compatible restore are verified. No paid service is authorized or required by this checkpoint.
 
+## Subsequent account-management integration
+
+Added QaAccountRoleManager to the access tab. The component refuses production URLs, support, employees and unknown roles; server RPCs remain the authorization boundary. Account switches invalidate pending reads/writes. UI protects self/owner rows and restricts manager choices. Applied the two reviewed account-management functions to QA only after the seven transactional assertions described above. Anonymous EXECUTE checks returned false for both functions. No existing account role was changed during installation. Current validation: 113 passed, zero failed, one credential-dependent smoke skipped; staging compilation passed. Interactive browser verification of this new UI remains pending. The UI source change is currently a local commit, not a verified deployed preview.
+
 Release remains blocked. Do not deploy to production based on this checkpoint.
