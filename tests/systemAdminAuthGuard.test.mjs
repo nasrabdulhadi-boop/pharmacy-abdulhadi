@@ -13,8 +13,8 @@ test('password change verifies current user and minimum length',()=>{
  assert.match(source,/newPassword\.length<12/);
  assert.match(source,/newPassword!==confirmPassword/);
  assert.match(source,/supabase\.auth\.getUser\(\)/);
- assert.match(source,/user\.id!==sessionUser\.id/);
- assert.match(source,/supabase\.auth\.updateUser\(\{password:newPassword\}\)/);
+ assert.match(source,/updateOwnQaPassword\(\{client:supabase/);
+ assert.match(source,/expectedUserId:sessionUser\.id/);
 });
 test('recovery delegates to Supabase Auth rather than custom token handling',()=>{
  assert.match(source,/supabase\.auth\.resetPasswordForEmail\(email\.trim\(\),\{redirectTo\}\)/);

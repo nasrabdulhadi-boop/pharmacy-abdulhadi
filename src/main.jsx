@@ -28,6 +28,7 @@ import {requestStagingPasswordRecovery,recoveryRequestError,verifyStagingRecover
 import {recoveryCallbackState,createRecoveryFlow} from './passwordRecoveryFlow.js';
 import RecoveryPasswordForm from './RecoveryPasswordForm.jsx';
 import {makeBackupReadinessReport} from './systemAdminBackupManifest.js';
+import {updateOwnQaPassword} from './qaAccountActions.js';
 import {assessStagingAuthorization,QA_AUTHORIZATION_FINDINGS} from './systemAdminSecurityAudit.js';
 
 const url=import.meta.env.VITE_SUPABASE_URL; const key=import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
@@ -361,17 +362,24 @@ function SystemAdministrationPreview(){
   if(newPassword!==confirmPassword){setPasswordError(true);setPasswordMessage('تأكيد كلمة المرور غير مطابق');return}
   setPasswordBusy(true);
   try{
-   const {data:{user},error:verifyError}=await supabase.auth.getUser();
-   if(verifyError||!user||user.id!==sessionUser.id)throw new Error('تعذر التحقق من الجلسة الحالية');
-   const {error}=await supabase.auth.updateUser({password:newPassword});
-   if(error)throw error;
+   await updateOwnQaPassword({client:supabase,previewEnabled:authMutationPreviewEnabled,projectUrl:url,password:newPassword,confirmation:confirmPassword,expectedUserId:sessionUser.id});
    setNewPassword('');setConfirmPassword('');
    setPasswordMessage('تم تحديث كلمة المرور. يُنصح بتسجيل الخروج ثم الدخول مجدداً.');
-  }catch(error){setPasswordError(true);setPasswordMessage(error?.message||'تعذر تغيير كلمة المرور. قد تتطلب العملية إعادة المصادقة.')}
+  }catch{setPasswordError(true);setPasswordMessage('تعذر تغيير كلمة المرور. تحقق من الجلسة ومتطلبات كلمة المرور، ثم حاول مجدداً.')}
   finally{setPasswordBusy(false)}
  };
  useEffect(()=>{let active=true;if(!supabase)return;supabase.auth.getUser().then(({data,error})=>{if(active){setSessionUser(!error?(data?.user||null):null);setAccountVerification(error?'unavailable':data?.user?'verified':'signed_out')}}).catch(()=>{if(active)setAccountVerification('unavailable')});return()=>{active=false}},[]);
  const verifiedRole=verifiedSystemRole(sessionUser);
+ const [liveHealth,setLiveHealth]=useState(null);
+ useEffect(()=>{let active=true;
+  if(!isolatedQaWorkspace||!['system_owner','system_admin','technical_support'].includes(verifiedRole)){setLiveHealth(null);return()=>{active=false};}
+  rawSupabase.rpc('qa_support_health').then(({data,error})=>{
+   if(!active)return;
+   const components={};if(!error&&Array.isArray(data)&&data.length){for(const row of data)if(['database','authentication'].includes(row.component))components[row.component]=row.status;components.api='healthy';}
+   setLiveHealth(makeTechnicalHealthSnapshot({components}));
+  }).catch(()=>{if(active)setLiveHealth(makeTechnicalHealthSnapshot())});
+  return()=>{active=false};
+ },[verifiedRole,sessionUser?.id]);
  const isSupportPreview=verifiedRole==='technical_support';
  const isUnverifiedPreview=!verifiedRole;
  const restrictedPreview=isSupportPreview||isUnverifiedPreview;
@@ -388,7 +396,7 @@ function SystemAdministrationPreview(){
     {label:adminCenterEnglish?'Account session':'جلسة الحساب',value:accountVerification==='verified'?'مؤكدة':accountVerification==='checking'?'جارٍ التحقق':accountVerification==='signed_out'?'غير مسجل':'غير متاحة',meta:'Supabase Auth',tone:accountVerification==='verified'?'good':'neutral',symbol:'◉'},
     {label:adminCenterEnglish?'Access control':'التحكم بالوصول',value:verifiedRole==='system_owner'?'مالك النظام':verifiedRole==='system_admin'?'مدير النظام':verifiedRole==='technical_support'?'دعم فني':'غير مؤكد',meta:'Server-issued role',tone:verifiedRole?'good':'neutral',symbol:'◇'},
     {label:adminCenterEnglish?'Backup readiness':'جاهزية النسخ الاحتياطي',value:'غير مهيأة',meta:'Restore not tested',tone:'pending',symbol:'▤'},
-    {label:adminCenterEnglish?'Service diagnostics':'تشخيص الخدمات',value:summarizeTechnicalHealth(makeTechnicalHealthSnapshot())==='unknown'?'غير متحقق':'متحقق',meta:'No live probes',tone:'neutral',symbol:'◎'}
+    {label:adminCenterEnglish?'Service diagnostics':'تشخيص الخدمات',value:liveHealth?'فحص QA مباشر':'غير متحقق',meta:liveHealth?'النشر يحتاج تحققاً منفصلاً':'لم يُجر فحص مباشر',tone:'neutral',symbol:'◎'}
    ].map(item=><article className="systemAdminMetric" key={item.label}><div className="systemAdminMetricTop"><span>{item.label}</span><span className="systemAdminMetricIcon" aria-hidden="true">{item.symbol}</span></div><strong>{item.value}</strong><small>{item.meta}</small><span className={`systemAdminIndicator systemAdminIndicator--${item.tone}`} aria-hidden="true"/></article>)}</div>
    {!restrictedPreview&&<div className="systemAdminReadiness"><div className="systemAdminReadinessHead"><div><h4>جاهزية مركز الإدارة</h4><p>مراحل التنفيذ والاختبار الفعلية، دون احتساب الميزات غير المفعّلة كمكتملة.</p></div><span>{readinessSummary().implemented} / {readinessSummary().total} منجزة برمجياً</span></div><div className="systemAdminReadinessGrid">{ADMIN_READINESS.map(item=><div key={item.id} className="systemAdminReadinessItem"><span className={`systemAdminReadinessState state-${item.state}`}>{item.state==='implemented'?'مُنفّذ':item.state==='verification_required'?'بانتظار اختبار':'غير مُنفّذ'}</span><strong>{item.title}</strong><small>{item.detail}</small></div>)}</div></div>}
    {!restrictedPreview&&<div className="systemAdminQuickActions" aria-label="اختصارات مركز الإدارة"><div><h4>إجراءات سريعة</h4><p>انتقل مباشرة إلى القسم المطلوب؛ الإجراءات الحساسة تظل محمية.</p></div><div className="systemAdminQuickActionsGrid">{[{id:'profile',icon:'◉',title:'حسابي وكلمة المرور',description:'الهوية والاسترداد التجريبي'},{id:'access',icon:'◇',title:'الأدوار والصلاحيات',description:'مصفوفة وصول الحسابات'},{id:'backup',icon:'▤',title:'النسخ الاحتياطي',description:'فحص ملفات النسخ التجريبية'},{id:'preferences',icon:'⚙',title:'إعدادات الواجهة',description:'اللغة وكثافة العرض'}].filter(action=>canViewSystemAdminSection(verifiedRole,action.id)).map(action=><button type="button" className="systemAdminQuickAction" key={action.id} onClick={()=>setSection(action.id)}><span className="systemAdminQuickActionIcon" aria-hidden="true">{action.icon}</span><span><strong>{action.title}</strong><small>{action.description}</small></span><span aria-hidden="true">←</span></button>)}</div></div>}

@@ -10,7 +10,8 @@ test('admin UI uses the isolated staging auth guard',()=>{
 test('administration preferences and diagnostics are connected to the UI',()=>{
  assert.match(source,/readAdminPreferences\(/);
  assert.match(source,/writeAdminPreferences\(/);
- assert.match(source,/summarizeTechnicalHealth\(makeTechnicalHealthSnapshot\(\)\)/);
+ assert.match(source,/rawSupabase\.rpc\('qa_support_health'\)/);
+ assert.match(source,/if\(!isolatedQaWorkspace/);
 });
 test('backup center is non-operational until audited service exists',()=>{
  assert.match(source,/getBackupCenterStatus\(\)/);

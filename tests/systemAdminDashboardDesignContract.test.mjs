@@ -11,7 +11,7 @@ test('overview has responsive modern dashboard regions',()=>{
 });
 test('dashboard does not imply untested backup or diagnostics are healthy',()=>{
  assert.match(ui,/Restore not tested/);
- assert.match(ui,/No live probes/);
+ assert.match(ui,/النشر يحتاج تحققاً منفصلاً/);
  assert.match(ui,/لم يُنفّذ/);
  assert.match(ui,/makeTechnicalHealthSnapshot\(\)/);
 });

@@ -17,7 +17,7 @@ export function createRecoveryFlow(initial='idle'){
 }
 export async function saveRecoveredPassword({auth,password,confirmation,enabled,recoveryState}){
  if(!enabled||recoveryState!=='ready')return {ok:false,message:'رابط الاسترداد غير صالح. اطلب رابطاً جديداً.'};
- if(typeof password!=='string'||password.length<12)return {ok:false,message:'استخدم كلمة مرور من 12 محرفاً على الأقل.'};
+ if(typeof password!=='string'||password.length<12||password.length>128)return {ok:false,message:'استخدم كلمة مرور من 12 إلى 128 محرفاً.'};
  if(password!==confirmation)return {ok:false,message:'كلمتا المرور غير متطابقتين.'};
  try{
   const {data:sessionData,error:sessionError}=await auth.getSession();

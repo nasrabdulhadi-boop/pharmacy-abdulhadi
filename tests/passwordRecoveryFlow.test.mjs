@@ -25,7 +25,7 @@ test('fast recovery event survives React subscription and explicit restart does 
 test('password changes are blocked for production, unverified callbacks, mismatch and short values',async()=>{
  let calls=0;const auth={getSession:async()=>{calls++;return {data:{session:{}}}},updateUser:async()=>{calls++;return {error:null}}};
  const base={auth,password:'a-long-test-password',confirmation:'a-long-test-password',enabled:true,recoveryState:'ready'};
- for(const override of [{enabled:false},{recoveryState:'pending'},{confirmation:'different'},{password:'short',confirmation:'short'}])assert.equal((await saveRecoveredPassword({...base,...override})).ok,false);
+ for(const override of [{enabled:false},{recoveryState:'pending'},{confirmation:'different'},{password:'short',confirmation:'short'},{password:'a'.repeat(129),confirmation:'a'.repeat(129)}])assert.equal((await saveRecoveredPassword({...base,...override})).ok,false);
  assert.equal(calls,0);
 });
 test('valid QA recovery updates only password and handles an expired session without writes',async()=>{
