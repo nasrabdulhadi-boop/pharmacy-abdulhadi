@@ -1,0 +1,42 @@
+{
+  "date": "2026-11-01",
+  "passed": 7,
+  "results": [
+    {
+      "name": "owner actual browser login and responsive shared workspace",
+      "passed": true
+    },
+    {
+      "name": "owner account management loads and protects self",
+      "passed": true
+    },
+    {
+      "name": "owner changes disposable employee role and restores it through real QA RPC",
+      "passed": true
+    },
+    {
+      "name": "manager actual browser login and responsive shared workspace",
+      "passed": true
+    },
+    {
+      "name": "manager account management loads and protects self",
+      "passed": true
+    },
+    {
+      "name": "employee actual browser login and responsive shared workspace",
+      "passed": true
+    },
+    {
+      "name": "support actual browser login and responsive shared workspace",
+      "passed": true
+    }
+  ],
+  "scope": "Local QA-configured build; real QA Auth and RPC via opt-in Node transport bridge. Native browser TLS/CORS and deployed-preview transport not tested.",
+  "cleanup": "Disposable fixture accounts banned; their sessions revoked. No existing account changed.",
+  "productionWrites": false,
+  "remaining": [
+    "mail delivery",
+    "hosted-compatible full backup and Storage restore",
+    "native browser network on deployed preview"
+  ]
+}
