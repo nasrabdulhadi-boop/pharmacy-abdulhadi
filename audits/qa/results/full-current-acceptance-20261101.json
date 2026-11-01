@@ -1,0 +1,48 @@
+{
+  "date": "2026-11-01",
+  "scope": "isolated QA only; no production writes",
+  "unit": {
+    "passed": 113,
+    "failed": 0,
+    "skipped": 1
+  },
+  "renderContract": {
+    "passed": 63,
+    "failed": 0,
+    "browser": false
+  },
+  "database": {
+    "passed": 135,
+    "suites": [
+      {
+        "file": "account_role_management_acceptance.sql",
+        "passed": 13
+      },
+      {
+        "file": "employee_daily_operations_acceptance.sql",
+        "passed": 50
+      },
+      {
+        "file": "debtors_and_employee_audit_acceptance.sql",
+        "passed": 64
+      },
+      {
+        "file": "support_authenticated_role_acceptance.sql",
+        "passed": 8
+      }
+    ],
+    "fixtures": "synthetic users/sessions/claims; transactions rolled back; not HTTP or browser"
+  },
+  "build": {
+    "passed": true,
+    "mode": "staging",
+    "warning": "existing chunk over 500 kB"
+  },
+  "notVerifiedThisRun": [
+    "real authenticated HTTP session smoke (skipped; temporary credentials absent)",
+    "browser acceptance of current role manager",
+    "email delivery and end-to-end recovery mailbox flow",
+    "hosted-compatible full database backup and restore including Storage bytes"
+  ],
+  "releaseReady": false
+}
