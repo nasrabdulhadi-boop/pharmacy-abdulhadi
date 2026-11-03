@@ -7,6 +7,7 @@ import {createPortal} from 'react-dom';
 import {createClient} from '@supabase/supabase-js';
 import {Search,LogIn,LogOut,Package,ShoppingCart,ClipboardList,Users,Truck,BarChart3,ShieldCheck,Plus,Trash2,RefreshCw,Menu,Home,Upload,Eye,Minus,Phone,Mail,MapPin,Clock,Send,FileImage,MessageCircle,Heart,Sparkles,ChevronLeft,AlertTriangle,AlertCircle,CalendarClock,CalendarDays,TrendingUp,Download,SearchCheck,ScanLine,Receipt,Tag,Activity,FileDown,ChevronDown,ExternalLink,FileText,WalletCards,Pencil} from 'lucide-react';
 import './style.css';
+import './POS_INVOICE_DISCOUNT.css';
 import './REDESIGN_V6_3.css';
 import './REDESIGN_V6_3_REAL.css';
 import './V6_4_1_LAYOUT_POLISH.css';
