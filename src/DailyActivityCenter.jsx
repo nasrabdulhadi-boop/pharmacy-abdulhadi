@@ -11,6 +11,13 @@ export default function DailyActivityCenter({supabase}){
  const [date,setDate]=useState(()=>{const d=new Date();return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-')});
  const [detailData,setDetailData]=useState(null); const [loaded,setLoaded]=useState(null),[busy,setBusy]=useState(false),[error,setError]=useState(''),[type,setType]=useState('all'),[search,setSearch]=useState(''),[detail,setDetail]=useState(null);
  const [offset,setOffset]=useState(0),[total,setTotal]=useState(0),[partial,setPartial]=useState(false);
+ const enrichSaleNumbers=async events=>{
+  const ids=[...new Set(events.filter(e=>e.kind==='sale').map(e=>e.item?.sale_id||e.item?.id||e.id).filter(Boolean))];
+  if(!ids.length)return events;
+  const {data,error}=await supabase.rpc('admin_sale_invoice_numbers_v1',{p_sale_ids:ids});
+  if(error||!data)return events;
+  return events.map(e=>{const id=e.item?.sale_id||e.item?.id||e.id;return e.kind==='sale'&&data[id]?{...e,item:{...e.item,invoice_number:data[id]}}:e});
+ };
  const load=async(more=false)=>{
  if(!/^\d{4}-\d{2}-\d{2}$/.test(date))return setError('اختر تاريخاً صحيحاً');
  setBusy(true);setError('');if(!more){setDetail(null);setOffset(0)}
@@ -29,14 +36,15 @@ export default function DailyActivityCenter({supabase}){
   const report=fallback.data||{};
   const events=sources.flatMap(([field,kind])=>(Array.isArray(report[field])?report[field]:[]).map((item,i)=>({key:field+':'+(item.id||i),kind,source:field,item,at:item.created_at||item.invoice_date||item.sale_date||item.date||null})));
   events.sort((a,b)=>String(b.at||'').localeCompare(String(a.at||'')));
-  setLoaded({date,events});setTotal(events.length);setOffset(events.length);setPartial(true);
+  setLoaded({date,events:await enrichSaleNumbers(events)});setTotal(events.length);setOffset(events.length);setPartial(true);
   return;
  }
  throw e;
 }
  if(!data||!Array.isArray(data.events))throw Error('استجابة غير صحيحة من مركز الحركة');
  const newEvents=data.events.map((x,i)=>({key:x.kind+':'+x.id+':'+(nextOffset+i),kind:x.kind,source:x.kind,item:x.details||{},at:x.occurred_at}));
- setLoaded(old=>({date,events:more&&old?.date===date?[...old.events,...newEvents]:newEvents}));
+ const numberedEvents=await enrichSaleNumbers(newEvents);
+ setLoaded(old=>({date,events:more&&old?.date===date?[...old.events,...numberedEvents]:numberedEvents}));
  setOffset(nextOffset+newEvents.length);setTotal(Number(data.total)||0);
  }catch(e){setError(e.message||'تعذر تحميل الحركة');if(!more)setLoaded(null)}finally{setBusy(false)}
  };
@@ -99,7 +107,7 @@ export default function DailyActivityCenter({supabase}){
  {detailData&&(()=>{
  const h=detailData.header||{},isInvoice=detail.kind==='sale'||detail.kind==='purchase';
  const c=field(h,['currency','sale_currency','purchase_currency'])||(detail.kind==='sale'?'SYP':null);
- const invoiceNo=field(h,['invoice_number','sale_number','purchase_number','receipt_number','daily_sale_number']);
+ const invoiceNo=field(h,['invoice_number','daily_sale_number','sale_number','purchase_number','receipt_number']);
  const customer=field(h,['supplier_name','debtor_name','customer_name']);
  const total=field(h,['total','grand_total','net_total']);
  const paid=field(h,['paid_amount','amount_paid','paid']);
