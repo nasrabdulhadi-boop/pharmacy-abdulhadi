@@ -64,9 +64,12 @@ export default function DailyActivityCenter({supabase}){
     const allSales=Array.isArray(sales.data)?sales.data:[];
     const full=allSales.find(x=>String(x.id)===String(id));
     const items=(Array.isArray(lines.data)?lines.data:[]).filter(x=>String(x.sale_id)===String(id));
-    if(full||items.length)setDetailData({header:{...raw,...(full||{}),currency:full?.currency||raw.currency||'SYP'},items});
+    let assignedNumber=null;
+    const numberResponse=await supabase.rpc('admin_get_sale_invoice_number_v1',{p_sale_id:id});
+    if(!numberResponse.error)assignedNumber=numberResponse.data;
+    if(full||items.length)setDetailData({header:{...raw,...(full||{}),currency:full?.currency||raw.currency||'SYP',daily_sale_number:assignedNumber||raw.daily_sale_number},items});
     if(!full||!items.length)setDetailWarning('بعض تفاصيل الفاتورة غير متاحة من الدوال الحالية. لا تعتبر البيانات المعروضة كشفاً كاملاً.');
-    else setDetailWarning('قد تعرض دالة أصناف البيع الكميات المتبقية بعد المرتجعات، وليس الكميات الأصلية وقت البيع.');
+    else setDetailWarning((assignedNumber?'':'رقم الفاتورة التسلسلي لم يُفعّل بعد على قاعدة البيانات الحالية. ')+'قد تعرض دالة أصناف البيع الكميات المتبقية بعد المرتجعات، وليس الكميات الأصلية وقت البيع.');
    }
   }catch(e){setDetailWarning('تعذّر استكمال تفاصيل الفاتورة من المصدر: '+(e.message||'خطأ غير معروف'))}
   finally{setDetailBusy(false)}
