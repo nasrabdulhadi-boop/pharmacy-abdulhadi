@@ -12,7 +12,7 @@ export default function DailyActivityCenter({supabase}){
  const [detailLoading,setDetailLoading]=useState(false),[detailError,setDetailError]=useState(''),[detailData,setDetailData]=useState(null); const [loaded,setLoaded]=useState(null),[busy,setBusy]=useState(false),[error,setError]=useState(''),[type,setType]=useState('all'),[search,setSearch]=useState(''),[detail,setDetail]=useState(null);
  const [offset,setOffset]=useState(0),[total,setTotal]=useState(0);
  const load=async(more=false)=>{
- if(!/^\\d{4}-\\d{2}-\\d{2}$/.test(date))return setError('اختر تاريخاً صحيحاً');
+ if(!/^\d{4}-\d{2}-\d{2}$/.test(date))return setError('اختر تاريخاً صحيحاً');
  setBusy(true);setError('');if(!more){setDetail(null);setOffset(0)}
  try{
  const start=new Date(date+'T00:00:00');
@@ -31,7 +31,7 @@ export default function DailyActivityCenter({supabase}){
  const rows=useMemo(()=>loaded?.events||[],[loaded]);
  const openDetail=row=>{setDetail(row);setDetailData({kind:row.kind,header:row.item,items:Array.isArray(row.item.items)?row.item.items:[],notice:'تفاصيل أصلية من السجل المرتبط؛ عرض للقراءة فقط.'});setDetailError('');setDetailLoading(false)};
  const visible=rows.filter(x=>(type==='all'||x.kind===type)&&(!search||JSON.stringify(x.item).toLowerCase().includes(search.toLowerCase())));
- const summary={};
+
  return <section className="dailyActivity" dir="rtl"><header className="dailyActivityHead"><div><h1>مركز الحركة اليومية</h1><p>عرض للقراءة فقط من التقرير المحاسبي المعتمد، دون تعديل أي فاتورة أو رصيد.</p></div><div className="dailyActivityDate"><label>تاريخ الحركة<input type="date" value={date} onChange={e=>setDate(e.target.value)}/></label><button className="primary" disabled={busy} onClick={()=>load(false)}>{busy?'جارٍ التحميل…':'عرض الحركة'}</button></div></header>
  {error&&<div className="error">{error}</div>}
  {loaded&&<><div className="dailyActivityCards">{[['فواتير البيع',rows.filter(x=>x.kind==='sale').length,'حركة'],['فواتير الشراء',rows.filter(x=>x.kind==='purchase').length,'حركة'],['المرتجعات',rows.filter(x=>x.kind==='return').length,'حركة'],['حركات الصندوق',rows.filter(x=>x.kind==='cash').length,'حركة']].map(([name,value,currency])=><div className="card" key={name}><small>{name}</small><strong>{value==null?'غير متاح':fmt(value)+' '+currency}</strong></div>)}</div>
