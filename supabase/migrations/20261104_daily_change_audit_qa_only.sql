@@ -7,9 +7,10 @@ DECLARE old_data jsonb; new_data jsonb; changed_old jsonb:='{}'::jsonb; changed_
 BEGIN
  actor:=auth.uid();
  IF TG_OP='INSERT' THEN RETURN NEW; END IF;
- old_data:=to_jsonb(OLD)-'phone'-'address'-'notes'-'file_path'-'customer_phone'-'customer_name'-'payment_notes';
+ old_data:=to_jsonb(OLD)-'phone'-'address'-'notes'-'file_path'-'file_name'-'customer_phone'-'customer_name'-'payment_notes'-'updated_at'-'public_code'-'email'-'password'-'token';
+ -- Exclude automatic updated_at churn and personal identifiers from snapshots.
  IF TG_OP='UPDATE' THEN
-   new_data:=to_jsonb(NEW)-'phone'-'address'-'notes'-'file_path'-'customer_phone'-'customer_name'-'payment_notes';
+   new_data:=to_jsonb(NEW)-'phone'-'address'-'notes'-'file_path'-'file_name'-'customer_phone'-'customer_name'-'payment_notes'-'updated_at'-'public_code'-'email'-'password'-'token';
    FOR k IN SELECT jsonb_object_keys(old_data) LOOP
      IF old_data->k IS DISTINCT FROM new_data->k THEN
        changed_old:=changed_old||jsonb_build_object(k,old_data->k);
