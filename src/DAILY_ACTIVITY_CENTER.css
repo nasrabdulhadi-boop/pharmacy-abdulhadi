@@ -15,3 +15,16 @@
 .dailyActivityDialogFooter{padding:18px 26px;display:flex;justify-content:flex-end}
 .dailyActivityDialogFooter button{background:#13845c;color:white;border:0;border-radius:10px;padding:11px 20px}
 @media(max-width:800px){.dailyActivityFacts{grid-template-columns:repeat(2,minmax(0,1fr))}.dailyActivityDetailSection,.dailyActivityDialogHead{padding:16px}.dailyActivityDialog{width:100%}}
+
+/* Compact, invoice-first detail view */
+.dailyActivityDialog{width:min(880px,95vw)}
+.dailyActivityDetailSection{padding:18px 24px}
+.dailyActivitySummary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:16px}
+.dailyActivitySummary>div{display:flex;flex-direction:column;gap:8px;padding:16px;border:1px solid var(--border,#dcebe3);border-radius:12px;background:var(--surface,#f3f8f5)}
+.dailyActivitySummary small{font-size:12px;color:var(--muted,#64748b)}
+.dailyActivitySummary strong{font-size:20px;font-weight:750;overflow-wrap:anywhere}
+.dailyActivityCompactFacts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 22px}
+.dailyActivityCompactFacts>div{display:flex;justify-content:space-between;gap:12px;align-items:start;padding:11px 2px;border-bottom:1px solid var(--border,#e5ebe7);min-width:0}
+.dailyActivityCompactFacts span{font-size:13px;color:var(--muted,#64748b)}
+.dailyActivityCompactFacts b{font-size:14px;font-weight:650;text-align:left;overflow-wrap:anywhere}
+@media(max-width:650px){.dailyActivitySummary{grid-template-columns:1fr}.dailyActivityCompactFacts{grid-template-columns:1fr}.dailyActivityDialog{width:100%}}
