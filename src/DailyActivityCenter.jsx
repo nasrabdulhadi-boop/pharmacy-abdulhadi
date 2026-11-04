@@ -42,7 +42,37 @@ export default function DailyActivityCenter({supabase}){
  };
  useEffect(()=>{load()},[]);
  const rows=useMemo(()=>loaded?.events||[],[loaded]);
- const openDetail=row=>{setDetail(row);setDetailData({kind:row.kind,header:row.item,items:Array.isArray(row.item.items)?row.item.items:[],notice:'تفاصيل أصلية من السجل المرتبط؛ عرض للقراءة فقط.'});};
+ const [detailBusy,setDetailBusy]=useState(false),[detailWarning,setDetailWarning]=useState('');
+ const openDetail=async row=>{
+  setDetail(row);setDetailWarning('');setDetailBusy(true);
+  const raw=row.item||{};
+  setDetailData({header:raw,items:Array.isArray(raw.items)?raw.items:[]});
+  const id=raw.id||raw.sale_id||raw.purchase_id;
+  try{
+   if(row.kind==='purchase'&&id){
+    const {data,error}=await supabase.rpc('admin_get_purchase_detail_currency',{p_purchase_id:id});
+    if(error)throw error;
+    if(data){
+     const header=data.purchase||data.invoice||data;
+     const items=data.items||data.purchase_items||header.items||[];
+     setDetailData({header:{...raw,...header},items:Array.isArray(items)?items:[]});
+    }
+   }else if(row.kind==='sale'&&id){
+    const start=new Date(date+'T00:00:00').toISOString();
+    const [sales,lines]=await Promise.all([supabase.rpc('admin_list_sales',{p_start:start}),supabase.rpc('admin_list_sale_items',{p_start:start})]);
+    if(sales.error)throw sales.error;if(lines.error)throw lines.error;
+    const full=(Array.isArray(sales.data)?sales.data:[]).find(x=>String(x.id)===String(id));
+    const items=(Array.isArray(lines.data)?lines.data:[]).filter(x=>String(x.sale_id)===String(id));
+    if(full||items.length)setDetailData({header:{...raw,...(full||{})},items});
+    if(!full||!items.length)setDetailWarning('بعض تفاصيل الفاتورة غير متاحة من الدوال الحالية. لا تعتبر البيانات المعروضة كشفاً كاملاً.');
+    else setDetailWarning('قد تعرض دالة أصناف البيع الكميات المتبقية بعد المرتجعات، وليس الكميات الأصلية وقت البيع.');
+   }
+  }catch(e){setDetailWarning('تعذّر استكمال تفاصيل الفاتورة من المصدر: '+(e.message||'خطأ غير معروف'))}
+  finally{setDetailBusy(false)}
+ };
+ const money=(v,c)=>v==null?'غير مسجل':fmt(v)+' '+(c||'عملة غير محددة');
+ const field=(obj,keys)=>keys.map(k=>obj?.[k]).find(v=>v!==undefined&&v!==null&&v!=='');
+ const fields=[['رقم الفاتورة',['invoice_number','receipt_number','id']],['المورد / العميل',['supplier_name','debtor_name','customer_name']],['نوع الدفع',['payment_method','payment_type']],['حالة الفاتورة',['status']],['العملة',['currency','sale_currency']],['سعر الصرف',['fx_rate']],['المجموع قبل الخصم',['subtotal']],['خصم الفاتورة',['discount','discount_amount']],['الإجمالي النهائي',['total']],['المبلغ المدفوع',['paid_amount','amount_paid','paid']],['المبلغ المتبقي / الدين',['due_amount','remaining_amount','balance']],['الدفعة المقدمة / الزيادة',['advance_amount','overpayment','credit_amount']],['الملاحظات',['notes']]];
  const visible=rows.filter(x=>(type==='all'||x.kind===type)&&(!search||JSON.stringify(x.item).toLowerCase().includes(search.toLowerCase())));
 
  return <section className="dailyActivity" dir="rtl"><header className="dailyActivityHead"><div><h1>مركز الحركة اليومية</h1><p>سجل موحد للقراءة فقط: البيع والشراء والمرتجعات والصندوق والمخزون والجرد والتعديلات والحذف والطلبات.</p></div><div className="dailyActivityDate"><label>تاريخ الحركة<input type="date" value={date} onChange={e=>setDate(e.target.value)}/></label><button className="primary" disabled={busy} onClick={()=>load(false)}>{busy?'جارٍ التحميل…':'عرض الحركة'}</button></div></header>
@@ -51,6 +81,15 @@ export default function DailyActivityCenter({supabase}){
  <div className="card dailyActivityControls"><select aria-label="نوع الحركة" value={type} onChange={e=>setType(e.target.value)}><option value="all">جميع الحركات</option>{[...new Set([...sources.map(x=>x[1]),'inventory_count','cash_count','order','prescription','medicine_request'])].map(k=><option value={k} key={k}>{label[k]}</option>)}</select><input placeholder="بحث برقم الفاتورة أو الاسم أو المرجع" value={search} onChange={e=>setSearch(e.target.value)}/><span>{visible.length} حركة معروضة من أصل {total}</span></div>
  <p className="dailyActivityNotice">المصدر: {partial?'التقرير المحاسبي الجزئي':'السجلات الأصلية عبر دالة قراءة إدارية'}. المبالغ والعملات لا تُحوّل أو تُجمع بين العملات. الحركات القديمة غير المسجلة أصلاً لا يمكن استعادتها.</p>
  <div className="card dailyActivityTable"><table><thead><tr><th>التاريخ والساعة</th><th>نوع الحركة</th><th>المرجع</th><th>القيمة</th><th>الإجراء</th></tr></thead><tbody>{visible.map(x=><tr key={x.key}><td>{when(x.at)}</td><td>{label[x.kind]}</td><td>{scalar(x.item.invoice_number||x.item.sale_id||x.item.purchase_id||x.item.id||x.item.description)}</td><td>{x.item.total!=null||x.item.amount!=null?fmt(x.item.total??x.item.amount)+' '+scalar(x.item.currency||'عملة غير محددة'):'—'}</td><td><button type="button" onClick={()=>openDetail(x)}>تفاصيل</button></td></tr>)}</tbody></table>{!visible.length&&<p>لا توجد حركات ضمن البيانات المتاحة للتاريخ والتصفية المحددين.</p>}{offset<total&&<button type="button" disabled={busy} onClick={()=>load(true)}>{busy?'جارٍ التحميل…':'تحميل 500 حركة إضافية'}</button>}</div></>}
- {detail&&<div className="dailyActivityModal" role="dialog" aria-modal="true" aria-label="تفاصيل الحركة"><div className="dailyActivityDialog card"><header><h2>تفاصيل {label[detail.kind]}</h2><button onClick={()=>setDetail(null)} aria-label="إغلاق">×</button></header><p>التاريخ والساعة: {when(detail.at)}</p><p>المصدر: {detail.source}</p>{detail.kind==='audit'&&detail.item.details?.source==='daily_change_audit_v1'&&<div className="dailyActivityChange"><h3>سجل التغيير</h3><p><b>العملية:</b> {detail.item.action==='delete'?'حذف':detail.item.action==='update'?'تعديل':scalar(detail.item.action)}</p><p><b>القسم:</b> {scalar(detail.item.entity_type)}</p><p><b>المستخدم:</b> {scalar(detail.item.user_id)}</p><table><thead><tr><th>الحقل</th><th>قبل</th><th>بعد</th></tr></thead><tbody>{Object.keys(detail.item.details.before||{}).map(k=><tr key={k}><td>{k}</td><td>{scalar(detail.item.details.before?.[k])}</td><td>{scalar(detail.item.details.after?.[k])}</td></tr>)}</tbody></table></div>}{detailData&&<><h3>بيانات العملية الأصلية</h3><dl>{Object.entries(detailData.header||{}).filter(([k])=>k!=='items').map(([k,v])=><React.Fragment key={k}><dt>{k}</dt><dd>{scalar(v)}</dd></React.Fragment>)}</dl><h3>الأصناف المرتبطة ({detailData.items.length})</h3>{detailData.items.length?<div className="dailyActivityTable"><table><thead><tr><th>الصنف</th><th>الكمية</th><th>السعر</th><th>الدفعة / الصلاحية</th></tr></thead><tbody>{detailData.items.map((item,i)=><tr key={item.id||i}><td>{scalar(item.product_name||item.name||item.product_id)}</td><td>{scalar(item.quantity)}</td><td>{scalar(item.unit_price??item.purchase_price)}</td><td>{scalar(item.batch_number||item.expiry_date)}</td></tr>)}</tbody></table></div>:<p>لا توجد أصناف مفصلة متاحة من المصدر.</p>}{detailData.notice&&<p className="dailyActivityNotice">{detailData.notice}</p>}</>}<p className="dailyActivityNotice">البيانات المعروضة مصدرها السجلات الأصلية المتاحة، ولا تُغيّر أي أرصدة أو فواتير.</p><button onClick={()=>setDetail(null)}>إغلاق</button></div></div>}
+ {detail&&<div className="dailyActivityModal" role="dialog" aria-modal="true" aria-label="تفاصيل الحركة" onClick={e=>{if(e.target===e.currentTarget)setDetail(null)}}><div className="dailyActivityDialog card">
+ <header className="dailyActivityDialogHead"><div><small>مركز الحركة اليومية / {label[detail.kind]||detail.kind}</small><h2>{detail.kind==='sale'?'تفاصيل فاتورة البيع':detail.kind==='purchase'?'تفاصيل فاتورة الشراء':'تفاصيل الحركة'}</h2><p>{when(detail.at)}</p></div><button type="button" onClick={()=>setDetail(null)} aria-label="إغلاق">×</button></header>
+ {detailBusy&&<p role="status">جارٍ جلب تفاصيل العملية من سجلات النظام…</p>}
+ {detailWarning&&<div className="dailyActivityNotice" role="status">{detailWarning}</div>}
+ {detailData&&<><section className="dailyActivityDetailSection"><h3>بيانات العملية والدفع</h3><div className="dailyActivityFacts">{fields.map(([name,keys])=>{const value=field(detailData.header,keys);return <div className="dailyActivityFact" key={name}><small>{name}</small><strong>{value==null?'غير مسجل':scalar(value)}</strong></div>})}</div></section>
+ <section className="dailyActivityDetailSection"><h3>أصناف {detail.kind==='sale'?'البيع':detail.kind==='purchase'?'الشراء':'الحركة'} ({detailData.items.length})</h3>{detailData.items.length?<div className="dailyActivityTable"><table><thead><tr><th>#</th><th>الصنف</th><th>الكمية</th><th>سعر الوحدة</th><th>الخصم</th><th>الإجمالي</th><th>الصلاحية / الدفعة</th></tr></thead><tbody>{detailData.items.map((item,i)=><tr key={item.id||i}><td>{i+1}</td><td>{scalar(field(item,['product_name','name_ar','name','product_id']))}</td><td>{scalar(field(item,['quantity','qty']))}</td><td>{scalar(field(item,['unit_price','purchase_price','price']))}</td><td>{scalar(field(item,['discount','discount_amount']))}</td><td>{scalar(field(item,['total','line_total','subtotal']))}</td><td>{scalar(field(item,['expiry_date','batch_number','batch_id']))}</td></tr>)}</tbody></table></div>:<p className="dailyActivityNotice">لا توجد أصناف مفصلة في البيانات المتاحة لهذه الحركة.</p>}</section>
+ {detail.kind==='audit'&&detailData.header.details?.before&&<section className="dailyActivityDetailSection"><h3>التعديل: قبل وبعد</h3><div className="dailyActivityTable"><table><thead><tr><th>الحقل</th><th>قبل</th><th>بعد</th></tr></thead><tbody>{Object.keys(detailData.header.details.before).map(k=><tr key={k}><td>{k}</td><td>{scalar(detailData.header.details.before[k])}</td><td>{scalar(detailData.header.details.after?.[k])}</td></tr>)}</tbody></table></div></section>}
+ <section className="dailyActivityDetailSection"><h3>معلومات إضافية مسجلة</h3><dl>{Object.entries(detailData.header).filter(([k])=>k!=='items'&&k!=='details').map(([k,v])=><React.Fragment key={k}><dt>{k}</dt><dd>{scalar(v)}</dd></React.Fragment>)}</dl></section></>}
+ <footer className="dailyActivityDialogFooter"><button type="button" onClick={()=>setDetail(null)}>إغلاق التفاصيل</button></footer></div></div>}
+
  </section>
 }
