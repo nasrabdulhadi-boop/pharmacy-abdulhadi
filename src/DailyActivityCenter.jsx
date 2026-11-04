@@ -58,6 +58,13 @@ export default function DailyActivityCenter({supabase}){
      setDetailData({header:{...raw,...header},items:Array.isArray(items)?items:[]});
     }
    }else if(row.kind==='sale'&&id){
+    const direct=await supabase.rpc('admin_sale_detail_daily_v1',{p_sale_id:id});
+    if(!direct.error&&direct.data?.header){
+      setDetailData({header:{...raw,...direct.data.header},items:Array.isArray(direct.data.items)?direct.data.items:[]});
+      setDetailWarning('الأصناف المعروضة هي السجلات الحالية؛ قد تختلف الكميات عن وقت البيع إذا سبق تعديلها بعد مرتجعات.');
+      return;
+    }
+    if(direct.error&&!['PGRST202','42883'].includes(direct.error.code)&&!/schema cache|Could not find the function/i.test(direct.error.message||''))throw direct.error;
     const start=new Date(date+'T00:00:00').toISOString();
     const [sales,lines]=await Promise.all([supabase.rpc('admin_list_sales',{p_start:start}),supabase.rpc('admin_list_sale_items',{p_start:start})]);
     if(sales.error)throw sales.error;if(lines.error)throw lines.error;
