@@ -14,6 +14,7 @@ import './SMART_TOAST.css';
 import './SUPPLIER_LEDGER_PREVIEW.css';
 // Load scoped POS/debtor styling after legacy redesign styles so it wins the cascade.
 import './POS_INVOICE_DISCOUNT.css';
+import DailyActivityCenter from './DailyActivityCenter.jsx';
 
 const url=import.meta.env.VITE_SUPABASE_URL; const key=import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 const supabase=url&&key?createClient(url,key):null;
@@ -263,7 +264,7 @@ function Admin({onLogout}){
  useEffect(()=>{try{localStorage.setItem('abdulhadi-sidebar',sideCollapsed?'collapsed':'expanded')}catch{}},[sideCollapsed]);
  const go=(next,target=null)=>{setFocus(target);setTab(next);setMobile(false);setQuickSearch('')};
  const navGroups=[
-  {title:'اليوم',items:[['dashboard','لوحة التحكم',Home],['pos','نقطة البيع',ShoppingCart]]},
+  {title:'اليوم',items:[['dashboard','لوحة التحكم',Home],['dailyActivity','مركز الحركة اليومية',Activity],['pos','نقطة البيع',ShoppingCart]]},
   {title:'المخزون والشراء',items:[['pharmacyProducts','منتجات الصيدلية',Package],['siteProducts','منتجات الموقع',ExternalLink],['inventory','المخزون',BarChart3],['smart','المخزون الذكي',Sparkles],['purchases','المشتريات',Receipt],['suppliers','الموردون',Truck],['supplierDebts','ديون الموردين',WalletCards]]},
   {title:'العملاء والخدمات',items:[['orders','الطلبات',ClipboardList],['prescriptions','الوصفات',Upload],['requests','طلبات الأدوية',SearchCheck],['customers','العملاء',Users],['debtors','المتدينين',Users],['offers','العروض',Tag]]},
   {title:'المال والتقارير',items:[['cashbox','الصندوق',Receipt],['returns','المرتجعات',Receipt],['reports','التقارير',TrendingUp],['profitCenterPreview','مركز الأرباح الذكي',BarChart3]]},
@@ -283,7 +284,7 @@ function Admin({onLogout}){
   <main className="adminMain">
    <div className="adminTopbar"><div className="topbarTitle"><div className="topbarEyebrow">إدارة صيدلية عبدالهادي</div><strong>{nav.find(x=>x[0]===tab)?.[1]}</strong></div><div className="globalSearch"><Search size={17}/><input value={quickSearch} onChange={e=>setQuickSearch(e.target.value)} onKeyDown={e=>{if(e.key==='Enter')runQuickSearch()}} placeholder="ابحث في أقسام النظام…" aria-label="بحث سريع داخل النظام"/><kbd>Ctrl K</kbd></div><div className="topbarActions"><button type="button" className="topbarAction themeToggle" onClick={()=>setDarkMode(x=>!x)} title={darkMode?'تفعيل الوضع النهاري':'تفعيل الوضع الليلي'} aria-label={darkMode?'تفعيل الوضع النهاري':'تفعيل الوضع الليلي'}><span aria-hidden="true">{darkMode?'☀':'☾'}</span><span>{darkMode?'نهاري':'ليلي'}</span></button><button type="button" className="topbarAction sidebarToggle" onClick={()=>setSideCollapsed(x=>!x)} title={sideCollapsed?'توسيع القائمة':'طي القائمة'} aria-label={sideCollapsed?'توسيع القائمة':'طي القائمة'}><Menu size={17}/></button><button type="button" className="topbarAction" onClick={()=>go('pos')} title="بيع جديد"><ShoppingCart size={17}/><span>بيع جديد</span></button><button type="button" className="topbarAction accent" onClick={()=>go('purchases')} title="فاتورة شراء جديدة"><Plus size={17}/><span>شراء جديد</span></button><div className="topbarClock"><Clock size={15}/><SystemClock/></div></div></div>
    <div className="mobileBar"><button type="button" className="mobileThemeToggle" onClick={()=>setDarkMode(x=>!x)} aria-label={darkMode?'الوضع النهاري':'الوضع الليلي'}>{darkMode?'☀':'☾'}</button><button onClick={()=>setMobile(!mobile)} aria-label="فتح القائمة"><Menu/></button><div><small>صيدلية عبدالهادي</small><b>{nav.find(x=>x[0]===tab)?.[1]}</b></div></div>
-   {tab==='dashboard'&&<Dashboard go={go}/>} {tab==='pos'&&<POS/>}{tab==='pharmacyProducts'&&<ProductManager mode="pharmacy"/>}{tab==='siteProducts'&&<ProductManager mode="site"/>}{tab==='inventory'&&<Inventory focus={focus}/>}{tab==='smart'&&<SmartInventory/>}{tab==='orders'&&<Orders/>}{tab==='prescriptions'&&<Prescriptions/>}{tab==='requests'&&<Requests/>}{tab==='offers'&&<Offers/>}{tab==='reports'&&<Reports/>}{tab==='profitCenterPreview'&&<ProfitCenterPreview/>}{tab==='cashbox'&&<Cashbox/>}{tab==='debtors'&&<Debtors/>}{tab==='purchases'&&<Purchases focus={focus} go={go}/>} {tab==='supplierDebts'&&<SupplierDebts go={go}/>}{tab==='suppliers'&&<Suppliers/>}{tab==='customers'&&<Customers/>}{tab==='returns'&&<Returns/>}{tab==='security'&&<Security/>}
+   {tab==='dashboard'&&<Dashboard go={go}/>} {tab==='pos'&&<POS/>}{tab==='pharmacyProducts'&&<ProductManager mode="pharmacy"/>}{tab==='siteProducts'&&<ProductManager mode="site"/>}{tab==='inventory'&&<Inventory focus={focus}/>}{tab==='smart'&&<SmartInventory/>}{tab==='orders'&&<Orders/>}{tab==='prescriptions'&&<Prescriptions/>}{tab==='requests'&&<Requests/>}{tab==='offers'&&<Offers/>}{tab==='dailyActivity'&&<DailyActivityCenter supabase={supabase}/>} {tab==='reports'&&<Reports/>}{tab==='profitCenterPreview'&&<ProfitCenterPreview/>}{tab==='cashbox'&&<Cashbox/>}{tab==='debtors'&&<Debtors/>}{tab==='purchases'&&<Purchases focus={focus} go={go}/>} {tab==='supplierDebts'&&<SupplierDebts go={go}/>}{tab==='suppliers'&&<Suppliers/>}{tab==='customers'&&<Customers/>}{tab==='returns'&&<Returns/>}{tab==='security'&&<Security/>}
   </main>
  </div>
 }
