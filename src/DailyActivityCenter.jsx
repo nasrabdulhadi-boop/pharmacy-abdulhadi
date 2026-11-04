@@ -20,7 +20,7 @@ export default function DailyActivityCenter({supabase}){
  const end=new Date(start);end.setDate(end.getDate()+1);
  const nextOffset=more?offset:0;
  const {data,error:e}=await supabase.rpc('admin_daily_activity_v1',{p_start:start.toISOString(),p_end:end.toISOString(),p_limit:500,p_offset:nextOffset});
- if(e)throw e;
+ if(e){if(e.code==='PGRST202'||/schema cache|Could not find the function/i.test(e.message||''))throw Error('مركز الحركة اليومية قيد التجهيز: دالة قراءة السجلات غير مثبّتة على قاعدة البيانات المتصلة بهذه النسخة. لم تتأثر بيانات الصيدلية.');throw e;}
  if(!data||!Array.isArray(data.events))throw Error('استجابة غير صحيحة من مركز الحركة');
  const newEvents=data.events.map((x,i)=>({key:x.kind+':'+x.id+':'+(nextOffset+i),kind:x.kind,source:x.kind,item:x.details||{},at:x.occurred_at}));
  setLoaded(old=>({date,events:more&&old?.date===date?[...old.events,...newEvents]:newEvents}));
