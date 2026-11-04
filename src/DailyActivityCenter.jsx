@@ -81,7 +81,7 @@ export default function DailyActivityCenter({supabase}){
   }catch(e){setDetailWarning('تعذّر استكمال تفاصيل الفاتورة من المصدر: '+(e.message||'خطأ غير معروف'))}
   finally{setDetailBusy(false)}
  };
- const money=(v,c)=>v==null?'غير مسجل':fmt(v)+' '+(c==='SYP'?'ل.س':c==='USD'?'
+ const money=(v,c)=>v==null?'غير مسجل':fmt(v)+' '+(c==='SYP'?'ل.س':c==='USD'?'USD':c||'عملة غير محددة');
  const field=(obj,keys)=>keys.map(k=>obj?.[k]).find(v=>v!==undefined&&v!==null&&v!=='');
  const fields=[['رقم الفاتورة',['invoice_number','receipt_number','id']],['المورد / العميل',['supplier_name','debtor_name','customer_name']],['نوع الدفع',['payment_method','payment_type']],['حالة الفاتورة',['status']],['العملة',['currency','sale_currency']],['سعر الصرف',['fx_rate']],['المجموع قبل الخصم',['subtotal']],['خصم الفاتورة',['discount','discount_amount']],['الإجمالي النهائي',['total']],['المبلغ المدفوع',['paid_amount','amount_paid','paid']],['المبلغ المتبقي / الدين',['due_amount','remaining_amount','balance']],['الدفعة المقدمة / الزيادة',['advance_amount','overpayment','credit_amount']],['الملاحظات',['notes']]];
  const visible=rows.filter(x=>(type==='all'||x.kind===type)&&(!search||JSON.stringify(x.item).toLowerCase().includes(search.toLowerCase())));
