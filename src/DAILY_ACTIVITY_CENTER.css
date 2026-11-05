@@ -192,3 +192,21 @@
  .adminShell:has(.reportWorkspace) .reportTableCard tr{break-inside:avoid!important;page-break-inside:avoid!important}
  .adminShell:has(.reportWorkspace) .reportItemsPanel{break-before:page!important;page-break-before:always!important;padding-top:39mm!important}
 }
+
+/* Screen remains tabbed. Printed accounting report includes all tabs once in order. */
+.reportWorkspace .reportTabPanel:not(.reportTabActive){display:none}
+.reportPrintTabTitle{display:none}
+@media print{
+ .reportWorkspace .reportTabPanel,
+ .reportWorkspace .reportTabPanel:not(.reportTabActive){display:block!important;visibility:visible!important;overflow:visible!important;height:auto!important;max-height:none!important}
+ .reportWorkspace .reportPrintTabTitle{display:block!important;font-size:18px!important;color:#087f5b!important;margin:0 0 12px!important;break-after:avoid!important}
+ .reportWorkspace .reportPrintOverview{break-before:auto!important;page-break-before:auto!important}
+ .reportWorkspace .reportPrintMovements,
+ .reportWorkspace .reportPrintIntegrity{break-before:page!important;page-break-before:always!important;padding-top:40mm!important}
+ .reportWorkspace .reportPrintMovements .reportTableCard:first-child{break-before:auto!important;page-break-before:auto!important;padding-top:0!important}
+ .reportWorkspace .reportPrintOverview .reportSectionCard:first-child{break-before:auto!important;page-break-before:auto!important}
+ .reportWorkspace .reportPrintIntegrity .reportIntegrity{break-inside:auto!important;page-break-inside:auto!important;overflow:visible!important}
+ .reportWorkspace .reportVisuals,.reportWorkspace .reportVisuals *{max-height:none}
+ .reportWorkspace .reportTabPanel .reportGrid{overflow:visible!important}
+ .reportWorkspace .reportPrintMovements .reportItemsPanel{break-before:page!important;page-break-before:always!important}
+}
