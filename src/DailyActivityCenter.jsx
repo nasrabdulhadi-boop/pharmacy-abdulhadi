@@ -23,6 +23,7 @@ export default function DailyActivityCenter({supabase}){
  const [date,setDate]=useState(()=>{const d=new Date();return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-')});
  const [detailData,setDetailData]=useState(null); const [loaded,setLoaded]=useState(null),[busy,setBusy]=useState(false),[error,setError]=useState(''),[type,setType]=useState('all'),[search,setSearch]=useState(''),[detail,setDetail]=useState(null);
  const [offset,setOffset]=useState(0),[total,setTotal]=useState(0),[partial,setPartial]=useState(false);
+ const [finance,setFinance]=useState(null),[financeError,setFinanceError]=useState('');
  const enrichSaleNumbers=async events=>{
   const ids=[...new Set(events.filter(e=>e.kind==='sale').map(e=>e.id||e.item?.sale_id||e.item?.id).filter(Boolean))];
   if(!ids.length)return events;
@@ -40,6 +41,7 @@ export default function DailyActivityCenter({supabase}){
  if(Number.isNaN(start.getTime())||start.getFullYear()!==Number(date.slice(0,4))||start.getMonth()+1!==Number(date.slice(5,7))||start.getDate()!==Number(date.slice(8,10)))throw Error('التاريخ غير صالح');
  const end=new Date(start);end.setDate(end.getDate()+1);
  const nextOffset=more?offset:0;
+ if(!more){setFinance(null);setFinanceError('');const fr=await supabase.rpc('admin_daily_financial_summary_v1',{p_start:start.toISOString(),p_end:end.toISOString()});if(fr.error)setFinanceError(fr.error.message);else setFinance(fr.data);}
  setPartial(false);
  const {data,error:e}=await supabase.rpc('admin_daily_activity_v1',{p_start:start.toISOString(),p_end:end.toISOString(),p_limit:500,p_offset:nextOffset});
  if(e){
@@ -110,6 +112,20 @@ export default function DailyActivityCenter({supabase}){
 
  return <section className="dailyActivity" dir="rtl"><header className="dailyActivityHead"><div><h1>مركز الحركة اليومية</h1><p>سجل للعمليات المهمة فقط: فواتير البيع والشراء، السحب والإيداع، التعديلات والحذف والجرد المعتمد، دون الحركات التلقائية المكررة.</p></div><div className="dailyActivityDate"><label>تاريخ الحركة<input type="date" value={date} onChange={e=>setDate(e.target.value)}/></label><button className="primary" disabled={busy} onClick={()=>load(false)}>{busy?'جارٍ التحميل…':'عرض الحركة'}</button></div></header>
  {error&&<div className="error">{error}</div>}
+ {financeError&&<p className="dailyActivityNotice">الملخص المالي غير متاح: {financeError}</p>}
+ {finance&&<section className="card" style={{padding:16,marginBottom:16}}><h2>الملخص المالي والتشغيلي لليوم</h2><div className="dailyActivityCards">{[
+ ['عدد فواتير البيع',finance.sales?.sale_count,'فاتورة'],['عدد فواتير الشراء',finance.purchases?.purchase_count,'فاتورة'],
+ ['إجمالي المبيعات',finance.sales?.sales_total,'ل.س'],['مبيعات نقدية',finance.sales?.cash_sales,'ل.س'],['مبيعات بالدين',finance.sales?.credit_sales,'ل.س'],
+ ['ديون جديدة',finance.sales?.new_due,'ل.س'],['تحصيل ديون',finance.cash?.debt_collected,'ل.س'],
+ ['تكلفة الأصناف المباعة',finance.sales?.cost_of_goods,'ل.س'],['الربح الإجمالي التقديري',finance.sales?.gross_profit,'ل.س'],
+ ['المصروفات التشغيلية',finance.cash?.operating_expenses,'ل.س'],['صافي الربح التقديري',finance.net_profit_estimate,'ل.س'],
+ ['صافي حركة الصندوق',finance.cash?.net_cash_change,'ل.س'],['رصيد الصندوق الافتتاحي المحسوب',finance.opening_cash,'ل.س'],['رصيد الصندوق الختامي المحسوب',finance.closing_cash,'ل.س'],
+ ['مشتريات بالليرة',finance.purchases?.purchases_syp,'ل.س'],['مشتريات بالدولار',finance.purchases?.purchases_usd,'USD']
+ ].map(([name,value,currency])=><div className="card" key={name}><small>{name}</small><strong>{value==null?'غير متاح':fmt(value)+' '+currency}</strong></div>)}</div>
+ <p className="dailyActivityNotice">الربح تقديري بناءً على تكلفة الأصناف المسجلة. رصيد الصندوق محسوب من الحركات المسجلة وليس النقد المعدود. السحوبات الشخصية لا تُخصم من الربح. العملات منفصلة.</p>
+ <h3>فواتير البيع اليومية</h3><div className="dailyActivityTable"><table><thead><tr><th>التاريخ</th><th>القيمة</th><th>نقدي / دين</th><th>المدفوع</th><th>المتبقي</th></tr></thead><tbody>{(finance.sales_invoices||[]).map(x=><tr key={x.id}><td>{when(x.date)}</td><td>{fmt(x.total)} {x.currency}</td><td>{x.payment_method==='cash'?'نقدي':'دين'}</td><td>{fmt(x.paid)}</td><td>{fmt(x.due)}</td></tr>)}</tbody></table></div>
+ <h3>فواتير الشراء اليومية</h3><div className="dailyActivityTable"><table><thead><tr><th>رقم الفاتورة</th><th>التاريخ</th><th>القيمة</th><th>المدفوع</th><th>المتبقي</th></tr></thead><tbody>{(finance.purchase_invoices||[]).map(x=><tr key={x.id}><td>{x.invoice_number}</td><td>{when(x.date)}</td><td>{fmt(x.total)} {x.currency}</td><td>{fmt(x.paid)}</td><td>{fmt(x.due)}</td></tr>)}</tbody></table></div></section>}
+
  {loaded&&<>{partial&&<div className="dailyActivityNotice" role="status"><strong>عرض جزئي فقط:</strong> الدالة الشاملة غير مثبتة على هذه القاعدة. يتم عرض الحركات المتاحة من التقرير المحاسبي الحالي؛ لا يشمل هذا العرض بالضرورة جميع عمليات التعديل والحذف والجرد أو تفاصيل الأصناف. لا تعتمد عليه كسجل تدقيق كامل.</div>}<div className="dailyActivityCards">{[['فواتير البيع',rows.filter(x=>x.kind==='sale').length,'حركة'],['فواتير الشراء',rows.filter(x=>x.kind==='purchase').length,'حركة'],['المرتجعات',rows.filter(x=>x.kind==='return').length,'حركة'],['سحب وإيداع الصندوق',rows.filter(x=>x.kind==='cash').length,'حركة']].map(([name,value,currency])=><div className="card" key={name}><small>{name}</small><strong>{value==null?'غير متاح':fmt(value)+' '+currency}</strong></div>)}</div>
  <div className="card dailyActivityControls"><select aria-label="نوع الحركة" value={type} onChange={e=>setType(e.target.value)}><option value="all">جميع الحركات</option>{[...new Set([...sources.map(x=>x[1]),'return','inventory_count'])].map(k=><option value={k} key={k}>{label[k]}</option>)}</select><input placeholder="بحث برقم الفاتورة أو الاسم أو المرجع" value={search} onChange={e=>setSearch(e.target.value)}/><span>{visible.length} حركة معروضة من أصل {total}</span></div>
  <p className="dailyActivityNotice">المصدر: {partial?'التقرير المحاسبي الجزئي':'سجلات العمليات المهمة'}. تُستبعد حركات المخزون الناتجة تلقائياً عن البيع وقبض الفواتير المكرر. لا يمكن استعادة تعديل لم يُسجّل أصلاً.</p>
