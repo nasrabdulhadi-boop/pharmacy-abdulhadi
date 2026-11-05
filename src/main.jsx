@@ -670,7 +670,7 @@ function POS(){
  const onSearchKey=async e=>{if(e.key!=='Enter')return;e.preventDefault();const t=String(q||'').trim();if(!t)return;if(/^\d{4,}$/.test(t)){await addScannedBarcode(t);return}await addFirstResult()};
  const refreshPos=async()=>{if(q.trim())await search(q);else{setProducts([]);setErr('')}};
  return <><PageHead title="نقطة البيع" sub="بيع نقدي أو بالدين — كل حركة مرتبطة بالمخزون والصندوق والمتدينين" refresh={refreshPos}/>
- {lastSaleNumber&&<div role="status" className="card" style={{marginBottom:12,padding:'12px 18px',borderInlineStart:'4px solid #16875b',fontWeight:700}}>آخر فاتورة بيع محفوظة: <strong style={{fontSize:20}}>رقم {lastSaleNumber}</strong></div>}
+ 
  <div className="posV440 posClassic">
   <div className="posTopBar"><div className="posSearchBar"><div className="search posSearchInput"><Search/><input ref={searchInputRef} autoFocus value={q} onChange={clearIfEmpty} onKeyDown={onSearchKey} placeholder="الباركود أو اسم المادة أو المادة الفعالة…"/><button className="scanBtn" onClick={startScan}><ScanLine/> تصوير باركود</button></div>{q&&<button className="secondaryAction" onClick={()=>{setQ('');setProducts([]);focusSearch()}}>مسح البحث</button>}</div><button className="posSettingsBtn" onClick={()=>setSettingsOpen(true)}>⚙️ إعدادات نقطة البيع</button></div>
   <div className="posDefaultsHint">سعر الصرف الحالي: <b>{money(usdRate)}</b> ل.س / $ &nbsp; • &nbsp; الافتراضي: <b>{posSettings.defaultQty}</b> علبة + <b>{posSettings.defaultPart}</b> جزء</div>{loading&&<div className="muted posHint">جارٍ البحث…</div>}{err&&<div className="errorBox posHint">{err}</div>}
