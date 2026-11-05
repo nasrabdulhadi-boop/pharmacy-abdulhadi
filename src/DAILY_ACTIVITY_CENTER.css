@@ -59,3 +59,34 @@
  body:has(.dailyActivity) .dailyActivity{box-sizing:border-box!important;padding:14mm 12mm!important}
  body:has(.dailyActivity) .dailyActivityPrintHeader{margin-top:0!important}
 }
+
+/* Multi-page A4 report: repeat the identity on every printed page. */
+.dailyActivityPrintSectionTitle{display:none}
+@media print{
+ @page{size:A4 portrait;margin:46mm 12mm 15mm 12mm}
+ html,body{height:auto!important;overflow:visible!important}
+ body:has(.dailyActivity) .dailyActivity{padding:0!important;margin:0!important;overflow:visible!important}
+ body:has(.dailyActivity) .adminMain,body:has(.dailyActivity) main{overflow:visible!important;height:auto!important}
+ .dailyActivityPrintHeader{
+   position:fixed!important;top:-40mm!important;right:0!important;left:0!important;
+   height:35mm!important;box-sizing:border-box!important;margin:0!important;padding:2mm 0 3mm!important;
+   background:#fff!important;z-index:9999!important;display:flex!important;align-items:center!important;
+   border-bottom:1.5px solid #087f5b!important;
+ }
+ .dailyActivityPrintIdentity{line-height:1.45!important}
+ .dailyActivityPrintIdentity h1{font-size:18px!important;margin:0!important}
+ .dailyActivityPrintIdentity h2{font-size:12px!important;margin:2mm 0 0!important}
+ .dailyActivityPrintLogo{width:26mm!important;height:26mm!important}
+ .dailyActivityPrintSection{display:block!important;break-before:page!important;page-break-before:always!important;break-inside:auto!important;page-break-inside:auto!important;box-shadow:none!important;border:0!important;padding:0!important;margin:0!important;background:#fff!important}
+ .dailyActivityPrintSection:first-of-type{break-before:auto!important;page-break-before:auto!important}
+ .dailyActivityFinancial{break-before:auto!important;page-break-before:auto!important}
+ .dailyActivityPrintSectionTitle{display:block!important}
+ .dailyActivityPrintSection h2,.dailyActivityPrintSection h3{break-after:avoid!important;page-break-after:avoid!important}
+ .dailyActivityPrintSection .dailyActivityCards{break-inside:auto!important;page-break-inside:auto!important}
+ .dailyActivityPrintSection .dailyActivityCards>.card{break-inside:avoid!important;page-break-inside:avoid!important}
+ .dailyActivityPrintSection .dailyActivityTable{break-inside:auto!important;page-break-inside:auto!important;overflow:visible!important}
+ .dailyActivityPrintSection table{break-inside:auto!important;page-break-inside:auto!important}
+ .dailyActivityPrintSection thead{display:table-header-group!important}
+ .dailyActivityPrintSection tr{break-inside:avoid!important;page-break-inside:avoid!important}
+ .dailyActivityPrintSection .dailyActivityNotice{break-inside:avoid!important}
+}
