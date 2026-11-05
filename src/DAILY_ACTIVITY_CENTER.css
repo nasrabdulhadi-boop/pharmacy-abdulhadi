@@ -108,105 +108,79 @@
  body:has(.dailyActivity) .dailyActivityFinancial{padding-top:40mm!important}
 }
 
-/* Shared branded print template for admin reports and print-capable sections. */
+
+/* Unified accounting print: avoid nested forced page breaks and scroll clipping. */
 .pharmacyGlobalPrintHeader{display:none}
-@media print{
- @page{size:A4 portrait;margin:12mm 12mm 14mm}
- body:has(.pharmacyGlobalPrintHeader) .adminTopbar,
- body:has(.pharmacyGlobalPrintHeader) .mobileBar,
- body:has(.pharmacyGlobalPrintHeader) .adminSidebar,
- body:has(.pharmacyGlobalPrintHeader) .sidebar,
- body:has(.pharmacyGlobalPrintHeader) .pageHead,
- body:has(.pharmacyGlobalPrintHeader) .reportFilter,
- body:has(.pharmacyGlobalPrintHeader) .reportTabs,
- body:has(.pharmacyGlobalPrintHeader) .reportHeaderActions{display:none!important}
- body:has(.pharmacyGlobalPrintHeader) .adminMain{margin:0!important;padding:0!important;max-width:none!important;width:100%!important;overflow:visible!important;height:auto!important}
- body:has(.pharmacyGlobalPrintHeader) .pharmacyGlobalPrintHeader{
-  display:flex!important;position:fixed!important;top:0!important;right:0!important;left:0!important;bottom:auto!important;
-  transform:none!important;height:33mm!important;align-items:center!important;justify-content:space-between!important;
-  direction:rtl!important;background:white!important;border-bottom:1.5px solid #087f5b!important;
-  z-index:10001!important;box-sizing:border-box!important;padding:2mm 0!important;
- }
- .pharmacyGlobalPrintIdentity{text-align:right!important;color:#172b25!important;line-height:1.35!important}
- .pharmacyGlobalPrintIdentity h1{font-size:18px!important;color:#087f5b!important;margin:0 0 2mm!important}
- .pharmacyGlobalPrintIdentity h2{font-size:12px!important;margin:2mm 0 0!important}
- .pharmacyGlobalPrintIdentity p{font-size:10px!important;margin:0!important}
- .pharmacyGlobalPrintHeader img{width:26mm!important;height:26mm!important;object-fit:contain!important}
- body:has(.pharmacyGlobalPrintHeader) .dailyActivityPrintHeader{display:none!important}
- body:has(.pharmacyGlobalPrintHeader) .dailyActivityPrintSection{padding-top:39mm!important}
- body:has(.pharmacyGlobalPrintHeader) .reportWorkspace{padding:39mm 0 0!important;overflow:visible!important;background:#fff!important}
- body:has(.pharmacyGlobalPrintHeader) .reportSectionCard{break-before:page!important;page-break-before:always!important;break-inside:auto!important;box-shadow:none!important}
- body:has(.pharmacyGlobalPrintHeader) .reportSectionCard:first-of-type{break-before:auto!important;page-break-before:auto!important}
- body:has(.pharmacyGlobalPrintHeader) .reportSectionCard{padding-top:39mm!important}
- body:has(.pharmacyGlobalPrintHeader) .reportSectionCard table thead{display:table-header-group!important}
- body:has(.pharmacyGlobalPrintHeader) .reportSectionCard tr{break-inside:avoid!important}
-}
-
-/* Reports print fix: masthead is a direct child of .adminShell, outside scrolling .adminMain. */
-@media print{
- .adminShell:has(.reportWorkspace){display:block!important;position:static!important;overflow:visible!important;transform:none!important}
- .adminShell:has(.reportWorkspace)>.pharmacyGlobalPrintHeader{
-  display:flex!important;position:fixed!important;top:0!important;left:0!important;right:0!important;bottom:auto!important;
-  margin:0!important;transform:none!important;visibility:visible!important;opacity:1!important;
-  height:34mm!important;background:#fff!important;z-index:2147483647!important;
- }
- .adminShell:has(.reportWorkspace)>.adminMain{display:block!important;overflow:visible!important;transform:none!important;position:static!important}
- .adminShell:has(.reportWorkspace) .reportWorkspace{display:block!important;overflow:visible!important;padding:40mm 0 0!important}
- .adminShell:has(.reportWorkspace) .reportSectionCard{break-before:page!important;page-break-before:always!important;break-inside:auto!important;min-height:0!important;padding:40mm 0 0!important}
- .adminShell:has(.reportWorkspace) .reportSectionCard table thead{display:table-header-group!important}
- .adminShell:has(.reportWorkspace) .reportSectionCard tr{break-inside:avoid!important}
-}
-
-/* Keep on-screen movement tables compact; print every row, including beyond 100. */
 .reportPrintExtraRow{display:none}
-@media print{
- .reportPrintExtraRow{display:table-row!important}
- .adminShell:has(.reportWorkspace) .reportTabPanel,
- .adminShell:has(.reportWorkspace) .reportGrid,
- .adminShell:has(.reportWorkspace) .reportGridPolished,
- .adminShell:has(.reportWorkspace) .reportTableCard,
- .adminShell:has(.reportWorkspace) .reportTableCard .tableWrap{
-  display:block!important;grid-template-columns:1fr!important;max-height:none!important;height:auto!important;
-  min-height:0!important;max-width:none!important;width:100%!important;overflow:visible!important;
-  position:static!important;transform:none!important;contain:none!important;
- }
- .adminShell:has(.reportWorkspace) .reportTableCard{
-  box-sizing:border-box!important;break-before:page!important;page-break-before:always!important;
-  break-inside:auto!important;page-break-inside:auto!important;
-  padding:39mm 0 0!important;margin:0!important;border:0!important;box-shadow:none!important;background:#fff!important;
- }
- .adminShell:has(.reportWorkspace) .reportTableCard .cardHead{break-after:avoid!important}
- .adminShell:has(.reportWorkspace) .reportTableCard .cardHead button{display:none!important}
- .adminShell:has(.reportWorkspace) .reportTableCard table{
-  display:table!important;width:100%!important;min-width:0!important;max-width:100%!important;
-  table-layout:fixed!important;border-collapse:collapse!important;font-size:10px!important;
- }
- .adminShell:has(.reportWorkspace) .reportTableCard th,
- .adminShell:has(.reportWorkspace) .reportTableCard td{
-  white-space:normal!important;overflow:visible!important;text-overflow:clip!important;
-  overflow-wrap:anywhere!important;word-break:normal!important;max-width:none!important;
-  padding:6px 5px!important;vertical-align:top!important;
- }
- .adminShell:has(.reportWorkspace) .reportTableCard thead{display:table-header-group!important}
- .adminShell:has(.reportWorkspace) .reportTableCard tbody{display:table-row-group!important}
- .adminShell:has(.reportWorkspace) .reportTableCard tr{break-inside:avoid!important;page-break-inside:avoid!important}
- .adminShell:has(.reportWorkspace) .reportItemsPanel{break-before:page!important;page-break-before:always!important;padding-top:39mm!important}
-}
-
-/* Screen remains tabbed. Printed accounting report includes all tabs once in order. */
-.reportWorkspace .reportTabPanel:not(.reportTabActive){display:none}
 .reportPrintTabTitle{display:none}
+.reportWorkspace .reportTabPanel:not(.reportTabActive){display:none}
 @media print{
- .reportWorkspace .reportTabPanel,
- .reportWorkspace .reportTabPanel:not(.reportTabActive){display:block!important;visibility:visible!important;overflow:visible!important;height:auto!important;max-height:none!important}
- .reportWorkspace .reportPrintTabTitle{display:block!important;font-size:18px!important;color:#087f5b!important;margin:0 0 12px!important;break-after:avoid!important}
- .reportWorkspace .reportPrintOverview{break-before:auto!important;page-break-before:auto!important}
- .reportWorkspace .reportPrintMovements,
- .reportWorkspace .reportPrintIntegrity{break-before:page!important;page-break-before:always!important;padding-top:40mm!important}
- .reportWorkspace .reportPrintMovements .reportTableCard:first-child{break-before:auto!important;page-break-before:auto!important;padding-top:0!important}
- .reportWorkspace .reportPrintOverview .reportSectionCard:first-child{break-before:auto!important;page-break-before:auto!important}
- .reportWorkspace .reportPrintIntegrity .reportIntegrity{break-inside:auto!important;page-break-inside:auto!important;overflow:visible!important}
- .reportWorkspace .reportVisuals,.reportWorkspace .reportVisuals *{max-height:none}
- .reportWorkspace .reportTabPanel .reportGrid{overflow:visible!important}
- .reportWorkspace .reportPrintMovements .reportItemsPanel{break-before:page!important;page-break-before:always!important}
+ @page{size:A4 portrait;margin:16mm 13mm 16mm}
+ html,body,#root{height:auto!important;min-height:0!important;overflow:visible!important}
+ .adminShell:has(.reportWorkspace){display:block!important;position:static!important;overflow:visible!important;height:auto!important;transform:none!important}
+ .adminShell:has(.reportWorkspace)>.adminMain{display:block!important;position:static!important;overflow:visible!important;height:auto!important;width:100%!important;max-width:none!important;margin:0!important;padding:0!important;transform:none!important}
+ .adminShell:has(.reportWorkspace) .adminTopbar,.adminShell:has(.reportWorkspace) .mobileBar,
+ .adminShell:has(.reportWorkspace) .adminSidebar,.adminShell:has(.reportWorkspace) .sidebar,
+ .adminShell:has(.reportWorkspace) .pageHead,.adminShell:has(.reportWorkspace) .reportFilter,
+ .adminShell:has(.reportWorkspace) .reportTabs,.adminShell:has(.reportWorkspace) .reportHeaderActions{display:none!important}
+ .adminShell:has(.reportWorkspace)>.pharmacyGlobalPrintHeader{
+  display:flex!important;position:static!important;transform:none!important;
+  width:100%!important;height:auto!important;min-height:30mm!important;
+  justify-content:space-between!important;align-items:center!important;
+  direction:rtl!important;border-bottom:2px solid #087f5b!important;
+  padding:0 0 4mm!important;margin:0 0 7mm!important;background:#fff!important;
+  break-after:avoid!important;
+ }
+ .pharmacyGlobalPrintIdentity{text-align:right!important;line-height:1.45!important;color:#172b25!important}
+ .pharmacyGlobalPrintIdentity h1{font-size:19px!important;color:#087f5b!important;margin:0 0 2mm!important}
+ .pharmacyGlobalPrintIdentity h2{font-size:13px!important;margin:2mm 0 0!important}
+ .pharmacyGlobalPrintIdentity p{font-size:10px!important;margin:0!important}
+ .pharmacyGlobalPrintHeader img{width:25mm!important;height:25mm!important;object-fit:contain!important}
+ .adminShell:has(.reportWorkspace) .reportWorkspace{display:block!important;overflow:visible!important;height:auto!important;width:100%!important;margin:0!important;padding:0!important;background:#fff!important}
+ .reportWorkspace .reportTabPanel,.reportWorkspace .reportTabPanel:not(.reportTabActive){
+  display:block!important;visibility:visible!important;overflow:visible!important;
+  height:auto!important;max-height:none!important;margin:0!important;padding:0!important;
+ }
+ .reportWorkspace .reportPrintTabTitle{display:block!important;font-size:18px!important;color:#087f5b!important;margin:7mm 0 5mm!important;break-after:avoid!important}
+ .reportWorkspace .reportPrintMovements,.reportWorkspace .reportPrintIntegrity{
+  break-before:page!important;page-break-before:always!important;
+ }
+ .reportWorkspace .reportSection,.reportWorkspace .reportSectionCard,.reportWorkspace .reportPanel,
+ .reportWorkspace .reportTableCard,.reportWorkspace .reportItemsPanel,.reportWorkspace .reportIntegrity{
+  break-before:auto!important;page-break-before:auto!important;
+  break-inside:auto!important;page-break-inside:auto!important;
+  padding:3mm!important;margin:0 0 5mm!important;min-height:0!important;
+  height:auto!important;max-height:none!important;overflow:visible!important;
+  box-shadow:none!important;transform:none!important;
+ }
+ .reportWorkspace .reportGrid,.reportWorkspace .reportGridPolished{
+  display:block!important;overflow:visible!important;grid-template-columns:1fr!important;
+  height:auto!important;max-height:none!important;min-height:0!important;
+ }
+ .reportWorkspace .reportGrid>.card{width:100%!important;max-width:100%!important;box-sizing:border-box!important}
+ .reportWorkspace .reportTableCard:not(:first-child){break-before:page!important;page-break-before:always!important}
+ .reportWorkspace .reportTableCard .tableWrap,.reportWorkspace .reportPanel .tableWrap{
+  display:block!important;width:100%!important;max-width:100%!important;
+  height:auto!important;max-height:none!important;overflow:visible!important;
+ }
+ .reportWorkspace .reportTableCard table,.reportWorkspace .reportPanel table{
+  display:table!important;width:100%!important;max-width:100%!important;
+  min-width:0!important;table-layout:fixed!important;border-collapse:collapse!important;font-size:10px!important;
+ }
+ .reportWorkspace .reportTableCard th,.reportWorkspace .reportTableCard td,
+ .reportWorkspace .reportPanel th,.reportWorkspace .reportPanel td{
+  white-space:normal!important;overflow:visible!important;overflow-wrap:anywhere!important;
+  text-overflow:clip!important;padding:5px!important;vertical-align:top!important;
+ }
+ .reportWorkspace table thead{display:table-header-group!important}
+ .reportWorkspace table tbody{display:table-row-group!important}
+ .reportWorkspace table tr{break-inside:avoid!important;page-break-inside:avoid!important}
+ .reportWorkspace .reportPrintExtraRow{display:table-row!important}
+ .reportWorkspace .reportTableCard .cardHead button,.reportWorkspace .reportQuickLinks button{display:none!important}
+ .reportWorkspace .reportItemsPanel{break-before:auto!important;page-break-before:auto!important}
+ .reportWorkspace .reportVisuals,.reportWorkspace .reportVisuals *{max-height:none!important}
+ .reportWorkspace svg{max-width:100%!important}
+ .reportWorkspace .reportPrintOverview .reportSectionCard{break-inside:auto!important}
+ .reportWorkspace .reportKpis .card,.reportWorkspace .supplierCreditPanel,
+ .reportWorkspace .reportItemsGrid .reportItem{break-inside:avoid!important;page-break-inside:avoid!important}
 }
