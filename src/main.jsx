@@ -835,12 +835,68 @@ function Reports(){
  useEffect(()=>{load()},[]);
  const quick=kind=>{const n=new Date();let s=new Date(n.getFullYear(),n.getMonth(),n.getDate()),e=new Date(n.getFullYear(),n.getMonth(),n.getDate());if(kind==='week')s=new Date(n.getFullYear(),n.getMonth(),n.getDate()-6);if(kind==='month')s=new Date(n.getFullYear(),n.getMonth(),1);if(kind==='prevmonth'){s=new Date(n.getFullYear(),n.getMonth()-1,1);e=new Date(n.getFullYear(),n.getMonth(),0)}const sk=localDateKey(s),ek=localDateKey(e);setStartDate(sk);setEndDate(ek);load(sk,ek)};
  const exportCsv=()=>{if(!data)return;const rows=[['التاريخ والساعة','النوع','التفاصيل','المبلغ'],...(data.sales_rows||[]).map(x=>[localDateTime(x.created_at),x.payment_method==='credit'?'بيع بالدين':'بيع نقدي',x.debtor_name||'بيع',x.total]),...(data.purchase_rows||[]).map(x=>[localDateTime(x.created_at),'شراء',x.supplier_name||'',x.total]),...(data.debt_rows||[]).map(x=>[localDateTime(x.created_at),x.type==='payment'?'دفعة دين':'دين',x.debtor_name||'',x.amount]),...(data.return_rows||[]).map(x=>[localDateTime(x.created_at),x.type==='customer'?'مرتجع زبون':'مرتجع مورد',x.product_name||'',x.amount])];const csv='\ufeff'+rows.map(r=>r.map(v=>`"${String(v??'').replaceAll('"','""')}"`).join(',')).join('\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));a.download=`pharmacy-abdelhadi-report-${startDate}-${endDate}.csv`;a.click();URL.revokeObjectURL(a.href)};
+
+ const printFullReport=()=>{
+  if(!data||busy)return;
+  const workspace=document.querySelector('.reportWorkspace');
+  if(!workspace)return;
+  // A separate document prevents dashboard print CSS and hidden tabs from generating empty sheets.
+  const printWindow=window.open('','_blank');
+  if(!printWindow){alert('يرجى السماح بفتح نافذة الطباعة لهذا الموقع ثم إعادة المحاولة.');return}
+  const content=workspace.cloneNode(true);
+  content.querySelectorAll('.reportFilter,.reportTabs,.reportHeaderActions,button,input,.reportQuickLinks').forEach(el=>el.remove());
+  content.querySelectorAll('.reportPrintExtraRow').forEach(el=>el.classList.remove('reportPrintExtraRow'));
+  content.querySelectorAll('.reportTabPanel').forEach(el=>{el.style.display='block';el.style.visibility='visible'});
+  const safeDate=String(startDate+' — '+endDate).replaceAll('<','&lt;').replaceAll('>','&gt;');
+  const printedAt=localDateTime(new Date());
+  const stylesheet=`
+  @page{size:A4 portrait;margin:15mm 13mm 16mm}
+  *{box-sizing:border-box}
+  html,body{direction:rtl;font-family:Tahoma,Arial,sans-serif;color:#172b25;background:#fff;margin:0;padding:0;font-size:11px;line-height:1.65}
+  .printMasthead{display:flex;align-items:center;justify-content:space-between;gap:20px;border-bottom:2px solid #087f5b;padding:0 0 12px;margin-bottom:18px;break-after:avoid}
+  .printMasthead h1{color:#087f5b;font-size:23px;margin:0}.printMasthead p{margin:2px 0}.printMasthead h2{font-size:14px;margin:6px 0 0}
+  .printMasthead img{width:88px;height:88px;object-fit:contain}
+  .reportFilter,.reportTabs,.reportHeaderActions,.reportQuickLinks,button,input{display:none!important}
+  .reportTabPanel,.reportTabPanel:not(.reportTabActive){display:block!important;visibility:visible!important;height:auto!important;overflow:visible!important}
+  .reportPrintTabTitle{display:block!important;font-size:19px;color:#087f5b;margin:16px 0 10px;break-after:avoid}
+  .reportPrintMovements,.reportPrintIntegrity{break-before:page;page-break-before:always}
+  .reportSection,.reportSectionCard,.reportTableCard,.reportIntegrity,.reportItemsPanel,.reportPanel,.card,.supplierCreditPanel{display:block;max-height:none!important;height:auto!important;overflow:visible!important;margin:0 0 13px;padding:11px;border:1px solid #dce8e1;border-radius:8px;box-shadow:none!important;break-inside:auto;page-break-inside:auto}
+  .reportSectionHead,.cardHead{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;break-after:avoid}
+  h2,h3,h4{font-size:14px;margin:4px 0 7px;break-after:avoid}p{margin:4px 0}
+  .reportGrid,.reportGridPolished,.reportVisuals,.reportVisualsGrid,.reportItemsGrid{display:block!important;height:auto!important;max-height:none!important;overflow:visible!important}
+  .kpis,.reportKpis,.reportKpisPolished,.supplierCreditGrid,.integrityList{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px}
+  .kpis>.card,.supplierCreditGrid>div,.integrityList>div{break-inside:avoid!important;page-break-inside:avoid!important;padding:9px;border:1px solid #e0ebe5;border-radius:6px}
+  .reportTableCard{break-before:auto!important;page-break-before:auto!important}
+  .reportTableCard:not(:first-child){break-before:page!important;page-break-before:always!important}
+  .tableWrap{display:block!important;overflow:visible!important;width:100%!important;height:auto!important;max-height:none!important}
+  table{display:table!important;width:100%!important;min-width:0!important;table-layout:fixed;border-collapse:collapse;font-size:10px}
+  thead{display:table-header-group!important}tbody{display:table-row-group!important}
+  tr{break-inside:avoid;page-break-inside:avoid}
+  th,td{padding:6px 5px!important;border:1px solid #dce8e1;text-align:right;vertical-align:top;white-space:normal!important;overflow:visible!important;overflow-wrap:anywhere!important}
+  th{background:#eaf5ef}
+  .reportPrintExtraRow{display:table-row!important}
+  .reportPrintRowDetails{display:flex!important;flex-wrap:wrap;gap:3px 10px;margin-top:4px;color:#475569;font-size:9px}
+  .reportPrintRowDetails span{overflow-wrap:anywhere}
+  svg{max-width:100%!important;height:auto!important;max-height:230px!important}
+  .reportVisuals svg{width:100%!important}
+  .reportItemsPanel,.reportIntegrity{break-before:auto!important;page-break-before:auto!important}
+  .reportItem,.reportItemsGrid>*,.reportVisuals .card{break-inside:avoid;page-break-inside:avoid}
+  .reportPrintOverview,.reportPrintMovements,.reportPrintIntegrity{margin:0;padding:0}
+  .reportPrintOverview .reportSectionCard{break-before:auto!important;page-break-before:auto!important}
+  .reportPrintMovements .reportTableCard:first-of-type{break-before:auto!important;page-break-before:auto!important}
+  @media screen{body{max-width:900px;margin:20px auto;padding:15px;background:#f8faf9}.printToolbar{position:sticky;top:0;background:#fff;padding:12px;border:1px solid #dce8e1;margin-bottom:20px}.printToolbar button{display:inline-block!important;padding:10px 22px;border:0;border-radius:8px;background:#087f5b;color:#fff;cursor:pointer}}
+  @media print{.printToolbar{display:none!important}body{background:#fff!important}a{color:inherit;text-decoration:none}}
+  `;
+  const html='<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><title>تقرير صيدلية عبدالهادي</title><style>'+stylesheet+'</style></head><body><div class="printToolbar"><button onclick="window.print()">طباعة التقرير الكامل / حفظ PDF</button></div><header class="printMasthead"><div><h1>صيدلية عبدالهادي</h1><p>تاريخ ووقت الطباعة: '+printedAt+'</p><p>الفترة المحاسبية: '+safeDate+'</p><h2>التقارير والمحاسبة — التقرير الشامل</h2></div><img src="'+window.location.origin+'/logo.png" alt="شعار الصيدلية"></header>'+content.innerHTML+'</body></html>';
+  printWindow.document.open();printWindow.document.write(html);printWindow.document.close();
+  printWindow.focus();
+ };
  const sm=data?.summary||{},cmp=data?.comparison||{},checks=data?.checks||{};
  const diff=k=>cmp[k]==null?null:Number(sm[k]||0)-Number(cmp[k]||0),n=v=>Number(v||0),ok=v=>v===true||Math.abs(Number(v||0))<0.0001;
  const openRows=(title,rows,type)=>setDetail({title,rows:rows||[],type});
  const section=(title,sub,children,extra='')=><section className={`reportSection reportSectionCard ${extra}`}><div className="reportSectionHead"><div><h2>{title}</h2><span>{sub}</span></div></div>{children}</section>;
  const tabs=[['overview','نظرة عامة'],['movements','الحركات'],['integrity','فحص الأرقام']];
- return <><PageHead title="التقارير والمحاسبة" sub="لوحة تقارير مرتبة — أرقام مترابطة مع المبيعات والمشتريات والصندوق والمرتجعات" refresh={()=>load()} actions={<div className="reportHeaderActions"><button className="secondaryAction" onClick={()=>quick('today')}>اليوم</button><button className="secondaryAction" onClick={()=>quick('week')}>7 أيام</button><button className="secondaryAction" onClick={()=>quick('month')}>هذا الشهر</button><button className="secondaryAction" onClick={()=>quick('prevmonth')}>الشهر السابق</button><button className="secondaryAction" onClick={exportCsv} disabled={!data}><Download/> تصدير</button><button className="secondaryAction" onClick={()=>window.print()}><FileDown/> طباعة</button></div>}/>
+ return <><PageHead title="التقارير والمحاسبة" sub="لوحة تقارير مرتبة — أرقام مترابطة مع المبيعات والمشتريات والصندوق والمرتجعات" refresh={()=>load()} actions={<div className="reportHeaderActions"><button className="secondaryAction" onClick={()=>quick('today')}>اليوم</button><button className="secondaryAction" onClick={()=>quick('week')}>7 أيام</button><button className="secondaryAction" onClick={()=>quick('month')}>هذا الشهر</button><button className="secondaryAction" onClick={()=>quick('prevmonth')}>الشهر السابق</button><button className="secondaryAction" onClick={exportCsv} disabled={!data}><Download/> تصدير</button><button className="secondaryAction" onClick={printFullReport} disabled={!data||busy}><FileDown/> طباعة</button></div>}/>
  <div className="reportWorkspace">
   <div className="reportFilter reportFilterModern"><div className="reportFilterHead"><div><b>الفترة المحاسبية</b><span>{startDate} ← {endDate}</span></div><div className="reportStatus">{busy?<span className="reportLoading"><RefreshCw className="spin"/> جاري تحديث الأرقام…</span>:data?<span className="reportReady">● البيانات محملة</span>:null}</div></div><div className="reportFilterGrid"><label>من تاريخ<input type="date" value={startDate} onChange={e=>setStartDate(e.target.value)}/></label><label>إلى تاريخ<input type="date" value={endDate} onChange={e=>setEndDate(e.target.value)}/></label><label className="reportCompareToggle"><input type="checkbox" checked={compare} onChange={e=>setCompare(e.target.checked)}/><span><b>مقارنة</b><small>مع الفترة السابقة بنفس عدد الأيام</small></span></label><button className="primary reportUpdateBtn" onClick={()=>load()} disabled={busy}><RefreshCw className={busy?'spin':''}/>{busy?'جارٍ التحديث…':'تحديث التقرير'}</button></div></div>
   {err&&<div className="error reportError reportErrorModern"><AlertCircle/><div><b>تعذر تحديث التقرير</b><span>{err}</span></div></div>}
