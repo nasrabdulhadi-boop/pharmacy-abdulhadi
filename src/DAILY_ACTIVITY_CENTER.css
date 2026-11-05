@@ -184,3 +184,6 @@
  .reportWorkspace .reportKpis .card,.reportWorkspace .supplierCreditPanel,
  .reportWorkspace .reportItemsGrid .reportItem{break-inside:avoid!important;page-break-inside:avoid!important}
 }
+
+.reportPrintRowDetails{display:none}
+@media print{.reportPrintRowDetails{display:flex!important;flex-wrap:wrap!important;gap:3px 12px!important;margin-top:5px!important;font-size:9px!important;color:#334155!important}.reportPrintRowDetails span{display:inline-block!important;max-width:100%!important;overflow-wrap:anywhere!important}.reportPrintRowDetails b{font-weight:700!important}}
