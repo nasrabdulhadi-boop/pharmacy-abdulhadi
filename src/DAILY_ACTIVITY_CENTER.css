@@ -156,3 +156,39 @@
  .adminShell:has(.reportWorkspace) .reportSectionCard table thead{display:table-header-group!important}
  .adminShell:has(.reportWorkspace) .reportSectionCard tr{break-inside:avoid!important}
 }
+
+/* Keep on-screen movement tables compact; print every row, including beyond 100. */
+.reportPrintExtraRow{display:none}
+@media print{
+ .reportPrintExtraRow{display:table-row!important}
+ .adminShell:has(.reportWorkspace) .reportTabPanel,
+ .adminShell:has(.reportWorkspace) .reportGrid,
+ .adminShell:has(.reportWorkspace) .reportGridPolished,
+ .adminShell:has(.reportWorkspace) .reportTableCard,
+ .adminShell:has(.reportWorkspace) .reportTableCard .tableWrap{
+  display:block!important;grid-template-columns:1fr!important;max-height:none!important;height:auto!important;
+  min-height:0!important;max-width:none!important;width:100%!important;overflow:visible!important;
+  position:static!important;transform:none!important;contain:none!important;
+ }
+ .adminShell:has(.reportWorkspace) .reportTableCard{
+  box-sizing:border-box!important;break-before:page!important;page-break-before:always!important;
+  break-inside:auto!important;page-break-inside:auto!important;
+  padding:39mm 0 0!important;margin:0!important;border:0!important;box-shadow:none!important;background:#fff!important;
+ }
+ .adminShell:has(.reportWorkspace) .reportTableCard .cardHead{break-after:avoid!important}
+ .adminShell:has(.reportWorkspace) .reportTableCard .cardHead button{display:none!important}
+ .adminShell:has(.reportWorkspace) .reportTableCard table{
+  display:table!important;width:100%!important;min-width:0!important;max-width:100%!important;
+  table-layout:fixed!important;border-collapse:collapse!important;font-size:10px!important;
+ }
+ .adminShell:has(.reportWorkspace) .reportTableCard th,
+ .adminShell:has(.reportWorkspace) .reportTableCard td{
+  white-space:normal!important;overflow:visible!important;text-overflow:clip!important;
+  overflow-wrap:anywhere!important;word-break:normal!important;max-width:none!important;
+  padding:6px 5px!important;vertical-align:top!important;
+ }
+ .adminShell:has(.reportWorkspace) .reportTableCard thead{display:table-header-group!important}
+ .adminShell:has(.reportWorkspace) .reportTableCard tbody{display:table-row-group!important}
+ .adminShell:has(.reportWorkspace) .reportTableCard tr{break-inside:avoid!important;page-break-inside:avoid!important}
+ .adminShell:has(.reportWorkspace) .reportItemsPanel{break-before:page!important;page-break-before:always!important;padding-top:39mm!important}
+}
