@@ -24,11 +24,11 @@ export default function DailyActivityCenter({supabase}){
  const [detailData,setDetailData]=useState(null); const [loaded,setLoaded]=useState(null),[busy,setBusy]=useState(false),[error,setError]=useState(''),[type,setType]=useState('all'),[search,setSearch]=useState(''),[detail,setDetail]=useState(null);
  const [offset,setOffset]=useState(0),[total,setTotal]=useState(0),[partial,setPartial]=useState(false);
  const enrichSaleNumbers=async events=>{
-  const ids=[...new Set(events.filter(e=>e.kind==='sale').map(e=>e.item?.sale_id||e.item?.id||e.id).filter(Boolean))];
+  const ids=[...new Set(events.filter(e=>e.kind==='sale').map(e=>e.id||e.item?.sale_id||e.item?.id).filter(Boolean))];
   if(!ids.length)return events;
   const {data,error}=await supabase.rpc('admin_sale_invoice_numbers_v1',{p_sale_ids:ids});
   if(error||!data)return events;
-  return events.map(e=>{const id=e.item?.sale_id||e.item?.id||e.id;return e.kind==='sale'&&data[id]?{...e,item:{...e.item,invoice_number:data[id]}}:e});
+  return events.map(e=>{const id=e.id||e.item?.sale_id||e.item?.id;return e.kind==='sale'?{...e,item:{...e.item,invoice_number:data[id]||null}}:e});
  };
  const load=async(more=false)=>{
  if(!/^\d{4}-\d{2}-\d{2}$/.test(date))return setError('اختر تاريخاً صحيحاً');
@@ -54,7 +54,7 @@ export default function DailyActivityCenter({supabase}){
  throw e;
 }
  if(!data||!Array.isArray(data.events))throw Error('استجابة غير صحيحة من مركز الحركة');
- const newEvents=data.events.map((x,i)=>({key:x.kind+':'+x.id+':'+(nextOffset+i),kind:x.kind,source:x.kind,item:x.details||{},at:x.occurred_at}));
+ const newEvents=data.events.map((x,i)=>({key:x.kind+':'+x.id+':'+(nextOffset+i),id:x.id,kind:x.kind,source:x.kind,item:{...(x.details||{}),...(x.kind==='sale'?{sale_id:x.id,invoice_number:null}:{})},at:x.occurred_at}));
  const numberedEvents=await enrichSaleNumbers(newEvents);
  setLoaded(old=>({date,events:more&&old?.date===date?[...old.events,...numberedEvents]:numberedEvents}));
  setOffset(nextOffset+newEvents.length);setTotal(Number(data.total)||0);
@@ -67,7 +67,7 @@ export default function DailyActivityCenter({supabase}){
   setDetail(row);setDetailWarning('');setDetailBusy(true);
   const raw=row.item||{};
   setDetailData({header:raw,items:Array.isArray(raw.items)?raw.items:[]});
-  const id=raw.id||raw.sale_id||raw.purchase_id;
+  const id=row.kind==='sale'?(row.id||raw.sale_id||raw.id):(raw.id||raw.sale_id||raw.purchase_id);
   try{
    if(row.kind==='purchase'&&id){
     const {data,error}=await supabase.rpc('admin_get_purchase_detail_currency',{p_purchase_id:id});
