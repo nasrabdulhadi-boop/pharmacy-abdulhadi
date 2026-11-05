@@ -264,10 +264,10 @@ function Admin({onLogout}){
  useEffect(()=>{try{localStorage.setItem('abdulhadi-sidebar',sideCollapsed?'collapsed':'expanded')}catch{}},[sideCollapsed]);
  const go=(next,target=null)=>{setFocus(target);setTab(next);setMobile(false);setQuickSearch('')};
  const navGroups=[
-  {title:'اليوم',items:[['dashboard','لوحة التحكم',Home],['dailyActivity','مركز الحركة اليومية',Activity],['pos','نقطة البيع',ShoppingCart]]},
+  {title:'اليوم',items:[['dashboard','لوحة التحكم',Home],['pos','نقطة البيع',ShoppingCart]]},
   {title:'المخزون والشراء',items:[['pharmacyProducts','منتجات الصيدلية',Package],['siteProducts','منتجات الموقع',ExternalLink],['inventory','المخزون',BarChart3],['smart','المخزون الذكي',Sparkles],['purchases','المشتريات',Receipt],['suppliers','الموردون',Truck],['supplierDebts','ديون الموردين',WalletCards]]},
   {title:'العملاء والخدمات',items:[['orders','الطلبات',ClipboardList],['prescriptions','الوصفات',Upload],['requests','طلبات الأدوية',SearchCheck],['customers','العملاء',Users],['debtors','المتدينين',Users],['offers','العروض',Tag]]},
-  {title:'المال والتقارير',items:[['cashbox','الصندوق',Receipt],['returns','المرتجعات',Receipt],['reports','التقارير',TrendingUp],['profitCenterPreview','مركز الأرباح الذكي',BarChart3]]},
+  {title:'المال والتقارير',items:[['cashbox','الصندوق',Receipt],['returns','المرتجعات',Receipt],['reports','التقارير',TrendingUp],['profitCenterPreview','مركز الأرباح الذكي',BarChart3],['dailyActivity','مركز الحركة اليومية',Activity]]},
   {title:'الحماية',items:[['security','الأمان والتدقيق',ShieldCheck]]}
  ];
  const nav=navGroups.flatMap(g=>g.items);
