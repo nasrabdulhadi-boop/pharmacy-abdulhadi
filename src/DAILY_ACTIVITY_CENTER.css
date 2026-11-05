@@ -107,3 +107,37 @@
  }
  body:has(.dailyActivity) .dailyActivityFinancial{padding-top:40mm!important}
 }
+
+/* Shared branded print template for admin reports and print-capable sections. */
+.pharmacyGlobalPrintHeader{display:none}
+@media print{
+ @page{size:A4 portrait;margin:12mm 12mm 14mm}
+ body:has(.pharmacyGlobalPrintHeader) .adminTopbar,
+ body:has(.pharmacyGlobalPrintHeader) .mobileBar,
+ body:has(.pharmacyGlobalPrintHeader) .adminSidebar,
+ body:has(.pharmacyGlobalPrintHeader) .sidebar,
+ body:has(.pharmacyGlobalPrintHeader) .pageHead,
+ body:has(.pharmacyGlobalPrintHeader) .reportFilter,
+ body:has(.pharmacyGlobalPrintHeader) .reportTabs,
+ body:has(.pharmacyGlobalPrintHeader) .reportHeaderActions{display:none!important}
+ body:has(.pharmacyGlobalPrintHeader) .adminMain{margin:0!important;padding:0!important;max-width:none!important;width:100%!important;overflow:visible!important;height:auto!important}
+ body:has(.pharmacyGlobalPrintHeader) .pharmacyGlobalPrintHeader{
+  display:flex!important;position:fixed!important;top:0!important;right:0!important;left:0!important;bottom:auto!important;
+  transform:none!important;height:33mm!important;align-items:center!important;justify-content:space-between!important;
+  direction:rtl!important;background:white!important;border-bottom:1.5px solid #087f5b!important;
+  z-index:10001!important;box-sizing:border-box!important;padding:2mm 0!important;
+ }
+ .pharmacyGlobalPrintIdentity{text-align:right!important;color:#172b25!important;line-height:1.35!important}
+ .pharmacyGlobalPrintIdentity h1{font-size:18px!important;color:#087f5b!important;margin:0 0 2mm!important}
+ .pharmacyGlobalPrintIdentity h2{font-size:12px!important;margin:2mm 0 0!important}
+ .pharmacyGlobalPrintIdentity p{font-size:10px!important;margin:0!important}
+ .pharmacyGlobalPrintHeader img{width:26mm!important;height:26mm!important;object-fit:contain!important}
+ body:has(.pharmacyGlobalPrintHeader) .dailyActivityPrintHeader{display:none!important}
+ body:has(.pharmacyGlobalPrintHeader) .dailyActivityPrintSection{padding-top:39mm!important}
+ body:has(.pharmacyGlobalPrintHeader) .reportWorkspace{padding:39mm 0 0!important;overflow:visible!important;background:#fff!important}
+ body:has(.pharmacyGlobalPrintHeader) .reportSectionCard{break-before:page!important;page-break-before:always!important;break-inside:auto!important;box-shadow:none!important}
+ body:has(.pharmacyGlobalPrintHeader) .reportSectionCard:first-of-type{break-before:auto!important;page-break-before:auto!important}
+ body:has(.pharmacyGlobalPrintHeader) .reportSectionCard{padding-top:39mm!important}
+ body:has(.pharmacyGlobalPrintHeader) .reportSectionCard table thead{display:table-header-group!important}
+ body:has(.pharmacyGlobalPrintHeader) .reportSectionCard tr{break-inside:avoid!important}
+}
