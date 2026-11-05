@@ -840,56 +840,48 @@ function Reports(){
   if(!data||busy)return;
   const workspace=document.querySelector('.reportWorkspace');
   if(!workspace)return;
-  // A separate document prevents dashboard print CSS and hidden tabs from generating empty sheets.
-  const printWindow=window.open('','_blank');
-  if(!printWindow){alert('يرجى السماح بفتح نافذة الطباعة لهذا الموقع ثم إعادة المحاولة.');return}
-  const content=workspace.cloneNode(true);
-  content.querySelectorAll('.reportFilter,.reportTabs,.reportHeaderActions,button,input,.reportQuickLinks').forEach(el=>el.remove());
-  content.querySelectorAll('.reportPrintExtraRow').forEach(el=>el.classList.remove('reportPrintExtraRow'));
-  content.querySelectorAll('.reportTabPanel').forEach(el=>{el.style.display='block';el.style.visibility='visible'});
-  const safeDate=String(startDate+' — '+endDate).replaceAll('<','&lt;').replaceAll('>','&gt;');
-  const printedAt=localDateTime(new Date());
-  const stylesheet=`
-  @page{size:A4 portrait;margin:15mm 13mm 16mm}
-  *{box-sizing:border-box}
-  html,body{direction:rtl;font-family:Tahoma,Arial,sans-serif;color:#172b25;background:#fff;margin:0;padding:0;font-size:11px;line-height:1.65}
-  .printMasthead{display:flex;align-items:center;justify-content:space-between;gap:20px;border-bottom:2px solid #087f5b;padding:0 0 12px;margin-bottom:18px;break-after:avoid}
-  .printMasthead h1{color:#087f5b;font-size:23px;margin:0}.printMasthead p{margin:2px 0}.printMasthead h2{font-size:14px;margin:6px 0 0}
-  .printMasthead img{width:88px;height:88px;object-fit:contain}
-  .reportFilter,.reportTabs,.reportHeaderActions,.reportQuickLinks,button,input{display:none!important}
-  .reportTabPanel,.reportTabPanel:not(.reportTabActive){display:block!important;visibility:visible!important;height:auto!important;overflow:visible!important}
-  .reportPrintTabTitle{display:block!important;font-size:19px;color:#087f5b;margin:16px 0 10px;break-after:avoid}
-  .reportPrintMovements,.reportPrintIntegrity{break-before:page;page-break-before:always}
-  .reportSection,.reportSectionCard,.reportTableCard,.reportIntegrity,.reportItemsPanel,.reportPanel,.card,.supplierCreditPanel{display:block;max-height:none!important;height:auto!important;overflow:visible!important;margin:0 0 13px;padding:11px;border:1px solid #dce8e1;border-radius:8px;box-shadow:none!important;break-inside:auto;page-break-inside:auto}
-  .reportSectionHead,.cardHead{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;break-after:avoid}
-  h2,h3,h4{font-size:14px;margin:4px 0 7px;break-after:avoid}p{margin:4px 0}
-  .reportGrid,.reportGridPolished,.reportVisuals,.reportVisualsGrid,.reportItemsGrid{display:block!important;height:auto!important;max-height:none!important;overflow:visible!important}
-  .kpis,.reportKpis,.reportKpisPolished,.supplierCreditGrid,.integrityList{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px}
-  .kpis>.card,.supplierCreditGrid>div,.integrityList>div{break-inside:avoid!important;page-break-inside:avoid!important;padding:9px;border:1px solid #e0ebe5;border-radius:6px}
-  .reportTableCard{break-before:auto!important;page-break-before:auto!important}
-  .reportTableCard:not(:first-child){break-before:page!important;page-break-before:always!important}
-  .tableWrap{display:block!important;overflow:visible!important;width:100%!important;height:auto!important;max-height:none!important}
-  table{display:table!important;width:100%!important;min-width:0!important;table-layout:fixed;border-collapse:collapse;font-size:10px}
-  thead{display:table-header-group!important}tbody{display:table-row-group!important}
-  tr{break-inside:avoid;page-break-inside:avoid}
-  th,td{padding:6px 5px!important;border:1px solid #dce8e1;text-align:right;vertical-align:top;white-space:normal!important;overflow:visible!important;overflow-wrap:anywhere!important}
-  th{background:#eaf5ef}
-  .reportPrintExtraRow{display:table-row!important}
-  .reportPrintRowDetails{display:flex!important;flex-wrap:wrap;gap:3px 10px;margin-top:4px;color:#475569;font-size:9px}
-  .reportPrintRowDetails span{overflow-wrap:anywhere}
-  svg{max-width:100%!important;height:auto!important;max-height:230px!important}
-  .reportVisuals svg{width:100%!important}
-  .reportItemsPanel,.reportIntegrity{break-before:auto!important;page-break-before:auto!important}
-  .reportItem,.reportItemsGrid>*,.reportVisuals .card{break-inside:avoid;page-break-inside:avoid}
-  .reportPrintOverview,.reportPrintMovements,.reportPrintIntegrity{margin:0;padding:0}
-  .reportPrintOverview .reportSectionCard{break-before:auto!important;page-break-before:auto!important}
-  .reportPrintMovements .reportTableCard:first-of-type{break-before:auto!important;page-break-before:auto!important}
-  @media screen{body{max-width:900px;margin:20px auto;padding:15px;background:#f8faf9}.printToolbar{position:sticky;top:0;background:#fff;padding:12px;border:1px solid #dce8e1;margin-bottom:20px}.printToolbar button{display:inline-block!important;padding:10px 22px;border:0;border-radius:8px;background:#087f5b;color:#fff;cursor:pointer}}
-  @media print{.printToolbar{display:none!important}body{background:#fff!important}a{color:inherit;text-decoration:none}}
+  const root=workspace.cloneNode(true);
+  root.querySelectorAll('.reportFilter,.reportTabs,.reportHeaderActions,.reportQuickLinks,button,input').forEach(el=>el.remove());
+  root.querySelectorAll('.reportPrintExtraRow').forEach(el=>el.classList.remove('reportPrintExtraRow'));
+  root.querySelectorAll('.reportTabPanel').forEach(el=>{el.style.display='block';el.style.visibility='visible'});
+  // Keep the application's real report styling; hide only decorative icons and interactive controls.
+  const frame=document.createElement('iframe');
+  frame.setAttribute('aria-hidden','true');
+  frame.style.cssText='position:fixed;right:0;bottom:0;width:0;height:0;border:0;opacity:0;pointer-events:none';
+  document.body.appendChild(frame);
+  const doc=frame.contentDocument;
+  const styles=Array.from(document.querySelectorAll('style,link[rel="stylesheet"]')).map(el=>el.outerHTML).join('');
+  const override=`
+  @page{size:A4 portrait;margin:15mm 13mm 15mm}
+  html,body{direction:rtl!important;background:white!important;color:#182d24!important;font-family:Tahoma,Arial,sans-serif!important;margin:0!important;padding:0!important}
+  .reportWorkspace{width:100%!important;max-width:none!important;margin:0!important;padding:0!important;display:block!important;overflow:visible!important}
+  .reportTabPanel,.reportTabPanel:not(.reportTabActive){display:block!important;visibility:visible!important;position:static!important;max-height:none!important;height:auto!important;overflow:visible!important}
+  .reportPrintMovements,.reportPrintIntegrity{break-before:page!important}
+  .reportPrintTabTitle{display:block!important;font-size:18px!important;margin:10px 0 12px!important;break-after:avoid!important}
+  .reportSectionCard,.reportTableCard,.reportIntegrity,.reportVisuals,.reportVisualsGrid,.reportItemsPanel{max-height:none!important;height:auto!important;overflow:visible!important;transform:none!important;break-inside:auto!important;box-shadow:none!important}
+  .reportGrid,.reportGridPolished,.reportVisualsGrid,.reportItemsGrid{display:block!important;height:auto!important;max-height:none!important;overflow:visible!important}
+  .reportTableCard{break-before:auto!important;page-break-before:auto!important;margin-bottom:12px!important}
+  .tableWrap,.reportTableCard .tableWrap{height:auto!important;max-height:none!important;overflow:visible!important;display:block!important;width:100%!important}
+  table{width:100%!important;min-width:0!important;table-layout:auto!important;border-collapse:collapse!important;font-size:9px!important}
+  thead{display:table-header-group!important}tr{break-inside:avoid!important}th,td{white-space:normal!important;overflow-wrap:anywhere!important;padding:4px!important}
+  .reportPrintExtraRow{display:table-row!important}.reportPrintRowDetails{display:block!important;font-size:9px!important}
+  .reportPrintRowDetails span{display:inline!important;margin-left:8px!important}
+  .reportWorkspace svg,.reportWorkspace .lucide{display:none!important}
+  .reportWorkspace .reportVisuals svg{display:block!important;max-width:100%!important;max-height:210px!important;width:100%!important;height:auto!important}
+  .reportWorkspace .reportVisuals .lucide{display:none!important}
+  .reportWorkspace .reportVisuals .card,.reportWorkspace .kpis>.card{break-inside:avoid!important}
+  .reportWorkspace .card{min-height:0!important}
+  .reportWorkspace button,.reportWorkspace input{display:none!important}
+  .printHeader{display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid #0b7956;padding:0 0 9px;margin:0 0 14px;break-after:avoid}
+  .printHeader h1{color:#087f5b;font-size:20px;margin:0}.printHeader p{font-size:10px;margin:3px 0}.printHeader h2{font-size:13px;margin:4px 0}.printHeader img{width:70px;height:70px;object-fit:contain}
+  @media print{.printHeader{display:flex!important}.reportWorkspace{display:block!important}}
   `;
-  const html='<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><title>تقرير صيدلية عبدالهادي</title><style>'+stylesheet+'</style></head><body><div class="printToolbar"><button onclick="window.print()">طباعة التقرير الكامل / حفظ PDF</button></div><header class="printMasthead"><div><h1>صيدلية عبدالهادي</h1><p>تاريخ ووقت الطباعة: '+printedAt+'</p><p>الفترة المحاسبية: '+safeDate+'</p><h2>التقارير والمحاسبة — التقرير الشامل</h2></div><img src="'+window.location.origin+'/logo.png" alt="شعار الصيدلية"></header>'+content.innerHTML+'</body></html>';
-  printWindow.document.open();printWindow.document.write(html);printWindow.document.close();
-  printWindow.focus();
+  const esc=t=>String(t).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;');
+  doc.open();
+  doc.write('<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><title>تقرير صيدلية عبدالهادي</title>'+styles+'<style>'+override+'</style></head><body><header class="printHeader"><div><h1>صيدلية عبدالهادي</h1><p>تاريخ ووقت الطباعة: '+esc(localDateTime(new Date()))+'</p><p>الفترة المحاسبية: '+esc(startDate)+' — '+esc(endDate)+'</p><h2>التقارير والمحاسبة</h2></div><img src="/logo.png" alt="شعار الصيدلية"></header><main class="reportWorkspace">'+root.innerHTML+'</main></body></html>');
+  doc.close();
+  const print=()=>{try{frame.contentWindow.focus();frame.contentWindow.print()}finally{setTimeout(()=>frame.remove(),60000)}};
+  if(doc.fonts?.ready){doc.fonts.ready.then(()=>setTimeout(print,350))}else{setTimeout(print,700)}
  };
  const sm=data?.summary||{},cmp=data?.comparison||{},checks=data?.checks||{};
  const diff=k=>cmp[k]==null?null:Number(sm[k]||0)-Number(cmp[k]||0),n=v=>Number(v||0),ok=v=>v===true||Math.abs(Number(v||0))<0.0001;
