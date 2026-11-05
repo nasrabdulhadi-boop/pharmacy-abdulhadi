@@ -28,3 +28,22 @@
 .dailyActivityCompactFacts span{font-size:13px;color:var(--muted,#64748b)}
 .dailyActivityCompactFacts b{font-size:14px;font-weight:650;text-align:left;overflow-wrap:anywhere}
 @media(max-width:650px){.dailyActivitySummary{grid-template-columns:1fr}.dailyActivityCompactFacts{grid-template-columns:1fr}.dailyActivityDialog{width:100%}}
+
+/* Dedicated daily report print layout: no application chrome */
+.dailyActivityPrintHeader{display:none}
+@media print{
+ @page{size:A4;margin:13mm 12mm}
+ body:has(.dailyActivity) .adminTopbar,body:has(.dailyActivity) .adminSidebar,body:has(.dailyActivity) aside,body:has(.dailyActivity) nav,body:has(.dailyActivity) .globalSearch{display:none!important}
+ body:has(.dailyActivity) .adminMain,body:has(.dailyActivity) main{margin:0!important;padding:0!important;width:100%!important;max-width:none!important;overflow:visible!important}
+ body:has(.dailyActivity) .dailyActivity{background:white!important;color:#172b25!important;padding:0!important;margin:0!important;width:100%!important}
+ .dailyActivityPrintHeader{display:flex!important;direction:rtl;align-items:flex-start;justify-content:space-between;border-bottom:2px solid #087f5b;padding:0 0 12px;margin:0 0 16px;gap:20px;break-inside:avoid}
+ .dailyActivityPrintIdentity{text-align:right;line-height:1.8}
+ .dailyActivityPrintIdentity h1{font-size:22px;margin:0 0 5px;color:#087f5b}
+ .dailyActivityPrintIdentity h2{font-size:16px;margin:8px 0 0}
+ .dailyActivityPrintLogo{display:block;object-fit:contain;width:95px;height:95px;margin:0}
+ .dailyActivityHead,.dailyActivityDate,.dailyActivity button,.dailyActivity input,.dailyActivity select,.dailyActivityDialog{display:none!important}
+ .dailyActivity .card,.dailyActivityTable,.dailyActivityCards{break-inside:avoid;box-shadow:none!important}
+ .dailyActivityTable{overflow:visible!important}
+ .dailyActivityTable table{width:100%;font-size:10px}
+ .dailyActivityTable tr{break-inside:avoid}
+}
