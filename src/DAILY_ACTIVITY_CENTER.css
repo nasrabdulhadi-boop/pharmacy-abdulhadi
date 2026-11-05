@@ -28,3 +28,162 @@
 .dailyActivityCompactFacts span{font-size:13px;color:var(--muted,#64748b)}
 .dailyActivityCompactFacts b{font-size:14px;font-weight:650;text-align:left;overflow-wrap:anywhere}
 @media(max-width:650px){.dailyActivitySummary{grid-template-columns:1fr}.dailyActivityCompactFacts{grid-template-columns:1fr}.dailyActivityDialog{width:100%}}
+
+/* Dedicated daily report print layout: no application chrome */
+.dailyActivityPrintHeader{display:none}
+@media print{
+ @page{size:A4;margin:13mm 12mm}
+ body:has(.dailyActivity) .adminTopbar,body:has(.dailyActivity) .adminSidebar,body:has(.dailyActivity) aside,body:has(.dailyActivity) nav,body:has(.dailyActivity) .globalSearch{display:none!important}
+ body:has(.dailyActivity) .adminMain,body:has(.dailyActivity) main{margin:0!important;padding:0!important;width:100%!important;max-width:none!important;overflow:visible!important}
+ body:has(.dailyActivity) .dailyActivity{background:white!important;color:#172b25!important;padding:0!important;margin:0!important;width:100%!important}
+ .dailyActivityPrintHeader{display:flex!important;direction:rtl;align-items:flex-start;justify-content:space-between;border-bottom:2px solid #087f5b;padding:0 0 12px;margin:0 0 16px;gap:20px;break-inside:avoid}
+ .dailyActivityPrintIdentity{text-align:right;line-height:1.8}
+ .dailyActivityPrintIdentity h1{font-size:22px;margin:0 0 5px;color:#087f5b}
+ .dailyActivityPrintIdentity h2{font-size:16px;margin:8px 0 0}
+ .dailyActivityPrintLogo{display:block;object-fit:contain;width:95px;height:95px;margin:0}
+ .dailyActivityHead,.dailyActivityDate,.dailyActivity button,.dailyActivity input,.dailyActivity select,.dailyActivityDialog{display:none!important}
+ .dailyActivity .card,.dailyActivityTable,.dailyActivityCards{break-inside:avoid;box-shadow:none!important}
+ .dailyActivityTable{overflow:visible!important}
+ .dailyActivityTable table{width:100%;font-size:10px}
+ .dailyActivityTable tr{break-inside:avoid}
+}
+
+/* Hide both desktop and mobile application chrome from printed daily reports. */
+@media print{
+ @page{size:A4;margin:0}
+ body:has(.dailyActivity) .mobileBar,
+ body:has(.dailyActivity) .adminTopbar,
+ body:has(.dailyActivity) .topbarClock,
+ body:has(.dailyActivity) .topbarActions,
+ body:has(.dailyActivity) .adminSidebar{display:none!important}
+ body:has(.dailyActivity) .dailyActivity{box-sizing:border-box!important;padding:14mm 12mm!important}
+ body:has(.dailyActivity) .dailyActivityPrintHeader{margin-top:0!important}
+}
+
+/* Multi-page A4 report: repeat the identity on every printed page. */
+.dailyActivityPrintSectionTitle{display:none}
+@media print{
+ @page{size:A4 portrait;margin:46mm 12mm 15mm 12mm}
+ html,body{height:auto!important;overflow:visible!important}
+ body:has(.dailyActivity) .dailyActivity{padding:0!important;margin:0!important;overflow:visible!important}
+ body:has(.dailyActivity) .adminMain,body:has(.dailyActivity) main{overflow:visible!important;height:auto!important}
+ .dailyActivityPrintHeader{
+   position:fixed!important;top:0!important;right:0!important;left:0!important;transform:translateY(-39mm)!important;
+   height:35mm!important;box-sizing:border-box!important;margin:0!important;padding:2mm 0 3mm!important;
+   background:#fff!important;z-index:9999!important;display:flex!important;align-items:center!important;
+   border-bottom:1.5px solid #087f5b!important;
+ }
+ .dailyActivityPrintIdentity{line-height:1.45!important}
+ .dailyActivityPrintIdentity h1{font-size:18px!important;margin:0!important}
+ .dailyActivityPrintIdentity h2{font-size:12px!important;margin:2mm 0 0!important}
+ .dailyActivityPrintLogo{width:26mm!important;height:26mm!important}
+ .dailyActivityPrintSection{display:block!important;break-before:page!important;page-break-before:always!important;break-inside:auto!important;page-break-inside:auto!important;box-shadow:none!important;border:0!important;padding:0!important;margin:0!important;background:#fff!important}
+ .dailyActivityPrintSection:first-of-type{break-before:auto!important;page-break-before:auto!important}
+ .dailyActivityFinancial{break-before:auto!important;page-break-before:auto!important}
+ .dailyActivityPrintSectionTitle{display:block!important}
+ .dailyActivityPrintSection h2,.dailyActivityPrintSection h3{break-after:avoid!important;page-break-after:avoid!important}
+ .dailyActivityPrintSection .dailyActivityCards{break-inside:auto!important;page-break-inside:auto!important}
+ .dailyActivityPrintSection .dailyActivityCards>.card{break-inside:avoid!important;page-break-inside:avoid!important}
+ .dailyActivityPrintSection .dailyActivityTable{break-inside:auto!important;page-break-inside:auto!important;overflow:visible!important}
+ .dailyActivityPrintSection table{break-inside:auto!important;page-break-inside:auto!important}
+ .dailyActivityPrintSection thead{display:table-header-group!important}
+ .dailyActivityPrintSection tr{break-inside:avoid!important;page-break-inside:avoid!important}
+ .dailyActivityPrintSection .dailyActivityNotice{break-inside:avoid!important}
+}
+
+/* Print header correction: avoid negative offsets and transformed fixed elements,
+   which Chromium places at the bottom of printed sheets. */
+@media print{
+ @page{size:A4 portrait;margin:12mm 12mm 14mm}
+ body:has(.dailyActivity) .dailyActivityPrintHeader{
+   position:fixed!important;top:0!important;bottom:auto!important;left:0!important;right:0!important;
+   transform:none!important;translate:none!important;
+   height:34mm!important;min-height:34mm!important;max-height:34mm!important;
+   margin:0!important;padding:2mm 0 3mm!important;
+   background:white!important;z-index:10000!important;
+ }
+ body:has(.dailyActivity) .dailyActivityPrintSection{
+   padding-top:40mm!important;box-sizing:border-box!important;
+ }
+ body:has(.dailyActivity) .dailyActivityFinancial{padding-top:40mm!important}
+}
+
+
+/* Unified accounting print: avoid nested forced page breaks and scroll clipping. */
+.pharmacyGlobalPrintHeader{display:none}
+.reportPrintExtraRow{display:none}
+.reportPrintTabTitle{display:none}
+.reportWorkspace .reportTabPanel:not(.reportTabActive){display:none}
+@media print{
+ @page{size:A4 portrait;margin:16mm 13mm 16mm}
+ html,body,#root{height:auto!important;min-height:0!important;overflow:visible!important}
+ .adminShell:has(.reportWorkspace){display:block!important;position:static!important;overflow:visible!important;height:auto!important;transform:none!important}
+ .adminShell:has(.reportWorkspace)>.adminMain{display:block!important;position:static!important;overflow:visible!important;height:auto!important;width:100%!important;max-width:none!important;margin:0!important;padding:0!important;transform:none!important}
+ .adminShell:has(.reportWorkspace) .adminTopbar,.adminShell:has(.reportWorkspace) .mobileBar,
+ .adminShell:has(.reportWorkspace) .adminSidebar,.adminShell:has(.reportWorkspace) .sidebar,
+ .adminShell:has(.reportWorkspace) .pageHead,.adminShell:has(.reportWorkspace) .reportFilter,
+ .adminShell:has(.reportWorkspace) .reportTabs,.adminShell:has(.reportWorkspace) .reportHeaderActions{display:none!important}
+ .adminShell:has(.reportWorkspace)>.pharmacyGlobalPrintHeader{
+  display:flex!important;position:static!important;transform:none!important;
+  width:100%!important;height:auto!important;min-height:30mm!important;
+  justify-content:space-between!important;align-items:center!important;
+  direction:rtl!important;border-bottom:2px solid #087f5b!important;
+  padding:0 0 4mm!important;margin:0 0 7mm!important;background:#fff!important;
+  break-after:avoid!important;
+ }
+ .pharmacyGlobalPrintIdentity{text-align:right!important;line-height:1.45!important;color:#172b25!important}
+ .pharmacyGlobalPrintIdentity h1{font-size:19px!important;color:#087f5b!important;margin:0 0 2mm!important}
+ .pharmacyGlobalPrintIdentity h2{font-size:13px!important;margin:2mm 0 0!important}
+ .pharmacyGlobalPrintIdentity p{font-size:10px!important;margin:0!important}
+ .pharmacyGlobalPrintHeader img{width:25mm!important;height:25mm!important;object-fit:contain!important}
+ .adminShell:has(.reportWorkspace) .reportWorkspace{display:block!important;overflow:visible!important;height:auto!important;width:100%!important;margin:0!important;padding:0!important;background:#fff!important}
+ .reportWorkspace .reportTabPanel,.reportWorkspace .reportTabPanel:not(.reportTabActive){
+  display:block!important;visibility:visible!important;overflow:visible!important;
+  height:auto!important;max-height:none!important;margin:0!important;padding:0!important;
+ }
+ .reportWorkspace .reportPrintTabTitle{display:block!important;font-size:18px!important;color:#087f5b!important;margin:7mm 0 5mm!important;break-after:avoid!important}
+ .reportWorkspace .reportPrintMovements,.reportWorkspace .reportPrintIntegrity{
+  break-before:page!important;page-break-before:always!important;
+ }
+ .reportWorkspace .reportSection,.reportWorkspace .reportSectionCard,.reportWorkspace .reportPanel,
+ .reportWorkspace .reportTableCard,.reportWorkspace .reportItemsPanel,.reportWorkspace .reportIntegrity{
+  break-before:auto!important;page-break-before:auto!important;
+  break-inside:auto!important;page-break-inside:auto!important;
+  padding:3mm!important;margin:0 0 5mm!important;min-height:0!important;
+  height:auto!important;max-height:none!important;overflow:visible!important;
+  box-shadow:none!important;transform:none!important;
+ }
+ .reportWorkspace .reportGrid,.reportWorkspace .reportGridPolished{
+  display:block!important;overflow:visible!important;grid-template-columns:1fr!important;
+  height:auto!important;max-height:none!important;min-height:0!important;
+ }
+ .reportWorkspace .reportGrid>.card{width:100%!important;max-width:100%!important;box-sizing:border-box!important}
+ .reportWorkspace .reportTableCard:not(:first-child){break-before:page!important;page-break-before:always!important}
+ .reportWorkspace .reportTableCard .tableWrap,.reportWorkspace .reportPanel .tableWrap{
+  display:block!important;width:100%!important;max-width:100%!important;
+  height:auto!important;max-height:none!important;overflow:visible!important;
+ }
+ .reportWorkspace .reportTableCard table,.reportWorkspace .reportPanel table{
+  display:table!important;width:100%!important;max-width:100%!important;
+  min-width:0!important;table-layout:fixed!important;border-collapse:collapse!important;font-size:10px!important;
+ }
+ .reportWorkspace .reportTableCard th,.reportWorkspace .reportTableCard td,
+ .reportWorkspace .reportPanel th,.reportWorkspace .reportPanel td{
+  white-space:normal!important;overflow:visible!important;overflow-wrap:anywhere!important;
+  text-overflow:clip!important;padding:5px!important;vertical-align:top!important;
+ }
+ .reportWorkspace table thead{display:table-header-group!important}
+ .reportWorkspace table tbody{display:table-row-group!important}
+ .reportWorkspace table tr{break-inside:avoid!important;page-break-inside:avoid!important}
+ .reportWorkspace .reportPrintExtraRow{display:table-row!important}
+ .reportWorkspace .reportTableCard .cardHead button,.reportWorkspace .reportQuickLinks button{display:none!important}
+ .reportWorkspace .reportItemsPanel{break-before:auto!important;page-break-before:auto!important}
+ .reportWorkspace .reportVisuals,.reportWorkspace .reportVisuals *{max-height:none!important}
+ .reportWorkspace svg{max-width:100%!important}
+ .reportWorkspace .reportPrintOverview .reportSectionCard{break-inside:auto!important}
+ .reportWorkspace .reportKpis .card,.reportWorkspace .supplierCreditPanel,
+ .reportWorkspace .reportItemsGrid .reportItem{break-inside:avoid!important;page-break-inside:avoid!important}
+}
+
+.reportPrintRowDetails{display:none}
+@media print{.reportPrintRowDetails{display:flex!important;flex-wrap:wrap!important;gap:3px 12px!important;margin-top:5px!important;font-size:9px!important;color:#334155!important}.reportPrintRowDetails span{display:inline-block!important;max-width:100%!important;overflow-wrap:anywhere!important}.reportPrintRowDetails b{font-weight:700!important}}
