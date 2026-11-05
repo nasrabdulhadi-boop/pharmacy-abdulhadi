@@ -47,3 +47,15 @@
  .dailyActivityTable table{width:100%;font-size:10px}
  .dailyActivityTable tr{break-inside:avoid}
 }
+
+/* Hide both desktop and mobile application chrome from printed daily reports. */
+@media print{
+ @page{size:A4;margin:0}
+ body:has(.dailyActivity) .mobileBar,
+ body:has(.dailyActivity) .adminTopbar,
+ body:has(.dailyActivity) .topbarClock,
+ body:has(.dailyActivity) .topbarActions,
+ body:has(.dailyActivity) .adminSidebar{display:none!important}
+ body:has(.dailyActivity) .dailyActivity{box-sizing:border-box!important;padding:14mm 12mm!important}
+ body:has(.dailyActivity) .dailyActivityPrintHeader{margin-top:0!important}
+}
