@@ -27,8 +27,10 @@ export default function DailyActivityCenter({supabase}){
   const ids=[...new Set(events.filter(e=>e.kind==='sale').map(e=>e.id||e.item?.sale_id||e.item?.id).filter(Boolean))];
   if(!ids.length)return events;
   const {data,error}=await supabase.rpc('admin_sale_invoice_numbers_v1',{p_sale_ids:ids});
-  if(error||!data)return events;
-  return events.map(e=>{const id=e.id||e.item?.sale_id||e.item?.id;return e.kind==='sale'?{...e,item:{...e.item,invoice_number:data[id]||null}}:e});
+  if(error||!data)throw new Error('تعذر التحقق من أرقام الفواتير: '+(error?.message||'استجابة فارغة'));
+  const seen=new Set();
+  for(const id of ids){const number=data[id];if(number==null)throw new Error('فاتورة بيع بلا رقم موثّق: '+id);if(seen.has(String(number)))throw new Error('تكرار رقم الفاتورة '+number+' لعدة فواتير؛ أُوقف العرض لحماية دقة البيانات');seen.add(String(number));}
+  return events.map(e=>{const id=e.id||e.item?.sale_id||e.item?.id;return e.kind==='sale'?{...e,item:{...e.item,invoice_number:data[id]}}:e});
  };
  const load=async(more=false)=>{
  if(!/^\d{4}-\d{2}-\d{2}$/.test(date))return setError('اختر تاريخاً صحيحاً');
