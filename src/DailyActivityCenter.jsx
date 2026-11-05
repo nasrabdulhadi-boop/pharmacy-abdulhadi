@@ -23,7 +23,7 @@ export default function DailyActivityCenter({supabase}){
  const [date,setDate]=useState(()=>{const d=new Date();return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-')});
  const [detailData,setDetailData]=useState(null); const [loaded,setLoaded]=useState(null),[busy,setBusy]=useState(false),[error,setError]=useState(''),[type,setType]=useState('all'),[search,setSearch]=useState(''),[detail,setDetail]=useState(null);
  const [offset,setOffset]=useState(0),[total,setTotal]=useState(0),[partial,setPartial]=useState(false);
- const [finance,setFinance]=useState(null),[financeError,setFinanceError]=useState(''),[invoiceNumberMap,setInvoiceNumberMap]=useState({});
+ const [finance,setFinance]=useState(null),[financeError,setFinanceError]=useState(''),[invoiceNumberMap,setInvoiceNumberMap]=useState({}),[previousFinance,setPreviousFinance]=useState(null);
  const enrichSaleNumbers=async events=>{
   const ids=[...new Set(events.filter(e=>e.kind==='sale').map(e=>e.id||e.item?.sale_id||e.item?.id).filter(Boolean))];
   if(!ids.length)return events;
