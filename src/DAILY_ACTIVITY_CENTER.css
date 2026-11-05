@@ -90,3 +90,20 @@
  .dailyActivityPrintSection tr{break-inside:avoid!important;page-break-inside:avoid!important}
  .dailyActivityPrintSection .dailyActivityNotice{break-inside:avoid!important}
 }
+
+/* Print header correction: avoid negative offsets and transformed fixed elements,
+   which Chromium places at the bottom of printed sheets. */
+@media print{
+ @page{size:A4 portrait;margin:12mm 12mm 14mm}
+ body:has(.dailyActivity) .dailyActivityPrintHeader{
+   position:fixed!important;top:0!important;bottom:auto!important;left:0!important;right:0!important;
+   transform:none!important;translate:none!important;
+   height:34mm!important;min-height:34mm!important;max-height:34mm!important;
+   margin:0!important;padding:2mm 0 3mm!important;
+   background:white!important;z-index:10000!important;
+ }
+ body:has(.dailyActivity) .dailyActivityPrintSection{
+   padding-top:40mm!important;box-sizing:border-box!important;
+ }
+ body:has(.dailyActivity) .dailyActivityFinancial{padding-top:40mm!important}
+}
