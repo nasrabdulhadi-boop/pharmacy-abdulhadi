@@ -1,0 +1,33 @@
+{
+  "date": "2026-11-07",
+  "environment": "QA only",
+  "production_modified": false,
+  "tests": {
+    "project_passed": 124,
+    "project_failed": 0,
+    "project_skipped": 0,
+    "live_auth_http_passed": 92,
+    "synthetic_backup_passed": 14,
+    "rollback_regression_passed": 135,
+    "backup_rollback_passed": 9,
+    "legacy_authenticated_rpc_passed": 4,
+    "ssr_contracts": 63
+  },
+  "cleanup": {
+    "temporary_auth_users": 0,
+    "synthetic_probe_rows": 0,
+    "synthetic_storage_files": 0,
+    "fixture_helper_disabled_status": 410
+  },
+  "public_tables_without_rls": 0,
+  "not_verified": [
+    "full QA export",
+    "full isolated restore",
+    "email delivery and final email confirmation",
+    "signed-in browser on deployed Preview"
+  ],
+  "not_implemented": [
+    "new-account invitation flow",
+    "archive restore executor"
+  ]
+}

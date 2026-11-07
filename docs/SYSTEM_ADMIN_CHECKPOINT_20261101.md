@@ -1,3 +1,5 @@
+> تحديث: راجع [تقرير الاستكمال 2026-11-07](SYSTEM_ADMIN_CONTINUATION_20261107.md) لحالة QA الحالية وحدود التحقق.
+
 # Administration completion checkpoint
 
 Production has not been modified. Completion plan: SYSTEM_ADMIN_COMPLETION_PLAN_20261101.md.

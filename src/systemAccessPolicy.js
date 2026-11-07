@@ -19,7 +19,8 @@ const permissions = {
  system_admin: [
   'system.view_technical_health','system.view_sanitized_diagnostics',
   'system.manage_users','pharmacy.read_sensitive','pharmacy.write_operations',
-  'finance.read','finance.write'
+  'finance.read','finance.write',
+  ...CAPABILITIES.filter(cap=>cap.startsWith('employee.'))
  ],
  technical_support: ['system.view_technical_health','system.view_sanitized_diagnostics'],
  employee: ['employee.debtor_create','employee.debtor_read','employee.debtor_payment','employee.product_create','employee.pos_sale','employee.catalog_read','employee.inventory_read','employee.inventory_count_submit','employee.purchase_draft_create','employee.order_process','employee.return_request_create','employee.supplier_operational_read']

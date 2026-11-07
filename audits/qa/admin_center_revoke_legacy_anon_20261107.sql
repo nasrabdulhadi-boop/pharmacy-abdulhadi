@@ -1,0 +1,3 @@
+-- QA ONLY: administrative RPCs are authenticated; trigger calls do not require API grants.
+revoke execute on function public.ab_assign_sale_invoice_number_v1(),public.ab_daily_change_audit_v1(),public.admin_daily_activity_v1(timestamptz,timestamptz,integer,integer),public.admin_get_sale_invoice_number_v1(uuid),public.admin_sale_detail_daily_v1(uuid),public.admin_sale_invoice_numbers_v1(uuid[]) from public,anon;
+grant execute on function public.admin_daily_activity_v1(timestamptz,timestamptz,integer,integer),public.admin_get_sale_invoice_number_v1(uuid),public.admin_sale_detail_daily_v1(uuid),public.admin_sale_invoice_numbers_v1(uuid[]) to authenticated;
