@@ -23,7 +23,7 @@ export const ADMIN_EN=Object.freeze({
  'إدارة الحسابات وحماية المالك':'Account management and owner protection',
  'تغيير الأدوار وإلغاء الجلسات ومنع رفع الصلاحية اجتازت اختبارات QA':'Role changes, session revocation and elevation denial passed QA checks',
  'تصدير تطبيق QA المشفر':'Encrypted QA application export',
- 'خدمة للمالك فقط؛ اختُبر تصدير سجل وملف اصطناعيين مع التشفير والبصمات':'Owner-only service; a tagged synthetic record and file passed encrypted export and hash checks',
+ 'خدمة للمالك فقط؛ نجح تصدير QA الكامل وفحص التشفير ودقة الأرقام':'Owner-only service; complete QA export, encryption and exact numeric encoding passed',
 
  'نسخة تطبيق QA المشفرة':'Encrypted QA application backup',
  'للمالك فقط: تصدير بيانات التطبيق وبنيته وملفات التخزين من QA. لا تشمل كلمات مرور الحسابات أو جلساتها أو إعدادات المنصة، ولا تثبت إمكانية الاستعادة الكاملة.':'Owner only: export QA application data, structure and Storage files. Account passwords, sessions and platform settings are excluded. This does not establish full recoverability.',
@@ -130,7 +130,7 @@ export const ADMIN_EN=Object.freeze({
  'إعدادات اللغة والكثافة':'Language and layout settings','ترجمة أقسام المركز محفوظة على الجهاز؛ لا تغيّر لغة بقية النظام':'Administration translations are device-local; the rest of the application keeps its language',
  'عزل حساب الدعم الفني':'Technical support isolation','يلزم اختبار رفض الوصول بحساب دعم فني حقيقي في بيئة معزولة':'Real support-account denial tests are required',
  'استرداد الحساب وتغيير البريد':'Account recovery and email changes','طلب الاسترداد وتغيير البريد مبرمجان على QA؛ تسليم البريد والتأكيد النهائي يحتاجان اختباراً فعلياً':'QA recovery and email requests are implemented; delivery and final confirmation require mailbox verification',
- 'النسخ الاحتياطي والاستعادة':'Backup and restore','يلزم خادم آمن واختبار استعادة على بيانات تجريبية':'A secure server and isolated restore test are required',
+ 'النسخ الاحتياطي والاستعادة':'Backup and restore','نجحت إعادة بناء قاعدة التطبيق محلياً؛ استعادة خدمات المنصة وAuth غير مختبرة':'The application database was rebuilt locally; platform services and Auth recovery remain unverified',
  'مراقبة صحة الخدمات':'Service health diagnostics','مجسات QA مباشرة ومخرجات منقحة؛ لا تثبت صحة النشر أو وصول البريد':'Live sanitized QA probes do not establish deployment health or email delivery',
  'اختبارات التكامل المرئية':'Browser integration tests','يلزم فحص المتصفح وسيناريوهات الأدوار والتوافق':'Browser, role and regression checks are required',
  'بيانات حسابي':'My account details','اسم العرض':'Display name','حفظ اسم العرض':'Save display name',

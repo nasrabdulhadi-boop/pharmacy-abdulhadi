@@ -1,7 +1,7 @@
 -- QA application backup only. Does not read Auth passwords, tokens, Vault or other schemas.
 create or replace function public.qa_admin_backup_snapshot() returns jsonb
 language plpgsql stable security definer set search_path='' as $function$
-declare actor_role text:=public.qa_current_system_role(); t record; data_rows jsonb; tables_json jsonb:='[]'; row_total bigint; result jsonb;
+declare actor_role text:=public.qa_current_system_role(); t record; data_rows jsonb; tables_json jsonb:='[]'; row_total bigint; result jsonb; precise_columns text;
  schemas constant text[]:=array['public','pharmacy_qa_private','pharmacy_supplier_stage','supplier_currency_qa'];
 begin
  if actor_role is distinct from 'system_owner' then raise exception 'not_authorized' using errcode='42501';end if;
@@ -11,7 +11,10 @@ begin
  loop
   execute format('select count(*) from %I.%I',t.nspname,t.relname) into row_total;
   if row_total>50000 then raise exception 'qa_backup_table_limit';end if;
-  execute format('select coalesce(jsonb_agg(to_jsonb(r) order by to_jsonb(r)::text),''[]''::jsonb) from %I.%I r',t.nspname,t.relname) into data_rows;
+  -- Numeric and bigint values must cross JSON as decimal strings, never JS floats.
+  select string_agg(format('%L,case when r.%I is null then ''null''::jsonb else to_jsonb(r.%I::text) end',a.attname,a.attname,a.attname),',') into precise_columns
+  from pg_attribute a where a.attrelid=t.oid and a.attnum>0 and not a.attisdropped and a.atttypid in ('pg_catalog.int8'::regtype,'pg_catalog.numeric'::regtype);
+  execute format('select coalesce(jsonb_agg(to_jsonb(r)%s order by to_jsonb(r)::text),''[]''::jsonb) from %I.%I r',case when precise_columns is null then '' else '||jsonb_build_object('||precise_columns||')' end,t.nspname,t.relname) into data_rows;
   tables_json:=tables_json||jsonb_build_array(jsonb_build_object(
    'schema',t.nspname,'name',t.relname,'rls',t.relrowsecurity,'force_rls',t.relforcerowsecurity,'grants',t.grants,
    'columns',(select coalesce(jsonb_agg(jsonb_build_object('name',a.attname,'type',format_type(a.atttypid,a.atttypmod),'not_null',a.attnotnull,'identity',a.attidentity,'generated',a.attgenerated,'default',pg_get_expr(d.adbin,d.adrelid)) order by a.attnum),'[]') from pg_attribute a left join pg_attrdef d on d.adrelid=a.attrelid and d.adnum=a.attnum where a.attrelid=t.oid and a.attnum>0 and not a.attisdropped),
@@ -26,11 +29,11 @@ begin
   'created_at',now(),'scope','application schemas and Storage; excludes Auth credentials, sessions and platform configuration',
   'schemas',schemas,'tables',tables_json,
   'functions',(select coalesce(jsonb_agg(jsonb_build_object('schema',n.nspname,'name',p.proname,'arguments',pg_get_function_identity_arguments(p.oid),'definition',pg_get_functiondef(p.oid),'owner',pg_get_userbyid(p.proowner),'grants',p.proacl::text) order by n.nspname,p.proname,p.oid),'[]') from pg_proc p join pg_namespace n on n.oid=p.pronamespace where n.nspname=any(schemas) and p.prokind='f'),
-  'sequences',(select coalesce(jsonb_agg(to_jsonb(s) order by s.schemaname,s.sequencename),'[]') from pg_sequences s where s.schemaname=any(schemas)),
+  'sequences',(select coalesce(jsonb_agg(to_jsonb(s)||jsonb_build_object('start_value',s.start_value::text,'min_value',s.min_value::text,'max_value',s.max_value::text,'increment_by',s.increment_by::text,'cache_size',s.cache_size::text,'last_value',s.last_value::text) order by s.schemaname,s.sequencename),'[]') from pg_sequences s where s.schemaname=any(schemas)),
   'storage_inventory',(select coalesce(jsonb_agg(jsonb_build_object('bucket_id',o.bucket_id,'name',o.name,'updated_at',o.updated_at,'metadata',o.metadata) order by o.bucket_id,o.name),'[]') from storage.objects o where o.bucket_id='supplier-preview-prescriptions'),
   'storage_buckets',(select coalesce(jsonb_agg(jsonb_build_object('id',b.id,'public',b.public,'file_size_limit',b.file_size_limit,'allowed_mime_types',b.allowed_mime_types)),'[]') from storage.buckets b where b.id='supplier-preview-prescriptions'),
   'auth_metadata',(select coalesce(jsonb_agg(jsonb_build_object('id',u.id,'email',u.email,'app_metadata',u.raw_app_meta_data,'user_metadata',u.raw_user_meta_data,'created_at',u.created_at,'banned_until',u.banned_until) order by u.id),'[]') from auth.users u),
-  'auth_credentials_included',false,'restore_verified',false);
+  'numeric_encoding','decimal-string-v1','auth_credentials_included',false,'restore_verified',false);
  if pg_column_size(result)>5000000 then raise exception 'qa_backup_size_limit';end if;
  return result;
 end $function$;

@@ -1,0 +1,47 @@
+{
+  "date": "2026-11-07",
+  "environment": "QA only",
+  "production_modified": false,
+  "user_authorized_full_qa_export": true,
+  "export": {
+    "project": "QA",
+    "completeExport": true,
+    "tables": 72,
+    "rows": 371,
+    "files": 0,
+    "functions": 195,
+    "archiveSha256": "d9635667a4b98419f2c2be1bbbcb9b27155a923ee3a6d5e795e968162af6cca4",
+    "archiveBytes": 986665,
+    "integrityVerified": true,
+    "fullPlatformRestore": false
+  },
+  "local_restore": {
+    "tables": 72,
+    "rows": 371,
+    "constraints": 245,
+    "indexes": 122,
+    "functions": 195,
+    "policies": 7,
+    "triggers": 42,
+    "sequences": 5,
+    "allRowsMatch": true,
+    "applicationDatabaseRehearsal": true,
+    "authRuntimeRestored": false,
+    "storageServiceRestored": false,
+    "platformRestoreVerified": false,
+    "tableAndFunctionGrantsRestored": true,
+    "aclEntries": 1009,
+    "archiveSummary": {
+      "tables": 72,
+      "rows": 371,
+      "files": 0,
+      "restoreVerified": false
+    },
+    "grantsRestored": false,
+    "applicationRpcExecutionVerified": false
+  },
+  "sql_precision_acceptance_passed": 12,
+  "local_restore_tests_passed": 3,
+  "temporary_export_users_after_cleanup": 0,
+  "temporary_helper_http_status": 410
+}
