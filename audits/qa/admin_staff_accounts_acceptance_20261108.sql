@@ -1,0 +1,51 @@
+begin;
+create temp table staff_acceptance(name text) on commit drop;
+create function pg_temp.check_staff(n text,ok boolean) returns void language plpgsql as $$begin if ok is distinct from true then raise exception 'FAILED: %',n;end if;insert into staff_acceptance values(n);end $$;
+do $test$
+declare a uuid:=gen_random_uuid(); b uuid:=gen_random_uuid(); t uuid:=gen_random_uuid(); s uuid:=gen_random_uuid(); ts uuid:=gen_random_uuid(); cmd uuid:=gen_random_uuid(); reset_id uuid; namespace text:='qa-staff-sql-'||gen_random_uuid(); denied boolean;
+begin
+ insert into auth.users(id,email,raw_app_meta_data,created_at,updated_at) values(a,namespace||'-a@example.invalid','{"system_role":"system_admin"}',now(),now()),(b,namespace||'-b@example.invalid','{"system_role":"system_admin"}',now(),now());
+ insert into auth.sessions(id,user_id,aal,created_at,updated_at) values(s,a,'aal1',now(),now());
+ perform set_config('request.jwt.claims',jsonb_build_object('sub',a,'session_id',s,'role','authenticated')::text,true);
+ perform pg_temp.check_staff('manager reserves employee creation',public.qa_admin_reserve_staff(cmd,'create',namespace||'-staff@example.invalid','employee',null,'{"full_name":"موظف اصطناعي","phone":"123"}'));
+ denied:=false;begin perform public.qa_admin_reserve_staff(gen_random_uuid(),'create',namespace||'-evil@example.invalid','system_admin',null,'{"full_name":"Fake"}');exception when insufficient_privilege then denied:=true;end;perform pg_temp.check_staff('manager cannot create privileged role',denied);
+ denied:=false;begin perform public.qa_admin_reserve_staff(gen_random_uuid(),'create',namespace||'-evil@example.invalid','employee',null,'{"full_name":"Fake","manager_id":"spoof"}');exception when invalid_parameter_value then denied:=true;end;perform pg_temp.check_staff('profile cannot inject manager ownership',denied);
+ insert into auth.users(id,email,raw_app_meta_data,raw_user_meta_data,created_at,updated_at,banned_until) values(t,namespace||'-staff@example.invalid',jsonb_build_object('system_role','disabled','qa_staff_request',cmd,'qa_staff_manager',a),'{}',now(),now(),now()+interval '1 day');
+ perform pg_temp.check_staff('service finalizes fresh account',public.qa_service_complete_staff(cmd,t));
+ perform pg_temp.check_staff('profile linked to authenticated creator',exists(select 1 from pharmacy_qa_private.staff_profiles where user_id=t and manager_id=a and profile->>'full_name'='موظف اصطناعي'));
+ perform pg_temp.check_staff('created role active and initial ban removed',exists(select 1 from auth.users where id=t and raw_app_meta_data->>'system_role'='employee' and banned_until is null));
+ perform pg_temp.check_staff('manager list exposes managed staff name',(public.qa_admin_accounts() @> jsonb_build_array(jsonb_build_object('id',t,'staff_profile',jsonb_build_object('full_name','موظف اصطناعي'),'can_manage_profile',true))));
+ perform pg_temp.check_staff('manager edits staff details',public.qa_admin_save_staff_profile(t,'{"full_name":"اسم معدل","phone":"456","notes":"اختبار"}'));
+ denied:=false;begin perform public.qa_service_complete_staff(cmd,t);exception when insufficient_privilege then denied:=true;end;perform pg_temp.check_staff('completed create cannot replay',denied);
+ update auth.sessions set user_id=b where id=s;perform set_config('request.jwt.claims',jsonb_build_object('sub',b,'session_id',s,'role','authenticated')::text,true);
+ perform pg_temp.check_staff('another manager cannot list linked staff',not(public.qa_admin_accounts() @> jsonb_build_array(jsonb_build_object('id',t))));
+ denied:=false;begin perform public.qa_admin_save_staff_profile(t,'{"full_name":"Wrong manager"}');exception when insufficient_privilege then denied:=true;end;perform pg_temp.check_staff('another manager cannot edit profile',denied);
+ denied:=false;begin perform public.qa_admin_set_role(t,'technical_support');exception when insufficient_privilege then denied:=true;end;perform pg_temp.check_staff('another manager cannot change role',denied);
+ denied:=false;begin perform public.qa_admin_reserve_staff(gen_random_uuid(),'password',null,null,t,null);exception when insufficient_privilege then denied:=true;end;perform pg_temp.check_staff('another manager cannot reset password',denied);
+ update auth.sessions set user_id=a where id=s;perform set_config('request.jwt.claims',jsonb_build_object('sub',a,'session_id',s,'role','authenticated')::text,true);
+ insert into auth.sessions(id,user_id,aal,created_at,updated_at)values(ts,t,'aal1',now(),now());reset_id:=gen_random_uuid();
+ perform public.qa_admin_reserve_staff(reset_id,'password',null,null,t,null);
+ perform pg_temp.check_staff('reset revokes all target sessions',not exists(select 1 from auth.sessions where user_id=t));
+ perform pg_temp.check_staff('reset target disabled until completion',exists(select 1 from auth.users where id=t and raw_app_meta_data->>'system_role'='disabled'));
+ denied:=false;begin perform public.qa_admin_set_role(t,'employee');exception when insufficient_privilege then denied:=true;end;perform pg_temp.check_staff('pending reset cannot be bypassed by role change',denied);
+ perform pg_temp.check_staff('completed reset restores intended role',public.qa_service_complete_staff(reset_id,t) and exists(select 1 from auth.users where id=t));
+ reset_id:=gen_random_uuid();perform public.qa_admin_reserve_staff(reset_id,'password',null,null,t,null);perform public.qa_service_fail_staff(reset_id);
+ perform pg_temp.check_staff('failed reset remains disabled',exists(select 1 from auth.users where id=t and raw_app_meta_data->>'system_role'='disabled'));
+ perform public.qa_admin_set_role(t,'technical_support');
+ perform pg_temp.check_staff('manager can change own linked staff role',exists(select 1 from auth.users where id=t and raw_app_meta_data->>'system_role'='technical_support'));
+
+ cmd:=gen_random_uuid();perform public.qa_admin_reserve_staff(cmd,'create',namespace||'-revoked@example.invalid','employee',null,'{"full_name":"Revoked creator"}');
+ insert into auth.users(id,email,raw_app_meta_data,created_at,updated_at)values(gen_random_uuid(),namespace||'-revoked@example.invalid',jsonb_build_object('system_role','disabled','qa_staff_request',cmd,'qa_staff_manager',a),now(),now()) returning id into t;
+ update auth.users set raw_app_meta_data='{"system_role":"employee"}' where id=a;
+ denied:=false;begin perform public.qa_service_complete_staff(cmd,t);exception when insufficient_privilege then denied:=true;end;perform pg_temp.check_staff('revoked creator cannot complete pending creation',denied);
+ perform pg_temp.check_staff('revoked creation stays disabled and unlinked',not exists(select 1 from pharmacy_qa_private.staff_profiles where user_id=t));
+
+ denied:=false;begin perform public.qa_admin_accounts();exception when insufficient_privilege then denied:=true;end;perform pg_temp.check_staff('employee denied account list',denied);
+ denied:=false;begin perform public.qa_admin_save_staff_profile(t,'{"full_name":"Staff actor"}');exception when insufficient_privilege then denied:=true;end;perform pg_temp.check_staff('employee denied profile update',denied);
+ denied:=false;begin perform public.qa_admin_reserve_staff(gen_random_uuid(),'password',null,null,t,null);exception when insufficient_privilege then denied:=true;end;perform pg_temp.check_staff('employee denied password command',denied);
+ perform pg_temp.check_staff('audit has actor without password',exists(select 1 from pharmacy_qa_private.audit_events where action='staff_create_completed' and actor_id=a and actor_id=a and details->>'password_recorded'='false'));
+ perform pg_temp.check_staff('completion is service-only',not has_function_privilege('authenticated','public.qa_service_complete_staff(uuid,uuid)','execute') and not has_function_privilege('anon','public.qa_service_complete_staff(uuid,uuid)','execute'));
+ perform pg_temp.check_staff('personal profiles not exposed to client roles',not has_table_privilege('authenticated','pharmacy_qa_private.staff_profiles','select') and not has_table_privilege('anon','pharmacy_qa_private.staff_profiles','select'));
+end $test$;
+select count(*) passed,jsonb_agg(name) checks from staff_acceptance;
+rollback;

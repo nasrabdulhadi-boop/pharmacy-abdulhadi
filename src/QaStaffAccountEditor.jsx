@@ -1,0 +1,29 @@
+import React,{useEffect,useRef,useState} from 'react';
+import {uiText} from './systemLocale.js';
+import {staffFields,validStaffPassword,manageQaStaffAccount,saveQaStaffProfile} from './qaStaffAccounts.js';
+import {invitationRequestId} from './qaAccountInvitations.js';
+const empty=()=>Object.fromEntries(Object.keys(staffFields).map(k=>[k,'']));
+const fieldLabels={full_name:'الاسم الكامل',phone:'رقم الهاتف',address:'العنوان',job_title:'المسمّى الوظيفي',employee_code:'رمز الموظف',start_date:'تاريخ بدء العمل',notes:'ملاحظات الموظف'};
+const messages={invalid_profile:'أدخل الاسم الكامل وراجع طول الحقول والتاريخ.',invalid_password:'استخدم كلمة مرور من 12 إلى 128 محرفاً، تشمل حروفاً إنكليزية وأرقاماً ورموزاً.',invalid_email:'البريد الإلكتروني غير صالح.',account_conflict:'الحساب موجود أو توجد عملية قيد التجهيز. حدّث الحسابات قبل إعادة المحاولة.',rate_limited:'بلغت حد العمليات المؤقت؛ حاول لاحقاً.',not_authorized:'الجلسة أو صلاحية إدارة الحساب غير مناسبة.',profile_save_failed:'تعذر حفظ ملف الموظف. حدّث الحسابات وتحقق من صلاحيتك.',account_operation_unconfirmed:'تعذر تأكيد العملية. قد يبقى الحساب موقوفاً لحماية الوصول؛ حدّث الحسابات قبل المحاولة مجدداً.'};
+export default function QaStaffAccountEditor({client,projectUrl,actorId,actorRole,row=null,onSaved,onCancel}){
+ const [profile,setProfile]=useState(()=>({...empty(),...row?.staff_profile})),[email,setEmail]=useState(''),[role,setRole]=useState('employee'),[password,setPassword]=useState(''),[confirmation,setConfirmation]=useState(''),[busy,setBusy]=useState(false),[message,setMessage]=useState('');
+ const epoch=useRef(0),lock=useRef(false);
+ useEffect(()=>{epoch.current++;setProfile({...empty(),...row?.staff_profile});setEmail('');setPassword('');setConfirmation('');setMessage('');setBusy(false);return()=>{epoch.current++;};},[actorId,row?.id]);
+ const editing=!!row;
+ const run=async action=>{if(lock.current)return;const current=epoch.current;lock.current=true;setBusy(true);setMessage('');try{await action();if(current===epoch.current){setPassword('');setConfirmation('');if(!editing){setProfile(empty());setEmail('');}setMessage(editing?'تم حفظ التغيير وتسجيله في مركز الأمان.':'تم إنشاء الحساب وربطه بالمدير. يمكن تسجيل الدخول بالبريد وكلمة المرور المحددين.');onSaved?.();}}catch(e){if(current===epoch.current)setMessage(messages[e.message]||messages.account_operation_unconfirmed);}finally{lock.current=false;if(current===epoch.current){setBusy(false);setPassword('');setConfirmation('');}}};
+ const passwordValid=validStaffPassword(password)&&password===confirmation;
+ const submit=e=>{e.preventDefault();if(editing)run(()=>saveQaStaffProfile({client,projectUrl,targetId:row.id,profile}));else if(passwordValid)run(()=>manageQaStaffAccount({client,projectUrl,actorId,actorRole,command:{action:'create',request_id:invitationRequestId(),email,role,profile,password}}));};
+ return <section className="staffAccountEditor" aria-label={uiText(editing?'تفاصيل حساب الموظف':'إنشاء حساب موظف أو فني')}>
+ <h4>{uiText(editing?'تفاصيل حساب الموظف':'إنشاء حساب موظف أو فني')}</h4>
+ {editing&&<p><b>{row.email}</b><br/>{uiText('المدير المرتبط')}: <span dir="ltr">{row.manager_id===actorId?uiText('حسابك'):row.manager_id}</span></p>}
+ <form onSubmit={submit}>
+ {!editing&&<div className="staffFormGrid"><label>{uiText('بريد تسجيل الدخول')}<input type="email" required maxLength={254} value={email} disabled={busy} autoComplete="off" onChange={e=>setEmail(e.target.value)}/></label><label>{uiText('نوع الحساب')}<select value={role} disabled={busy} onChange={e=>setRole(e.target.value)}><option value="employee">{uiText('موظف')}</option><option value="technical_support">{uiText('دعم فني')}</option></select></label></div>}
+ <div className="staffFormGrid">{Object.entries(fieldLabels).map(([key,label])=><label key={key}>{uiText(label)}{key==='notes'?<textarea maxLength={staffFields[key]} value={profile[key]} disabled={busy} onChange={e=>setProfile(p=>({...p,[key]:e.target.value}))}/>:<input type={key==='start_date'?'date':key==='phone'?'tel':'text'} required={key==='full_name'} minLength={key==='full_name'?2:undefined} maxLength={staffFields[key]} value={profile[key]} disabled={busy} autoComplete="off" onChange={e=>setProfile(p=>({...p,[key]:e.target.value}))}/>}</label>)}</div>
+ {!editing&&<PasswordFields {...{password,setPassword,confirmation,setConfirmation,busy}}/>}
+ <div className="staffFormActions"><button className="primary" disabled={busy||!profile.full_name.trim()||(!editing&&!passwordValid)}>{busy?uiText('جارٍ الحفظ…'):uiText(editing?'حفظ بيانات الموظف':'إنشاء الحساب')}</button>{onCancel&&<button type="button" disabled={busy} onClick={onCancel}>{uiText('إغلاق')}</button>}</div>
+ </form>
+ {editing&&<details><summary>{uiText('إعادة تعيين كلمة مرور الحساب')}</summary><form onSubmit={e=>{e.preventDefault();if(passwordValid)run(()=>manageQaStaffAccount({client,projectUrl,actorId,actorRole,command:{action:'password',request_id:invitationRequestId(),target_id:row.id,password}}));}}><PasswordFields {...{password,setPassword,confirmation,setConfirmation,busy}}/><p>{uiText('تغيير كلمة المرور ينهي جلسات الحساب. كلمة المرور الحالية لا تُعرض.')}</p><button disabled={busy||!passwordValid}>{uiText('تعيين كلمة المرور الجديدة')}</button></form></details>}
+ {message&&<p role="status">{uiText(message)}</p>}
+ </section>;
+}
+function PasswordFields({password,setPassword,confirmation,setConfirmation,busy}){return <><div className="staffFormGrid"><label>{uiText('كلمة مرور الحساب')}<input type="password" autoComplete="new-password" required minLength={12} maxLength={128} value={password} disabled={busy} onChange={e=>setPassword(e.target.value)}/></label><label>{uiText('تأكيد كلمة المرور')}<input type="password" autoComplete="new-password" required minLength={12} maxLength={128} value={confirmation} disabled={busy} onChange={e=>setConfirmation(e.target.value)}/></label></div><small>{uiText('12 إلى 128 محرفاً، تشمل حروفاً إنكليزية وأرقاماً ورموزاً.')}</small></>;}
