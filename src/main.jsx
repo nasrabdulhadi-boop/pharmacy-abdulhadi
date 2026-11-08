@@ -20,6 +20,7 @@ import {workspaceSectionAllowed,workspaceCanReadMoney,workspaceCanReadStock,ROLE
 import {WorkspaceSectionFrame,WorkspaceOperationSurface} from './WorkspacePermissionViews.jsx';
 import './WORKSPACE_PERMISSIONS.css';
 import './SYSTEM_LANGUAGE.css';
+import './SYSTEM_ADMIN_PREMIUM.css';
 import {allowStagingAuthMutation} from './stagingAuthGuard.js';
 import {readAdminPreferences,writeAdminPreferences} from './systemAdminPreferences.js';
 import {makeTechnicalHealthSnapshot} from './systemAdminDiagnostics.js';
@@ -385,9 +386,9 @@ function SystemAdministrationPreview({overviewPanel=null}){
  const restrictedPreview=isSupportPreview||isUnverifiedPreview;
  const sections=[['overview',adminCenterLabels.overview],['profile',adminCenterLabels.profile],['access',adminCenterLabels.access],['backup',adminCenterLabels.backup],['preferences',adminCenterLabels.preferences]].filter(([id])=>canViewSystemAdminSection(verifiedRole,id)||id==='overview');
  const effectiveSection=canViewSystemAdminSection(verifiedRole,section)?section:'overview';
- return localizeAdminTree(<div className="panel systemAdminModern" data-density={adminPrefs.density} dir={adminCenterEnglish?'ltr':'rtl'} style={{padding:adminPrefs.density==='compact'?12:24,maxWidth:1100,margin:'18px auto'}}>
+ return localizeAdminTree(<div className="panel systemAdminModern" data-section={effectiveSection} data-density={adminPrefs.density} dir={adminCenterEnglish?'ltr':'rtl'} style={{padding:adminPrefs.density==='compact'?12:24,maxWidth:1100,margin:'18px auto'}}>
   <header className="systemAdminTopbar"><div className="systemAdminBrand"><span className="systemAdminBrandIcon" aria-hidden="true"><ShieldCheck size={22}/></span><h2>{uiText(adminCenterLabels.title)}</h2></div><span className="systemAdminPreviewPill">QA</span></header>
-  <nav className="systemAdminTabs systemAdminTabsTop" aria-label={adminCenterEnglish?'Administration sections':uiText('أقسام مركز الإدارة')}>{sections.map(([id,label])=><button type="button" key={id} aria-current={effectiveSection===id?'page':undefined} className={effectiveSection===id?'primary':''} onClick={()=>setSection(id)}>{uiText(label)}</button>)}</nav>
+  <nav className="systemAdminTabs systemAdminTabsTop" aria-label={adminCenterEnglish?'Administration sections':uiText('أقسام مركز الإدارة')}>{sections.map(([id,label])=>{const Icon={overview:Home,profile:Users,access:ShieldCheck,backup:Download,preferences:Sparkles}[id];return <button type="button" key={id} aria-current={effectiveSection===id?'page':undefined} className={effectiveSection===id?'primary':''} onClick={()=>setSection(id)}>{Icon&&<Icon size={18} aria-hidden="true"/>}<span>{uiText(label)}</span></button>})}</nav>
   <main className="systemAdminMain"><div className="systemAdminPageIntro"><h3>{sections.find(([id])=>id===effectiveSection)?.[1]||uiText(adminCenterLabels.overview)}</h3></div>
   {effectiveSection==='overview'&&<section className="systemAdminOverview" aria-label={adminCenterEnglish?'Administration overview':uiText('نظرة عامة على إدارة النظام')}>
    {restrictedPreview&&<p className="systemAdminNotice" role="status">{isSupportPreview?uiText('الدعم الفني: عرض تقني محدود فقط.'):uiText('لا يمكن عرض الأقسام الإدارية قبل التحقق من دور الحساب عبر الخادم.')}</p>}
@@ -401,10 +402,10 @@ function SystemAdministrationPreview({overviewPanel=null}){
    {!restrictedPreview&&<QaAdminSecurityStatus client={rawSupabase} projectUrl={url} language={systemLanguage}/>}
    {uiText(overviewPanel)}
   </section>}
-  {!restrictedPreview&&effectiveSection==='profile'&&<section>
-   <p><span>{uiText("البريد الإلكتروني")}</span>: <b dir="ltr">{sessionUser?.email||uiText('جاري التحقق من الحساب...')}</b></p>
+  {!restrictedPreview&&effectiveSection==='profile'&&<section className="adminProfileLayout">
+   <div className="adminIdentityCard"><span className="adminAvatar"><Users size={28}/></span><div><span>{uiText("البريد الإلكتروني")}</span><b dir="ltr">{sessionUser?.email||uiText('جاري التحقق من الحساب...')}</b></div><ShieldCheck size={22} aria-hidden="true"/></div>
    <QaProfileDetails client={rawSupabase} projectUrl={url} previewEnabled={authMutationPreviewEnabled} user={sessionUser} language={systemLanguage}/>
-   <form onSubmit={changeOwnPassword} style={{display:'grid',gap:10,maxWidth:440,marginTop:20}} autoComplete="off">
+   <form className="adminSettingsCard adminPasswordCard" onSubmit={changeOwnPassword} style={{display:'grid',gap:10,maxWidth:440,marginTop:20}} autoComplete="off">
     <h4>{uiText("تغيير كلمة المرور")}</h4>
     {!authMutationPreviewEnabled&&<p role="status">{uiText("تغيير كلمة المرور معطّل في المعاينة لحماية حساب الإنتاج.")}</p>}
     <label>{uiText("كلمة المرور الجديدة")}<input type="password" minLength={12} maxLength={72} required autoComplete="new-password" value={newPassword} onChange={e=>setNewPassword(e.target.value)} placeholder={uiText("12 محرفاً على الأقل")}/></label>
@@ -412,11 +413,11 @@ function SystemAdministrationPreview({overviewPanel=null}){
     <button type="submit" className="primary" disabled={!authMutationPreviewEnabled||passwordBusy||!sessionUser||!newPassword||!confirmPassword}>{passwordBusy?uiText('جارٍ تحديث كلمة المرور…'):uiText('تأكيد تغيير كلمة المرور')}</button>
     {uiText(passwordMessage)&&<div role={passwordError?'alert':'status'}>{uiText(passwordMessage)}</div>}
    </form>
-   <div className="systemAdminRecovery"><h4>{uiText("استرداد كلمة المرور")}</h4><label>{uiText("البريد الإلكتروني")}<input type="email" autoComplete="email" value={recoveryEmail} onChange={e=>setRecoveryEmail(e.target.value)} placeholder="name@example.com" disabled={!authMutationPreviewEnabled||recoveryBusy}/></label><button type="button" disabled={!authMutationPreviewEnabled||recoveryBusy||!recoveryEmail} onClick={sendRecoveryEmail}>{recoveryBusy?uiText('جارٍ الطلب…'):uiText('إرسال رابط الاسترداد')}</button>{uiText(recoveryMessage)&&<p role="status">{uiText(recoveryMessage)}</p>}{!authMutationPreviewEnabled&&<p role="status">{uiText("الاسترداد معطّل حتى تفعيل بيئة المصادقة التجريبية المعزولة.")}</p>}</div>
+   <div className="systemAdminRecovery adminSettingsCard"><h4>{uiText("استرداد كلمة المرور")}</h4><label>{uiText("البريد الإلكتروني")}<input type="email" autoComplete="email" value={recoveryEmail} onChange={e=>setRecoveryEmail(e.target.value)} placeholder="name@example.com" disabled={!authMutationPreviewEnabled||recoveryBusy}/></label><button type="button" disabled={!authMutationPreviewEnabled||recoveryBusy||!recoveryEmail} onClick={sendRecoveryEmail}>{recoveryBusy?uiText('جارٍ الطلب…'):uiText('إرسال رابط الاسترداد')}</button>{uiText(recoveryMessage)&&<p role="status">{uiText(recoveryMessage)}</p>}{!authMutationPreviewEnabled&&<p role="status">{uiText("الاسترداد معطّل حتى تفعيل بيئة المصادقة التجريبية المعزولة.")}</p>}</div>
   </section>}
   {!restrictedPreview&&effectiveSection==='access'&&<QaAccountRoleManager language={systemLanguage} client={rawSupabase} projectUrl={url} actorId={sessionUser?.id} actorRole={verifiedRole}/>}
   {!restrictedPreview&&effectiveSection==='backup'&&<section><QaBackupExport client={rawSupabase} projectUrl={url} actorRole={verifiedRole} actorId={sessionUser?.id} language={systemLanguage}/>{!['system_owner','system_admin'].includes(verifiedRole)&&<p role="status">{uiText("النسخ الاحتياطي متاح للمدير والمالك فقط.")}</p>}{!getBackupCenterStatus().canRestore&&<p role="status">{uiText("الاستعادة الكاملة غير متاحة حالياً.")}</p>}</section>}
-  {!restrictedPreview&&effectiveSection==='preferences'&&<section><label style={{display:'grid',gap:6,maxWidth:320}}>{uiText("لغة النظام")}<select value={systemLanguage} onChange={e=>changeAdminPref('language',e.target.value)}><option value="ar">{uiText("العربية")}</option><option value="en">English</option></select></label><label style={{display:'grid',gap:6,maxWidth:320,marginTop:14}}>{uiText("كثافة عرض مركز الإدارة")}<select value={adminPrefs.density} onChange={e=>changeAdminPref('density',e.target.value)}><option value="comfortable">{uiText("مريح")}</option><option value="compact">{uiText("مضغوط")}</option></select></label></section>}
+  {!restrictedPreview&&effectiveSection==='preferences'&&<section className="adminPreferencesGrid"><label style={{display:'grid',gap:6,maxWidth:320}}>{uiText("لغة النظام")}<select aria-label={uiText("لغة النظام")} value={systemLanguage} onChange={e=>changeAdminPref('language',e.target.value)}><option value="ar">{uiText("العربية")}</option><option value="en">English</option></select></label><label style={{display:'grid',gap:6,maxWidth:320,marginTop:14}}>{uiText("كثافة عرض مركز الإدارة")}<select aria-label={uiText("كثافة عرض مركز الإدارة")} value={adminPrefs.density} onChange={e=>changeAdminPref('density',e.target.value)}><option value="comfortable">{uiText("مريح")}</option><option value="compact">{uiText("مضغوط")}</option></select></label></section>}
  </main></div>,systemLanguage)
 }
 

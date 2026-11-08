@@ -1662,4 +1662,5 @@ export const SYSTEM_EN=Object.freeze({
 "يجب تأكيد كلمة مرور حساب المدير الحالي لكل تغيير. لا تُحفظ كلمة المرور.":"Confirm the current manager account password for every change. The password is not stored.",
 "أدخل كلمة مرور المدير لتأكيد التغيير.":"Enter the manager password to confirm this change.",
 "لم ينجح تأكيد كلمة مرور المدير. لم تتغير كلمة مرور الموظف.":"Manager password confirmation failed. The staff password was not changed.",
-"بلغت حد محاولات التأكيد. انتظر 15 دقيقة قبل المحاولة مجدداً.":"Confirmation attempt limit reached. Wait 15 minutes before retrying."});
+"بلغت حد محاولات التأكيد. انتظر 15 دقيقة قبل المحاولة مجدداً.":"Confirmation attempt limit reached. Wait 15 minutes before retrying.",
+"بيانات الملف الشخصي":"Profile information"});

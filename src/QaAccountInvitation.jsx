@@ -16,7 +16,7 @@ export default function QaAccountInvitation({client,projectUrl,actorId,actorRole
   }catch(error){if(current===generation.current)setMessage(errors[error.message]||'تعذر تأكيد الدعوة. حدّث قائمة الحسابات قبل إعادة المحاولة.');}
   finally{locked.current=false;if(current===generation.current)setBusy(false);}
  };
- return localizeAdminTree(<section className="systemAdminRecovery" aria-label={uiText("دعوة حساب جديد")}>
+ return localizeAdminTree(<section className="systemAdminRecovery adminInviteForm" aria-label={uiText("دعوة حساب جديد")}>
   <h4>{uiText("دعوة حساب جديد — QA فقط")}</h4><p>{uiText("رابط لمرة واحدة، تُسلّمه للمستخدم دون إرسال بريد.")}</p>
   <form onSubmit={submit}>
    <label>{uiText("بريد الحساب الجديد")}<input type="email" autoComplete="off" required maxLength={254} value={email} onChange={e=>setEmail(e.target.value)} disabled={busy}/></label>
