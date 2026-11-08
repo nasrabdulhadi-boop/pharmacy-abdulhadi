@@ -34,6 +34,7 @@ import {localizeAdminTree,adminCapabilityLabel,adminManifestError} from './syste
 import QaProfileDetails from './QaProfileDetails.jsx';
 import QaAdminSecurityStatus from './QaAdminSecurityStatus.jsx';
 import QaBackupExport from './QaBackupExport.jsx';
+import {consumeQaInvitation} from './qaAccountInvitations.js';
 import {assessStagingAuthorization,QA_AUTHORIZATION_FINDINGS} from './systemAdminSecurityAudit.js';
 
 const url=import.meta.env.VITE_SUPABASE_URL; const key=import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
@@ -43,6 +44,7 @@ const recoveryFlow=createRecoveryFlow(recoveryCallbackState(typeof window==='und
 const rawSupabase=url&&key?createClient(url,key):null;
 // Subscribe before React mounts, so a fast callback cannot lose PASSWORD_RECOVERY.
 if(recoveryEnabled&&rawSupabase?.auth?.onAuthStateChange)rawSupabase.auth.onAuthStateChange((event,session)=>recoveryFlow.onAuthEvent(event,session));
+if(recoveryEnabled&&rawSupabase&&typeof window!=='undefined')consumeQaInvitation({auth:rawSupabase.auth,projectUrl:url,enabled:recoveryEnabled,hash:window.location.hash,clearFragment:()=>window.history.replaceState(null,'',window.location.pathname+'#admin')}).then(result=>{if(result.handled){if(result.session)recoveryFlow.onAuthEvent('SIGNED_IN',result.session);else recoveryFlow.restart();}});
 let workspaceRole=null,workspaceIdentity=null,workspaceRedacted=false;
 const supabase=createQaWorkspaceClient(rawSupabase,{url,getRole:()=>workspaceRole,getIdentity:()=>workspaceIdentity,isRedacted:()=>workspaceRedacted});
 const WorkspaceRoleContext=React.createContext('system_admin');
@@ -417,7 +419,7 @@ function SystemAdministrationPreview(){
    <button type="submit" className="primary" disabled={!authMutationPreviewEnabled||passwordBusy||!sessionUser||!newPassword||!confirmPassword}>{passwordBusy?'جارٍ تحديث كلمة المرور…':'تأكيد تغيير كلمة المرور'}</button>
    {passwordMessage&&<div role={passwordError?'alert':'status'} style={{padding:10,borderRadius:8,border:'1px solid currentColor'}}>{passwordMessage}</div>}
   </form><div className="systemAdminRecovery"><h4>طلب استرداد كلمة المرور — نسخة اختبارية</h4><p>إرسال رابط استرداد إلى بريد حساب تجريبي فقط. لا يُفعّل على قاعدة الإنتاج، ويجب إعداد رابط العودة المسموح به في Supabase Auth.</p><label>البريد الإلكتروني<input type="email" autoComplete="email" value={recoveryEmail} onChange={e=>setRecoveryEmail(e.target.value)} placeholder="name@example.com" disabled={!authMutationPreviewEnabled||recoveryBusy}/></label><button type="button" disabled={!authMutationPreviewEnabled||recoveryBusy||!recoveryEmail} onClick={sendRecoveryEmail}>{recoveryBusy?'جارٍ الطلب…':'إرسال رابط الاسترداد التجريبي'}</button>{recoveryMessage&&<p role="status">{recoveryMessage}</p>}{!authMutationPreviewEnabled&&<p role="status">الاسترداد معطّل حتى تفعيل بيئة المصادقة التجريبية المعزولة.</p>}<QaProfileDetails client={rawSupabase} projectUrl={url} previewEnabled={authMutationPreviewEnabled} user={sessionUser} language={adminPrefs.language}/></div></div>}
-  {!restrictedPreview&&effectiveSection==='access'&&<div><h3>إدارة الهوية والصلاحيات — IAM</h3><p><b>مالك النظام:</b> الصلاحية العليا بعد اعتماد آلية استرداد آمنة.</p><p><b>مدير النظام:</b> صلاحيات إدارية مفوضة.</p><p><b>الدعم الفني:</b> تشخيص تقني محدود، بلا تعديل أو وصول لبيانات المرضى والعملاء والماليات.</p><p>إدارة أدوار الحسابات الموجودة متاحة. إنشاء حسابات جديدة يتطلب مسار دعوة مستقلاً.</p>
+  {!restrictedPreview&&effectiveSection==='access'&&<div><h3>إدارة الهوية والصلاحيات — IAM</h3><p><b>مالك النظام:</b> الصلاحية العليا بعد اعتماد آلية استرداد آمنة.</p><p><b>مدير النظام:</b> صلاحيات إدارية مفوضة.</p><p><b>الدعم الفني:</b> تشخيص تقني محدود، بلا تعديل أو وصول لبيانات المرضى والعملاء والماليات.</p><p>إدارة أدوار الحسابات الموجودة ودعوة حساب جديد متاحتان على QA فقط.</p>
   <QaAccountRoleManager language={adminPrefs.language} client={rawSupabase} projectUrl={url} actorId={sessionUser?.id} actorRole={verifiedRole}/>
   <h4>مصفوفة الصلاحيات</h4>
   <div style={{overflowX:'auto'}}><table style={{width:'100%',textAlign:'right'}}><thead><tr><th>الصلاحية</th><th>المالك</th><th>المدير</th><th>الدعم الفني</th><th>الموظف</th></tr></thead><tbody>{CAPABILITIES.map(cap=><tr key={cap}><td>{adminCapabilityLabel(cap,adminPrefs.language)}</td>{['system_owner','system_admin','technical_support','employee'].map(role=><td key={role} style={{fontWeight:600}}>{hasCapability(role,cap)?'مسموح':'ممنوع'}</td>)}</tr>)}</tbody></table></div>
@@ -1388,7 +1390,7 @@ const Root=()=>{
  const finishRecovery=()=>{window.history.replaceState(null,'',window.location.pathname+window.location.search+'#admin');recoveryFlow.reset()};
  if(recoveryEnabled&&recoveryState==='failed')return <Login initialRecovery initialError="تعذر تأكيد جلسة الرابط. استخدم رمز الاسترداد من البريد، أو اطلب رسالة جديدة." onAuthenticated={finishRecovery}/>;
  if(recoveryEnabled&&recoveryState==='invalid')return <Login initialRecovery initialError="رابط الاسترداد منتهي الصلاحية أو استُخدم سابقاً. أدخل بريدك واطلب رابطاً جديداً، ثم افتح أحدث رسالة مرة واحدة." onAuthenticated={finishRecovery}/>;
- if(recoveryEnabled&&recoveryState==='ready')return <RecoveryPasswordForm auth={rawSupabase.auth} enabled={recoveryEnabled} recoveryState={recoveryState} onDone={finishRecovery} onRestart={()=>{window.history.replaceState(null,'',window.location.pathname+'#admin');recoveryFlow.restart()}}/>;
+ if(recoveryEnabled&&recoveryState==='ready')return <RecoveryPasswordForm isInvitation={recoveryFlow.isInvitation()} auth={rawSupabase.auth} enabled={recoveryEnabled} recoveryState={recoveryState} onDone={finishRecovery} onRestart={()=>{window.history.replaceState(null,'',window.location.pathname+'#admin');recoveryFlow.restart()}}/>;
  if(!checked||recoveryState==='pending'||(s&&isolatedQaWorkspace&&!roleChecked))return <Splash/>;
  const admin=['system_owner','system_admin'].includes(verifiedSystemRole(s?.user));
  workspaceRole=isolatedQaWorkspace?serverRole:verifiedSystemRole(s?.user);workspaceIdentity=s?.user?.id||null;workspaceRedacted=false;

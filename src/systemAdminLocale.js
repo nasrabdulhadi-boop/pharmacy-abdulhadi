@@ -2,6 +2,19 @@ import React from 'react';
 
 // Scoped to the administration center. Values entered by the user are never translated.
 export const ADMIN_EN=Object.freeze({
+ 'إدارة أدوار الحسابات الموجودة ودعوة حساب جديد متاحتان على QA فقط.':'Manage existing account roles and invite new accounts on QA only.',
+ 'دعوة حساب جديد':'Invite a new account','دعوة حساب جديد — QA فقط':'Invite a new account — QA only',
+ 'يُجهز رابط دعوة لمرة واحدة دون إرسال بريد. سلّمه للمستخدم المقصود بأمان؛ يفتح الرابط ويختار كلمة مروره. لا تستخدم الدعوة لتعديل حساب موجود.':'Prepare a single-use invitation link without sending email. Share it securely with the intended user, who opens it and sets a password. Existing accounts cannot be changed through invitations.',
+ 'بريد الحساب الجديد':'New account email','دور الحساب الجديد':'New account role',
+ 'جارٍ تجهيز الدعوة…':'Preparing invitation…','تجهيز رابط دعوة':'Prepare invitation link',
+ 'تم تجهيز الدعوة وتسجيلها. لم تُرسل رسالة بريد.':'The invitation is prepared and recorded. No email was sent.',
+ 'الرابط يمنح الدخول للحساب المدعو. لا تنشره ولا تضعه في سجل أو تقرير.':'The link grants access to the invited account. Do not publish it or include it in logs or reports.',
+ 'رابط الدعوة':'Invitation link','إخفاء الرابط':'Hide link','أُخفي رابط الدعوة من هذه الشاشة.':'The invitation link is hidden from this screen.',
+ 'الحساب موجود أو توجد دعوة قيد التجهيز. حدّث قائمة الحسابات قبل المحاولة مجدداً.':'The account exists or an invitation is being prepared. Refresh the account list before retrying.',
+ 'بلغت حد الدعوات المؤقت؛ حاول لاحقاً.':'The temporary invitation limit was reached; retry later.',
+ 'الجلسة أو صلاحية الدعوة غير مناسبة.':'Your session or invitation permission is not valid.',
+ 'تعذر تأكيد الدعوة. حدّث قائمة الحسابات قبل إعادة المحاولة.':'Unable to confirm the invitation. Refresh the account list before retrying.',
+
  'إدارة أدوار الحسابات الموجودة متاحة. إنشاء حسابات جديدة يتطلب مسار دعوة مستقلاً.':'Existing account roles can be managed here. New accounts require a separate invitation flow.',
  'اختيار نسخة مشفرة':'Choose an encrypted archive',
  'إذا كان البريد مسجلاً، ستصلك رسالة الاسترداد. تحقق من صندوق البريد.':'If the email is registered, a recovery message will be sent. Check your inbox.',
@@ -21,7 +34,7 @@ export const ADMIN_EN=Object.freeze({
  'اسم العرض وكلمة المرور والجلسات':'Display name, password and sessions',
  'حفظ اسم العرض وتغيير كلمة المرور وإلغاء الجلسات الأخرى اختُبرت بحساب اصطناعي':'Profile, password and other-session changes were tested with a disposable account',
  'إدارة الحسابات وحماية المالك':'Account management and owner protection',
- 'تغيير الأدوار وإلغاء الجلسات ومنع رفع الصلاحية اجتازت اختبارات QA':'Role changes, session revocation and elevation denial passed QA checks',
+ 'إدارة الأدوار ودعوة حساب جديد وقبول الرابط وتعيين كلمة المرور اجتازت اختبارات QA':'Account roles, invitation acceptance and password setup passed QA checks',
  'تصدير تطبيق QA المشفر':'Encrypted QA application export',
  'خدمة للمالك فقط؛ نجح تصدير QA الكامل وفحص التشفير ودقة الأرقام':'Owner-only service; complete QA export, encryption and exact numeric encoding passed',
 

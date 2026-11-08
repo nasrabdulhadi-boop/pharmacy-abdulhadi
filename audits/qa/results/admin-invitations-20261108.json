@@ -1,0 +1,165 @@
+{
+  "date": "2026-11-08",
+  "environment": "QA only",
+  "production_modified": false,
+  "live_invitation_checks": {
+    "results": [
+      {
+        "name": "employee cannot prepare invitation",
+        "passed": true
+      },
+      {
+        "name": "support cannot prepare invitation",
+        "passed": true
+      },
+      {
+        "name": "manager cannot invite another manager",
+        "passed": true
+      },
+      {
+        "name": "authenticated owner cannot call service finalizer directly",
+        "passed": true
+      },
+      {
+        "name": "existing owner account is protected from invitation",
+        "passed": true
+      },
+      {
+        "name": "owner prepares employee without sending email",
+        "passed": true
+      },
+      {
+        "name": "invitation uses QA verify endpoint and allowed callback",
+        "passed": true
+      },
+      {
+        "name": "invitation replay cannot create a second account",
+        "passed": true
+      },
+      {
+        "name": "recipient accepts one-use invitation token",
+        "passed": true
+      },
+      {
+        "name": "verified invitation enters password setup",
+        "passed": true
+      },
+      {
+        "name": "recipient can choose a password",
+        "passed": true
+      },
+      {
+        "name": "server grants exactly the invited role",
+        "passed": true
+      },
+      {
+        "name": "consumed invitation token is rejected",
+        "passed": true
+      },
+      {
+        "name": "recipient can sign in with the chosen password",
+        "passed": true
+      },
+      {
+        "name": "manager prepares technical_support without sending email",
+        "passed": true
+      },
+      {
+        "name": "invitation uses QA verify endpoint and allowed callback",
+        "passed": true
+      },
+      {
+        "name": "invitation replay cannot create a second account",
+        "passed": true
+      },
+      {
+        "name": "recipient accepts one-use invitation token",
+        "passed": true
+      },
+      {
+        "name": "verified invitation enters password setup",
+        "passed": true
+      },
+      {
+        "name": "recipient can choose a password",
+        "passed": true
+      },
+      {
+        "name": "server grants exactly the invited role",
+        "passed": true
+      },
+      {
+        "name": "consumed invitation token is rejected",
+        "passed": true
+      },
+      {
+        "name": "recipient can sign in with the chosen password",
+        "passed": true
+      },
+      {
+        "name": "owner prepares system_admin without sending email",
+        "passed": true
+      },
+      {
+        "name": "invitation uses QA verify endpoint and allowed callback",
+        "passed": true
+      },
+      {
+        "name": "invitation replay cannot create a second account",
+        "passed": true
+      },
+      {
+        "name": "recipient accepts one-use invitation token",
+        "passed": true
+      },
+      {
+        "name": "verified invitation enters password setup",
+        "passed": true
+      },
+      {
+        "name": "recipient can choose a password",
+        "passed": true
+      },
+      {
+        "name": "server grants exactly the invited role",
+        "passed": true
+      },
+      {
+        "name": "consumed invitation token is rejected",
+        "passed": true
+      },
+      {
+        "name": "recipient can sign in with the chosen password",
+        "passed": true
+      },
+      {
+        "name": "owner can revoke temporary manager authority",
+        "passed": true
+      },
+      {
+        "name": "stale manager JWT loses invitation access immediately",
+        "passed": true
+      }
+    ]
+  },
+  "project_suite": {
+    "passed": 139,
+    "failed": 0,
+    "skipped": 0
+  },
+  "rollback_sql_passed": 12,
+  "ssr_checks_passed": 63,
+  "invitation_audits_verified": 3,
+  "credentials_in_invitation_audits": 0,
+  "cleanup": {
+    "synthetic_users": 0,
+    "synthetic_invitation_rows": 0,
+    "temporary_helper_http_status": 410
+  },
+  "browser_scope": "mocked local component; Arabic/English, link hide, narrow and dark display",
+  "remaining": [
+    "full Supabase platform restore",
+    "actual email delivery confirmation",
+    "signed-in deployed browser acceptance"
+  ]
+}

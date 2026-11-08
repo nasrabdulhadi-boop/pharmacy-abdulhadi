@@ -5,7 +5,7 @@ import {createClient} from '@supabase/supabase-js';
 const fixture=JSON.parse(fs.readFileSync(process.env.QA_ACCOUNT_FIXTURES,'utf8'));
 if(fixture.environment!=='isolated-qa')throw new Error('isolated QA fixtures required');
 const support=fixture.users.find(user=>user.label==='support');
-if(!support?.email.startsWith('admin-close-'))throw new Error('disposable support required');
+if(!/^(admin-close|qa-invite)-[a-f0-9]{12}-support@example\.com$/.test(support?.email||''))throw new Error('disposable support required');
 const client=createClient('https://vpjxdsprfcpqclnhbeoh.supabase.co',fixture.key,{auth:{persistSession:false,autoRefreshToken:false}});
 const signed=await client.auth.signInWithPassword({email:support.email,password:support.password});
 if(signed.error||!signed.data.session)throw new Error('QA support login failed');

@@ -4,16 +4,16 @@ export function recoveryCallbackState(location,enabled){
  const hash=new URLSearchParams((location.hash||'').replace(/^#/,''));
  const search=new URLSearchParams(location.search||'');
  if(hash.has('error')||hash.has('error_code')||search.has('error')||search.has('error_code'))return 'invalid';
- return hash.get('type')==='recovery'?'pending':'idle';
+ return hash.get('type')==='invite'?'pending_invite':hash.get('type')==='recovery'?'pending':'idle';
 }
 export function createRecoveryFlow(initial='idle'){
- let state=initial;const listeners=new Set();
+ let invitation=initial==='pending_invite';let state=invitation?'pending':initial;const listeners=new Set();
  const set=next=>{state=next;for(const fn of listeners)fn(state)};
- return {getState:()=>state,subscribe(fn){listeners.add(fn);return()=>listeners.delete(fn)},
-  onAuthEvent(event,session){if(event==='PASSWORD_RECOVERY'&&session?.user)set('ready');else if(event==='SIGNED_OUT'&&state==='ready')set('invalid')},
+ return {getState:()=>state,isInvitation:()=>invitation,subscribe(fn){listeners.add(fn);return()=>listeners.delete(fn)},
+  onAuthEvent(event,session){if(event==='PASSWORD_RECOVERY'&&session?.user)set('ready');else if(invitation&&['pending','failed'].includes(state)&&event==='SIGNED_IN'&&session?.user?.email_confirmed_at&&session.user.app_metadata?.qa_invitation_id)set('ready');else if(event==='SIGNED_OUT'&&state==='ready')set('invalid')},
   // Auth SDK queues PASSWORD_RECOVERY after initialization, on the next event-loop turn.
   // getSession() finishing first is not evidence of an expired link.
-  initialized(){},timeout(){if(state==='pending')set('failed')},restart(){set('invalid')},reset(){set('idle')}};
+  initialized(){},timeout(){if(state==='pending')set('failed')},restart(){set('invalid')},reset(){invitation=false;set('idle')}};
 }
 export async function saveRecoveredPassword({auth,password,confirmation,enabled,recoveryState}){
  if(!enabled||recoveryState!=='ready')return {ok:false,message:'رابط الاسترداد غير صالح. اطلب رابطاً جديداً.'};

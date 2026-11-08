@@ -1,7 +1,7 @@
 import React,{useState} from 'react';
 import {saveRecoveredPassword} from './passwordRecoveryFlow.js';
 
-export default function RecoveryPasswordForm({auth,enabled,recoveryState,onDone,onRestart}){
+export default function RecoveryPasswordForm({auth,enabled,recoveryState,onDone,onRestart,isInvitation=false}){
  const [password,setPassword]=useState(''),[confirmation,setConfirmation]=useState('');
  const [busy,setBusy]=useState(false),[result,setResult]=useState(null);
  const submit=async event=>{
@@ -12,7 +12,7 @@ export default function RecoveryPasswordForm({auth,enabled,recoveryState,onDone,
  };
  return <div className="login" dir="rtl"><form onSubmit={submit}>
   <img className="loginLogo" src="/logo.png" alt="شعار صيدلية عبدالهادي"/>
-  <h1>تعيين كلمة مرور جديدة</h1><p>حساب النسخة التجريبية QA فقط</p>
+  <h1>{isInvitation?'قبول الدعوة وتعيين كلمة المرور':'تعيين كلمة مرور جديدة'}</h1><p>حساب النسخة التجريبية QA فقط</p>
   {result?.ok?<><p role="status">{result.message}</p><button type="button" className="primary full" onClick={onDone}>متابعة إلى النظام</button></>:<>
    <label>كلمة المرور الجديدة<input type="password" autoComplete="new-password" minLength={12} maxLength={72} value={password} onChange={e=>setPassword(e.target.value)} required disabled={busy}/></label>
    <label>تأكيد كلمة المرور<input type="password" autoComplete="new-password" minLength={12} maxLength={72} value={confirmation} onChange={e=>setConfirmation(e.target.value)} required disabled={busy}/></label>

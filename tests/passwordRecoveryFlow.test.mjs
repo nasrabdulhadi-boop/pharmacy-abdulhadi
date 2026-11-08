@@ -42,3 +42,13 @@ test('auth failures do not leak provider errors, credentials or URLs into messag
   assert.equal(result.ok,false);assert.doesNotMatch(result.message,/secret|token=/);
  }
 });
+
+test('invitation callback needs the verified invited identity before opening password setup',()=>{
+ const flow=createRecoveryFlow(recoveryCallbackState({hash:'#type=invite&access_token=synthetic'},true));assert.equal(flow.getState(),'pending');assert.equal(flow.isInvitation(),true);
+ flow.onAuthEvent('SIGNED_IN',{user:{id:'ordinary'}});assert.equal(flow.getState(),'pending');
+ flow.onAuthEvent('SIGNED_IN',{user:{id:'invited',email_confirmed_at:'2026-11-08',app_metadata:{qa_invitation_id:'synthetic'}}});assert.equal(flow.getState(),'ready');
+ flow.reset();assert.equal(flow.isInvitation(),false);assert.equal(flow.getState(),'idle');
+});
+test('ordinary login never becomes an invitation password setup',()=>{
+ const flow=createRecoveryFlow();flow.onAuthEvent('SIGNED_IN',{user:{email_confirmed_at:'now',app_metadata:{qa_invitation_id:'old-invitation'}}});assert.equal(flow.getState(),'idle');
+});
