@@ -1,0 +1,737 @@
+{
+  "Point of sale": [
+    "Касса",
+    "Satış noktası",
+    "Punct de vânzare",
+    "Point de vente",
+    "Kasse"
+  ],
+  "Dashboard": [
+    "Главная панель",
+    "Gösterge paneli",
+    "Panou principal",
+    "Tableau de bord",
+    "Übersicht"
+  ],
+  "Pharmacy products": [
+    "Товары аптеки",
+    "Eczane ürünleri",
+    "Produsele farmaciei",
+    "Produits de la pharmacie",
+    "Apothekenprodukte"
+  ],
+  "Website products": [
+    "Товары на сайте",
+    "Web sitesi ürünleri",
+    "Produse pe site",
+    "Produits du site",
+    "Website-Produkte"
+  ],
+  "Inventory": [
+    "Склад",
+    "Stok",
+    "Stoc",
+    "Stock",
+    "Lagerbestand"
+  ],
+  "Smart inventory": [
+    "Инвентаризация",
+    "Akıllı stok sayımı",
+    "Inventariere inteligentă",
+    "Inventaire intelligent",
+    "Intelligente Inventur"
+  ],
+  "Purchases": [
+    "Закупки",
+    "Satın almalar",
+    "Achiziții",
+    "Achats",
+    "Einkäufe"
+  ],
+  "Suppliers": [
+    "Поставщики",
+    "Tedarikçiler",
+    "Furnizori",
+    "Fournisseurs",
+    "Lieferanten"
+  ],
+  "Supplier debts": [
+    "Задолженность поставщикам",
+    "Tedarikçi borçları",
+    "Datorii către furnizori",
+    "Dettes fournisseurs",
+    "Lieferantenverbindlichkeiten"
+  ],
+  "Supplier credit": [
+    "Аванс поставщику",
+    "Tedarikçideki avans",
+    "Avans la furnizor",
+    "Avance fournisseur",
+    "Lieferantenguthaben"
+  ],
+  "Orders": [
+    "Заказы",
+    "Siparişler",
+    "Comenzi",
+    "Commandes",
+    "Bestellungen"
+  ],
+  "Prescriptions": [
+    "Рецепты",
+    "Reçeteler",
+    "Rețete",
+    "Ordonnances",
+    "Rezepte"
+  ],
+  "Medicine requests": [
+    "Запросы лекарств",
+    "İlaç talepleri",
+    "Cereri de medicamente",
+    "Demandes de médicaments",
+    "Arzneimittelanfragen"
+  ],
+  "Customers": [
+    "Клиенты",
+    "Müşteriler",
+    "Clienți",
+    "Clients",
+    "Kunden"
+  ],
+  "Debtors": [
+    "Должники",
+    "Borçlular",
+    "Debitori",
+    "Débiteurs",
+    "Schuldner"
+  ],
+  "Offers": [
+    "Предложения",
+    "Kampanyalar",
+    "Oferte",
+    "Offres",
+    "Angebote"
+  ],
+  "Cashbox": [
+    "Касса и денежные операции",
+    "Kasa",
+    "Casierie",
+    "Caisse",
+    "Kassenbuch"
+  ],
+  "Returns": [
+    "Возвраты",
+    "İadeler",
+    "Retururi",
+    "Retours",
+    "Retouren"
+  ],
+  "Reports": [
+    "Отчёты",
+    "Raporlar",
+    "Rapoarte",
+    "Rapports",
+    "Berichte"
+  ],
+  "Smart profit center": [
+    "Центр прибыли",
+    "Akıllı kâr merkezi",
+    "Centru inteligent de profit",
+    "Centre de profit intelligent",
+    "Intelligentes Gewinnzentrum"
+  ],
+  "Security and audit": [
+    "Безопасность и аудит",
+    "Güvenlik ve denetim",
+    "Securitate și audit",
+    "Sécurité et audit",
+    "Sicherheit und Prüfung"
+  ],
+  "System Administration Center": [
+    "Управление системой",
+    "Sistem yönetim merkezi",
+    "Administrarea sistemului",
+    "Administration du système",
+    "Systemverwaltung"
+  ],
+  "System administration": [
+    "Управление системой",
+    "Sistem yönetimi",
+    "Administrarea sistemului",
+    "Administration du système",
+    "Systemverwaltung"
+  ],
+  "Overview": [
+    "Обзор",
+    "Genel bakış",
+    "Prezentare generală",
+    "Vue d’ensemble",
+    "Überblick"
+  ],
+  "My Profile": [
+    "Мой профиль",
+    "Profilim",
+    "Profilul meu",
+    "Mon profil",
+    "Mein Profil"
+  ],
+  "Roles & Access": [
+    "Роли и доступ",
+    "Roller ve erişim",
+    "Roluri și acces",
+    "Rôles et accès",
+    "Rollen und Zugriff"
+  ],
+  "Backup & Recovery": [
+    "Резервное копирование",
+    "Yedekleme ve kurtarma",
+    "Copiere de siguranță",
+    "Sauvegarde et récupération",
+    "Sicherung und Wiederherstellung"
+  ],
+  "Language & Appearance": [
+    "Язык и оформление",
+    "Dil ve görünüm",
+    "Limbă și aspect",
+    "Langue et apparence",
+    "Sprache und Darstellung"
+  ],
+  "System language": [
+    "Язык системы",
+    "Sistem dili",
+    "Limba sistemului",
+    "Langue du système",
+    "Systemsprache"
+  ],
+  "Arabic": [
+    "Арабский",
+    "Arapça",
+    "Arabă",
+    "Arabe",
+    "Arabisch"
+  ],
+  "Administrator": [
+    "Администратор",
+    "Yönetici",
+    "Administrator",
+    "Administrateur",
+    "Administrator"
+  ],
+  "System administrator": [
+    "Администратор системы",
+    "Sistem yöneticisi",
+    "Administrator de sistem",
+    "Administrateur système",
+    "Systemadministrator"
+  ],
+  "System owner": [
+    "Владелец системы",
+    "Sistem sahibi",
+    "Proprietarul sistemului",
+    "Propriétaire du système",
+    "Systeminhaber"
+  ],
+  "Employee": [
+    "Сотрудник",
+    "Çalışan",
+    "Angajat",
+    "Employé",
+    "Mitarbeiter"
+  ],
+  "Technical support": [
+    "Техническая поддержка",
+    "Teknik destek",
+    "Asistență tehnică",
+    "Assistance technique",
+    "Technischer Support"
+  ],
+  "Disabled": [
+    "Отключён",
+    "Devre dışı",
+    "Dezactivat",
+    "Désactivé",
+    "Deaktiviert"
+  ],
+  "Full name": [
+    "Полное имя",
+    "Ad ve soyad",
+    "Nume complet",
+    "Nom complet",
+    "Vollständiger Name"
+  ],
+  "Display name": [
+    "Отображаемое имя",
+    "Görünen ad",
+    "Nume afișat",
+    "Nom affiché",
+    "Anzeigename"
+  ],
+  "Email": [
+    "Электронная почта",
+    "E-posta",
+    "E-mail",
+    "Adresse e-mail",
+    "E-Mail"
+  ],
+  "Sign-in email": [
+    "Почта для входа",
+    "Giriş e-postası",
+    "E-mail de autentificare",
+    "E-mail de connexion",
+    "Anmelde-E-Mail"
+  ],
+  "New email": [
+    "Новая почта",
+    "Yeni e-posta",
+    "E-mail nou",
+    "Nouvel e-mail",
+    "Neue E-Mail"
+  ],
+  "Phone number": [
+    "Номер телефона",
+    "Telefon numarası",
+    "Număr de telefon",
+    "Numéro de téléphone",
+    "Telefonnummer"
+  ],
+  "Address": [
+    "Адрес",
+    "Adres",
+    "Adresă",
+    "Adresse",
+    "Adresse"
+  ],
+  "Job title": [
+    "Должность",
+    "Görev unvanı",
+    "Funcție",
+    "Poste",
+    "Berufsbezeichnung"
+  ],
+  "Employee code": [
+    "Код сотрудника",
+    "Çalışan kodu",
+    "Cod angajat",
+    "Code employé",
+    "Mitarbeitercode"
+  ],
+  "Start date": [
+    "Дата начала работы",
+    "İşe başlama tarihi",
+    "Data începerii activității",
+    "Date de prise de poste",
+    "Eintrittsdatum"
+  ],
+  "Staff notes": [
+    "Примечания о сотруднике",
+    "Çalışan notları",
+    "Note despre angajat",
+    "Notes sur l’employé",
+    "Mitarbeiternotizen"
+  ],
+  "Details and password": [
+    "Данные и пароль",
+    "Bilgiler ve parola",
+    "Date și parolă",
+    "Informations et mot de passe",
+    "Daten und Passwort"
+  ],
+  "Staff account details": [
+    "Данные учётной записи",
+    "Çalışan hesap bilgileri",
+    "Detaliile contului angajatului",
+    "Détails du compte employé",
+    "Mitarbeiterkontodaten"
+  ],
+  "Account password": [
+    "Пароль учётной записи",
+    "Hesap parolası",
+    "Parola contului",
+    "Mot de passe du compte",
+    "Kontopasswort"
+  ],
+  "Confirm password": [
+    "Подтверждение пароля",
+    "Parolayı doğrula",
+    "Confirmă parola",
+    "Confirmer le mot de passe",
+    "Passwort bestätigen"
+  ],
+  "Change password": [
+    "Изменить пароль",
+    "Parolayı değiştir",
+    "Schimbă parola",
+    "Changer le mot de passe",
+    "Passwort ändern"
+  ],
+  "Reset account password": [
+    "Сбросить пароль",
+    "Hesap parolasını sıfırla",
+    "Resetează parola contului",
+    "Réinitialiser le mot de passe",
+    "Kontopasswort zurücksetzen"
+  ],
+  "Manager password for confirmation": [
+    "Пароль администратора для подтверждения",
+    "Onay için yönetici parolası",
+    "Parola administratorului pentru confirmare",
+    "Mot de passe administrateur pour confirmation",
+    "Administratorpasswort zur Bestätigung"
+  ],
+  "Save": [
+    "Сохранить",
+    "Kaydet",
+    "Salvează",
+    "Enregistrer",
+    "Speichern"
+  ],
+  "Save staff details": [
+    "Сохранить данные",
+    "Çalışan bilgilerini kaydet",
+    "Salvează datele angajatului",
+    "Enregistrer les informations",
+    "Mitarbeiterdaten speichern"
+  ],
+  "Save display name": [
+    "Сохранить имя",
+    "Görünen adı kaydet",
+    "Salvează numele afișat",
+    "Enregistrer le nom affiché",
+    "Anzeigename speichern"
+  ],
+  "Close": [
+    "Закрыть",
+    "Kapat",
+    "Închide",
+    "Fermer",
+    "Schließen"
+  ],
+  "Cancel": [
+    "Отмена",
+    "İptal",
+    "Anulează",
+    "Annuler",
+    "Abbrechen"
+  ],
+  "Delete": [
+    "Удалить",
+    "Sil",
+    "Șterge",
+    "Supprimer",
+    "Löschen"
+  ],
+  "Edit": [
+    "Изменить",
+    "Düzenle",
+    "Editează",
+    "Modifier",
+    "Bearbeiten"
+  ],
+  "Delete item": [
+    "Удалить позицию",
+    "Kalemi sil",
+    "Șterge articolul",
+    "Supprimer l’article",
+    "Position löschen"
+  ],
+  "Refresh": [
+    "Обновить",
+    "Yenile",
+    "Actualizează",
+    "Actualiser",
+    "Aktualisieren"
+  ],
+  "Sign out": [
+    "Выйти",
+    "Çıkış yap",
+    "Deconectare",
+    "Déconnexion",
+    "Abmelden"
+  ],
+  "Add employee or support account": [
+    "Добавить сотрудника или техподдержку",
+    "Çalışan veya destek hesabı ekle",
+    "Adaugă angajat sau cont de asistență",
+    "Ajouter un employé ou un compte d’assistance",
+    "Mitarbeiter- oder Supportkonto hinzufügen"
+  ],
+  "Reload accounts": [
+    "Обновить список",
+    "Hesapları yenile",
+    "Reîncarcă conturile",
+    "Actualiser les comptes",
+    "Konten neu laden"
+  ],
+  "Account management — QA only": [
+    "Управление учётными записями — QA",
+    "Hesap yönetimi — yalnızca QA",
+    "Administrarea conturilor — doar QA",
+    "Gestion des comptes — QA uniquement",
+    "Kontoverwaltung — nur QA"
+  ],
+  "Backup passphrase": [
+    "Пароль шифрования копии",
+    "Yedek şifreleme parolası",
+    "Parola de criptare a copiei",
+    "Phrase secrète de sauvegarde",
+    "Sicherungspassphrase"
+  ],
+  "Confirm passphrase": [
+    "Подтверждение пароля шифрования",
+    "Şifreleme parolasını doğrula",
+    "Confirmă parola de criptare",
+    "Confirmer la phrase secrète",
+    "Passphrase bestätigen"
+  ],
+  "Quantity": [
+    "Количество",
+    "Miktar",
+    "Cantitate",
+    "Quantité",
+    "Menge"
+  ],
+  "Purchase price": [
+    "Закупочная цена",
+    "Alış fiyatı",
+    "Preț de achiziție",
+    "Prix d’achat",
+    "Einkaufspreis"
+  ],
+  "Sale price": [
+    "Цена продажи",
+    "Satış fiyatı",
+    "Preț de vânzare",
+    "Prix de vente",
+    "Verkaufspreis"
+  ],
+  "Unit cost": [
+    "Себестоимость единицы",
+    "Birim maliyet",
+    "Cost unitar",
+    "Coût unitaire",
+    "Stückkosten"
+  ],
+  "Discount": [
+    "Скидка",
+    "İndirim",
+    "Reducere",
+    "Remise",
+    "Rabatt"
+  ],
+  "Total": [
+    "Итого",
+    "Toplam",
+    "Total",
+    "Total",
+    "Gesamt"
+  ],
+  "Profit": [
+    "Прибыль",
+    "Kâr",
+    "Profit",
+    "Bénéfice",
+    "Gewinn"
+  ],
+  "Currency": [
+    "Валюта",
+    "Para birimi",
+    "Monedă",
+    "Devise",
+    "Währung"
+  ],
+  "Exchange rate": [
+    "Обменный курс",
+    "Döviz kuru",
+    "Curs de schimb",
+    "Taux de change",
+    "Wechselkurs"
+  ],
+  "Cash": [
+    "Наличные",
+    "Nakit",
+    "Numerar",
+    "Espèces",
+    "Barzahlung"
+  ],
+  "Credit": [
+    "В долг",
+    "Vadeli",
+    "Pe credit",
+    "À crédit",
+    "Auf Rechnung"
+  ],
+  "Paid amount": [
+    "Оплаченная сумма",
+    "Ödenen tutar",
+    "Sumă plătită",
+    "Montant payé",
+    "Bezahlter Betrag"
+  ],
+  "Due amount": [
+    "Сумма к оплате",
+    "Ödenecek tutar",
+    "Sumă datorată",
+    "Montant dû",
+    "Fälliger Betrag"
+  ],
+  "Approved": [
+    "Одобрено",
+    "Onaylandı",
+    "Aprobat",
+    "Approuvé",
+    "Genehmigt"
+  ],
+  "Rejected": [
+    "Отклонено",
+    "Reddedildi",
+    "Respins",
+    "Refusé",
+    "Abgelehnt"
+  ],
+  "Pending": [
+    "Ожидает решения",
+    "Beklemede",
+    "În așteptare",
+    "En attente",
+    "Ausstehend"
+  ],
+  "Manager decisions": [
+    "Решения администратора",
+    "Yönetici kararları",
+    "Deciziile administratorului",
+    "Décisions de l’administrateur",
+    "Administratorentscheidungen"
+  ],
+  "System Administration Center — Restricted by permissions": [
+    "Управление системой — доступ ограничен",
+    "Sistem yönetimi — erişim kısıtlı",
+    "Administrarea sistemului — acces restricționat",
+    "Administration du système — accès restreint",
+    "Systemverwaltung — Zugriff eingeschränkt"
+  ],
+  "Pharmacy Abdulhadi": [
+    "Аптека Абдулхади",
+    "Abdulhadi Eczanesi",
+    "Farmacia Abdulhadi",
+    "Pharmacie Abdulhadi",
+    "Abdulhadi-Apotheke"
+  ],
+  "Backup": [
+    "Резервное копирование",
+    "Yedekleme",
+    "Copie de siguranță",
+    "Sauvegarde",
+    "Datensicherung"
+  ],
+  "Full restore": [
+    "Полное восстановление",
+    "Tam geri yükleme",
+    "Restaurare completă",
+    "Restauration complète",
+    "Vollständige Wiederherstellung"
+  ],
+  "Full restore is currently unavailable.": [
+    "Полное восстановление пока недоступно.",
+    "Tam geri yükleme şu anda kullanılamıyor.",
+    "Restaurarea completă nu este disponibilă în prezent.",
+    "La restauration complète est actuellement indisponible.",
+    "Die vollständige Wiederherstellung ist derzeit nicht verfügbar."
+  ],
+  "Available": [
+    "Доступно",
+    "Kullanılabilir",
+    "Disponibil",
+    "Disponible",
+    "Verfügbar"
+  ],
+  "Unavailable": [
+    "Недоступно",
+    "Kullanılamıyor",
+    "Indisponibil",
+    "Indisponible",
+    "Nicht verfügbar"
+  ],
+  "Verified": [
+    "Подтверждено",
+    "Doğrulandı",
+    "Verificat",
+    "Vérifié",
+    "Bestätigt"
+  ],
+  "Expiry date": [
+    "Срок годности",
+    "Son kullanma tarihi",
+    "Data expirării",
+    "Date de péremption",
+    "Verfallsdatum"
+  ],
+  "Create account": [
+    "Создать учётную запись",
+    "Hesap oluştur",
+    "Creează cont",
+    "Créer un compte",
+    "Konto erstellen"
+  ],
+  "Create an employee or support account": [
+    "Создать учётную запись сотрудника или техподдержки",
+    "Çalışan veya destek hesabı oluştur",
+    "Creează un cont de angajat sau asistență",
+    "Créer un compte employé ou d’assistance",
+    "Mitarbeiter- oder Supportkonto erstellen"
+  ],
+  "Manager password confirmation failed. The staff password was not changed.": [
+    "Пароль администратора не подтверждён. Пароль сотрудника не изменён.",
+    "Yönetici parolası doğrulanamadı. Çalışanın parolası değiştirilmedi.",
+    "Parola administratorului nu a fost confirmată. Parola angajatului nu a fost modificată.",
+    "La confirmation du mot de passe administrateur a échoué. Le mot de passe de l’employé n’a pas été modifié.",
+    "Das Administratorpasswort wurde nicht bestätigt. Das Mitarbeiterpasswort wurde nicht geändert."
+  ],
+  "The password and confirmation do not match.": [
+    "Пароль и подтверждение не совпадают.",
+    "Parola ve onayı eşleşmiyor.",
+    "Parola și confirmarea nu coincid.",
+    "Le mot de passe et sa confirmation ne correspondent pas.",
+    "Passwort und Bestätigung stimmen nicht überein."
+  ],
+  "Enter the manager password to confirm this change.": [
+    "Введите пароль администратора для подтверждения изменения.",
+    "Bu değişikliği onaylamak için yönetici parolasını girin.",
+    "Introdu parola administratorului pentru a confirma modificarea.",
+    "Saisissez le mot de passe administrateur pour confirmer cette modification.",
+    "Geben Sie das Administratorpasswort ein, um diese Änderung zu bestätigen."
+  ],
+  "Could not load the language. Try again.": [
+    "Не удалось загрузить язык. Повторите попытку.",
+    "Dil yüklenemedi. Tekrar deneyin.",
+    "Limba nu a putut fi încărcată. Încearcă din nou.",
+    "Impossible de charger la langue. Réessayez.",
+    "Die Sprache konnte nicht geladen werden. Versuchen Sie es erneut."
+  ],
+  "No.": [
+    "№",
+    "No.",
+    "Nr.",
+    "N°",
+    "Nr."
+  ],
+  "Part": [
+    "Часть упаковки",
+    "Kutu parçası",
+    "Fracție de ambalaj",
+    "Fraction de boîte",
+    "Packungsteil"
+  ],
+  "Item": [
+    "Товар",
+    "Ürün",
+    "Articol",
+    "Article",
+    "Artikel"
+  ],
+  "Original price": [
+    "Исходная цена",
+    "Orijinal fiyat",
+    "Preț inițial",
+    "Prix initial",
+    "Ursprünglicher Preis"
+  ]
+}

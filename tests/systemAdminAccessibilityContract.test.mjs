@@ -2,11 +2,12 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 const source=readFileSync(new URL('../src/main.jsx',import.meta.url),'utf8');
+const languages=readFileSync(new URL('../src/systemLanguages.js',import.meta.url),'utf8');
 const prefs=readFileSync(new URL('../src/systemAdminPreferences.js',import.meta.url),'utf8');
 
 test('admin preview retains explicit Arabic and English language choices',()=>{
- assert.match(prefs,/\bar\b/);
- assert.match(prefs,/\ben\b/);
+ assert.match(languages,/\bar\b/);
+ assert.match(languages,/\ben\b/);
 });
 test('admin preview has account role gate and verified auth state',()=>{
  assert.match(source,/canViewSystemAdminSection/);

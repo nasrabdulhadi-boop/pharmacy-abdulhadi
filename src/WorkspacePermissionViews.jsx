@@ -1,4 +1,4 @@
-import {uiText,uiTemplate,uiSourceText} from './systemLocale.js';
+import {uiText,uiTemplate,uiSourceTexts} from './systemLocale.js';
 import React,{useEffect,useRef} from 'react';
 import {LockKeyhole} from 'lucide-react';
 export function WorkspaceSectionFrame({locked,title,children}){
@@ -11,9 +11,9 @@ export function WorkspaceOperationSurface({section,restricted,children}){
  useEffect(()=>{
   if(!restricted||!ref.current)return;
   const mask=()=>{for(const button of ref.current.querySelectorAll('button')){
-   const label=[button.textContent,button.title,button.getAttribute('aria-label')].map(uiSourceText).join(' ');
+   const label=[button.textContent,button.title,button.getAttribute('aria-label')].flatMap(uiSourceTexts).join(' ');
    const destructive=section!=='pos'&&(button.classList.contains('danger')||!!button.querySelector('.lucide-trash-2'));
-   const draftLineRemoval=section==='purchases'&&uiSourceText(button.title)==='حذف الصنف';
+   const draftLineRemoval=section==='purchases'&&uiSourceTexts(button.title).includes('حذف الصنف');
    if(!draftLineRemoval&&(destructive||deniedLabels[section]?.test(label)||(section==='suppliers'&&button.classList.contains('linkButton')))){if(!button.disabled)button.disabled=true;button.dataset.workspaceDenied='true';button.title=uiText('غير مسموح لصلاحيات هذا الحساب');button.setAttribute('aria-label',uiText('إجراء مقفل حسب الصلاحيات'))}
   }};
   mask();const observer=new MutationObserver(mask);observer.observe(ref.current,{childList:true,subtree:true,attributes:true,attributeFilter:['disabled']});return()=>observer.disconnect();

@@ -15,7 +15,7 @@ export default function QaBackupExport({client,projectUrl,actorRole,actorId,lang
    if(verify){
     if(!file||file.size>70*1024*1024)throw new Error('invalid_archive');
     const result=await decryptQaBackup(JSON.parse(await file.text()),phrase);
-    if(generation===current.current)setMessage((language==='en'?'Archive integrity verified; tables: ':'تم التحقق من سلامة الملف؛ عدد الجداول: ')+result.summary.tables+(language==='en'?'. This is not a restore test.':'. هذا ليس اختبار استعادة.'));
+    if(generation===current.current)setMessage(uiText('تم التحقق من سلامة الملف؛ عدد الجداول: ')+result.summary.tables+uiText('. هذا ليس اختبار استعادة.'));
    }else{
     if(phrase.length<16||phrase!==confirmation)throw new Error('invalid_passphrase');
     const {data:user,error:identityError}=await client.auth.getUser();
