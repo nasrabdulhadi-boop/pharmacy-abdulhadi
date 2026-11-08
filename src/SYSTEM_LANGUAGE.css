@@ -1,0 +1,9 @@
+/* Language changes layout direction only; input values and business records are untouched. */
+html[lang="en"] body,html[lang="en"] .site,html[lang="en"] .login,html[lang="en"] .cartOverlay{direction:ltr!important}
+html[lang="en"] .adminShell,html[lang="en"] .adminShell .adminMain,html[lang="en"] .adminShell .adminTopbar,html[lang="en"] .adminShell aside{direction:ltr!important}
+html[lang="en"] .adminShell aside{inset:0 auto 0 0!important}
+html[lang="en"] .adminShell .adminMain{margin-right:0!important;margin-left:252px!important}
+html[lang="en"] .adminShell .navGroup button span,html[lang="en"] .adminShell .v6Action,html[lang="en"] .adminShell th{text-align:start!important}
+@media(min-width:901px){html[lang="en"] .adminShell.adminSideCollapsed .adminMain{margin-left:76px!important}}
+@media(max-width:900px){html[lang="en"] .adminShell .adminMain{margin-left:0!important}html[lang="en"] .adminShell aside{transform:translateX(-100%)!important}html[lang="en"] .adminShell aside.open{transform:none!important}}
+.workspaceRoleBadge[hidden]{display:none!important}

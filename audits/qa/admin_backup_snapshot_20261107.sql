@@ -4,7 +4,7 @@ language plpgsql stable security definer set search_path='' as $function$
 declare actor_role text:=public.qa_current_system_role(); t record; data_rows jsonb; tables_json jsonb:='[]'; row_total bigint; result jsonb; precise_columns text;
  schemas constant text[]:=array['public','pharmacy_qa_private','pharmacy_supplier_stage','supplier_currency_qa'];
 begin
- if actor_role is distinct from 'system_owner' then raise exception 'not_authorized' using errcode='42501';end if;
+ if actor_role is null or actor_role not in ('system_owner','system_admin') then raise exception 'not_authorized' using errcode='42501';end if;
  for t in select c.oid,c.relname,n.nspname,c.relrowsecurity,c.relforcerowsecurity,c.relacl::text as grants
   from pg_class c join pg_namespace n on n.oid=c.relnamespace
   where n.nspname=any(schemas) and c.relkind='r' order by n.nspname,c.relname
@@ -43,12 +43,13 @@ grant execute on function public.qa_admin_backup_snapshot() to authenticated;
 -- Only the trusted Edge service may record a completed server export.
 create or replace function public.qa_record_completed_backup_export(p_actor uuid,p_sha256 text,p_tables integer,p_files integer) returns uuid
 language plpgsql security definer set search_path='' as $function$
-declare event_id uuid:=gen_random_uuid();
+declare event_id uuid:=gen_random_uuid(); actor_role text;
 begin
  if p_sha256 is null or p_sha256 !~ '^[a-f0-9]{64}$' or p_tables<1 or p_files<0 or p_files>30 then raise exception 'invalid_export_evidence';end if;
- if not exists(select 1 from auth.users where id=p_actor and raw_app_meta_data->>'system_role'='system_owner' and (banned_until is null or banned_until<=now()))then raise exception 'not_authorized' using errcode='42501';end if;
+ select case when raw_app_meta_data ? 'system_role' then raw_app_meta_data->>'system_role' when raw_app_meta_data->>'role'='admin' then 'system_admin' end into actor_role from auth.users where id=p_actor and (banned_until is null or banned_until<=now());
+ if actor_role is null or actor_role not in ('system_owner','system_admin')then raise exception 'not_authorized' using errcode='42501';end if;
  insert into pharmacy_qa_private.audit_events(id,actor_id,actor_email,actor_role,action,entity_type,entity_id,details)
- select event_id,u.id,u.email,'system_owner','qa_application_backup_exported','backup',event_id::text,
+ select event_id,u.id,u.email,actor_role,'qa_application_backup_exported','backup',event_id::text,
  jsonb_build_object('source','trusted_edge_service','source_sha256',p_sha256,'tables',p_tables,'files',p_files,'auth_credentials_included',false,'restore_verified',false)
  from auth.users u where u.id=p_actor;
  return event_id;

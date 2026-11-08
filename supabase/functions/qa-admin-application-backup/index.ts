@@ -21,7 +21,7 @@ Deno.serve(async req=>{
   if(identity.error||!identity.data.user)return response({error:"not_authorized"},401);
   // The database independently checks current owner role, current session, expiry and bans.
   const role=await scoped.rpc("qa_my_role");
-  if(role.error||role.data!=="system_owner")return response({error:"not_authorized"},403);
+  if(role.error||!["system_owner","system_admin"].includes(role.data))return response({error:"not_authorized"},403);
   const body=await req.json().catch(()=>({}));
   const probeMode=body.mode==="synthetic_probe";
   if(probeMode&&!/^[a-f0-9-]{36}$/.test(body.probe_id||""))return response({error:"invalid_probe"},400);

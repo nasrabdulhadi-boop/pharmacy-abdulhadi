@@ -1,3 +1,4 @@
+import {uiText,uiTemplate} from './systemLocale.js';
 import React,{useEffect,useRef,useState} from 'react';
 import {prepareQaInvitation,invitationRequestId} from './qaAccountInvitations.js';
 import {localizeAdminTree} from './systemAdminLocale.js';
@@ -15,14 +16,14 @@ export default function QaAccountInvitation({client,projectUrl,actorId,actorRole
   }catch(error){if(current===generation.current)setMessage(errors[error.message]||'تعذر تأكيد الدعوة. حدّث قائمة الحسابات قبل إعادة المحاولة.');}
   finally{locked.current=false;if(current===generation.current)setBusy(false);}
  };
- return localizeAdminTree(<section className="systemAdminRecovery" aria-label="دعوة حساب جديد">
-  <h4>دعوة حساب جديد — QA فقط</h4><p>رابط لمرة واحدة، تُسلّمه للمستخدم دون إرسال بريد.</p>
+ return localizeAdminTree(<section className="systemAdminRecovery" aria-label={uiText("دعوة حساب جديد")}>
+  <h4>{uiText("دعوة حساب جديد — QA فقط")}</h4><p>{uiText("رابط لمرة واحدة، تُسلّمه للمستخدم دون إرسال بريد.")}</p>
   <form onSubmit={submit}>
-   <label>بريد الحساب الجديد<input type="email" autoComplete="off" required maxLength={254} value={email} onChange={e=>setEmail(e.target.value)} disabled={busy}/></label>
-   <label>دور الحساب الجديد<select value={role} onChange={e=>setRole(e.target.value)} disabled={busy}><option value="employee">موظف</option><option value="technical_support">دعم فني</option>{actorRole==='system_owner'&&<option value="system_admin">مدير النظام</option>}</select></label>
-   <button type="submit" disabled={busy||!email.trim()}>{busy?'جارٍ تجهيز الدعوة…':'تجهيز رابط دعوة'}</button>
+   <label>{uiText("بريد الحساب الجديد")}<input type="email" autoComplete="off" required maxLength={254} value={email} onChange={e=>setEmail(e.target.value)} disabled={busy}/></label>
+   <label>{uiText("دور الحساب الجديد")}<select value={role} onChange={e=>setRole(e.target.value)} disabled={busy}><option value="employee">{uiText("موظف")}</option><option value="technical_support">{uiText("دعم فني")}</option>{actorRole==='system_owner'&&<option value="system_admin">{uiText("مدير النظام")}</option>}</select></label>
+   <button type="submit" disabled={busy||!email.trim()}>{busy?uiText('جارٍ تجهيز الدعوة…'):uiText('تجهيز رابط دعوة')}</button>
   </form>
-  {message&&<p role="status">{message}</p>}
-  {prepared&&<div><p>الرابط يمنح الدخول للحساب المدعو؛ سلّمه بأمان.</p><label>رابط الدعوة<textarea data-no-translate readOnly dir="ltr" autoComplete="off" value={prepared.link} style={{width:'100%',minHeight:90,overflowWrap:'anywhere'}} onFocus={e=>e.target.select()}/></label><button type="button" onClick={()=>{setPrepared(null);setMessage('أُخفي رابط الدعوة من هذه الشاشة.');}}>إخفاء الرابط</button></div>}
+  {uiText(message)&&<p role="status">{uiText(message)}</p>}
+  {prepared&&<div><p>{uiText("الرابط يمنح الدخول للحساب المدعو؛ سلّمه بأمان.")}</p><label>{uiText("رابط الدعوة")}<textarea data-no-translate readOnly dir="ltr" autoComplete="off" value={prepared.link} style={{width:'100%',minHeight:90,overflowWrap:'anywhere'}} onFocus={e=>e.target.select()}/></label><button type="button" onClick={()=>{setPrepared(null);setMessage('أُخفي رابط الدعوة من هذه الشاشة.');}}>{uiText("إخفاء الرابط")}</button></div>}
  </section>,language);
 }

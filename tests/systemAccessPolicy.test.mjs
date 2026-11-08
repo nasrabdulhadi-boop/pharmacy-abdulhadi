@@ -14,9 +14,9 @@ test('unknown roles and unknown capabilities are denied',()=>{
  }
  for(const role of ROLES)assert.equal(hasCapability(role,'finance.export_all'),false);
 });
-test('admin cannot control owner-only security and backup functions',()=>{
+test('manager can back up data but cannot manage owner security',()=>{
  assert.equal(hasCapability('system_admin','system.manage_security'),false);
- assert.equal(hasCapability('system_admin','system.manage_backups'),false);
+ assert.equal(hasCapability('system_admin','system.manage_backups'),true);
 });
 test('sanitization removes secrets, user data, and raw SQL errors',()=>{
  const result=sanitizeTechnicalDiagnostic({

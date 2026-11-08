@@ -1,3 +1,4 @@
+import {uiText,uiTemplate} from './systemLocale.js';
 import React,{useEffect,useRef,useState} from 'react';
 import {saveOwnQaProfile,requestOwnQaEmailChange,signOutOtherQaSessions} from './systemAdminProfileActions.js';
 import {localizeAdminTree} from './systemAdminLocale.js';
@@ -15,18 +16,18 @@ export default function QaProfileDetails({client,projectUrl,previewEnabled,user,
   catch(error){if(current===generation.current){setFailed(true);setMessage(errors[error.message]||'تعذر إكمال الطلب. تحقق من الجلسة أو حاول لاحقاً.');}}
   finally{pending.current=false;if(current===generation.current)setBusy(false);}
  };
- return localizeAdminTree(<section className="systemAdminRecovery" aria-label="بيانات حسابي">
+ return localizeAdminTree(<section className="systemAdminRecovery" aria-label={uiText("بيانات حسابي")}>
   <form onSubmit={e=>{e.preventDefault();run(options=>saveOwnQaProfile({...options,name}),'تم حفظ اسم العرض.');}}>
-   <label>اسم العرض<input autoComplete="name" required maxLength={100} value={name} onChange={e=>setName(e.target.value)} disabled={!enabled||busy}/></label>
-   <button type="submit" disabled={!enabled||busy||!name.trim()}>{busy?'جارٍ الحفظ…':'حفظ اسم العرض'}</button>
+   <label>{uiText("اسم العرض")}<input autoComplete="name" required maxLength={100} value={name} onChange={e=>setName(e.target.value)} disabled={!enabled||busy}/></label>
+   <button type="submit" disabled={!enabled||busy||!name.trim()}>{busy?uiText('جارٍ الحفظ…'):uiText('حفظ اسم العرض')}</button>
   </form>
   <form onSubmit={e=>{e.preventDefault();const origin=window.location.origin;run(options=>requestOwnQaEmailChange({...options,email,origin,redirectTo:origin+'/#admin'}),'تم قبول الطلب. أكمل التأكيد المطلوب عبر البريد القديم والجديد حسب إعدادات الخدمة. لم يتم التحقق من وصول الرسائل.');}}>
-   <h4>تغيير البريد الإلكتروني</h4><p>تغيير البريد يتطلب التأكيد عبر البريد.</p>
-   <label>البريد الجديد<input type="email" required maxLength={254} autoComplete="email" value={email} onChange={e=>setEmail(e.target.value)} disabled={!enabled||busy}/></label>
-   <button type="submit" disabled={!enabled||busy||!email.trim()}>طلب تأكيد البريد الجديد</button>
+   <h4>{uiText("تغيير البريد الإلكتروني")}</h4><p>{uiText("تغيير البريد يتطلب التأكيد عبر البريد.")}</p>
+   <label>{uiText("البريد الجديد")}<input type="email" required maxLength={254} autoComplete="email" value={email} onChange={e=>setEmail(e.target.value)} disabled={!enabled||busy}/></label>
+   <button type="submit" disabled={!enabled||busy||!email.trim()}>{uiText("طلب تأكيد البريد الجديد")}</button>
   </form>
-  <h4>أمان الجلسات</h4>
-  <button type="button" disabled={!enabled||busy} onClick={()=>run(signOutOtherQaSessions,'تم إنهاء جلساتك الأخرى؛ جلستك الحالية مستمرة.')}>إنهاء الجلسات الأخرى</button>
-  {message&&<p role={failed?'alert':'status'}>{message}</p>}
+  <h4>{uiText("أمان الجلسات")}</h4>
+  <button type="button" disabled={!enabled||busy} onClick={()=>run(signOutOtherQaSessions,'تم إنهاء جلساتك الأخرى؛ جلستك الحالية مستمرة.')}>{uiText("إنهاء الجلسات الأخرى")}</button>
+  {uiText(message)&&<p role={failed?'alert':'status'}>{uiText(message)}</p>}
  </section>,language);
 }

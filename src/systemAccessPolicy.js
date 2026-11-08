@@ -18,7 +18,7 @@ const permissions = {
  system_owner: CAPABILITIES,
  system_admin: [
   'system.view_technical_health','system.view_sanitized_diagnostics',
-  'system.manage_users','pharmacy.read_sensitive','pharmacy.write_operations',
+  'system.manage_users','system.manage_backups','pharmacy.read_sensitive','pharmacy.write_operations',
   'finance.read','finance.write',
   ...CAPABILITIES.filter(cap=>cap.startsWith('employee.'))
  ],
