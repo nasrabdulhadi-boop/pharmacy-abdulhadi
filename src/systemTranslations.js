@@ -1655,4 +1655,11 @@ export const SYSTEM_EN=Object.freeze({
 "كلمة المرور تحتاج 12 إلى 128 محرفاً وحروفاً إنكليزية وأرقاماً ورمزاً مثل ! أو @.":"Use 12\u2013128 characters with English letters, numbers and a symbol such as ! or @.",
 "أعد إدخال كلمة المرور في حقل التأكيد.":"Re-enter the password in the confirmation field.",
 "كلمة المرور وتأكيدها غير متطابقين.":"The password and confirmation do not match.",
-"راجع الحقول الموضحة قبل المتابعة.":"Check the highlighted fields before continuing."});
+"راجع الحقول الموضحة قبل المتابعة.":"Check the highlighted fields before continuing.",
+"إغلاق نافذة الموظف":"Close staff dialog",
+"تاريخ إنشاء الحساب":"Account creation date",
+"كلمة مرور المدير للتأكيد":"Manager password for confirmation",
+"يجب تأكيد كلمة مرور حساب المدير الحالي لكل تغيير. لا تُحفظ كلمة المرور.":"Confirm the current manager account password for every change. The password is not stored.",
+"أدخل كلمة مرور المدير لتأكيد التغيير.":"Enter the manager password to confirm this change.",
+"لم ينجح تأكيد كلمة مرور المدير. لم تتغير كلمة مرور الموظف.":"Manager password confirmation failed. The staff password was not changed.",
+"بلغت حد محاولات التأكيد. انتظر 15 دقيقة قبل المحاولة مجدداً.":"Confirmation attempt limit reached. Wait 15 minutes before retrying."});

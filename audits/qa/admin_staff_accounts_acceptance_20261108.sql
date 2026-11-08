@@ -24,12 +24,12 @@ begin
  denied:=false;begin perform public.qa_admin_reserve_staff(gen_random_uuid(),'password',null,null,t,null);exception when insufficient_privilege then denied:=true;end;perform pg_temp.check_staff('another manager cannot reset password',denied);
  update auth.sessions set user_id=a where id=s;perform set_config('request.jwt.claims',jsonb_build_object('sub',a,'session_id',s,'role','authenticated')::text,true);
  insert into auth.sessions(id,user_id,aal,created_at,updated_at)values(ts,t,'aal1',now(),now());reset_id:=gen_random_uuid();
- perform public.qa_admin_reserve_staff(reset_id,'password',null,null,t,null);
+ perform public.qa_admin_begin_staff_password_check(reset_id,t);perform public.qa_service_verify_staff_password_check(reset_id);perform public.qa_admin_reserve_staff(reset_id,'password',null,null,t,null);
  perform pg_temp.check_staff('reset revokes all target sessions',not exists(select 1 from auth.sessions where user_id=t));
  perform pg_temp.check_staff('reset target disabled until completion',exists(select 1 from auth.users where id=t and raw_app_meta_data->>'system_role'='disabled'));
  denied:=false;begin perform public.qa_admin_set_role(t,'employee');exception when insufficient_privilege then denied:=true;end;perform pg_temp.check_staff('pending reset cannot be bypassed by role change',denied);
  perform pg_temp.check_staff('completed reset restores intended role',public.qa_service_complete_staff(reset_id,t) and exists(select 1 from auth.users where id=t));
- reset_id:=gen_random_uuid();perform public.qa_admin_reserve_staff(reset_id,'password',null,null,t,null);perform public.qa_service_fail_staff(reset_id);
+ reset_id:=gen_random_uuid();perform public.qa_admin_begin_staff_password_check(reset_id,t);perform public.qa_service_verify_staff_password_check(reset_id);perform public.qa_admin_reserve_staff(reset_id,'password',null,null,t,null);perform public.qa_service_fail_staff(reset_id);
  perform pg_temp.check_staff('failed reset remains disabled',exists(select 1 from auth.users where id=t and raw_app_meta_data->>'system_role'='disabled'));
  perform public.qa_admin_set_role(t,'technical_support');
  perform pg_temp.check_staff('manager can change own linked staff role',exists(select 1 from auth.users where id=t and raw_app_meta_data->>'system_role'='technical_support'));

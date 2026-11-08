@@ -15,7 +15,19 @@ export async function handleStaffAccount(req,config){
   const identity=await scoped.auth.getUser(token.slice(7)),role=await scoped.rpc('qa_my_role');
   if(identity.error||!identity.data?.user||role.error||!['system_owner','system_admin'].includes(role.data))return response({error:'not_authorized'},403);
   const raw=await req.text();if(raw.length>8192)return response({error:'invalid_request'},400);
-  try{command=cleanStaffCommand(JSON.parse(raw));}catch(e){return response({error:['invalid_request','invalid_email','invalid_profile','invalid_password','not_authorized'].includes(e.message)?e.message:'invalid_request'},400);}
+  try{command=cleanStaffCommand(JSON.parse(raw));}catch(e){return response({error:['invalid_request','invalid_email','invalid_profile','invalid_password','not_authorized','manager_confirmation_required'].includes(e.message)?e.message:'invalid_request'},400);}
+  if(command.action==='password'){
+   const attempt=await scoped.rpc('qa_admin_begin_staff_password_check',{p_id:command.request_id,p_target:command.target_id});
+   if(attempt.error||attempt.data!==true)return response({error:attempt.error?.code==='54000'?'confirmation_rate_limited':'not_authorized'},attempt.error?.code==='54000'?429:403);
+   // Separate non-persistent client: never replace or globally sign out the manager's session.
+   const proof=config.createClient(QA,config.publishable,{auth:{persistSession:false,autoRefreshToken:false}});
+   let verified=false;
+   try{const signed=await proof.auth.signInWithPassword({email:identity.data.user.email,password:command.manager_password});verified=!signed.error&&signed.data?.user?.id===identity.data.user.id&&!!signed.data?.session;}
+   finally{await proof.auth.signOut({scope:'local'}).catch(()=>{});command.manager_password='';}
+   if(!verified)return response({error:'manager_confirmation_failed'},403);
+   admin=config.createClient(QA,config.secret,{auth:{persistSession:false,autoRefreshToken:false}});
+   const approved=await admin.rpc('qa_service_verify_staff_password_check',{p_id:command.request_id});if(approved.error||approved.data!==true)return response({error:'manager_confirmation_failed'},403);
+  }
   const reservation=await scoped.rpc('qa_admin_reserve_staff',{p_id:command.request_id,p_action:command.action,p_email:command.email||null,p_role:command.role||null,p_target:command.target_id||null,p_profile:command.profile||null});
   if(reservation.error||reservation.data!==true)return response({error:reservation.error?.code==='23505'?'account_conflict':reservation.error?.code==='54000'?'rate_limited':'not_authorized'},reservation.error?.code==='23505'?409:reservation.error?.code==='54000'?429:403);
   reserved=true;admin=config.createClient(QA,config.secret,{auth:{persistSession:false,autoRefreshToken:false}});

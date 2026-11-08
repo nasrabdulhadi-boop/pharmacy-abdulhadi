@@ -1,5 +1,5 @@
 import {staffFields,validStaffPassword} from './qaStaffAccounts.js';
-export function validateStaffAccountForm({mode='create',profile={},email='',password='',confirmation=''}){
+export function validateStaffAccountForm({mode='create',profile={},email='',password='',confirmation='',managerPassword=''}){
  const errors={};
  if(mode!=='password'){
   for(const [key,max]of Object.entries(staffFields))if(typeof (profile[key]??'')!=='string'||(profile[key]||'').trim().length>max)errors[key]='قيمة الحقل أطول من الحد المسموح.';
@@ -13,5 +13,6 @@ export function validateStaffAccountForm({mode='create',profile={},email='',pass
   if(!confirmation)errors.confirmation='أعد إدخال كلمة المرور في حقل التأكيد.';
   else if(password!==confirmation)errors.confirmation='كلمة المرور وتأكيدها غير متطابقين.';
  }
+ if(mode==='password'&&(typeof managerPassword!=='string'||!managerPassword||managerPassword.length>1024))errors.managerPassword='أدخل كلمة مرور المدير لتأكيد التغيير.';
  return errors;
 }

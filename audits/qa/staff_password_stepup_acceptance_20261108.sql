@@ -1,0 +1,35 @@
+begin;
+create temp table stepup_results(name text) on commit drop;
+create function pg_temp.check_step(n text,ok boolean) returns void language plpgsql as $$begin if ok is distinct from true then raise exception 'FAILED: %',n;end if;insert into stepup_results values(n);end$$;
+do $test$
+declare a uuid:=gen_random_uuid();t uuid:=gen_random_uuid();other_t uuid:=gen_random_uuid();s uuid:=gen_random_uuid();other_s uuid:=gen_random_uuid();r uuid:=gen_random_uuid();expired uuid:=gen_random_uuid();revoked uuid:=gen_random_uuid();denied boolean;i integer;
+begin
+ insert into auth.users(id,email,raw_app_meta_data,created_at,updated_at)values(a,'qa-step-'||a||'@example.invalid','{"system_role":"system_admin"}',now(),now()),(t,'qa-step-'||t||'@example.invalid','{"system_role":"employee"}',now(),now()),(other_t,'qa-step-'||other_t||'@example.invalid','{"system_role":"technical_support"}',now(),now());
+ insert into auth.sessions(id,user_id,aal,created_at,updated_at)values(s,a,'aal1',now(),now()),(other_s,a,'aal1',now(),now());
+ insert into pharmacy_qa_private.staff_profiles(user_id,manager_id,profile)values(t,a,'{"full_name":"Synthetic staff"}'),(other_t,a,'{"full_name":"Synthetic support"}');
+ perform set_config('request.jwt.claims',jsonb_build_object('sub',a,'session_id',s,'role','authenticated')::text,true);
+ denied:=false;begin perform public.qa_admin_reserve_staff(r,'password',null,null,t,null);exception when insufficient_privilege then denied:=true;end;perform pg_temp.check_step('direct reset reservation denied without confirmation',denied);
+ perform public.qa_admin_begin_staff_password_check(r,t);
+ denied:=false;begin perform public.qa_admin_reserve_staff(r,'password',null,null,t,null);exception when insufficient_privilege then denied:=true;end;perform pg_temp.check_step('unverified attempt cannot reset target',denied);
+ perform pg_temp.check_step('failed proof leaves staff active',exists(select 1 from auth.users where id=t and raw_app_meta_data->>'system_role'='employee'));
+ perform public.qa_service_verify_staff_password_check(r);
+ denied:=false;begin perform public.qa_admin_reserve_staff(r,'password',null,null,other_t,null);exception when insufficient_privilege then denied:=true;end;perform pg_temp.check_step('confirmation bound to target',denied);
+ perform set_config('request.jwt.claims',jsonb_build_object('sub',a,'session_id',other_s,'role','authenticated')::text,true);
+ denied:=false;begin perform public.qa_admin_reserve_staff(r,'password',null,null,t,null);exception when insufficient_privilege then denied:=true;end;perform pg_temp.check_step('confirmation bound to original manager session',denied);
+ perform set_config('request.jwt.claims',jsonb_build_object('sub',a,'session_id',s,'role','authenticated')::text,true);
+ perform pg_temp.check_step('verified scoped request can reserve reset',public.qa_admin_reserve_staff(r,'password',null,null,t,null));
+ perform pg_temp.check_step('proof consumed once',exists(select 1 from pharmacy_qa_private.staff_password_checks where id=r and consumed));
+ perform public.qa_service_complete_staff(r,t);
+ denied:=false;begin perform public.qa_admin_reserve_staff(r,'password',null,null,t,null);exception when insufficient_privilege then denied:=true;end;perform pg_temp.check_step('completed confirmation cannot replay',denied);
+ perform public.qa_admin_begin_staff_password_check(expired,t);update pharmacy_qa_private.staff_password_checks set created_at=now()-interval '2 minutes' where id=expired;
+ denied:=false;begin perform public.qa_service_verify_staff_password_check(expired);exception when insufficient_privilege then denied:=true;end;perform pg_temp.check_step('expired attempt denied',denied);
+ perform public.qa_admin_begin_staff_password_check(revoked,t);delete from auth.sessions where id=s;
+ denied:=false;begin perform public.qa_service_verify_staff_password_check(revoked);exception when insufficient_privilege then denied:=true;end;perform pg_temp.check_step('revoked manager session denied',denied);
+ insert into auth.sessions(id,user_id,aal,created_at,updated_at)values(s,a,'aal1',now(),now());
+ for i in 1..2 loop perform public.qa_admin_begin_staff_password_check(gen_random_uuid(),t);end loop;
+ denied:=false;begin perform public.qa_admin_begin_staff_password_check(gen_random_uuid(),t);exception when program_limit_exceeded then denied:=true;end;perform pg_temp.check_step('five attempts per manager per 15 minutes',denied);
+ perform pg_temp.check_step('browser cannot mark verification passed',not has_function_privilege('authenticated','public.qa_service_verify_staff_password_check(uuid)','execute'));
+ perform pg_temp.check_step('browser cannot read verification attempts',not has_table_privilege('authenticated','pharmacy_qa_private.staff_password_checks','select'));
+end $test$;
+select count(*) passed,jsonb_agg(name) checks from stepup_results;
+rollback;
