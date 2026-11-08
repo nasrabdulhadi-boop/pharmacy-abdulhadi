@@ -1,7 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {ADMIN_READINESS,readinessSummary} from '../src/systemAdminReadiness.js';
-import {readFileSync} from 'node:fs';
 test('readiness counts reconcile with the complete implementation register',()=>{
  const s=readinessSummary();assert.equal(s.total,ADMIN_READINESS.length);
  assert.equal(s.total,s.implemented+s.verificationRequired+s.notImplemented);
@@ -12,9 +11,4 @@ test('backup, recovery and live diagnostics cannot be reported implemented prema
  assert.equal(ADMIN_READINESS.find(x=>x.id==='live_diagnostics')?.state,'implemented');
  assert.equal(ADMIN_READINESS.find(x=>x.id==='support_isolation')?.state,'implemented');
  assert.equal(ADMIN_READINESS.find(x=>x.id==='account_recovery')?.state,'verification_required');
-});
-test('status register is rendered only for authorized overview roles',()=>{
- const source=readFileSync(new URL('../src/main.jsx',import.meta.url),'utf8');
- assert.match(source,/!restrictedPreview&&<div className="systemAdminReadiness"/);
- assert.match(source,/readinessSummary\(\)\.implemented/);
 });

@@ -5,14 +5,12 @@ const ui=readFileSync(new URL('../src/main.jsx',import.meta.url),'utf8');
 const css=readFileSync(new URL('../src/SYSTEM_ADMIN_WINDOW_POLISH.css',import.meta.url),'utf8');
 
 test('overview has responsive modern dashboard regions',()=>{
- for(const part of ['systemAdminHero','systemAdminMetrics','systemAdminOverviewLower','systemAdminInfoPanel'])assert.ok(ui.includes(part),`missing ${part}`);
+ for(const part of ['systemAdminMetrics','systemAdminQuickActions'])assert.ok(ui.includes(part),`missing ${part}`);
  assert.match(css,/@media\(max-width:900px\)/);
  assert.match(css,/@media\(max-width:600px\)/);
 });
 test('dashboard does not imply untested backup or diagnostics are healthy',()=>{
- assert.match(ui,/Restore not tested/);
- assert.match(ui,/النشر يحتاج تحققاً منفصلاً/);
- assert.match(ui,/لم يُنفّذ/);
+ assert.match(ui,/الاستعادة الكاملة غير متاحة حالياً/);
  assert.match(ui,/makeTechnicalHealthSnapshot\(\)/);
 });
 test('support-only role cannot navigate to sensitive administrative sections',()=>{

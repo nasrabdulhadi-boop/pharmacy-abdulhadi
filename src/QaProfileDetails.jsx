@@ -16,18 +16,16 @@ export default function QaProfileDetails({client,projectUrl,previewEnabled,user,
   finally{pending.current=false;if(current===generation.current)setBusy(false);}
  };
  return localizeAdminTree(<section className="systemAdminRecovery" aria-label="بيانات حسابي">
-  <h4>بيانات حسابي</h4>
   <form onSubmit={e=>{e.preventDefault();run(options=>saveOwnQaProfile({...options,name}),'تم حفظ اسم العرض.');}}>
-   <p>حفظ الاسم يغيّر بيانات العرض فقط، ولا يمنح أي صلاحية.</p>
    <label>اسم العرض<input autoComplete="name" required maxLength={100} value={name} onChange={e=>setName(e.target.value)} disabled={!enabled||busy}/></label>
    <button type="submit" disabled={!enabled||busy||!name.trim()}>{busy?'جارٍ الحفظ…':'حفظ اسم العرض'}</button>
   </form>
   <form onSubmit={e=>{e.preventDefault();const origin=window.location.origin;run(options=>requestOwnQaEmailChange({...options,email,origin,redirectTo:origin+'/#admin'}),'تم قبول الطلب. أكمل التأكيد المطلوب عبر البريد القديم والجديد حسب إعدادات الخدمة. لم يتم التحقق من وصول الرسائل.');}}>
-   <h4>تغيير البريد الإلكتروني</h4><p>سيبقى بريدك الحالي معتمداً حتى إكمال التأكيد المطلوب. لا يغيّر هذا الطلب دور حسابك.</p>
+   <h4>تغيير البريد الإلكتروني</h4><p>تغيير البريد يتطلب التأكيد عبر البريد.</p>
    <label>البريد الجديد<input type="email" required maxLength={254} autoComplete="email" value={email} onChange={e=>setEmail(e.target.value)} disabled={!enabled||busy}/></label>
    <button type="submit" disabled={!enabled||busy||!email.trim()}>طلب تأكيد البريد الجديد</button>
   </form>
-  <h4>أمان الجلسات</h4><p>هذا الإجراء يخص حسابك الحالي فقط.</p>
+  <h4>أمان الجلسات</h4>
   <button type="button" disabled={!enabled||busy} onClick={()=>run(signOutOtherQaSessions,'تم إنهاء جلساتك الأخرى؛ جلستك الحالية مستمرة.')}>إنهاء الجلسات الأخرى</button>
   {message&&<p role={failed?'alert':'status'}>{message}</p>}
  </section>,language);

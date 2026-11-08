@@ -26,7 +26,7 @@
 .panel.systemAdminModern .systemAdminEyebrow{color:#2c8275!important;letter-spacing:.06em!important}
 .panel.systemAdminModern .systemAdminMetrics{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:13px!important}
 .panel.systemAdminModern .systemAdminMetric,.panel.systemAdminModern .systemAdminInfoPanel{background:#fff!important;color:#25384d!important;border:1px solid #e5ebf1!important;box-shadow:0 2px 10px rgba(32,53,79,.035)!important;border-radius:15px!important}
-.panel.systemAdminModern .systemAdminMetric{min-height:148px!important;padding:18px!important}
+.panel.systemAdminModern .systemAdminMetric{min-height:104px!important;padding:14px!important}
 .panel.systemAdminModern .systemAdminMetricTop{color:#6c7e8f!important;font-size:.82rem!important}
 .panel.systemAdminModern .systemAdminMetric strong{color:#263c52!important;font-size:1.25rem!important}
 .panel.systemAdminModern .systemAdminMetric small{color:#8492a0!important;opacity:1!important}
@@ -73,14 +73,14 @@
 .panel.systemAdminModern .systemAdminManifestInspector [role=status]{padding:12px;border:1px solid #c8dcd4;background:#fff;border-radius:10px}
 
 /* Functional quick actions: visible change in the owner dashboard. */
-.panel.systemAdminModern .systemAdminQuickActions{background:#fff;border:1px solid #e2eaf0;border-radius:18px;padding:22px;display:grid;gap:16px}
+.panel.systemAdminModern .systemAdminQuickActions{background:#fff;border:1px solid #e2eaf0;border-radius:18px;padding:16px;display:grid;gap:12px}
 .panel.systemAdminModern .systemAdminQuickActions h4{margin:0 0 6px;font-size:1.12rem;color:#1f3c4a}
 .panel.systemAdminModern .systemAdminQuickActions p{margin:0;color:#708394;font-size:.86rem}
 .panel.systemAdminModern .systemAdminQuickActionsGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
-.panel.systemAdminModern .systemAdminQuickAction{display:flex!important;align-items:center;gap:13px;text-align:start!important;min-height:88px;padding:16px!important;background:#f7fbfa!important;color:#254254!important;border:1px solid #dcebe6!important;border-radius:14px!important;cursor:pointer;transition:background .15s,border-color .15s,transform .15s}
+.panel.systemAdminModern .systemAdminQuickAction{display:flex!important;align-items:center;gap:13px;text-align:start!important;min-height:60px;padding:10px!important;background:#f7fbfa!important;color:#254254!important;border:1px solid #dcebe6!important;border-radius:14px!important;cursor:pointer;transition:background .15s,border-color .15s,transform .15s}
 .panel.systemAdminModern .systemAdminQuickAction:hover{background:#eaf6f0!important;border-color:#8bbba8!important;transform:translateY(-2px)}
 .panel.systemAdminModern .systemAdminQuickAction:focus-visible{outline:3px solid #14836b;outline-offset:3px}
-.panel.systemAdminModern .systemAdminQuickAction>span:nth-child(2){display:grid;gap:5px;flex:1;min-width:0}
+.panel.systemAdminModern .systemAdminQuickAction>strong{flex:1;min-width:0}
 .panel.systemAdminModern .systemAdminQuickAction strong{font-size:.95rem;color:#24453e}
 .panel.systemAdminModern .systemAdminQuickAction small{font-size:.76rem;color:#738493}
 .panel.systemAdminModern .systemAdminQuickActionIcon{display:grid;place-items:center;width:44px;height:44px;border-radius:12px;background:#ddf2e8;color:#166d55;font-size:1.5rem;flex:none}
@@ -98,7 +98,7 @@
 .panel.systemAdminModern[data-density="compact"] .systemAdminOverview{gap:12px!important}
 .panel.systemAdminModern[data-density="compact"] .systemAdminHero{padding:16px 18px!important}
 .panel.systemAdminModern[data-density="compact"] .systemAdminMetrics{gap:9px!important}
-.panel.systemAdminModern[data-density="compact"] .systemAdminMetric{min-height:126px!important;padding:14px!important}
+.panel.systemAdminModern[data-density="compact"] .systemAdminMetric{min-height:88px!important;padding:12px!important}
 .panel.systemAdminModern[data-density="compact"] th,.panel.systemAdminModern[data-density="compact"] td{padding:9px 12px!important}
 
 /* Respect the pharmacy's explicit theme; OS preference must not override this control. */

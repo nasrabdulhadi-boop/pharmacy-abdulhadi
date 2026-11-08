@@ -15,5 +15,5 @@ test('administration preferences and diagnostics are connected to the UI',()=>{
 });
 test('backup center is non-operational until audited service exists',()=>{
  assert.match(source,/getBackupCenterStatus\(\)/);
- assert.match(source,/تنزيل النسخ والاستعادة معطّلان/);
+ assert.match(source,/الاستعادة الكاملة غير متاحة حالياً/);
 });

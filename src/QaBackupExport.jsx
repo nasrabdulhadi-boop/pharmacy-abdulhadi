@@ -34,13 +34,13 @@ export default function QaBackupExport({client,projectUrl,actorRole,actorId,lang
  };
  return localizeAdminTree(<section className="systemAdminRecovery" aria-label="نسخة تطبيق QA المشفرة">
   <h4>نسخة تطبيق QA المشفرة</h4>
-  <p>للمالك فقط: تصدير بيانات التطبيق وبنيته وملفات التخزين من QA. لا تشمل كلمات مرور الحسابات أو جلساتها أو إعدادات المنصة، ولا تثبت إمكانية الاستعادة الكاملة.</p>
+  <p>تشمل بيانات التطبيق وملفاته، دون كلمات المرور أو إعدادات المنصة.</p>
   <label>عبارة تشفير النسخة<input type="password" autoComplete="new-password" minLength={16} value={phrase} onChange={e=>setPhrase(e.target.value)} disabled={busy}/></label>
   <label>تأكيد عبارة التشفير<input type="password" autoComplete="new-password" minLength={16} value={confirmation} onChange={e=>setConfirmation(e.target.value)} disabled={busy}/></label>
-  <p>16 محرفاً على الأقل. لا تُرسل عبارة التشفير إلى الخادم ولا تُحفظ على الجهاز.</p>
+  <p>16 محرفاً على الأقل؛ احفظ العبارة لاستعمال النسخة.</p>
   <button type="button" disabled={busy||phrase.length<16||phrase!==confirmation} onClick={()=>run(false)}>{busy?'جارٍ الحفظ…':'تجهيز نسخة مشفرة من QA'}</button>
   {download&&<p><a href={download.url} download={download.name}>تنزيل نسخة التطبيق المشفرة</a></p>}
-  <h4>فحص سلامة نسخة مشفرة</h4><p>يفك التشفير ويتحقق من البصمات محلياً فقط. لا يرفع الملف أو ينفّذ تعليماته أو يستعيد بياناته.</p>
+  <h4>فحص سلامة نسخة مشفرة</h4><p>فحص محلي للسلامة، لا يستعيد البيانات.</p>
   <label>اختيار نسخة مشفرة<input type="file" accept=".json,application/json" disabled={busy} onChange={e=>setFile(e.target.files?.[0]||null)}/></label>
   <button type="button" disabled={busy||!file||phrase.length<16} onClick={()=>run(true)}>فحص سلامة الملف محلياً</button>
   {message&&<p role="status">{message}</p>}

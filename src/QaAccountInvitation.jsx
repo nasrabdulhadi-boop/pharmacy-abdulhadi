@@ -16,13 +16,13 @@ export default function QaAccountInvitation({client,projectUrl,actorId,actorRole
   finally{locked.current=false;if(current===generation.current)setBusy(false);}
  };
  return localizeAdminTree(<section className="systemAdminRecovery" aria-label="دعوة حساب جديد">
-  <h4>دعوة حساب جديد — QA فقط</h4><p>يُجهز رابط دعوة لمرة واحدة دون إرسال بريد. سلّمه للمستخدم المقصود بأمان؛ يفتح الرابط ويختار كلمة مروره. لا تستخدم الدعوة لتعديل حساب موجود.</p>
+  <h4>دعوة حساب جديد — QA فقط</h4><p>رابط لمرة واحدة، تُسلّمه للمستخدم دون إرسال بريد.</p>
   <form onSubmit={submit}>
    <label>بريد الحساب الجديد<input type="email" autoComplete="off" required maxLength={254} value={email} onChange={e=>setEmail(e.target.value)} disabled={busy}/></label>
    <label>دور الحساب الجديد<select value={role} onChange={e=>setRole(e.target.value)} disabled={busy}><option value="employee">موظف</option><option value="technical_support">دعم فني</option>{actorRole==='system_owner'&&<option value="system_admin">مدير النظام</option>}</select></label>
    <button type="submit" disabled={busy||!email.trim()}>{busy?'جارٍ تجهيز الدعوة…':'تجهيز رابط دعوة'}</button>
   </form>
   {message&&<p role="status">{message}</p>}
-  {prepared&&<div><p>الرابط يمنح الدخول للحساب المدعو. لا تنشره ولا تضعه في سجل أو تقرير.</p><label>رابط الدعوة<textarea data-no-translate readOnly dir="ltr" autoComplete="off" value={prepared.link} style={{width:'100%',minHeight:90,overflowWrap:'anywhere'}} onFocus={e=>e.target.select()}/></label><button type="button" onClick={()=>{setPrepared(null);setMessage('أُخفي رابط الدعوة من هذه الشاشة.');}}>إخفاء الرابط</button></div>}
+  {prepared&&<div><p>الرابط يمنح الدخول للحساب المدعو؛ سلّمه بأمان.</p><label>رابط الدعوة<textarea data-no-translate readOnly dir="ltr" autoComplete="off" value={prepared.link} style={{width:'100%',minHeight:90,overflowWrap:'anywhere'}} onFocus={e=>e.target.select()}/></label><button type="button" onClick={()=>{setPrepared(null);setMessage('أُخفي رابط الدعوة من هذه الشاشة.');}}>إخفاء الرابط</button></div>}
  </section>,language);
 }

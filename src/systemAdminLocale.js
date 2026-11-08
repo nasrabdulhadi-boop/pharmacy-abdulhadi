@@ -2,6 +2,17 @@ import React from 'react';
 
 // Scoped to the administration center. Values entered by the user are never translated.
 export const ADMIN_EN=Object.freeze({
+ 'دور الحساب':'Account role','الاستعادة الكاملة':'Full restore','تغيير كلمة المرور':'Change password','استرداد كلمة المرور':'Password recovery','إرسال رابط الاسترداد':'Send recovery link',
+ 'النسخ الاحتياطي متاح للمالك فقط.':'Backups are available to the owner only.','الاستعادة الكاملة غير متاحة حالياً.':'Full restore is currently unavailable.',
+ 'تغيير البريد يتطلب التأكيد عبر البريد.':'Email changes require email confirmation.',
+ 'رابط لمرة واحدة، تُسلّمه للمستخدم دون إرسال بريد.':'A single-use link you share with the user. No email is sent.',
+ 'الرابط يمنح الدخول للحساب المدعو؛ سلّمه بأمان.':'The link grants access to the invited account; share it securely.',
+ 'تغيير الدور ينهي جلسات الحساب.':'Changing a role signs the account out.',
+ 'تشمل بيانات التطبيق وملفاته، دون كلمات المرور أو إعدادات المنصة.':'Includes application data and files, excluding passwords and platform settings.',
+ '16 محرفاً على الأقل؛ احفظ العبارة لاستعمال النسخة.':'At least 16 characters; keep the passphrase to use the backup.',
+ 'فحص محلي للسلامة، لا يستعيد البيانات.':'Local integrity check; does not restore data.',
+ 'حالة الأمان':'Security status','جداول غير محمية:':'Unprotected tables:',' · وصول زائر لبيانات حساسة:':' · Guest access to sensitive data:',
+
  'إدارة أدوار الحسابات الموجودة ودعوة حساب جديد متاحتان على QA فقط.':'Manage existing account roles and invite new accounts on QA only.',
  'دعوة حساب جديد':'Invite a new account','دعوة حساب جديد — QA فقط':'Invite a new account — QA only',
  'يُجهز رابط دعوة لمرة واحدة دون إرسال بريد. سلّمه للمستخدم المقصود بأمان؛ يفتح الرابط ويختار كلمة مروره. لا تستخدم الدعوة لتعديل حساب موجود.':'Prepare a single-use invitation link without sending email. Share it securely with the intended user, who opens it and sets a password. Existing accounts cannot be changed through invitations.',

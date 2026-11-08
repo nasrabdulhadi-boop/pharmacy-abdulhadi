@@ -11,8 +11,8 @@ export default function QaAdminSecurityStatus({client,projectUrl,language='ar'})
   return()=>{active=false};
  },[client,projectUrl]);
  return localizeAdminTree(<article className="systemAdminSecurityAudit" role="status">
-  <div><h4>مراجعة الخادم الحالية</h4><p>قراءة مؤشرات الأمان من الخادم، دون بيانات حسابات أو فواتير.</p></div>
+  <div><h4>حالة الأمان</h4></div>
   <strong>{!status?'فحص الصلاحيات غير متاح حالياً.':status.unprotected||status.anonymous?'الفحص يحتاج متابعة':'قيود QA مطبقة'}</strong>
-  {status&&<><p>منح الزائر على الجداول الحساسة: <b>{status.anonymous}</b></p><p>قيود الوصول المباشر مطبقة؛ اختبارات الجلسات الفعلية مستقلة.</p></>}
+  {status&&(status.unprotected>0||status.anonymous>0)&&<p>جداول غير محمية: <b>{status.unprotected}</b> · وصول زائر لبيانات حساسة: <b>{status.anonymous}</b></p>}
  </article>,language);
 }
