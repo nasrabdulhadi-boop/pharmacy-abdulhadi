@@ -1647,4 +1647,12 @@ export const SYSTEM_EN=Object.freeze({
 "تعذر حفظ ملف الموظف. حدّث الحسابات وتحقق من صلاحيتك.":"Could not save staff details. Refresh accounts and check your access.",
 "تعذر تأكيد العملية. قد يبقى الحساب موقوفاً لحماية الوصول؛ حدّث الحسابات قبل المحاولة مجدداً.":"Could not confirm the operation. The account may remain disabled to protect access; refresh accounts before retrying.",
 "تم حفظ التغيير وتسجيله في مركز الأمان.":"Saved and recorded in the security log.",
-"تم إنشاء الحساب وربطه بالمدير. يمكن تسجيل الدخول بالبريد وكلمة المرور المحددين.":"Account created and linked to the manager. Sign in with the specified email and password."});
+"تم إنشاء الحساب وربطه بالمدير. يمكن تسجيل الدخول بالبريد وكلمة المرور المحددين.":"Account created and linked to the manager. Sign in with the specified email and password.",
+"قيمة الحقل أطول من الحد المسموح.":"This field exceeds the allowed length.",
+"أدخل الاسم الكامل من محرفين على الأقل.":"Enter a full name with at least two characters.",
+"أدخل تاريخ بدء عمل صالحاً.":"Enter a valid start date.",
+"أدخل بريد تسجيل دخول صالحاً.":"Enter a valid sign-in email.",
+"كلمة المرور تحتاج 12 إلى 128 محرفاً وحروفاً إنكليزية وأرقاماً ورمزاً مثل ! أو @.":"Use 12\u2013128 characters with English letters, numbers and a symbol such as ! or @.",
+"أعد إدخال كلمة المرور في حقل التأكيد.":"Re-enter the password in the confirmation field.",
+"كلمة المرور وتأكيدها غير متطابقين.":"The password and confirmation do not match.",
+"راجع الحقول الموضحة قبل المتابعة.":"Check the highlighted fields before continuing."});
