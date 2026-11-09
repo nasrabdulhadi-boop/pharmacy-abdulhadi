@@ -26,8 +26,11 @@ test('downloaded recovery can be reopened independently and queried', async () =
  const {result, database} = await restoreQaArchive(archive, phrase, {
   createDatabase: () => new PGlite(),
   saveDatabase: true,
+  reopenDatabase: database => new PGlite({loadDataDir: database}),
  });
  assert.equal(result.allRowsMatch, true);
+ assert.equal(result.localRestartVerified, true);
+ assert.equal(result.platformRestoreVerified, false);
  const recovered = new PGlite({loadDataDir: database});
  try {
   const {rows} = await recovered.query('select id::text, amount::text, double_amount::text from pharmacy_qa_private.precision_fixture');
@@ -35,4 +38,18 @@ test('downloaded recovery can be reopened independently and queried', async () =
  } finally {
   await recovered.close();
  }
+});
+
+test('a failed restart with missing rows blocks a recovery result', async () => {
+ const {PGlite} = await import('@electric-sql/pglite');
+ const {restoreQaArchive} = await import('../src/qaRestoreArchive.js');
+ const archive = await encryptQaBackup(fixture(), phrase, phrase);
+ await assert.rejects(restoreQaArchive(archive, phrase, {
+  createDatabase: () => new PGlite(),
+  saveDatabase: true,
+  reopenDatabase: () => ({
+   query: async () => ({rows: [{rows: []}]}),
+   close: async () => {},
+  }),
+ }), /row_digest_mismatch/);
 });

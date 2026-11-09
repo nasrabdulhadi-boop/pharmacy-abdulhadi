@@ -1,8 +1,18 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {uiText, uiTemplate} from './systemLocale.js';
+import {getSystemLanguage, uiText, uiTemplate} from './systemLocale.js';
 
 const MAX_FILE_BYTES = 70 * 1024 * 1024;
 const TIMEOUT_MS = 120_000;
+
+const recoveryLabels = {
+ ar: ['نجح تشغيل القاعدة المستعادة من جديد وتطابقت سجلاتها.', 'اعتماد النسخة على النظام المستضاف غير متاح قبل اختبار الاستعادة الكاملة.', 'تنزيل تقرير التحقق'],
+ en: ['The recovered database restarted and its records matched.', 'Hosted activation requires a verified full recovery.', 'Download verification report'],
+ ru: ['База перезапущена, записи совпали.', 'Для запуска на сервере нужна проверка полного восстановления.', 'Скачать отчёт проверки'],
+ tr: ['Veritabanı yeniden başlatıldı ve kayıtlar eşleşti.', 'Barındırılan sistemde etkinleştirme için tam kurtarma doğrulanmalıdır.', 'Doğrulama raporunu indir'],
+ ro: ['Baza repornită conține aceleași înregistrări.', 'Activarea pe server necesită verificarea recuperării complete.', 'Descarcă raportul de verificare'],
+ fr: ['La base restaurée a redémarré et les données correspondent.', 'L’activation hébergée exige une restauration complète vérifiée.', 'Télécharger le rapport de vérification'],
+ de: ['Die wiederhergestellte Datenbank wurde neu gestartet. Die Datensätze stimmen überein.', 'Die Aktivierung auf dem Server erfordert eine geprüfte vollständige Wiederherstellung.', 'Prüfbericht herunterladen'],
+};
 
 export default function QaBackupRestore({verifyActor}) {
  const [file, setFile] = useState(null);
@@ -12,10 +22,14 @@ export default function QaBackupRestore({verifyActor}) {
  const [recovery, setRecovery] = useState(null);
  const active = useRef(null);
  const download = useRef(null);
+ const reportDownload = useRef(null);
+ const [restartPassed, activationBlocked, reportLabel] = recoveryLabels[getSystemLanguage()] || recoveryLabels.en;
 
  function clearDownload() {
   if (download.current) URL.revokeObjectURL(download.current);
   download.current = null;
+  if (reportDownload.current) URL.revokeObjectURL(reportDownload.current);
+  reportDownload.current = null;
  }
 
  useEffect(() => () => {
@@ -56,11 +70,28 @@ export default function QaBackupRestore({verifyActor}) {
    if (active.current !== job) return;
    await verifyActor();
    if (active.current !== job) return;
-   if (!recovered.result?.allRowsMatch || !(recovered.database instanceof Blob) || !recovered.database.size) {
+   if (!recovered.result?.localRestartVerified || !recovered.result.allRowsMatch || !(recovered.database instanceof Blob) || !recovered.database.size) {
     throw new Error('restore_failed');
    }
    download.current = URL.createObjectURL(recovered.database);
-   setRecovery({url: download.current, tables: recovered.result.tables, rows: recovered.result.rows});
+   const {tables, rows, archiveSummary} = recovered.result;
+   const report = {
+    format: 'pharmacy-recovery-verification-v1',
+    verifiedAt: new Date().toISOString(),
+    scope: 'isolated-qa-local-database',
+    sourceArchiveSha256: recovered.sourceArchiveSha256,
+    tables,
+    rows,
+    attachmentChecksumsVerified: archiveSummary.files,
+    databaseRestartVerified: true,
+    recordsMatchedAfterRestart: true,
+    hostedApplicationVerified: false,
+    hostedAuthenticationVerified: false,
+    hostedStorageVerified: false,
+    activation: 'blocked',
+   };
+   reportDownload.current = URL.createObjectURL(new Blob([JSON.stringify(report, null, 2)], {type: 'application/json'}));
+   setRecovery({url: download.current, reportUrl: reportDownload.current, tables, rows});
   } catch (error) {
    if (active.current !== job) return;
    if (error.message === 'backup_decryption_failed') {
@@ -104,6 +135,9 @@ export default function QaBackupRestore({verifyActor}) {
   {message && <p role="status">{uiText(message)}</p>}
   {recovery && <div role="status">
    <p>{uiTemplate(['تمت استعادة ', ' جدول و', ' سجل ومطابقتها مع النسخة.'], [recovery.tables, recovery.rows])}</p>
+   <p>{restartPassed}</p>
+   <p>{activationBlocked}</p>
+   <p><a href={recovery.reportUrl} download="Pharmacy_QA_Recovery_Report.json">{reportLabel}</a></p>
    <a href={recovery.url} download="Pharmacy_QA_Recovered.pglite.tar.gz">{uiText('تنزيل قاعدة البيانات المستعادة')}</a>
    <p>{uiText('الملف المستعاد غير مشفر ومخصص لـ PGlite. احفظه في مكان محمي.')}</p>
   </div>}

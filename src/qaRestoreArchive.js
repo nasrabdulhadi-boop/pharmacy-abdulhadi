@@ -5,11 +5,24 @@ const ql=s=>"'"+String(s).replaceAll("'","''")+"'";
 const qualified=(s,n)=>qi(s)+'.'+qi(n);
 const canonical=v=>v===null||typeof v!=='object'?JSON.stringify(v):Array.isArray(v)?'['+v.map(canonical).join(',')+']':'{'+Object.keys(v).sort().map(k=>JSON.stringify(k)+':'+canonical(v[k])).join(',')+'}';
 const canonicalRows=rows=>JSON.stringify(rows.map(canonical).sort());
-export async function restoreQaArchive(archive,phrase,{createDatabase,saveDatabase}={}){
+async function verifyRestoredRows(db,tables){
+ for(const table of tables){
+  const precise=table.columns
+   .filter(column=>column.type==='bigint'||column.type.startsWith('numeric'))
+   .map(column=>ql(column.name)+',to_jsonb(r.'+qi(column.name)+'::text)').join(',');
+  const row='to_jsonb(r)'+(precise?'||jsonb_build_object('+precise+')':'');
+  const result=await db.query(`select coalesce(jsonb_agg(${row}),'[]'::jsonb) as rows from ${qualified(table.schema,table.name)} r`);
+  if(canonicalRows(result.rows[0].rows)!==canonicalRows(table.rows))throw Error('row_digest_mismatch');
+ }
+}
+
+export async function restoreQaArchive(archive,phrase,{createDatabase,saveDatabase,reopenDatabase}={}){
  const {data,summary}=await decryptQaBackup(archive,phrase);
+ if(!data.tables.length)throw Error('empty_backup');
  if(data.numeric_encoding!=='decimal-string-v1')throw Error('archive_requires_exact_decimal_encoding');
  const db=await createDatabase();const result={tables:0,rows:0,constraints:0,indexes:0,functions:0,policies:0,triggers:0,sequences:0,allRowsMatch:false,applicationDatabaseRehearsal:false,authRuntimeRestored:false,storageServiceRestored:false,platformRestoreVerified:false};
  let phase='initialization';
+ let database;
  try{
   await db.exec(`create schema auth;create schema extensions;create role anon;create role authenticated;create role service_role;create role pharmacy_catalog_reader;
    create table auth.users(id uuid primary key,email text,raw_app_meta_data jsonb,raw_user_meta_data jsonb,created_at timestamptz,banned_until timestamptz);
@@ -63,15 +76,23 @@ export async function restoreQaArchive(archive,phrase,{createDatabase,saveDataba
   phase='sequence state';
   for(const seq of data.sequences||[]){if(seq.last_value!==null)await db.query('select setval($1::regclass,$2::bigint,true)',[qualified(seq.schemaname,seq.sequencename),seq.last_value]);result.sequences++;}
   phase='row comparison';
-  for(const table of data.tables){const precise=table.columns.filter(c=>c.type==='bigint'||c.type.startsWith('numeric')).map(c=>ql(c.name)+',case when r.'+qi(c.name)+' is null then \'null\'::jsonb else to_jsonb(r.'+qi(c.name)+'::text) end').join(',');const row='to_jsonb(r)'+(precise?'||jsonb_build_object('+precise+')':'');const r=await db.query(`select coalesce(jsonb_agg(${row} order by to_jsonb(r)::text),'[]'::jsonb) as rows from ${qualified(table.schema,table.name)} r`);if(canonicalRows(r.rows[0].rows)!==canonicalRows(table.rows))throw Error('row_digest_mismatch');}
+  await verifyRestoredRows(db,data.tables);
   result.allRowsMatch=true;result.applicationDatabaseRehearsal=true;result.archiveSummary=summary;
   // Functions are installed, but not executed; Auth is metadata-only. Schema/sequence ACLs are outside this archive.
   result.grantsRestored=false;result.applicationRpcExecutionVerified=false;
   if(saveDatabase){
    phase='database archive';
-   return {result,database:await db.dumpDataDir('gzip')};
+   database=await db.dumpDataDir('gzip');
   }
-  return result;
  }catch(error){const e=new Error('local_restore_failed_at_'+phase,{cause:error});e.safeSummary={...result,failedAt:phase,sqlState:error.code};throw e;}
  finally{await db.close();}
+ if(!saveDatabase)return result;
+ if(reopenDatabase){
+  const restarted=await reopenDatabase(database);
+  try{
+   await verifyRestoredRows(restarted,data.tables);
+   result.localRestartVerified=true;
+  }finally{await restarted.close();}
+ }
+ return {result,database};
 }
