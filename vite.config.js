@@ -11,5 +11,5 @@ export default defineConfig(({mode})=>{
  })){
   throw new Error('Unsafe auth mutation configuration: only isolated staging is permitted');
  }
- return {server:{allowedHosts:['terminal.local']}};
+ return {worker:{format:'es'},server:{allowedHosts:['terminal.local']}};
 });

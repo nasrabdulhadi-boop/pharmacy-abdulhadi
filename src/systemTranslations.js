@@ -1662,5 +1662,18 @@ export const SYSTEM_EN=Object.freeze({
   "لم ينجح تأكيد كلمة مرور المدير. لم تتغير كلمة مرور الموظف.": "Manager password confirmation failed. The staff password was not changed.",
   "بلغت حد محاولات التأكيد. انتظر 15 دقيقة قبل المحاولة مجدداً.": "Confirmation attempt limit reached. Wait 15 minutes before retrying.",
   "بيانات الملف الشخصي": "Profile information",
-  "تعذر تحميل اللغة. أعد المحاولة.": "Could not load the language. Try again."
+  "تعذر تحميل اللغة. أعد المحاولة.": "Could not load the language. Try again.",
+  "استعادة البيانات محلياً": "Local data recovery",
+  "تُستعاد الجداول في قاعدة معزولة داخل المتصفح. تبقى الملفات المرفقة في النسخة المشفرة.": "Tables are restored in an isolated browser database. Attachments remain in the encrypted backup.",
+  "استعادة نسخة محلية": "Restore locally",
+  "جارٍ استعادة البيانات…": "Restoring data…",
+  "تمت استعادة {0} جدول و{1} سجل ومطابقتها مع النسخة.": "Restored {0} tables and {1} records and matched them to the backup.",
+  "تنزيل قاعدة البيانات المستعادة": "Download recovered database",
+  "الملف المستعاد غير مشفر ومخصص لـ PGlite. احفظه في مكان محمي.": "The recovered file is unencrypted and intended for PGlite. Store it securely.",
+  "تعذر فك التشفير. تحقق من العبارة وسلامة الملف.": "Decryption failed. Check the passphrase and file integrity.",
+  "هذه النسخة قديمة. جهّز نسخة جديدة تدعم استعادة الأرقام بدقة.": "This backup is outdated. Create a new backup to restore numbers exactly.",
+  "انتهت مهلة الاستعادة المحلية.": "Local recovery timed out.",
+  "تعذرت الاستعادة المحلية.": "Local recovery failed.",
+  "ملف النسخة أكبر من الحد المدعوم (70 MiB).": "Backup file exceeds the 70 MiB limit.",
+  "تعذر تجهيز النسخة. تحقق من الصلاحية وعبارة التشفير وتطابقها، ثم حاول مجدداً.": "Could not create backup. Check access and the matching passphrases, then retry."
 });

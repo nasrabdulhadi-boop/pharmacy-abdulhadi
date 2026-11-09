@@ -1967,5 +1967,18 @@ export default {
   "تعديل الأسعار": "Schimbarea prețurilor",
   "حذف الفواتير": "Eliminați facturile",
   "إدارة الحسابات المالية": "Gestionarea conturilor financiare",
-  "إدارة المستخدمين": "Gestionarea utilizatorilor"
+  "إدارة المستخدمين": "Gestionarea utilizatorilor",
+  "استعادة البيانات محلياً": "Recuperare locală a datelor",
+  "تُستعاد الجداول في قاعدة معزولة داخل المتصفح. تبقى الملفات المرفقة في النسخة المشفرة.": "Tabelele sunt restaurate într-o bază de date izolată în browser. Atașamentele rămân în copia criptată.",
+  "استعادة نسخة محلية": "Restaurează local",
+  "جارٍ استعادة البيانات…": "Se restaurează datele…",
+  "تمت استعادة {0} جدول و{1} سجل ومطابقتها مع النسخة.": "S-au restaurat și verificat {0} tabele și {1} înregistrări.",
+  "تنزيل قاعدة البيانات المستعادة": "Descarcă baza recuperată",
+  "الملف المستعاد غير مشفر ومخصص لـ PGlite. احفظه في مكان محمي.": "Fișierul PGlite este necriptat. Păstrează-l într-un loc securizat.",
+  "تعذر فك التشفير. تحقق من العبارة وسلامة الملف.": "Decriptarea a eșuat. Verifică parola și fișierul.",
+  "هذه النسخة قديمة. جهّز نسخة جديدة تدعم استعادة الأرقام بدقة.": "Copia este veche. Creează una nouă pentru restaurarea exactă a numerelor.",
+  "انتهت مهلة الاستعادة المحلية.": "Timpul pentru recuperarea locală a expirat.",
+  "تعذرت الاستعادة المحلية.": "Recuperarea locală a eșuat.",
+  "ملف النسخة أكبر من الحد المدعوم (70 MiB).": "Fișierul depășește limita de 70 MiB.",
+  "تعذر تجهيز النسخة. تحقق من الصلاحية وعبارة التشفير وتطابقها، ثم حاول مجدداً.": "Copia nu a putut fi creată. Verifică accesul și parolele."
 };

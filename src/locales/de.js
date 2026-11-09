@@ -1967,5 +1967,18 @@ export default {
   "تعديل الأسعار": "Veränderung der Preise",
   "حذف الفواتير": "Rechnungen löschen",
   "إدارة الحسابات المالية": "Verwaltung von Finanzkonten",
-  "إدارة المستخدمين": "Verwaltung von Benutzern"
+  "إدارة المستخدمين": "Verwaltung von Benutzern",
+  "استعادة البيانات محلياً": "Lokale Datenwiederherstellung",
+  "تُستعاد الجداول في قاعدة معزولة داخل المتصفح. تبقى الملفات المرفقة في النسخة المشفرة.": "Tabellen werden in einer isolierten Browserdatenbank wiederhergestellt. Anhänge bleiben in der verschlüsselten Sicherung.",
+  "استعادة نسخة محلية": "Lokal wiederherstellen",
+  "جارٍ استعادة البيانات…": "Daten werden wiederhergestellt…",
+  "تمت استعادة {0} جدول و{1} سجل ومطابقتها مع النسخة.": "{0} Tabellen und {1} Datensätze wurden wiederhergestellt und abgeglichen.",
+  "تنزيل قاعدة البيانات المستعادة": "Wiederhergestellte Datenbank herunterladen",
+  "الملف المستعاد غير مشفر ومخصص لـ PGlite. احفظه في مكان محمي.": "Die PGlite-Datei ist unverschlüsselt. Bewahren Sie sie geschützt auf.",
+  "تعذر فك التشفير. تحقق من العبارة وسلامة الملف.": "Entschlüsselung fehlgeschlagen. Prüfen Sie Passphrase und Datei.",
+  "هذه النسخة قديمة. جهّز نسخة جديدة تدعم استعادة الأرقام بدقة.": "Diese Sicherung ist veraltet. Erstellen Sie eine neue für die exakte Wiederherstellung von Zahlen.",
+  "انتهت مهلة الاستعادة المحلية.": "Zeitlimit für die lokale Wiederherstellung erreicht.",
+  "تعذرت الاستعادة المحلية.": "Lokale Wiederherstellung fehlgeschlagen.",
+  "ملف النسخة أكبر من الحد المدعوم (70 MiB).": "Die Sicherungsdatei überschreitet 70 MiB.",
+  "تعذر تجهيز النسخة. تحقق من الصلاحية وعبارة التشفير وتطابقها، ثم حاول مجدداً.": "Sicherung fehlgeschlagen. Prüfen Sie Zugriff und Passphrasen."
 };

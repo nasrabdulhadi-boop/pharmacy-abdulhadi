@@ -1967,5 +1967,18 @@ export default {
   "تعديل الأسعار": "Fiyat Değişimi",
   "حذف الفواتير": "faturaları silin",
   "إدارة الحسابات المالية": "Finansal Hesap Yönetimi",
-  "إدارة المستخدمين": "Kullanıcı Yönetimi"
+  "إدارة المستخدمين": "Kullanıcı Yönetimi",
+  "استعادة البيانات محلياً": "Yerel veri kurtarma",
+  "تُستعاد الجداول في قاعدة معزولة داخل المتصفح. تبقى الملفات المرفقة في النسخة المشفرة.": "Tablolar tarayıcıda yalıtılmış bir veritabanına geri yüklenir. Ekler şifreli yedekte kalır.",
+  "استعادة نسخة محلية": "Yerel olarak geri yükle",
+  "جارٍ استعادة البيانات…": "Veriler geri yükleniyor…",
+  "تمت استعادة {0} جدول و{1} سجل ومطابقتها مع النسخة.": "{0} tablo ve {1} kayıt geri yüklendi ve yedekle karşılaştırıldı.",
+  "تنزيل قاعدة البيانات المستعادة": "Kurtarılan veritabanını indir",
+  "الملف المستعاد غير مشفر ومخصص لـ PGlite. احفظه في مكان محمي.": "PGlite dosyası şifrelenmemiştir. Güvenli bir yerde saklayın.",
+  "تعذر فك التشفير. تحقق من العبارة وسلامة الملف.": "Şifre çözülemedi. Parolayı ve dosyayı kontrol edin.",
+  "هذه النسخة قديمة. جهّز نسخة جديدة تدعم استعادة الأرقام بدقة.": "Bu yedek eski. Sayıları tam geri yüklemek için yeni bir yedek oluşturun.",
+  "انتهت مهلة الاستعادة المحلية.": "Yerel kurtarma zaman aşımına uğradı.",
+  "تعذرت الاستعادة المحلية.": "Yerel kurtarma başarısız oldu.",
+  "ملف النسخة أكبر من الحد المدعوم (70 MiB).": "Yedek dosyası 70 MiB sınırını aşıyor.",
+  "تعذر تجهيز النسخة. تحقق من الصلاحية وعبارة التشفير وتطابقها، ثم حاول مجدداً.": "Yedek oluşturulamadı. Erişimi ve parolaları kontrol edin."
 };

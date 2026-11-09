@@ -1967,5 +1967,18 @@ export default {
   "تعديل الأسعار": "Changement des prix",
   "حذف الفواتير": "Supprimer les factures",
   "إدارة الحسابات المالية": "Gérer les comptes financiers",
-  "إدارة المستخدمين": "Gérer les utilisateurs"
+  "إدارة المستخدمين": "Gérer les utilisateurs",
+  "استعادة البيانات محلياً": "Récupération locale des données",
+  "تُستعاد الجداول في قاعدة معزولة داخل المتصفح. تبقى الملفات المرفقة في النسخة المشفرة.": "Les tables sont restaurées dans une base isolée du navigateur. Les pièces jointes restent dans la sauvegarde chiffrée.",
+  "استعادة نسخة محلية": "Restaurer localement",
+  "جارٍ استعادة البيانات…": "Restauration des données…",
+  "تمت استعادة {0} جدول و{1} سجل ومطابقتها مع النسخة.": "{0} tables et {1} enregistrements restaurés et vérifiés.",
+  "تنزيل قاعدة البيانات المستعادة": "Télécharger la base récupérée",
+  "الملف المستعاد غير مشفر ومخصص لـ PGlite. احفظه في مكان محمي.": "Le fichier PGlite est non chiffré. Conservez-le en lieu sûr.",
+  "تعذر فك التشفير. تحقق من العبارة وسلامة الملف.": "Échec du déchiffrement. Vérifiez la phrase secrète et le fichier.",
+  "هذه النسخة قديمة. جهّز نسخة جديدة تدعم استعادة الأرقام بدقة.": "Cette sauvegarde est ancienne. Créez-en une nouvelle pour restaurer les nombres avec précision.",
+  "انتهت مهلة الاستعادة المحلية.": "Le délai de récupération locale a expiré.",
+  "تعذرت الاستعادة المحلية.": "La récupération locale a échoué.",
+  "ملف النسخة أكبر من الحد المدعوم (70 MiB).": "Le fichier dépasse la limite de 70 Mio.",
+  "تعذر تجهيز النسخة. تحقق من الصلاحية وعبارة التشفير وتطابقها، ثم حاول مجدداً.": "La sauvegarde a échoué. Vérifiez vos droits et les phrases secrètes."
 };

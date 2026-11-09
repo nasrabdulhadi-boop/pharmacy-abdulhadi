@@ -18,3 +18,21 @@ test('legacy numeric encoding is refused instead of claiming exact recovery',asy
  const archive=await encryptQaBackup(f,phrase,phrase);
  await assert.rejects(rehearseQaArchive(archive,phrase),/archive_requires_exact_decimal_encoding/);
 });
+
+test('downloaded recovery can be reopened independently and queried', async () => {
+ const {PGlite} = await import('@electric-sql/pglite');
+ const {restoreQaArchive} = await import('../src/qaRestoreArchive.js');
+ const archive = await encryptQaBackup(fixture(), phrase, phrase);
+ const {result, database} = await restoreQaArchive(archive, phrase, {
+  createDatabase: () => new PGlite(),
+  saveDatabase: true,
+ });
+ assert.equal(result.allRowsMatch, true);
+ const recovered = new PGlite({loadDataDir: database});
+ try {
+  const {rows} = await recovered.query('select id::text, amount::text, double_amount::text from pharmacy_qa_private.precision_fixture');
+  assert.deepEqual(rows, fixture().tables[0].rows);
+ } finally {
+  await recovered.close();
+ }
+});
