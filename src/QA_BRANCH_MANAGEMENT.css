@@ -97,3 +97,8 @@
 @media (max-width: 900px) {
   .qaBranchOperator aside:not(.open) { visibility: hidden; }
 }
+.qaBranchCenter .qaBranchCheck {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+}

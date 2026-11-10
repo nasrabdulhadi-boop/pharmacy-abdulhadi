@@ -14,13 +14,12 @@ test('branch links resolve by UUID and comparison preserves large signed totals'
   assert.deepEqual(orderBranches(rows,'profit',false).map(row=>row.name),['C','B','A']);
 });
 
-test('branch workspace starts at point of sale and keeps manager areas locked', () => {
-  assert.equal(branchOperatorSections[0].id,'pos');
-  assert.ok(!branchOperatorSections.some(section=>section.id==='dashboard'));
+test('branch workspace shows the dashboard and keeps manager areas locked', () => {
+  assert.equal(branchOperatorSections[0].id,'dashboard');
   for (const id of ['customers','offers','profit','reports','system']) {
     assert.equal(branchOperatorSections.find(section=>section.id===id)?.locked,true);
   }
-  for (const id of ['pos','returns','purchases','suppliers','inventory','cashbox']) {
+  for (const id of ['dashboard','pos','returns','purchases','suppliers','inventory','cashbox','settings']) {
     assert.ok(branchOperatorSections.some(section=>section.id===id && !section.locked));
   }
 });
@@ -126,6 +125,37 @@ test('database persists branches, scopes membership and independently totals fin
     await session(1);
     assert.equal((await db.query('select branch_id from public.qa_branch_suppliers')).rows.length,2);
     assert.equal((await report(first)).branches[0].profit,'310');
+    await db.exec('reset role');
+    await db.exec(await readFile(new URL('../audits/qa/branch_permissions.sql',import.meta.url),'utf8'));
+    const invoiceId=own.movements[0].id;
+    const request = (action,reason,reference=null,amount=null,cash=null) => db.query(
+      'select public.qa_branch_request_invoice($1,$2,$3,$4,$5,$6,$7) as id',[first,invoiceId,action,reason,reference,amount,cash]);
+    const decide = (requestId,approve) => db.query('select public.qa_branch_decide_invoice($1,$2) as status',[requestId,approve]);
+    await db.query("insert into public.qa_branch_permissions values ($1,array['dashboard','pos'])",[first]);
+    await session(2);
+    assert.deepEqual((await operator(first,['deposit'])).movements,[]);
+    await assert.rejects(record(first,'deposit','LOCKED',25,25,0),/row-level security/);
+    assert.equal((await db.query("update public.qa_branch_permissions set sections=array['cashbox'] where branch_id=$1 returning sections",[first])).rows.length,0);
+    const req=(await request('edit','Correct invoice','S1 corrected',1200,800)).rows[0].id;
+    await assert.rejects(decide(req,true),/request unavailable/);
+    await assert.rejects(request('delete','duplicate request'),/duplicate key/);
+    assert.equal((await operator(first,['sale'])).movements[0].amount,1000);
+    await session(4);
+    await assert.rejects(decide(req,true),/request unavailable/);
+    await session(1);
+    assert.equal((await decide(req,true)).rows[0].status,'approved');
+    assert.equal((await decide(req,true)).rows[0].status,'approved');
+    assert.equal((await report(first)).branches[0].sales,'1200');
+    await session(2);
+    const removed=(await request('delete','Remove duplicate')).rows[0].id;
+    await session(1);
+    assert.equal((await decide(removed,false)).rows[0].status,'rejected');
+    assert.equal((await report(first)).branches[0].sales,'1200');
+    await session(2);
+    const confirmed=(await request('delete','Remove confirmed duplicate')).rows[0].id;
+    await session(1);
+    assert.equal((await decide(confirmed,true)).rows[0].status,'approved');
+    assert.equal((await report(first)).branches[0].sales,'0');
     await db.exec('reset role; set role anon');
     await assert.rejects(db.query('select public.qa_claim_branch($1)',[first]),/permission denied/);
   } finally {
