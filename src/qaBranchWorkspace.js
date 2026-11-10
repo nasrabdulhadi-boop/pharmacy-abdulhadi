@@ -49,3 +49,17 @@ export async function readBranchDay(client, day, id) {
   if (error) throw error;
   return data;
 }
+
+export const branchOperatorSections = [
+  {id:'pos', label:'نقطة البيع', kinds:['sale']},
+  {id:'returns', label:'المرتجعات', kinds:['return']},
+  {id:'purchases', label:'المشتريات', kinds:['purchase']},
+  {id:'inventory', label:'المخزون والجرد', kinds:['inventory']},
+  {id:'suppliers', label:'الموردون', kinds:[]},
+  {id:'cashbox', label:'الصندوق', kinds:['deposit','withdrawal','expense']},
+  {id:'customers', label:'العملاء', locked:true},
+  {id:'offers', label:'العروض', locked:true},
+  {id:'profit', label:'مركز الأرباح', locked:true},
+  {id:'reports', label:'التقارير العامة', locked:true},
+  {id:'system', label:'مركز إدارة النظام', locked:true},
+];

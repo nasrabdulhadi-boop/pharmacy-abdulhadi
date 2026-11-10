@@ -85,3 +85,15 @@
   padding: 1rem;
   width: min(calc(100% - 2rem), 72rem);
 }
+.qaBranchOperator .qaBranchSrOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+.qaBranchOperator .adminMain { min-width: 0; }
+.qaBranchOperator .workspacePermissionNote svg { vertical-align: middle; }
+@media (max-width: 900px) {
+  .qaBranchOperator aside:not(.open) { visibility: hidden; }
+}

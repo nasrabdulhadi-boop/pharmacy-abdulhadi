@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { ShoppingCart, RotateCcw, Receipt, Package, Truck, WalletCards, Users, Tag, TrendingUp, BarChart3, ShieldCheck, LockKeyhole, LogOut, Menu } from 'lucide-react';
 import QaBranchManagement from './QaBranchManagement.jsx';
-import { branchKinds, comparisonMetrics, branchMoney, branchNumber, branchToday, orderBranches, branchLink, readBranchDay } from './qaBranchWorkspace.js';
+import { branchKinds, comparisonMetrics, branchMoney, branchNumber, branchToday, orderBranches, branchLink, readBranchDay, branchOperatorSections } from './qaBranchWorkspace.js';
 
 function BranchTable({ title, columns, rows }) {
   return <div className="qaBranchTable" role="region" tabIndex={0} aria-label={title}>
@@ -172,8 +173,8 @@ export default function QaBranchWorkspace({ client, ownerEmail }) {
   </section>;
 }
 
-function RecordEvent({client, branchId, onRecorded}) {
-  const [kind, setKind] = useState('sale');
+function RecordEvent({client, branchId, kinds, onRecorded}) {
+  const [kind, setKind] = useState(kinds[0]);
   const [busy, setBusy] = useState(false);
   const [status, setStatus] = useState('');
   const request = useRef(null);
@@ -201,7 +202,7 @@ function RecordEvent({client, branchId, onRecorded}) {
       const {error} = await client.from('qa_branch_events').insert({...payload,id:request.current.id});
       if (error) {
         if (error.code !== '23505') throw error;
-        const saved = await client.from('qa_branch_events').select('id').eq('branch_id',branchId).eq('id',request.current.id).maybeSingle();
+        const saved = await client.rpc('qa_branch_event_saved',{p_branch:branchId,p_id:request.current.id});
         if (saved.error || !saved.data) throw error;
       }
       request.current = null;
@@ -216,10 +217,10 @@ function RecordEvent({client, branchId, onRecorded}) {
   }
   const salesCost = ['sale','return'].includes(kind);
   return <form onSubmit={submit} className="qaBranchDetail qaBranchForm">
-    <h4>تسجيل حركة تجريبية</h4>
-    <label>نوع الحركة <select value={kind} onChange={event => setKind(event.target.value)}>
-      {Object.entries(branchKinds).map(([id,label]) => <option key={id} value={id}>{label}</option>)}
-    </select></label>
+    <h4>تسجيل {kinds.length === 1 ? branchKinds[kind] : 'حركة صندوق'} · QA</h4>
+    {kinds.length > 1 && <label>نوع الحركة <select value={kind} onChange={event => setKind(event.target.value)}>
+      {kinds.map(id => <option key={id} value={id}>{branchKinds[id]}</option>)}
+    </select></label>}
     <label key={kind}>{kind === 'inventory' ? 'اسم الصنف أو الباركود' : 'رقم الفاتورة أو وصف الحركة'}
       <input name="reference" required maxLength={160}/>
     </label>
@@ -272,10 +273,99 @@ function BranchSignIn({ client, branchId }) {
   </form>;
 }
 
+const operatorIcons = {
+  pos:ShoppingCart, returns:RotateCcw, purchases:Receipt, inventory:Package, suppliers:Truck, cashbox:WalletCards,
+  customers:Users, offers:Tag, profit:TrendingUp, reports:BarChart3, system:ShieldCheck,
+};
+
+function useOperatorData(client, branchId, day, section, revision) {
+  const [state, setState] = useState(null);
+  useEffect(() => {
+    let active = true;
+    client.rpc('qa_branch_operator_day', {p_branch:branchId, p_day:day, p_kinds:section.kinds ?? []}).then(({data,error}) => {
+      if (active) setState({day, section, revision, data, error});
+    }).catch(() => {
+      if (active) setState({day, section, revision, error:true});
+    });
+    return () => { active = false; };
+  }, [client, branchId, day, section, revision]);
+  return {latest:state, current:state?.day === day && state.section === section && state.revision === revision ? state : null};
+}
+
+function BranchSuppliers({client, branchId}) {
+  const [rows, setRows] = useState(null);
+  const [message, setMessage] = useState('');
+  const [busy, setBusy] = useState(false);
+  const [page, setPage] = useState(0);
+  const [revision, refresh] = useState(0);
+  const pageSize = 50;
+  useEffect(() => {
+    let active = true;
+    client.from('qa_branch_suppliers').select('id,name,phone').eq('branch_id',branchId).order('name').order('id')
+      .range(page * pageSize, (page + 1) * pageSize).then(({data,error}) => {
+        if (!active) return;
+        setRows(error ? [] : data);
+        if (error) setMessage('تعذّر تحميل الموردين.');
+      }).catch(() => { if (active) { setRows([]); setMessage('تعذّر تحميل الموردين.'); } });
+    return () => { active = false; };
+  }, [client, branchId, page, revision]);
+
+  async function add(event) {
+    event.preventDefault();
+    const form = event.currentTarget;
+    const values = new FormData(form);
+    setBusy(true);
+    setMessage('');
+    try {
+      const {error} = await client.from('qa_branch_suppliers').insert({
+        branch_id:branchId, name:String(values.get('name')).trim(), phone:String(values.get('phone')).trim() || null,
+      });
+      if (error) {
+        setMessage(error.code === '23505' ? 'اسم المورد مسجّل مسبقاً.' : 'تعذّر إضافة المورد.');
+        return;
+      }
+      form.reset();
+      setMessage('تمت إضافة المورد.');
+      setPage(0);
+      refresh(value => value + 1);
+    } catch {
+      setMessage('تعذّر تأكيد الإضافة. حدّث القائمة وحاول مجدداً.');
+    } finally {
+      setBusy(false);
+    }
+  }
+  return <>
+    <form className="qaBranchDetail qaBranchForm" onSubmit={add}>
+      <h4>إضافة مورد للفرع</h4>
+      <label>اسم المورد<input name="name" required minLength={2} maxLength={120}/></label>
+      <label>هاتف المورد (اختياري)<input name="phone" type="tel" maxLength={40}/></label>
+      <button type="submit" className="primary" disabled={busy}>إضافة مورد</button>
+      <p role="status">{message}</p>
+    </form>
+    {rows === null ? <p role="status">جارٍ تحميل الموردين…</p> : rows.length === 0
+      ? <p>لا يوجد موردون في هذه الصفحة.</p>
+      : <BranchTable title="موردو الفرع" columns={['المورد','الهاتف']} rows={rows.slice(0,pageSize).map(row => [row.id,row.name,row.phone || '—'])}/>}
+    {(page > 0 || rows?.length > pageSize) && <div className="qaBranchControls">
+      <button type="button" disabled={page === 0} onClick={() => {setRows(null);setPage(value => value - 1);}}>السابق</button>
+      <button type="button" disabled={!(rows?.length > pageSize)} onClick={() => {setRows(null);setPage(value => value + 1);}}>التالي</button>
+    </div>}
+  </>;
+}
+
+function OperatorActivity({data, section}) {
+  if (section.id === 'inventory') {
+    return data.inventory.length ? <BranchTable title="أرصدة الأصناف المسجّلة" columns={['الصنف أو الباركود','الرصيد','حد الطلب']}
+      rows={data.inventory.map(item => [item.id,item.reference,branchNumber(item.quantity),branchNumber(item.reorder_level)])}/>
+      : <p>ما في أرصدة أصناف مسجّلة لهذا التاريخ.</p>;
+  }
+  return data.movements.length ? <BranchTable title="أحدث 100 حركة في القسم خلال اليوم المختار" columns={['المرجع','الحركة','قيمة العملية','المبلغ النقدي','الوقت']}
+    rows={data.movements.map(item => [item.id,item.reference,branchKinds[item.kind],branchMoney(item.amount),branchMoney(item.cash),
+      new Intl.DateTimeFormat('ar-SY',{timeZone:'Asia/Damascus',timeStyle:'short'}).format(new Date(item.recorded_at))])}/>
+    : <p>ما في حركات مسجّلة بهذا القسم للتاريخ المختار.</p>;
+}
+
 function SignedInBranch({ client, branchId }) {
   const [claim, setClaim] = useState(null);
-  const [day, setDay] = useState(branchToday);
-  const [revision, refresh] = useState(0);
   useEffect(() => {
     let active = true;
     client.rpc('qa_claim_branch',{p_branch:branchId}).then(({error}) => {
@@ -285,32 +375,75 @@ function SignedInBranch({ client, branchId }) {
     });
     return () => { active = false; };
   }, [client, branchId]);
-  if (claim === null) return <p role="status">جارٍ التحقق من صلاحية الدخول للفرع…</p>;
-  if (claim === false) return <p role="alert">تعذّر التحقق من صلاحية الفرع.</p>;
-  return <BranchOperations client={client} branchId={branchId} day={day} setDay={setDay} revision={revision} refresh={refresh}/>;
+  if (claim === null) return <p className="panel qaBranchPortal" role="status">جارٍ التحقق من صلاحية الدخول للفرع…</p>;
+  if (claim === false) return <BranchDenied client={client}>تعذّر التحقق من صلاحية الفرع.</BranchDenied>;
+  return <BranchOperations client={client} branchId={branchId}/>;
 }
 
-function BranchOperations({ client, branchId, day, setDay, revision, refresh }) {
-  const detail = useDay(client, day, branchId, revision);
-  const branch = detail?.data?.branches[0];
-  const [confirmed, setConfirmed] = useState(false);
-  useEffect(() => { if (branch) setConfirmed(true); }, [branch]);
-  return <>
-    {(branch || (!detail && confirmed)) && <RecordEvent client={client} branchId={branchId} onRecorded={() => {setDay(branchToday());refresh(value => value + 1);}}/>}
-    <label>تاريخ التقرير <input type="date" value={day} max={branchToday()} onChange={event => { if (event.target.value) setDay(event.target.value); }}/></label>
-    {!detail && <p role="status">جارٍ تحميل بيانات الفرع…</p>}
-    {detail && !branch && <p role="alert">{detail.error ? 'تعذّر تحميل الفرع.' : 'هذا الرابط غير متاح للحساب الحالي. ادخل بالبريد المدعو.'}</p>}
-    {branch && <BranchDetails data={detail.data} branch={branch}/>}
-  </>;
+function BranchDenied({client, children}) {
+  return <main className="panel qaBranchPortal" dir="rtl">
+    <p role="alert">{children}</p>
+    <button type="button" onClick={() => client.auth.signOut()}>تسجيل الخروج</button>
+  </main>;
+}
+
+function BranchOperations({ client, branchId }) {
+  const [section, setSection] = useState(branchOperatorSections[0]);
+  const [day, setDay] = useState(branchToday);
+  const [revision, refresh] = useState(0);
+  const [mobile, setMobile] = useState(false);
+  const {latest,current} = useOperatorData(client, branchId, day, section, revision);
+  const branch = latest?.data?.branch;
+  if (!latest) return <p className="panel qaBranchPortal" role="status">جارٍ تحميل الفرع…</p>;
+  if (!branch) return <BranchDenied client={client}>{latest.error ? 'تعذّر تحميل الفرع.' : 'ادخل بالبريد المدعو لهذا الفرع.'}</BranchDenied>;
+  const renderSection = item => {
+    const Icon = operatorIcons[item.id];
+    return <button key={item.id} type="button" aria-current={section === item ? 'page' : undefined}
+      className={(section === item ? 'active ' : '') + (item.locked ? 'workspaceNavLocked' : '')}
+      onClick={() => {setSection(item);setMobile(false);}}>
+      <Icon aria-hidden="true"/><span>{item.label}{item.locked && <span className="qaBranchSrOnly"> · مقفل</span>}</span>
+      {item.locked && <LockKeyhole aria-hidden="true"/>}
+    </button>;
+  };
+  return <div className="adminShell qaBranchOperator" dir="rtl">
+    <aside id="qa-branch-navigation" className={mobile ? 'open' : ''} aria-label="أقسام الفرع">
+      <div className="sideBrand"><img className="sideLogo" src="/logo.png" alt=""/><div><b>{branch.name}</b><span>{branch.location}</span></div></div>
+      {mobile && <button type="button" className="qaBranchCloseMenu" onClick={() => setMobile(false)}>إغلاق قائمة الأقسام</button>}
+      <div className="sideMiniProfile"><span className="onlineDot"/><div><b>حساب تشغيل الفرع</b><small>QA</small></div></div>
+      <nav>
+        <div className="navGroup"><div className="sideCaption">تشغيل الفرع</div>{branchOperatorSections.filter(item => !item.locked).map(renderSection)}</div>
+        <div className="navGroup"><div className="sideCaption">صلاحيات المدير</div>{branchOperatorSections.filter(item => item.locked).map(renderSection)}</div>
+      </nav>
+      <div className="sideFooter"><button type="button" className="logout" onClick={() => client.auth.signOut()}><LogOut aria-hidden="true"/> تسجيل الخروج</button></div>
+    </aside>
+    <main className="adminMain">
+      <div className="mobileBar"><button type="button" aria-label="فتح أقسام الفرع" aria-controls="qa-branch-navigation" aria-expanded={mobile} onClick={() => setMobile(value => !value)}><Menu size={18}/></button><div><small>{branch.name}</small><b>{section.label}</b></div></div>
+      <header className="pageHead"><div><p>{branch.name} · {branch.location} · QA</p><h1>{section.label}</h1></div></header>
+      <section className="panel qaBranchCenter">
+        {section.locked ? <div className="workspacePermissionNote" role="status"><LockKeyhole size={17} aria-hidden="true"/> هذا القسم متاح لحساب المدير العام.</div>
+          : section.id === 'suppliers' ? <BranchSuppliers client={client} branchId={branchId}/>
+          : <>
+            <RecordEvent key={section.id} client={client} branchId={branchId} kinds={section.kinds}
+              onRecorded={() => {setDay(branchToday());refresh(value => value + 1);}}/>
+            <div className="qaBranchControls">
+              <label>تاريخ السجل<input type="date" value={day} max={branchToday()} onChange={event => {if (event.target.value) setDay(event.target.value);}}/></label>
+              <button type="button" onClick={() => refresh(value => value + 1)}>تحديث السجل</button>
+            </div>
+            {!current && <p role="status">جارٍ تحميل السجل…</p>}
+            {current?.data && <OperatorActivity data={current.data} section={section}/>}
+          </>}
+      </section>
+    </main>
+  </div>;
 }
 
 export function QaBranchPortal({client, branchId, user}) {
+  if (user) return <SignedInBranch key={user.id + branchId} client={client} branchId={branchId}/>;
   return <main className="panel qaBranchCenter qaBranchPortal" dir="rtl">
     <header className="qaBranchIntro">
       <div><h2>بوابة الفرع</h2><p>QA · سجل تشغيل تجريبي مستقل لكل فرع</p></div>
-      {user && <button type="button" onClick={() => client.auth.signOut()}>تسجيل الخروج</button>}
     </header>
-    {user ? <SignedInBranch key={user.id + branchId} client={client} branchId={branchId}/> : <BranchSignIn client={client} branchId={branchId}/>}
+    <BranchSignIn client={client} branchId={branchId}/>
     <a href="/#admin">العودة إلى دخول الإدارة</a>
   </main>;
 }

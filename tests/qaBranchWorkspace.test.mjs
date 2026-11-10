@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { PGlite } from '@electric-sql/pglite';
-import { branchLink, branchIdFromSearch, orderBranches } from '../src/qaBranchWorkspace.js';
+import { branchLink, branchIdFromSearch, orderBranches, branchOperatorSections } from '../src/qaBranchWorkspace.js';
 
 const id = index => `00000000-0000-0000-0000-${String(index).padStart(12,'0')}`;
 
@@ -12,6 +12,17 @@ test('branch links resolve by UUID and comparison preserves large signed totals'
   const rows = [{name:'A',profit:'9007199254740993'},{name:'B',profit:'9007199254740992'},{name:'C',profit:'-30'}];
   assert.deepEqual(orderBranches(rows,'profit',true).map(row=>row.name),['A','B','C']);
   assert.deepEqual(orderBranches(rows,'profit',false).map(row=>row.name),['C','B','A']);
+});
+
+test('branch workspace starts at point of sale and keeps manager areas locked', () => {
+  assert.equal(branchOperatorSections[0].id,'pos');
+  assert.ok(!branchOperatorSections.some(section=>section.id==='dashboard'));
+  for (const id of ['customers','offers','profit','reports','system']) {
+    assert.equal(branchOperatorSections.find(section=>section.id===id)?.locked,true);
+  }
+  for (const id of ['pos','returns','purchases','suppliers','inventory','cashbox']) {
+    assert.ok(branchOperatorSections.some(section=>section.id===id && !section.locked));
+  }
 });
 
 test('database persists branches, scopes membership and independently totals financial movements', async () => {
@@ -88,6 +99,33 @@ test('database persists branches, scopes membership and independently totals fin
     assert.deepEqual([row.sales,row.returns,row.profit,row.cash_in,row.cash_paid,row.cash_withdrawn,row.cash_balance,row.shortages],
       ['1000','100','310','1000','500','200','300',1]);
     assert.equal((await report(null)).branches.length,3);
+    await db.exec('reset role');
+    await db.exec(await readFile(new URL('../audits/qa/branch_operator_workspace.sql',import.meta.url),'utf8'));
+    const operator = async (branch,kinds) => (await db.query(
+      "select public.qa_branch_operator_day($1,(now() at time zone 'Asia/Damascus')::date,$2) as data",[branch,kinds])).rows[0].data;
+    const addSupplier = branch => db.query("insert into public.qa_branch_suppliers(branch_id,name) values ($1,'QA Supplier')",[branch]);
+    await session(2);
+    const own = await operator(first,['sale']);
+    assert.equal(own.branch.name,'فرع أول');
+    assert.equal(own.movements.length,1);
+    assert.equal(own.movements[0].amount,1000);
+    assert.ok(!('cost' in own.movements[0]));
+    assert.ok(!('profit' in own.branch));
+    assert.equal((await operator(second,['sale'])).branch,null);
+    assert.equal((await db.query('select cost from public.qa_branch_events')).rows.length,0);
+    assert.equal((await report(first)).branches[0].profit,'0');
+    assert.equal((await db.query('select public.qa_branch_event_saved($1,$2) as saved',[first,own.movements[0].id])).rows[0].saved,true);
+    await record(first,'deposit','D2',25,25,0);
+    assert.equal((await operator(first,['deposit'])).movements.length,2);
+    await assert.rejects(record(second,'deposit','D3',25,25,0),/row-level security/);
+    await addSupplier(first);
+    await assert.rejects(addSupplier(second),/row-level security/);
+    await session(3);
+    await addSupplier(second);
+    assert.deepEqual((await db.query('select branch_id from public.qa_branch_suppliers')).rows.map(row=>row.branch_id),[second]);
+    await session(1);
+    assert.equal((await db.query('select branch_id from public.qa_branch_suppliers')).rows.length,2);
+    assert.equal((await report(first)).branches[0].profit,'310');
     await db.exec('reset role; set role anon');
     await assert.rejects(db.query('select public.qa_claim_branch($1)',[first]),/permission denied/);
   } finally {
