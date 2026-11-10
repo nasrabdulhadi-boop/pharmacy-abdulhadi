@@ -34,6 +34,7 @@ import {localizeAdminTree} from './systemAdminLocale.js';
 import QaProfileDetails from './QaProfileDetails.jsx';
 import QaAdminSecurityStatus from './QaAdminSecurityStatus.jsx';
 import QaBackupExport from './QaBackupExport.jsx';
+import QaBranchManagement from './QaBranchManagement.jsx';
 import {SYSTEM_LANGUAGES} from './systemLanguages.js';
 import {useSystemLanguage,setSystemLanguage,getSystemDirection,getSystemLanguage,getSystemDateLocale} from './systemLocale.js';
 import {consumeQaInvitation} from './qaAccountInvitations.js';
@@ -327,13 +328,13 @@ function Admin({onLogout,role='system_admin',initialTab='dashboard'}){
    {isolatedQaWorkspace&&<div className="workspaceRoleBadge"><ShieldCheck size={17}/><strong>{uiText(ROLE_NAMES[role])}</strong><span>{uiText("QA • واجهة النظام الأصلية • البيانات اصطناعية")}</span></div>}
    {isolatedQaWorkspace&&role==='employee'&&<QaEmployeeRequestStatus client={supabase}/>}
    <WorkspaceSectionFrame locked={!workspaceSectionAllowed(role,tab)} title={uiText(nav.find(x=>x[0]===tab)?.[1])||uiText('قسم محجوب')}><WorkspaceOperationSurface section={tab} restricted={restricted}>
-   {tab==='dashboard'&&<Dashboard go={go} role={role}/>} {tab==='pos'&&<POS/>}{tab==='pharmacyProducts'&&<ProductManager mode="pharmacy"/>}{tab==='siteProducts'&&<ProductManager mode="site"/>}{tab==='inventory'&&<Inventory focus={focus}/>}{tab==='smart'&&<SmartInventory/>}{tab==='orders'&&<Orders/>}{tab==='prescriptions'&&<Prescriptions/>}{tab==='requests'&&<Requests/>}{tab==='offers'&&<Offers/>}{tab==='reports'&&<Reports/>}{tab==='profitCenterPreview'&&<ProfitCenterPreview/>}{tab==='cashbox'&&<Cashbox/>}{tab==='debtors'&&<Debtors/>}{tab==='purchases'&&<Purchases focus={focus} go={go}/>} {tab==='supplierDebts'&&<SupplierDebts go={go}/>}{tab==='suppliers'&&<Suppliers/>}{tab==='customers'&&<Customers/>}{tab==='returns'&&<Returns/>}{tab==='security'&&<Security/>}{tab==='systemCenter'&&<SystemAdministrationPreview overviewPanel={role==='technical_support'?<SharedSupportDiagnostics/>:isolatedQaWorkspace?<div className="workspaceEmbedded"><QaOperationsWorkbench client={supabase} manager allowPasswordChange={authMutationPreviewEnabled} projectUrl={url} onLogout={onLogout}/></div>:null}/>}
+   {tab==='dashboard'&&<Dashboard go={go} role={role}/>} {tab==='pos'&&<POS/>}{tab==='pharmacyProducts'&&<ProductManager mode="pharmacy"/>}{tab==='siteProducts'&&<ProductManager mode="site"/>}{tab==='inventory'&&<Inventory focus={focus}/>}{tab==='smart'&&<SmartInventory/>}{tab==='orders'&&<Orders/>}{tab==='prescriptions'&&<Prescriptions/>}{tab==='requests'&&<Requests/>}{tab==='offers'&&<Offers/>}{tab==='reports'&&<Reports/>}{tab==='profitCenterPreview'&&<ProfitCenterPreview/>}{tab==='cashbox'&&<Cashbox/>}{tab==='debtors'&&<Debtors/>}{tab==='purchases'&&<Purchases focus={focus} go={go}/>} {tab==='supplierDebts'&&<SupplierDebts go={go}/>}{tab==='suppliers'&&<Suppliers/>}{tab==='customers'&&<Customers/>}{tab==='returns'&&<Returns/>}{tab==='security'&&<Security/>}{tab==='systemCenter'&&<SystemAdministrationPreview workspaceRole={role} overviewPanel={role==='technical_support'?<SharedSupportDiagnostics/>:isolatedQaWorkspace?<div className="workspaceEmbedded"><QaOperationsWorkbench client={supabase} manager allowPasswordChange={authMutationPreviewEnabled} projectUrl={url} onLogout={onLogout}/></div>:null}/>}
    </WorkspaceOperationSurface></WorkspaceSectionFrame>
 
   </main>
  </div></WorkspaceRoleContext.Provider>
 }
-function SystemAdministrationPreview({overviewPanel=null}){
+function SystemAdministrationPreview({overviewPanel=null,workspaceRole}){
  const systemLanguage=useSystemLanguage();
  const [section,setSection]=useState('overview');
  const [adminPrefs,setAdminPrefs]=useState(()=>readAdminPreferences(typeof window==='undefined'?null:window.localStorage));
@@ -386,11 +387,14 @@ function SystemAdministrationPreview({overviewPanel=null}){
  const isUnverifiedPreview=!verifiedRole;
  const restrictedPreview=isSupportPreview||isUnverifiedPreview;
  const sections=[['overview',adminCenterLabels.overview],['profile',adminCenterLabels.profile],['access',adminCenterLabels.access],['backup',adminCenterLabels.backup],['preferences',adminCenterLabels.preferences]].filter(([id])=>canViewSystemAdminSection(verifiedRole,id)||id==='overview');
- const effectiveSection=canViewSystemAdminSection(verifiedRole,section)?section:'overview';
+ const canViewBranches=canViewSystemAdminSection(verifiedRole,'branches',isolatedQaWorkspace)&&canViewSystemAdminSection(workspaceRole,'branches',isolatedQaWorkspace);
+ if(canViewBranches)sections.push(['branches',adminCenterEnglish?'Branch Management':'مركز إدارة الفروع']);
+ const effectiveSection=(section==='branches'?canViewBranches:canViewSystemAdminSection(verifiedRole,section))?section:'overview';
  return localizeAdminTree(<div className="panel systemAdminModern" data-section={effectiveSection} data-density={adminPrefs.density} dir={getSystemDirection()} style={{padding:adminPrefs.density==='compact'?12:24,maxWidth:1100,margin:'18px auto'}}>
   <header className="systemAdminTopbar"><div className="systemAdminBrand"><span className="systemAdminBrandIcon" aria-hidden="true"><ShieldCheck size={22}/></span><h2>{uiText(adminCenterLabels.title)}</h2></div><span className="systemAdminPreviewPill">QA</span></header>
-  <nav className="systemAdminTabs systemAdminTabsTop" aria-label={adminCenterEnglish?'Administration sections':uiText('أقسام مركز الإدارة')}>{sections.map(([id,label])=>{const Icon={overview:Home,profile:Users,access:ShieldCheck,backup:Download,preferences:Sparkles}[id];return <button type="button" key={id} aria-current={effectiveSection===id?'page':undefined} className={effectiveSection===id?'primary':''} onClick={()=>setSection(id)}>{Icon&&<Icon size={18} aria-hidden="true"/>}<span>{uiText(label)}</span></button>})}</nav>
+  <nav className="systemAdminTabs systemAdminTabsTop" aria-label={adminCenterEnglish?'Administration sections':uiText('أقسام مركز الإدارة')}>{sections.map(([id,label])=>{const Icon={overview:Home,profile:Users,access:ShieldCheck,backup:Download,preferences:Sparkles,branches:MapPin}[id];return <button type="button" key={id} aria-current={effectiveSection===id?'page':undefined} className={effectiveSection===id?'primary':''} onClick={()=>setSection(id)}>{Icon&&<Icon size={18} aria-hidden="true"/>}<span>{uiText(label)}</span></button>})}</nav>
   <main className="systemAdminMain"><div className="systemAdminPageIntro"><h3>{sections.find(([id])=>id===effectiveSection)?.[1]||uiText(adminCenterLabels.overview)}</h3></div>
+  {effectiveSection==='branches'&&<QaBranchManagement/>}
   {effectiveSection==='overview'&&<section className="systemAdminOverview" aria-label={adminCenterEnglish?'Administration overview':uiText('نظرة عامة على إدارة النظام')}>
    {restrictedPreview&&<p className="systemAdminNotice" role="status">{isSupportPreview?uiText('الدعم الفني: عرض تقني محدود فقط.'):uiText('لا يمكن عرض الأقسام الإدارية قبل التحقق من دور الحساب عبر الخادم.')}</p>}
    <div className="systemAdminMetrics">{[

@@ -1,0 +1,66 @@
+.qaBranchCenter {
+  display: grid;
+  gap: 1rem;
+  min-width: 0;
+}
+.qaBranchCenter :is(.qaBranchIntro, .qaBranchMetrics article, .qaBranchDetail, .qaBranchTable) {
+  border: 1px solid currentColor;
+  border-color: color-mix(in srgb, currentColor 18%, transparent);
+  border-radius: 1rem;
+  background: color-mix(in srgb, currentColor 4%, transparent);
+}
+.qaBranchCenter :is(.qaBranchIntro, .qaBranchMetrics article, .qaBranchDetail) {
+  padding: 1rem;
+}
+.qaBranchIntro {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.qaBranchIntro label {
+  display: grid;
+  gap: .3rem;
+}
+.qaBranchCenter :is(p, h4, dd, dl, ul) {
+  margin: 0;
+}
+.qaBranchMetrics, .qaBranchDetail dl {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 10rem), 1fr));
+  gap: .75rem;
+}
+.qaBranchMetrics article {
+  display: grid;
+  gap: .4rem;
+}
+.qaBranchMetrics strong { font-size: 1.25rem; }
+.qaBranchDetail {
+  display: grid;
+  gap: .7rem;
+}
+.qaBranchDetail dd { font-weight: 700; }
+.qaBranchDetail h4 {
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+}
+.qaBranchDetail li span {
+  display: inline-block;
+  margin-inline-start: .7rem;
+}
+.qaBranchTable {
+  min-width: 0;
+  overflow-x: auto;
+}
+.qaBranchTable table { width: 100%; }
+.qaBranchTable caption {
+  text-align: start;
+  font-weight: 700;
+  padding: 1rem;
+}
+.qaBranchTable :is(th, td) {
+  text-align: start;
+  white-space: nowrap;
+}

@@ -6,7 +6,8 @@ export function verifiedSystemRole(user){
  if(role===undefined&&user?.app_metadata?.role==='admin')return 'system_admin';
  return null;
 }
-export function canViewSystemAdminSection(role,section){
+export function canViewSystemAdminSection(role,section,isolatedQaWorkspace=false){
+ if(section==='branches')return isolatedQaWorkspace===true&&(role==='system_owner'||role==='system_admin');
  if(role==='technical_support')return section==='overview';
  if(role==='system_owner'||role==='system_admin')return ['overview','profile','access','backup','preferences'].includes(section);
  return false;
