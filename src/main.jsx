@@ -34,7 +34,8 @@ import {localizeAdminTree} from './systemAdminLocale.js';
 import QaProfileDetails from './QaProfileDetails.jsx';
 import QaAdminSecurityStatus from './QaAdminSecurityStatus.jsx';
 import QaBackupExport from './QaBackupExport.jsx';
-import QaBranchManagement from './QaBranchManagement.jsx';
+import QaBranchWorkspace,{QaBranchPortal} from './QaBranchWorkspace.jsx';
+import {branchIdFromSearch} from './qaBranchWorkspace.js';
 import {SYSTEM_LANGUAGES} from './systemLanguages.js';
 import {useSystemLanguage,setSystemLanguage,getSystemDirection,getSystemLanguage,getSystemDateLocale} from './systemLocale.js';
 import {consumeQaInvitation} from './qaAccountInvitations.js';
@@ -394,7 +395,7 @@ function SystemAdministrationPreview({overviewPanel=null,workspaceRole}){
   <header className="systemAdminTopbar"><div className="systemAdminBrand"><span className="systemAdminBrandIcon" aria-hidden="true"><ShieldCheck size={22}/></span><h2>{uiText(adminCenterLabels.title)}</h2></div><span className="systemAdminPreviewPill">QA</span></header>
   <nav className="systemAdminTabs systemAdminTabsTop" aria-label={adminCenterEnglish?'Administration sections':uiText('أقسام مركز الإدارة')}>{sections.map(([id,label])=>{const Icon={overview:Home,profile:Users,access:ShieldCheck,backup:Download,preferences:Sparkles,branches:MapPin}[id];return <button type="button" key={id} aria-current={effectiveSection===id?'page':undefined} className={effectiveSection===id?'primary':''} onClick={()=>setSection(id)}>{Icon&&<Icon size={18} aria-hidden="true"/>}<span>{uiText(label)}</span></button>})}</nav>
   <main className="systemAdminMain"><div className="systemAdminPageIntro"><h3>{sections.find(([id])=>id===effectiveSection)?.[1]||uiText(adminCenterLabels.overview)}</h3></div>
-  {effectiveSection==='branches'&&<QaBranchManagement/>}
+  {effectiveSection==='branches'&&<QaBranchWorkspace client={rawSupabase} ownerEmail={sessionUser?.email}/>}
   {effectiveSection==='overview'&&<section className="systemAdminOverview" aria-label={adminCenterEnglish?'Administration overview':uiText('نظرة عامة على إدارة النظام')}>
    {restrictedPreview&&<p className="systemAdminNotice" role="status">{isSupportPreview?uiText('الدعم الفني: عرض تقني محدود فقط.'):uiText('لا يمكن عرض الأقسام الإدارية قبل التحقق من دور الحساب عبر الخادم.')}</p>}
    <div className="systemAdminMetrics">{[
@@ -1391,6 +1392,8 @@ const Root=()=>{
  if(recoveryEnabled&&recoveryState==='invalid')return <Login initialRecovery initialError="رابط الاسترداد منتهي الصلاحية أو استُخدم سابقاً. أدخل بريدك واطلب رابطاً جديداً، ثم افتح أحدث رسالة مرة واحدة." onAuthenticated={finishRecovery}/>;
  if(recoveryEnabled&&recoveryState==='ready')return <RecoveryPasswordForm isInvitation={recoveryFlow.isInvitation()} auth={rawSupabase.auth} enabled={recoveryEnabled} recoveryState={recoveryState} onDone={finishRecovery} onRestart={()=>{window.history.replaceState(null,'',window.location.pathname+'#admin');recoveryFlow.restart()}}/>;
  if(!checked||recoveryState==='pending'||(s&&isolatedQaWorkspace&&!roleChecked))return <Splash/>;
+ const branchId=isolatedQaWorkspace?branchIdFromSearch(window.location.search):null;
+ if(branchId)return <QaBranchPortal client={rawSupabase} branchId={branchId} user={s?.user}/>;
  const admin=['system_owner','system_admin'].includes(verifiedSystemRole(s?.user));
  workspaceRole=isolatedQaWorkspace?serverRole:verifiedSystemRole(s?.user);workspaceIdentity=s?.user?.id||null;workspaceRedacted=false;
  if((isolatedQaWorkspace&&['system_owner','system_admin'].includes(workspaceRole))||(!isolatedQaWorkspace&&admin))return <Admin key={workspaceIdentity+':'+workspaceRole} role={workspaceRole} onLogout={()=>supabase.auth.signOut()}/>;

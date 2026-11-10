@@ -64,3 +64,24 @@
   text-align: start;
   white-space: nowrap;
 }
+.qaBranchControls {
+  display: flex;
+  align-items: end;
+  gap: .75rem;
+  flex-wrap: wrap;
+}
+.qaBranchCenter label {
+  display: grid;
+  gap: .35rem;
+}
+.qaBranchForm {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
+  align-items: end;
+}
+.qaBranchForm :is(h3,h4,p) { grid-column: 1/-1; }
+.qaBranchCenter input, .qaBranchCenter select { max-width: 100%; }
+.qaBranchPortal {
+  margin: 1rem auto;
+  padding: 1rem;
+  width: min(calc(100% - 2rem), 72rem);
+}
