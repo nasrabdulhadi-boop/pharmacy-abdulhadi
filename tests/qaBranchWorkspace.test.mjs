@@ -156,6 +156,45 @@ test('database persists branches, scopes membership and independently totals fin
     await session(1);
     assert.equal((await decide(confirmed,true)).rows[0].status,'approved');
     assert.equal((await report(first)).branches[0].sales,'0');
+    await db.exec('reset role');
+    await db.exec(await readFile(new URL('../audits/qa/branch_shared_pos.sql',import.meta.url),'utf8'));
+    await session(1);
+    const catalog=async(branch)=> (await db.query(
+      "insert into public.qa_branch_catalog(branch_id,barcode,name,stock,sale_price,unit_cost) values($1,'12345','QA Item',3,100,40) returning id",[branch])).rows[0].id;
+    const sku=await catalog(first), otherSku=await catalog(second);
+    const dash=async(branch)=> (await db.query(
+      "select public.qa_branch_dashboard($1,(now() at time zone 'Asia/Damascus')::date) as data",[branch])).rows[0].data;
+    const find=async(branch)=> (await db.query("select public.qa_branch_pos_search($1,'12345',true) as data",[branch])).rows[0].data;
+    const buy=(saleId,items)=>db.query('select public.qa_branch_pos_complete($1,$2,$3) as receipt',[first,saleId,JSON.stringify(items)]);
+    await session(2);
+    assert.equal((await find(first))[0].id,sku);
+    assert.equal('unit_cost' in (await find(first))[0],false);
+    assert.deepEqual(await find(second),[]);
+    await assert.rejects(buy(id(20),[{product_id:otherSku,quantity:1,unit_price:100}]),/الرصيد/);
+    await assert.rejects(buy(id(20),[{product_id:sku,quantity:1,unit_price:99}]),/تغير سعر/);
+    await assert.rejects(buy(id(20),[{product_id:sku,quantity:4,unit_price:100}]),/الرصيد/);
+    await assert.rejects(record(first,'sale','DIRECT',100,100,0),/row-level security/);
+    const items=[{product_id:sku,quantity:2,unit_price:100}];
+    const completed=await buy(id(20),items);
+    assert.equal(completed.rows[0].receipt.total,200);
+    assert.deepEqual(await buy(id(20),items),completed);
+    assert.equal((await find(first))[0].stock,1);
+    assert.equal((await dash(first)).sales,200);
+    assert.equal((await dash(first)).profit,null);
+    assert.equal((await dash(first)).chart.length,7);
+    assert.equal((await operator(first,['sale'])).movements[0].items[0].quantity,2);
+    await session(1);
+    await db.query("update public.qa_branch_permissions set sections=array['dashboard','dashboardProfit','pos','inventory'] where branch_id=$1",[first]);
+    await session(2);
+    assert.equal((await dash(first)).profit,30); // 120 from sale, less the earlier return loss of 40 and expense of 50.
+    const undo=(await db.query("select public.qa_branch_request_invoice($1,$2,'delete','Reverse test cash sale',null,null,null) as id",[first,id(20)])).rows[0].id;
+    await assert.rejects(decide(undo,true),/request unavailable/);
+    await session(1);
+    assert.equal((await decide(undo,true)).rows[0].status,'approved');
+    await session(2);
+    assert.equal((await find(first))[0].stock,3);
+    assert.equal((await dash(first)).sales,0);
+    await assert.rejects(buy(id(20),items),/إعادة استخدام/);
     await db.exec('reset role; set role anon');
     await assert.rejects(db.query('select public.qa_claim_branch($1)',[first]),/permission denied/);
   } finally {

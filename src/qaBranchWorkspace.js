@@ -52,6 +52,7 @@ export async function readBranchDay(client, day, id) {
 
 export const branchOperatorSections = [
   {id:'dashboard', label:'لوحة التحكم', kinds:[]},
+  {id:'dashboardProfit', label:'عرض ربح اليوم في لوحة التحكم', optIn:true},
   {id:'pos', label:'نقطة البيع', kinds:['sale']},
   {id:'returns', label:'المرتجعات', kinds:['return']},
   {id:'purchases', label:'المشتريات', kinds:['purchase']},
