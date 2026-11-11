@@ -420,17 +420,85 @@ function useDashboardData(){
  useEffect(()=>{load().catch(e=>setD(x=>({...x,error:e?.message||'تعذر تحميل لوحة التحكم'})))},[]);
  return[d,load]
 }
+// The product's accounting cost can be in SYP even when the purchase was in USD.
+async function loadCatalogPurchasePrices(products){
+ const latest = new Map();
+ const pageSize = 500;
+ const productIds = products.map(product=>product.id);
+ for(let offset=0;;offset+=pageSize){
+  const {data,error} = await supabase.from('batches')
+   .select('product_id,purchase_id,purchase_item_id,purchase_currency,original_purchase_price,purchase_price')
+   .in('product_id',productIds)
+   .or('batch_number.is.null,batch_number.not.ilike.%bonus%')
+   .order('created_at',{ascending:false,nullsFirst:false})
+   .order('id',{ascending:false})
+   .range(offset,offset+pageSize-1);
+  if(error) throw error;
+  for(const batch of data){
+   if(!latest.has(batch.product_id)) latest.set(batch.product_id,batch);
+  }
+  if(data.length<pageSize || latest.size===products.length) break;
+ }
+ const invoiceIds = [...new Set([...latest.values()]
+  .filter(batch=>batch.purchase_currency==='USD' && batch.purchase_id && batch.purchase_item_id)
+  .map(batch=>batch.purchase_id))];
+ const invoicePrices = new Map();
+ for(let offset=0;offset<invoiceIds.length;offset+=8){
+  await Promise.all(invoiceIds.slice(offset,offset+8).map(async invoiceId=>{
+   const {data,error} = await supabase.rpc('admin_currency_purchase_detail_v1',{p_purchase_id:invoiceId});
+   if(error) throw error;
+   if(data?.currency==='USD'){
+    for(const item of data.items||[]) invoicePrices.set(item.id,item.purchase_price);
+   }
+  }));
+ }
+ for(const batch of latest.values()){
+  batch.invoice_purchase_price = invoicePrices.get(batch.purchase_item_id);
+ }
+ return latest;
+}
+
+const catalogUsdPrice = new Intl.NumberFormat('en-US',{maximumFractionDigits:6});
+
+function formatCatalogPurchasePrice(product){
+ const batch = product.catalogPurchaseBatch;
+ if(batch?.purchase_currency==='USD'){
+  const price = batch.invoice_purchase_price??batch.original_purchase_price;
+  return price==null ? '—' : catalogUsdPrice.format(price)+' $';
+ }
+ if(batch?.purchase_currency==='SYP'){
+  return money(batch.original_purchase_price??batch.purchase_price)+' ل.س';
+ }
+ return product.sale_currency==='USD'
+  ? (Number(product.purchase_price)>100 ? '⚠️ يحتاج تصحيح' : money(product.purchase_price)+' $')
+  : money(product.purchase_price)+' ل.س';
+}
+
 function ProductManager({mode='pharmacy'}){
  const empty={name:'',barcode:'',active_ingredient:'',strength:'',dosage_form:'',manufacturer:'',category:'',unit:'piece',reorder_level:1,purchase_price:0,sale_price:0,sale_currency:'SYP',parts_per_unit:1,customer_visible:true};
  const [rows,setRows]=useState([]),[allRows,setAllRows]=useState([]),[q,setQ]=useState(''),[aliasCodesForSave,setAliasCodesForSave]=useState([]),[show,setShow]=useState(false),[editId,setEditId]=useState(null),[form,setForm]=useState(empty),[busy,setBusy]=useState(false),[card,setCard]=useState(null),[cardBatches,setCardBatches]=useState([]),[scanOpen,setScanOpen]=useState(false),[loadErr,setLoadErr]=useState('');
  const [manufacturerFilter,setManufacturerFilter]=useState(''),[dosageFormFilter,setDosageFormFilter]=useState(''),[categoryFilter,setCategoryFilter]=useState(''),[sortBy,setSortBy]=useState('name'),[sortDir,setSortDir]=useState('asc');
  const [page,setPage]=useState(0),[pageSize]=useState(100),[totalCount,setTotalCount]=useState(0),[loadingProducts,setLoadingProducts]=useState(false);
+ const catalogRequest=useRef(0);
  const normalizeValue=v=>String(v??'').trim().toLocaleLowerCase('ar');
  const uniqueOptions=key=>[...new Set(allRows.map(x=>String(x?.[key]||'').trim()).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'ar',{numeric:true,sensitivity:'base'}));
  const manufacturers=useMemo(()=>uniqueOptions('manufacturer'),[allRows]);
  const dosageForms=useMemo(()=>uniqueOptions('dosage_form'),[allRows]);
  const categories=useMemo(()=>uniqueOptions('category'),[allRows]);
- const load=async(nextPage=page)=>{setLoadErr('');setLoadingProducts(true);try{let searchTerm=q.trim();if(mode==='pharmacy'&&searchTerm.length>=6&&/^[0-9A-Za-z_-]+$/.test(searchTerm)){const resolved=await supabase.rpc('admin_product_search_key_for_barcode',{p_barcode:searchTerm});if(!resolved.error&&resolved.data)searchTerm=resolved.data;}const {data,error}=await supabase.rpc('admin_product_catalog_currency',{p_query:searchTerm||null,p_manufacturer:manufacturerFilter||null,p_dosage_form:dosageFormFilter||null,p_category:categoryFilter||null,p_customer_visible:mode==='site'?true:null,p_limit:pageSize,p_offset:nextPage*pageSize,p_sort:sortBy,p_desc:sortDir==='desc'});if(error)throw error;const list=Array.isArray(data)?data:[];setRows(list);setAllRows(list);setTotalCount(Number(list[0]?.total_count||0));setPage(nextPage)}catch(e){setRows([]);setAllRows([]);setTotalCount(0);setLoadErr(e?.message||'تعذر تحميل المنتجات')}finally{setLoadingProducts(false)}};
+ const load=async(nextPage=page)=>{const request=++catalogRequest.current;setLoadErr('');setLoadingProducts(true);try{let searchTerm=q.trim();if(mode==='pharmacy'&&searchTerm.length>=6&&/^[0-9A-Za-z_-]+$/.test(searchTerm)){const resolved=await supabase.rpc('admin_product_search_key_for_barcode',{p_barcode:searchTerm});if(!resolved.error&&resolved.data)searchTerm=resolved.data;}const {data,error}=await supabase.rpc('admin_product_catalog_currency',{p_query:searchTerm||null,p_manufacturer:manufacturerFilter||null,p_dosage_form:dosageFormFilter||null,p_category:categoryFilter||null,p_customer_visible:mode==='site'?true:null,p_limit:pageSize,p_offset:nextPage*pageSize,p_sort:sortBy,p_desc:sortDir==='desc'});if(error)throw error;let list=Array.isArray(data)?data:[];
+  if(mode==='pharmacy'&&list.length){
+   try{
+    const latest=await loadCatalogPurchasePrices(list);
+    list=list.map(product=>({...product,catalogPurchaseBatch:latest.get(product.id)}));
+   }catch(error){
+    if(request!==catalogRequest.current) return;
+    console.warn('Could not load catalog purchase currencies',error);
+    setLoadErr('تعذر التحقق من عملة الشراء. أعد تحميل المنتجات.');
+    list=list.map(product=>({...product,catalogPurchaseUnavailable:true}));
+   }
+  }
+  if(request!==catalogRequest.current) return;
+  setRows(list);setAllRows(list);setTotalCount(Number(list[0]?.total_count||0));setPage(nextPage)}catch(e){if(request!==catalogRequest.current) return;setRows([]);setAllRows([]);setTotalCount(0);setLoadErr(e?.message||'تعذر تحميل المنتجات')}finally{if(request===catalogRequest.current) setLoadingProducts(false)}};
  useEffect(()=>{const t=setTimeout(()=>load(0),180);return()=>clearTimeout(t)},[q,manufacturerFilter,dosageFormFilter,categoryFilter,sortBy,sortDir]);
  const clearProductFilters=()=>{setManufacturerFilter('');setDosageFormFilter('');setCategoryFilter('');setSortBy('name');setSortDir('asc');setQ('');setPage(0)};
  const onUsbSearch=useMemo(()=>code=>{setQ(String(code||'').trim())},[]); useUsbBarcodeCapture(mode==='pharmacy'&&!show,onUsbSearch);
@@ -453,7 +521,7 @@ function ProductManager({mode='pharmacy'}){
  {loadErr&&<div className="error" style={{marginBottom:12}}>{loadErr}</div>}<div className="productModeBanner"><div><b>{mode==='pharmacy'?'قاعدة منتجات الصيدلية':'كتالوج الموقع الخارجي'}</b><span>{mode==='pharmacy'?'المنتج هنا هو الأصل الذي يرتبط به المخزون والدفعات.':'هذه القائمة هي ما يراه الزبون عند فتح الموقع.'}</span></div><strong>{rows.length} منتج</strong></div>
  <div className="toolbar productFiltersToolbar"><div className="search productManagerSearch"><Search/><input value={q} onChange={e=>setQ(e.target.value)} placeholder="بحث بالاسم أو الباركود أو المادة الفعالة أو الشركة…"/><button className="productScanIcon" title="تصوير باركود" aria-label="تصوير باركود" onClick={cameraScan}><ScanLine/></button></div><div className="productFilterControls"><label><span>الشركة</span><select value={manufacturerFilter} onChange={e=>setManufacturerFilter(e.target.value)}><option value="">كل الشركات</option>{manufacturers.map(v=><option key={v} value={v}>{v}</option>)}</select></label><label><span>الشكل الصيدلاني</span><select value={dosageFormFilter} onChange={e=>setDosageFormFilter(e.target.value)}><option value="">كل الأشكال</option>{dosageForms.map(v=><option key={v} value={v}>{v}</option>)}</select></label><label><span>التصنيف</span><select value={categoryFilter} onChange={e=>setCategoryFilter(e.target.value)}><option value="">كل التصنيفات</option>{categories.map(v=><option key={v} value={v}>{v}</option>)}</select></label><label><span>فرز حسب</span><select value={sortBy} onChange={e=>setSortBy(e.target.value)}><option value="name">الاسم</option><option value="manufacturer">الشركة</option><option value="dosage_form">الشكل الصيدلاني</option><option value="active_ingredient">المادة الفعالة</option><option value="category">التصنيف</option><option value="sale_price">سعر المبيع</option><option value="purchase_price">سعر النت</option></select></label><button type="button" className="secondaryAction productSortDir" onClick={()=>setSortDir(v=>v==='asc'?'desc':'asc')} title={sortDir==='asc'?'تصاعدي':'تنازلي'}>{sortDir==='asc'?'أ–ي / تصاعدي':'ي–أ / تنازلي'}</button>{(q||manufacturerFilter||dosageFormFilter||categoryFilter||sortBy!=='name'||sortDir!=='asc')&&<button type="button" className="secondaryAction" onClick={clearProductFilters}>مسح الفرز والفلاتر</button>}</div></div>
  <div className="productResultsMeta"><span>عرض <b>{rows.length}</b> من أصل <b>{totalCount.toLocaleString('en-US')}</b> منتج</span>{loadingProducts&&<span className="activeFilterHint">جارٍ التحميل…</span>}{(manufacturerFilter||dosageFormFilter||categoryFilter)&&<span className="activeFilterHint">فلاتر مفعّلة</span>}</div>
- <div className="tableWrap"><table className="productsTable"><thead><tr><th>الباركود</th><th>اسم الدواء</th><th>الاسم العلمي</th><th>الشركة</th><th>الشكل الصيدلاني</th><th>سعر الشراء</th><th>سعر المبيع</th><th>الموقع</th><th>بطاقة</th><th>إجراء</th></tr></thead><tbody>{rows.map(r=><tr key={r.id}><td>{r.barcode||'—'}</td><td><b>{r.name} {r.strength||''}</b></td><td>{r.active_ingredient||'—'}</td><td>{r.manufacturer||'—'}</td><td><span className="resultPill">{r.dosage_form||'—'}</span></td><td>{r.sale_currency==='USD'?<>{Number(r.purchase_price)>100?'⚠️ يحتاج تصحيح':money(r.purchase_price)+' $'}</>:<>{money(r.purchase_price)} ل.س</>}</td><td>{r.sale_currency==='USD'?<>{money(r.sale_price)} $</>:<>{money(r.sale_price)} ل.س</>}</td><td><span className={r.customer_visible?'activePill':'mutedPill'}>{r.customer_visible?'ظاهر للزبون':'مخفي'}</span></td><td><button className="iconBtn" title="بطاقة المادة" onClick={()=>openCard(r)}><FileText/></button></td><td className="actions"><button className="iconBtn" title="تعديل" onClick={async()=>{setBusy(true);try{const {data,error}=await supabase.rpc('admin_get_product_barcodes',{p_product_id:r.id});if(error)throw error;setEditId(r.id);setForm({...empty,...r,reorder_level:Number(r.reorder_level??1)});setAliasCodesForSave((data||[]).map(x=>x.barcode));setShow(true)}catch(e){notify(e.message||'تعذر تحميل الباركودات')}finally{setBusy(false)}}}>✏️</button>{mode==='pharmacy'&&<button className="iconBtn" title={r.customer_visible?'إخفاء من الموقع':'إظهار على الموقع'} onClick={()=>toggleVisibility(r)}>{r.customer_visible?'🙈':'👁️'}</button>}<button className="iconBtn danger" title="حذف المنتج" onClick={()=>remove(r)} disabled={busy}><Trash2/></button></td></tr>)}</tbody></table>{!rows.length&&!loadingProducts&&<div className="emptyCart">لا توجد منتجات مطابقة للفلاتر الحالية.</div>}</div><div className="productPagination"><button type="button" className="secondaryAction" disabled={page===0||loadingProducts} onClick={()=>load(page-1)}>السابق</button><span>صفحة <b>{page+1}</b> من <b>{Math.max(1,Math.ceil(totalCount/pageSize))}</b></span><button type="button" className="secondaryAction" disabled={loadingProducts||((page+1)*pageSize>=totalCount)} onClick={()=>load(page+1)}>التالي</button></div>
+ <div className="tableWrap"><table className="productsTable"><thead><tr><th>الباركود</th><th>اسم الدواء</th><th>الاسم العلمي</th><th>الشركة</th><th>الشكل الصيدلاني</th><th>سعر الشراء</th><th>سعر المبيع</th><th>الموقع</th><th>بطاقة</th><th>إجراء</th></tr></thead><tbody>{rows.map(r=><tr key={r.id}><td>{r.barcode||'—'}</td><td><b>{r.name} {r.strength||''}</b></td><td>{r.active_ingredient||'—'}</td><td>{r.manufacturer||'—'}</td><td><span className="resultPill">{r.dosage_form||'—'}</span></td><td>{r.catalogPurchaseUnavailable ? '—' : formatCatalogPurchasePrice(r)}</td><td>{r.sale_currency==='USD'?<>{money(r.sale_price)} $</>:<>{money(r.sale_price)} ل.س</>}</td><td><span className={r.customer_visible?'activePill':'mutedPill'}>{r.customer_visible?'ظاهر للزبون':'مخفي'}</span></td><td><button className="iconBtn" title="بطاقة المادة" onClick={()=>openCard(r)}><FileText/></button></td><td className="actions"><button className="iconBtn" title="تعديل" onClick={async()=>{setBusy(true);try{const {data,error}=await supabase.rpc('admin_get_product_barcodes',{p_product_id:r.id});if(error)throw error;setEditId(r.id);setForm({...empty,...r,reorder_level:Number(r.reorder_level??1)});setAliasCodesForSave((data||[]).map(x=>x.barcode));setShow(true)}catch(e){notify(e.message||'تعذر تحميل الباركودات')}finally{setBusy(false)}}}>✏️</button>{mode==='pharmacy'&&<button className="iconBtn" title={r.customer_visible?'إخفاء من الموقع':'إظهار على الموقع'} onClick={()=>toggleVisibility(r)}>{r.customer_visible?'🙈':'👁️'}</button>}<button className="iconBtn danger" title="حذف المنتج" onClick={()=>remove(r)} disabled={busy}><Trash2/></button></td></tr>)}</tbody></table>{!rows.length&&!loadingProducts&&<div className="emptyCart">لا توجد منتجات مطابقة للفلاتر الحالية.</div>}</div><div className="productPagination"><button type="button" className="secondaryAction" disabled={page===0||loadingProducts} onClick={()=>load(page-1)}>السابق</button><span>صفحة <b>{page+1}</b> من <b>{Math.max(1,Math.ceil(totalCount/pageSize))}</b></span><button type="button" className="secondaryAction" disabled={loadingProducts||((page+1)*pageSize>=totalCount)} onClick={()=>load(page+1)}>التالي</button></div>
  {show&&<ProductForm form={form} setForm={setForm} save={save} close={()=>setShow(false)} edit={!!editId} busy={busy} aliasCodes={aliasCodesForSave} setAliasCodes={setAliasCodesForSave} suggestions={allRows} onUsbBarcode={code=>setForm(f=>({...f,barcode:code}))}/>} {card&&<ProductCard product={card} batches={cardBatches} close={()=>setCard(null)} refresh={load}/>} {scanOpen&&<div className="modal"><div className="modalBox"><button className="x" onClick={()=>setScanOpen(false)}>×</button><h2>📷 تصوير باركود المنتج</h2><video id="pharmacyProductsBarcodeVideo" className="barcodeVideo" playsInline/><p className="muted">وجّه الكاميرا نحو باركود المنتج؛ سيتم البحث عنه تلقائياً.</p></div></div>}</>
 }
 function ProductForm({form,setForm,save,close,edit,busy,aliasCodes,setAliasCodes,suggestions=[],onUsbBarcode,asPortal=false,inlineError=''}){
