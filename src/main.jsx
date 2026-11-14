@@ -1751,30 +1751,29 @@ function Login({onSignIn}){
  </main>;
 }
 function AdminWelcome({owner,onContinue}){
- const duration=3600;
+ const duration=3500;
  useEffect(()=>{
-  const timer=window.setTimeout(onContinue,window.matchMedia('(prefers-reduced-motion: reduce)').matches?1200:duration);
+  const timer=window.setTimeout(onContinue,window.matchMedia('(prefers-reduced-motion: reduce)').matches?1000:duration);
   return()=>window.clearTimeout(timer);
  },[onContinue]);
  const moveLight=event=>{
   if(event.pointerType!=='mouse'||window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
-  const card=event.currentTarget;
-  const bounds=card.getBoundingClientRect();
-  card.style.setProperty('--welcome-x',`${event.clientX-bounds.left}px`);
-  card.style.setProperty('--welcome-y',`${event.clientY-bounds.top}px`);
+  const screen=event.currentTarget;
+  const bounds=screen.getBoundingClientRect();
+  screen.style.setProperty('--welcome-light-x',`${event.clientX-bounds.left}px`);
+  screen.style.setProperty('--welcome-light-y',`${event.clientY-bounds.top}px`);
  };
- return <main className="publicLogin pharmacyWelcome" dir="rtl">
-  <div className="pharmacyWelcomeCard" onPointerMove={moveLight} style={{'--welcome-duration':`${duration}ms`}}>
+ return <main className="publicLogin pharmacyWelcome" dir="rtl" onPointerMove={moveLight} style={{'--welcome-duration':`${duration}ms`}}>
+  <div className="pharmacyWelcomeScenery" aria-hidden="true"><i/><i/><i/></div>
+  <div className="pharmacyWelcomeContent">
    <div className="pharmacyWelcomeEmblem" aria-hidden="true">
-    <div className="pharmacyWelcomeOrbit"><i/><i/><i/></div>
-    <img src="/logo.png" alt="" width="104" height="104"/>
+    <span className="pharmacyWelcomeHalo"/>
+    <span className="pharmacyWelcomeCapsule"/><span className="pharmacyWelcomeCapsule"/>
+    <img src="/logo.png" alt="" width="108" height="108"/>
    </div>
    <div className="pharmacyWelcomeMessage" role="status">
     <h1>{owner?'أهلاً بك، مديرنا دكتور نصر':'أهلاً بك في إدارة الصيدلية'}</h1>
-    <p>جارٍ فتح لوحة الإدارة…</p>
    </div>
-   <div className="pharmacyWelcomeProgress" aria-hidden="true"/>
-   <button type="button" className="publicPrimary" onClick={onContinue}>متابعة إلى لوحة الإدارة <ChevronLeft size={18} aria-hidden="true"/></button>
   </div>
  </main>;
 }

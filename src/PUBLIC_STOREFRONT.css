@@ -1206,66 +1206,78 @@
 }
 
 .pharmacyWelcome {
+  position:relative;
+  isolation:isolate;
+  overflow:hidden;
   min-height:100dvh;
-  padding:20px;
+  padding:24px;
   text-align:center;
-  color:#fff8e8;
-  background:radial-gradient(ellipse at 50% 30%,#244f3d,#0b261c 62%,#071811);
+  color:#fff6df;
+  background:
+    radial-gradient(circle at var(--welcome-light-x,50%) var(--welcome-light-y,38%),#42725670,transparent 320px),
+    radial-gradient(ellipse at 20% 95%,#2b583e,transparent 58%),
+    linear-gradient(145deg,#0a2118 12%,#143729 62%,#091c16);
+  animation:welcome-exit var(--welcome-duration) ease both;
 }
-.pharmacyWelcomeCard {
-  width:min(580px,100%);
-  position:relative;
-  padding:clamp(26px,6vw,54px) 18px 30px;
-  border:1px solid #b5945c;
-  border-radius:30px;
-  background:radial-gradient(circle at var(--welcome-x,50%) var(--welcome-y,28%),#48725a66,transparent 220px),#123629;
-  box-shadow:inset 0 0 0 6px #0e2d22,0 28px 72px #0006;
+.pharmacyWelcomeScenery {position:absolute;inset:0;z-index:-1;pointer-events:none;overflow:hidden}
+.pharmacyWelcomeScenery i {
+  position:absolute;
+  width:clamp(470px,85vw,1240px);
+  aspect-ratio:1.65;
+  border:1px solid #d6b77a36;
+  border-radius:50%;
+  inset:50% auto auto 50%;
+  transform:translate(-50%,-50%) rotate(-25deg);
+  animation:welcome-scenery 1.25s cubic-bezier(.2,.68,.24,1) both;
 }
+.pharmacyWelcomeScenery i:nth-child(2) {width:clamp(530px,94vw,1440px);animation-delay:.1s;border-color:#97b8a338}
+.pharmacyWelcomeScenery i:nth-child(3) {width:clamp(600px,108vw,1600px);animation-delay:.2s}
+.pharmacyWelcomeContent {width:min(690px,100%);display:grid;justify-items:center;gap:22px}
 .pharmacyWelcomeEmblem {
-  position:relative;
   display:grid;
   place-items:center;
-  width:174px;
-  height:174px;
-  margin:0 auto 24px;
+  position:relative;
+  width:192px;
+  height:192px;
 }
-.pharmacyWelcomeEmblem::before,.pharmacyWelcomeEmblem::after {
-  content:"";
+.pharmacyWelcomeHalo {
   position:absolute;
-  inset:0;
+  inset:8px;
+  border:1px solid #d7bc83;
   border-radius:50%;
-  border:1px solid #d7b67566;
+  box-shadow:0 0 0 12px #d7bc8319,0 0 50px #d7bc8333;
+  animation:welcome-halo .95s .12s cubic-bezier(.12,.7,.24,1) both;
 }
-.pharmacyWelcomeEmblem::after {
-  inset:15px;
-  border-color:#e6ce94;
-  box-shadow:0 0 27px #d6af6230;
-  animation:welcome-ring .7s ease-out both;
+.pharmacyWelcomeEmblem img {
+  border-radius:50%;
+  box-shadow:0 8px 38px #091c17b0;
+  animation:welcome-logo-rise .82s .2s cubic-bezier(.14,.77,.25,1) both;
 }
-.pharmacyWelcomeEmblem img {border-radius:22px;animation:welcome-ring .6s .1s ease-out both}
-.pharmacyWelcomeOrbit {position:absolute;inset:0;z-index:1;animation:welcome-orbit 3s cubic-bezier(.19,.65,.3,1) both}
-.pharmacyWelcomeOrbit i {
+.pharmacyWelcomeCapsule {
   position:absolute;
-  width:20px;height:9px;
-  border-radius:9px;
-  background:linear-gradient(90deg,#ebcd8c 50%,#81af95 50%);
-  box-shadow:0 0 10px #e4c58770;
+  z-index:1;
+  inset:10px 20px auto auto;
+  width:24px;
+  height:11px;
+  --pellet-x:48px;
+  --pellet-y:-27px;
+  border-radius:99px;
+  background:linear-gradient(90deg,#e8cf91 50%,#85b69b 50%);
+  box-shadow:0 0 12px #edcf8277;
+  animation:welcome-arrive .95s .37s ease-out both;
 }
-.pharmacyWelcomeOrbit i:nth-child(1) {top:-4px;left:calc(50% - 10px)}
-.pharmacyWelcomeOrbit i:nth-child(2) {bottom:24px;left:7px;transform:rotate(60deg)}
-.pharmacyWelcomeOrbit i:nth-child(3) {bottom:24px;right:7px;transform:rotate(-60deg)}
-.pharmacyWelcomeMessage {animation:welcome-message .42s .25s ease-out both}
-.pharmacyWelcome .pharmacyWelcomeMessage h1 {font-size:clamp(22px,5vw,34px);line-height:1.5}
-.pharmacyWelcomeMessage p {color:#daeadf;margin:8px 0 20px}
-.pharmacyWelcomeProgress {width:min(230px,70%);height:3px;background:#f5e5b83a;margin:0 auto 18px;border-radius:4px;overflow:hidden}
-.pharmacyWelcomeProgress::after {content:"";display:block;height:100%;background:#e5c47e;transform-origin:right;animation:welcome-progress var(--welcome-duration) linear both}
-.pharmacyWelcome .publicPrimary {background:#f8efd9;color:#123c2c;border-color:#e5c47e;transition:background .18s ease}
-.pharmacyWelcome .publicPrimary:hover {background:#f0dcad}
-.pharmacyWelcome .publicPrimary:focus-visible {outline:2px solid #fff1c7;outline-offset:3px}
-@keyframes welcome-ring {from{opacity:0;transform:scale(.8)}to{opacity:1;transform:none}}
-@keyframes welcome-orbit {from{transform:rotate(-105deg);opacity:0}to{transform:rotate(20deg);opacity:1}}
-@keyframes welcome-message {from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
-@keyframes welcome-progress {from{transform:scaleX(0)}to{transform:scaleX(1)}}
+.pharmacyWelcomeCapsule:nth-of-type(3) {inset:auto auto 14px 16px;--pellet-x:-42px;--pellet-y:29px;animation-delay:.56s}
+.pharmacyWelcomeMessage {animation:welcome-heading .64s .76s cubic-bezier(.2,.7,.3,1) both}
+.pharmacyWelcome .pharmacyWelcomeMessage h1 {font-size:clamp(25px,5vw,46px);line-height:1.65;margin:0;text-wrap:balance}
+@keyframes welcome-scenery {
+  from{opacity:0;transform:translate(-50%,-50%) rotate(-44deg) scale(.86)}
+  to{opacity:1;transform:translate(-50%,-50%) rotate(-25deg) scale(1)}
+}
+@keyframes welcome-halo {from{opacity:0;transform:scale(.66)}to{opacity:1;transform:none}}
+@keyframes welcome-logo-rise {from{opacity:0;transform:translateY(16px) scale(.88)}to{opacity:1;transform:none}}
+@keyframes welcome-arrive {from{opacity:0;transform:translate(var(--pellet-x),var(--pellet-y)) rotate(80deg)}to{opacity:1;transform:rotate(-27deg)}}
+@keyframes welcome-heading {from{opacity:0;transform:translateY(16px);filter:blur(4px)}to{opacity:1;transform:none;filter:none}}
+@keyframes welcome-exit {0%,82%{opacity:1}100%{opacity:0}}
 @media(prefers-reduced-motion:reduce) {
-  .pharmacyWelcome :is(.pharmacyWelcomeEmblem img,.pharmacyWelcomeOrbit,.pharmacyWelcomeMessage),.pharmacyWelcomeEmblem::after,.pharmacyWelcomeProgress::after {animation:none}
+  .pharmacyWelcome,.pharmacyWelcome :is(.pharmacyWelcomeScenery i,.pharmacyWelcomeHalo,.pharmacyWelcomeEmblem img,.pharmacyWelcomeCapsule,.pharmacyWelcomeMessage) {animation:none}
 }
