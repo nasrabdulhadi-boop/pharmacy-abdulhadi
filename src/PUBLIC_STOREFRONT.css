@@ -1101,3 +1101,66 @@
 @media(max-width:640px) and (prefers-reduced-motion:reduce) {
   .publicCapsuleGateway .gatewayLayout {gap:14px}
 }
+
+/* Open brand area and raised sign-in card. */
+.publicCapsuleGateway {
+  background:
+    radial-gradient(ellipse at 80% 40%, #285845 0%, transparent 49%),
+    linear-gradient(132deg, #102d23, #071a14 76%);
+}
+.publicCapsuleGateway .publicLoginStage {width:min(1080px,100%)}
+.publicCapsuleGateway .gatewayLayout {
+  grid-template-columns:minmax(0,1fr) minmax(0,.83fr);
+  align-items:center;
+  gap:clamp(24px,7vw,96px);
+}
+.publicCapsuleGateway .publicLoginIdentity {
+  position:relative;
+  min-height:360px;
+  padding:38px 10px;
+  border:0;
+  background:none;
+  box-shadow:none;
+  overflow:visible;
+}
+.publicCapsuleGateway .publicLoginIdentity::before {
+  inset:5% 0;
+  background:radial-gradient(ellipse,#bc9a512a,transparent 67%);
+}
+.publicCapsuleGateway .publicLoginIdentity::after {
+  inset:50% auto auto 50%;
+  width:clamp(190px,26vw,315px);
+  aspect-ratio:1;
+  border-radius:50%;
+  transform:translate(-50%,-57%);
+  background:none;
+  border-color:#c9ad6b35;
+}
+.publicCapsuleGateway .publicLoginIdentity img {
+  width:clamp(118px,15vw,176px);
+  border-radius:50%;
+  outline:1px solid #dcc18c;
+  outline-offset:8px;
+}
+.publicCapsuleGateway .publicLoginIdentity strong {font-size:clamp(19px,2.8vw,31px)}
+.publicCapsuleGateway .publicLoginIdentity strong::after {width:32px}
+.publicCapsuleGateway .publicLoginCard {
+  border-radius:22px;
+  border-color:#ddd0ab;
+  background:linear-gradient(160deg,#fffdf7,#f7f2e6);
+  box-shadow:0 28px 72px #020d0990;
+}
+.publicCapsuleGateway .gatewayFrame {border-radius:22px}
+.publicCapsuleGateway .publicLoginFields {padding:clamp(22px,4vw,43px)}
+.publicCapsuleGateway .publicLoginFields h1 {border-bottom:0;padding-bottom:5px}
+.publicCapsuleGateway .publicLoginFields h1::after {display:block;margin-top:8px;width:30px}
+.publicCapsuleGateway .publicLoginField {border-color:#bdc8ba;background:#f8f9f3}
+@media(max-width:640px){
+  .publicCapsuleGateway .gatewayLayout {grid-template-columns:1fr;gap:56px}
+  .publicCapsuleGateway .publicLoginIdentity {min-height:0;padding:15px 8px 12px}
+  .publicCapsuleGateway .publicLoginIdentity img {width:76px}
+  .publicCapsuleGateway .publicLoginIdentity::after {width:132px}
+}
+@media(max-width:640px) and (prefers-reduced-motion:reduce){
+  .publicCapsuleGateway .gatewayLayout {gap:12px}
+}
