@@ -190,3 +190,67 @@
 @media(max-width: 1100px) {
   .posCompactStation .posCompactCheckout {grid-template-columns:minmax(0,1fr)}
 }
+
+.posV440.posClassic.posCompactStation .posCompactCheckout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 7px;
+  padding: 8px 12px;
+  container-type: inline-size;
+}
+.posCheckoutSummary {
+  display: grid;
+  grid-template-columns: max-content minmax(78px, .85fr) minmax(170px, 2fr) minmax(80px, .95fr);
+  gap: 6px;
+  align-items: stretch;
+}
+.posCheckoutMetric {
+  display: grid;
+  align-content: center;
+  gap: 2px;
+  min-width: 0;
+  padding: 4px 8px;
+  border-inline-start: 1px solid var(--pos-line);
+  font-variant-numeric: tabular-nums;
+}
+.posCheckoutMetric span {font-size: 11px;color: var(--pos-muted)}
+.posCheckoutMetric :is(b,strong) {font-size: 13px;overflow-wrap: anywhere}
+.posCheckoutNet {background: var(--pos-highlight);border: 0;border-radius: 7px;color: var(--pos-accent)}
+.posCheckoutNet strong {font-size: 15px}
+.posV440.posClassic.posCompactStation .posCheckoutSummary .posInvoiceDiscount {
+  align-content: center;
+  padding: 4px 6px !important;
+  gap: 4px !important;
+}
+.posCheckoutSummary .posInvoiceDiscount label {min-width: 0}
+.posV440.posClassic.posCompactStation .posCheckoutSummary .posInvoiceDiscount :is(input,select) {
+  padding: 3px 5px !important;
+  min-width: 0 !important;
+  min-height: 28px;
+}
+.posCheckoutSummary .posInvoiceDiscount select {flex: 2 1 90px}
+.posCheckoutSummary .posInvoiceDiscount input {flex: 1 1 38px}
+.posCheckoutActions {
+  display: grid;
+  grid-template-columns: minmax(110px, 1fr) minmax(0, 1fr) minmax(100px, 1fr);
+  gap: 6px;
+  align-items: center;
+}
+.posV440.posClassic.posCompactStation .posCheckoutActions :is(.paymentModes button,.posCheckoutDebtor,.posComplete) {
+  min-width: 0 !important;
+  min-height: 35px !important;
+  height: 35px !important;
+  margin: 0 !important;
+  padding: 4px 7px !important;
+  font-size: 12px !important;
+  white-space: nowrap;
+}
+.posCheckoutActions .posCheckoutDebtor {display:block !important;overflow:hidden;text-overflow:ellipsis}
+.posCheckoutActions .paymentModes {display:flex !important;gap:4px;margin:0 !important}
+.posDebtorPicker .modalBox {width:min(500px,calc(100vw - 24px));box-sizing:border-box}
+.posDebtorPicker .debtorResults {max-height:min(35vh, 250px);overflow:auto;margin:8px 0}
+@container (max-width: 470px) {
+  .posCheckoutSummary {grid-template-columns: repeat(3, minmax(0,1fr))}
+  .posCheckoutSummary .posInvoiceDiscount {grid-row:2;grid-column:1 / -1}
+  .posCheckoutActions {grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, .9fr)}
+}
