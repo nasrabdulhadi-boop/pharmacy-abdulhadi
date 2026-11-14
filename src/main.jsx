@@ -1712,13 +1712,17 @@ function Login(){
  return <main className="publicLogin" dir="rtl">
   <a href="#home" className="publicBack">العودة للموقع <ChevronLeft size={17}/></a>
   <div className="publicLoginStage">
-   <form onSubmit={e=>{e.preventDefault();submitLogin()}}>
-    <BrandLogo/>
-    <h1>تسجيل دخول الإدارة</h1>
-    <label>البريد الإلكتروني<input type="email" autoComplete="username" value={email} onChange={e=>setEmail(e.target.value)} required/></label>
-    <label>كلمة المرور<input type="password" autoComplete="current-password" value={password} onChange={e=>setPassword(e.target.value)} required/></label>
-    <button className="publicPrimary" disabled={busy}><LogIn size={18}/>{busy?'جارٍ الدخول…':'دخول'}</button>
-    {err&&<div className="error" role="alert">{err}</div>}
+   <form className="publicLoginCard" onSubmit={e=>{e.preventDefault();submitLogin()}} aria-labelledby="admin-login-title">
+    <div className="publicLoginIdentity">
+     <img src="/logo.png" alt={CFG.name} width="80" height="80"/>
+     <h1 id="admin-login-title">دخول الإدارة</h1>
+    </div>
+    <div className="publicLoginFields">
+     <label htmlFor="admin-login-email">البريد الإلكتروني<span className="publicLoginField"><Mail size={18} aria-hidden="true"/><input id="admin-login-email" type="email" dir="ltr" autoComplete="username" value={email} onChange={e=>setEmail(e.target.value)} required/></span></label>
+     <label htmlFor="admin-login-password">كلمة المرور<span className="publicLoginField"><ShieldCheck size={18} aria-hidden="true"/><input id="admin-login-password" type="password" dir="ltr" autoComplete="current-password" value={password} onChange={e=>setPassword(e.target.value)} required/></span></label>
+     {err&&<div className="error" role="alert">{err}</div>}
+     <button className="publicPrimary" type="submit" disabled={busy}><span>{busy?'جارٍ الدخول…':'الدخول إلى لوحة الإدارة'}</span><ChevronLeft size={18} aria-hidden="true"/></button>
+    </div>
    </form>
    <div className="publicLoginParticles" aria-hidden="true">
     {Array.from({length:24},(_,i)=>{

@@ -525,35 +525,69 @@
 }
 
 
-/* Ivory, emerald and brushed gold sampled visually from the official mark. */
+/* Emerald and pale sage carry the identity; gold is a small accent. */
 .publicStorefront,.publicLogin {
-  --forest:#073b27;
-  --ink:#173b2d;
-  --border:#d9cdb1;
-  --paper:#f6f1e6;
+  --forest:#0c4933;
+  --ink:#173c2e;
+  --border:#bdcfc0;
+  --paper:#edf4ec;
 }
 .publicStorefront {
-  background:linear-gradient(160deg,#faf7ef,#f1eee2 58%,#f6f1e6) !important;
+  background:linear-gradient(155deg,#f4f8f1,#e3efe4 58%,#edf4eb) !important;
 }
-.publicStorefront .publicContact {background:#eee6d3;color:#214735}
-.publicStorefront .publicHeader {background:#fbf8ef}
+.publicStorefront .publicContact {background:#d7e9db;color:#214735}
+.publicStorefront .publicHeader {background:#f4f8f1}
 .publicStorefront .publicHero {
-  background:radial-gradient(ellipse at 18% 18%,#e9e6d2,transparent 70%),linear-gradient(120deg,#fcf9f0,#eeeadd);
-  border-color:#d5c39b;
+  background:radial-gradient(ellipse at 18% 18%,#cfe5d4,transparent 72%),linear-gradient(120deg,#f6faf3,#e0eee2);
+  border-color:#abc7b3;
+}
+.publicStorefront .publicHero h1::after {
+  content:"";display:block;width:48px;height:3px;margin-top:15px;border-radius:3px;background:#b48d48;
 }
 .publicStorefront :is(.publicServiceDesk>a,.publicServiceDesk>button,.publicCatalogSearch) {
-  background:#fcf9f1;
-  color:#214735;
-  border-color:#d9cdb1;
+  background:#f5faf4;color:#214735;border-color:var(--border);
 }
-.publicStorefront .publicServiceDesk > :is(a,button):hover {background:#efe7d4;border-color:#b89a60}
-.publicStorefront :is(.quickServices,.productArt,.serviceIcon) {background:#eae7d8!important}
-.publicStorefront :is(.quickServices button,.newProduct,.serviceCard,.offerCustomer,.promo,.lastOrderBar,.emptyProducts) {background:#fcfaf3!important}
-.publicStorefront :is(.publicHeroHours,.publicAdminEntry) {background:#eee7d5;border-color:#cbb78b;color:#234935}
-.publicStorefront .publicAdminEntry:hover {background:#e8ddc2;border-color:#b89a60}
-.publicStorefront .siteFooter {background:#e9e2ce!important}
-.publicLogin {background:radial-gradient(ellipse at 25% 15%,#eee3c8,#f7f3e9 65%);color:var(--ink)}
-.publicLogin form {background:#fcfaf2;border-color:#cbb78b}
-.publicLogin input {background:#f8f4e9;border-color:#cbb78b}
+.publicStorefront .publicServiceDesk > :is(a,button):hover {background:#dfefe2;border-color:#8db49a}
+.publicStorefront :is(.quickServices,.productArt,.serviceIcon) {background:#dcecdf!important}
+.publicStorefront :is(.quickServices button,.newProduct,.serviceCard,.offerCustomer,.promo,.lastOrderBar,.emptyProducts) {background:#f7faf5!important}
+.publicStorefront :is(.publicHeroHours,.publicAdminEntry) {background:#e2efe2;border-color:#b7cbb8;color:#234935}
+.publicStorefront .publicAdminEntry:hover {background:#d0e7d5;border-color:#8db49a}
+.publicStorefront .siteFooter {background:#d4e6d7!important;border-top:1px solid #b29357}
+.publicLogin {background:radial-gradient(ellipse at 26% 14%,#d0e7d6,#eef5ec 65%);color:var(--ink)}
+.publicLogin .publicLoginCard {
+  padding:0;
+  gap:0;
+  background:#f8fbf6;
+  border:1px solid #aec8b5;
+  border-radius:22px;
+  overflow:hidden;
+  box-shadow:0 24px 64px #143e3030;
+}
+.publicLoginIdentity {
+  display:grid;
+  justify-items:center;
+  gap:10px;
+  padding:24px 18px 17px;
+  background:linear-gradient(140deg,#e6f1e5,#d4e7d8);
+  border-bottom:1px solid #c1d4c5;
+}
+.publicLoginIdentity img {
+  object-fit:contain;
+  border-radius:18px;
+  outline:1px solid #b39355;
+  outline-offset:3px;
+}
+.publicLoginIdentity h1 {font-size:clamp(23px,5vw,30px);color:#0c4933}
+.publicLoginFields {display:grid;gap:13px;padding:20px 23px 23px}
+.publicLoginField {
+  display:flex;align-items:center;gap:9px;padding-inline:11px;
+  color:#315c48;background:#eef5ed;border:1px solid #a9c3b1;border-radius:10px;
+}
+.publicLoginField:focus-within {outline:2px solid #4e8b66;outline-offset:2px}
+.publicLoginField svg {flex-shrink:0}
+.publicLogin .publicLoginField input {
+  min-width:0;min-height:43px;padding:7px 0;border:0;outline:none;background:transparent;color:#173c2e;
+}
+.publicLogin .publicLoginFields .publicPrimary {justify-content:space-between;min-height:45px;margin-top:2px}
 .publicLoginStage .publicCapsuleRight {background:linear-gradient(#246449,#073b27)}
 .publicLoginStage .publicCapsuleLeft {background:linear-gradient(#fffaf0,#dcca9c)}
