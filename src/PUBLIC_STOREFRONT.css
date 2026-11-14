@@ -911,3 +911,64 @@
   }
   .publicCapsuleGateway .publicLoginFields .publicPrimary:not(:disabled):is(:hover,:focus-visible) svg {transform:none}
 }
+
+.publicCapsuleGateway .gatewayLayout {
+  grid-template-columns:minmax(0,.92fr) minmax(0,1.08fr);
+  filter:drop-shadow(0 18px 45px #0003);
+}
+.publicCapsuleGateway .publicLoginIdentity {
+  background:
+    linear-gradient(135deg,#102d23e8,#183e30d9),
+    radial-gradient(ellipse at 65% 25%,#5d8a69,#102d23 72%);
+  border-color:#526f60;
+  gap:20px;
+}
+.publicCapsuleGateway .publicLoginIdentity img {
+  width:clamp(96px,11vw,132px);
+  outline-color:#bca16b;
+  outline-offset:5px;
+  box-shadow:0 10px 24px #071b1460;
+}
+.publicCapsuleGateway .publicLoginIdentity strong {
+  font-size:clamp(16px,2vw,23px);
+  font-weight:650;
+}
+.publicCapsuleGateway .publicLoginCard {
+  background:#fbfaf4;
+  border-color:#bba775;
+  box-shadow:none;
+}
+.publicCapsuleGateway .publicLoginFields {
+  padding:clamp(23px,4.1vw,46px);
+  gap:15px;
+}
+.publicCapsuleGateway .publicLoginFields h1 {
+  font-size:clamp(22px,2.7vw,30px);
+  margin-bottom:8px;
+}
+.publicCapsuleGateway .publicLoginFields h1::after {
+  content:"";
+  display:block;
+  width:34px;
+  height:2px;
+  margin-top:10px;
+  background:#b99b60;
+}
+.publicCapsuleGateway .publicLoginField {
+  background:#f1f4ec;
+  border-color:#bdcbbd;
+}
+.publicCapsuleGateway .publicLoginField:focus-within {
+  background:#fffdf6;
+  box-shadow:0 0 0 2px #b9975633;
+}
+.publicCapsuleGateway .publicLoginFields .publicPrimary {
+  background:linear-gradient(110deg,#123e2d,#1a5d45);
+  border-color:#1d5741;
+}
+@media(max-width:640px) {
+  .publicCapsuleGateway .gatewayLayout {grid-template-columns:minmax(0,1fr);filter:none}
+  .publicCapsuleGateway .publicLoginIdentity {gap:12px}
+  .publicCapsuleGateway .publicLoginIdentity img {width:72px}
+  .publicCapsuleGateway .publicLoginFields {padding:21px}
+}
