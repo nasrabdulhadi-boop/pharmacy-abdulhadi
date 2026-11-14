@@ -1,0 +1,228 @@
+/* Keep the same palette in the admin shell and dialogs mounted under body. */
+body.abdulhadiNight {
+  --night-bg:#10181e;
+  --night-panel:#18252d;
+  --night-raised:#21323c;
+  --night-hover:#293d48;
+  --night-border:#3c5460;
+  --night-text:#eff6f5;
+  --night-secondary:#b5c8cd;
+  --night-accent:#8ee2c4;
+  --night-positive:#a8efcc;
+  --night-negative:#ffc4c8;
+  --night-warning:#ffe09b;
+  background:var(--night-bg);
+  color:var(--night-text);
+  color-scheme:dark;
+}
+body.abdulhadiNight .adminShell.adminDark {
+  --night-bg:#10181e;
+  --night-panel:#18252d;
+  --night-raised:#21323c;
+  --night-hover:#293d48;
+  --night-border:#3c5460;
+  --night-text:#eff6f5;
+  --night-secondary:#b5c8cd;
+  --night-accent:#8ee2c4;
+  --night-positive:#a8efcc;
+  --night-negative:#ffc4c8;
+  --night-warning:#ffe09b;
+}
+@media screen {
+  body.abdulhadiNight :is(.adminShell.adminDark,.modalBox,.nativeTopDialog,.dailyActivityDialog,.dashboardDayPanel) {
+    color:var(--night-text) !important;
+  }
+
+  body.abdulhadiNight .adminShell.adminDark :is(.adminMain,.adminTopbar,.mobileBar),
+  body.abdulhadiNight .adminShell.adminDark > aside,
+  body.abdulhadiNight :is(.modalBox,.nativeTopDialog,.dailyActivityDialog,.dashboardDayPanel) {
+    background:var(--night-panel) !important;
+    border-color:var(--night-border) !important;
+  }
+
+  body.abdulhadiNight .adminShell.adminDark :is(
+    .card,.tableWrap,.kpi,.toolbar,.search,.purchaseWorkflow>*,
+    .productModeBanner,.purchaseSection,.purchaseSummaryCard,.purchasePaymentCard,.purchaseDiscountCard,
+    .purchaseSupplierLinkCard,.reportPanel,.reportChartCard,.reportTabPanel,.reportFilter,
+    .intelPanel,.intelKpi,.intelSearchPanel,.intelWelcomeHero,.intelHeroAdvisor,
+    .supplierSummary>div,.supplierCreditPanel,.smartCountSummary>div,.auditDataPanel,.auditDetailCards>div,
+    .detailGrid>div,.dailyActivityControls,.dailyActivityNotice,.reportIntegrityNote,
+    .posV440.posClassic,.posInvoice,.posStationSearch,.posTopBar,.posSearchBar,.posSearchPopup,
+    .posShortcutSidebar,.posShortcutTabs,.posCompactCheckout,.posInvoiceDiscount,
+    .quickManageRow,.quickManageResults,.posCheckoutSummary,.posCheckoutActions
+  ),
+  body.abdulhadiNight :is(.modalBox,.nativeTopDialog,.dailyActivityDialog,.dashboardDayPanel) :is(
+    .card,.search,.detailGrid>div,.tableWrap,.purchaseSection,.purchaseSummaryCard,.purchasePaymentCard,
+    .purchaseDiscountCard,.purchaseSupplierLinkCard,.purchaseExpiryDialogBox,.purchaseInvoiceStickyFooter,
+    .purchaseSummaryRows>div,.supplierSummary>div,.auditField,.auditItemCard,.auditSummaryPanel,.auditDataPanel,
+    .auditItemsPanel,.debtorInvoiceSummary>div,.productCardHead,.debtorResults>button,.selectedDebtor
+  ) {
+    background:var(--night-panel) !important;
+    border-color:var(--night-border) !important;
+    color:var(--night-text) !important;
+    box-shadow:none !important;
+  }
+
+  body.abdulhadiNight :is(.adminShell.adminDark,.modalBox,.nativeTopDialog,.dailyActivityDialog,.dashboardDayPanel)
+  :is(table,thead,tbody,tr,td,th) {
+    border-color:var(--night-border) !important;
+    color:var(--night-text) !important;
+  }
+  body.abdulhadiNight :is(.adminShell.adminDark,.modalBox,.nativeTopDialog,.dailyActivityDialog,.dashboardDayPanel)
+  :is(table,tbody,tbody tr,td) {background:var(--night-panel) !important}
+  body.abdulhadiNight :is(.adminShell.adminDark,.modalBox,.nativeTopDialog,.dailyActivityDialog,.dashboardDayPanel)
+  :is(thead,thead tr,th,tbody tr:nth-child(even) td) {background:var(--night-raised) !important}
+  body.abdulhadiNight :is(.adminShell.adminDark,.modalBox,.nativeTopDialog) tbody tr:hover td {background:var(--night-hover) !important}
+
+  body.abdulhadiNight :is(.adminShell.adminDark,.modalBox,.nativeTopDialog,.dailyActivityDialog,.dashboardDayPanel)
+  :is(input,select,textarea,option,kbd,.scanBtn,.productScanIcon,.iconBtn,.miniBtn,.posSettingsBtn,.secondaryAction,.posShortcutTabs button,
+      .posV440.posClassic .posShortcutSidebar .posShortcutSlot,.paymentModes button,.reportTabs button,.auditTabs button) {
+    background:var(--night-raised) !important;
+    color:var(--night-text) !important;
+    border-color:var(--night-border) !important;
+  }
+  body.abdulhadiNight :is(.adminShell.adminDark,.modalBox,.nativeTopDialog)
+  :is(input,textarea)::placeholder {color:var(--night-secondary) !important;opacity:1}
+  body.abdulhadiNight :is(.adminShell.adminDark,.modalBox,.nativeTopDialog)
+  :is(button,input,select,textarea):focus-visible {outline:2px solid var(--night-accent);outline-offset:2px}
+
+  body.abdulhadiNight .adminShell.adminDark :is(.navGroup button.active,.posShortcutTabs button.active,.paymentModes button.active,
+    .reportTabs button.active,.auditTabs button.active,.posCheckoutNet,.posPopupIndex,.posShortcutIndex),
+  body.abdulhadiNight :is(.modalBox,.nativeTopDialog) :is(button.selected,button.active,[aria-selected="true"]) {
+    background:#214539 !important;
+    color:var(--night-positive) !important;
+    border-color:#477062 !important;
+  }
+
+  body.abdulhadiNight :is(.adminShell.adminDark,.modalBox,.nativeTopDialog,.dailyActivityDialog)
+  :is(.activePill,.mutedPill,.warnPill,.resultPill,.inventoryQtyReadOnly,.purchaseSectionBadge,.activeFilterHint,
+      .supplierCreditBadge,.purchaseWorkflow>*>*,.posDefaultsHint,.posUsdHint) {
+    background:var(--night-raised) !important;
+    color:var(--night-text) !important;
+    border-color:var(--night-border) !important;
+  }
+  body.abdulhadiNight :is(.adminShell.adminDark,.modalBox,.nativeTopDialog) :is(.activePill,.good,.positive) {color:var(--night-positive) !important}
+  body.abdulhadiNight :is(.adminShell.adminDark,.modalBox,.nativeTopDialog) :is(.warnPill,.warn,.warning) {color:var(--night-warning) !important}
+  body.abdulhadiNight :is(.adminShell.adminDark,.modalBox,.nativeTopDialog) :is(.danger,.dangerText,.bad,.negative) {color:var(--night-negative) !important}
+  body.abdulhadiNight :is(.adminShell.adminDark,.modalBox,.nativeTopDialog) :is(.activePill,.mutedPill,.warnPill) {
+    display:inline-flex;align-items:center;min-width:max-content;white-space:nowrap;opacity:1;
+  }
+  body.abdulhadiNight .adminShell.adminDark :is(.linkButton,.posProductName,.posPopupPrice,.posShortcutName,.posCheckoutMetric strong) {
+    color:var(--night-accent) !important;
+  }
+  body.abdulhadiNight .adminShell.adminDark :is(.posDefaultsHint,.posDefaultsHint b,.posShortcutSlot small,.posPopupMeta small,.posPopupMain b) {
+    color:var(--night-text) !important;
+  }
+  body.abdulhadiNight .adminShell.adminDark .posV440.posClassic.posCompactStation .posStationHeader {
+    background:#21323c !important;
+    color:var(--night-text) !important;
+    border-bottom:1px solid var(--night-border) !important;
+  }
+  body.abdulhadiNight .adminShell.adminDark .posV440.posClassic.posCompactStation .posStationResults .posPopupItem {
+    background:var(--night-panel) !important;
+    border-color:var(--night-border) !important;
+  }
+  body.abdulhadiNight .adminShell.adminDark .posV440.posClassic.posCompactStation .posStationResults .posPopupItem:is(:hover,:focus-visible) {
+    background:var(--night-hover) !important;
+  }
+}
+
+@media screen {
+  body.abdulhadiNight .adminShell.adminDark .adminMain :is(
+    .posShortcutSlot.populated,.posShortcutSlot.empty,.posShortcutSlot.populated .posShortcutName,
+    .posShortcutSlot.populated small,.posShortcutHead,.posShortcutHelp,.posShortcutTabs button:not(.active)
+  ) {
+    background:var(--night-raised) !important;
+    color:var(--night-text) !important;
+    border-color:var(--night-border) !important;
+    box-shadow:none !important;
+  }
+
+  body.abdulhadiNight .adminShell.adminDark .adminMain :is(
+    .purchaseWorkflow>*,.purchaseWorkflow>*>*,.productModeBanner,
+    .inventoryQtyReadOnly,.posDefaultsHint,.posDefaultsHint b
+  ) {
+    background:var(--night-raised) !important;
+    color:var(--night-text) !important;
+    border-color:var(--night-border) !important;
+  }
+  body.abdulhadiNight .adminShell.adminDark .adminMain .posStationSearch .posSearchBar {
+    background:var(--night-panel) !important;
+    border-color:var(--night-border) !important;
+    box-shadow:none !important;
+  }
+  body.abdulhadiNight .adminShell.adminDark .adminMain :is(.primary,.posComplete),
+  body.abdulhadiNight :is(.modalBox,.nativeTopDialog) .primary {
+    background:#176044 !important;
+    color:#f4fff9 !important;
+    border-color:#4b9478 !important;
+  }
+}
+
+/* Match the specificity of the legacy invoice rules, including striped and hovered rows. */
+@media screen {
+  body.abdulhadiNight .adminShell.adminDark .posV440.posClassic .posInvoice table.posTable.invoiceTable :is(tbody,tbody tr,tbody td) {
+    background:var(--night-panel) !important;
+    color:var(--night-text) !important;
+    border-color:var(--night-border) !important;
+  }
+  body.abdulhadiNight .adminShell.adminDark .posV440.posClassic .posInvoice table.posTable.invoiceTable tbody tr:nth-child(even) td {
+    background:var(--night-raised) !important;
+  }
+  body.abdulhadiNight .adminShell.adminDark .posV440.posClassic .posInvoice table.posTable.invoiceTable tbody tr:hover td {
+    background:var(--night-hover) !important;
+  }
+  body.abdulhadiNight .adminShell.adminDark .posV440.posClassic .posInvoice table.posTable.invoiceTable :is(td small,.posProductName span) {
+    color:var(--night-secondary) !important;
+  }
+  body.abdulhadiNight .adminShell.adminDark .posV440.posClassic .posInvoice table.posTable.invoiceTable .posProductName {
+    color:var(--night-accent) !important;
+  }
+
+  /* The purchase editor is portaled outside the admin shell. */
+  body.abdulhadiNight dialog.nativeTopDialog.purchaseInvoiceModal :is(
+    .modalBox.wide,.purchaseInvoiceHeader,.purchaseInvoiceMain,.purchaseInvoiceSidebar,.purchaseProfessionalTable,
+    .purchaseSection,.purchaseSummaryCard,.purchaseSummaryTotal,.purchaseSummaryRows>div,.purchaseSummaryRows>div.due,
+    .purchaseDiscountCard,.purchasePaymentCard,.purchaseSupplierLinkCard,.purchaseInvoiceStickyFooter,
+    .supplierChooser,.supplierChooserTop,.purchaseAuditNote,.purchaseExpiryDialogBox
+  ) {
+    background:var(--night-panel) !important;
+    color:var(--night-text) !important;
+    border-color:var(--night-border) !important;
+  }
+  body.abdulhadiNight dialog.nativeTopDialog.purchaseInvoiceModal .purchaseProfessionalTable tbody td {
+    background:var(--night-panel) !important;
+    color:var(--night-text) !important;
+    border-color:var(--night-border) !important;
+  }
+  body.abdulhadiNight dialog.nativeTopDialog.purchaseInvoiceModal .purchaseProfessionalTable :is(thead th,tbody tr:nth-child(even) td) {
+    background:var(--night-raised) !important;
+    color:var(--night-text) !important;
+    border-color:var(--night-border) !important;
+  }
+  body.abdulhadiNight dialog.nativeTopDialog.purchaseInvoiceModal .purchaseProfessionalTable tbody tr:hover td {
+    background:var(--night-hover) !important;
+  }
+  body.abdulhadiNight dialog.nativeTopDialog.purchaseInvoiceModal :is(input:not([type="checkbox"]),select,textarea),
+  body.abdulhadiNight dialog.nativeTopDialog.purchaseInvoiceModal .purchaseProfessionalTable td:nth-child(9) input {
+    background:var(--night-raised) !important;
+    color:var(--night-text) !important;
+    border-color:var(--night-border) !important;
+  }
+  body.abdulhadiNight dialog.nativeTopDialog.purchaseInvoiceModal :is(.purchaseProductDisplay b,.purchaseSummaryTotal strong) {
+    color:var(--night-text) !important;
+  }
+  body.abdulhadiNight dialog.nativeTopDialog.purchaseInvoiceModal :is(.purchaseProductDisplay small,label) {
+    color:var(--night-secondary) !important;
+  }
+  body.abdulhadiNight :is(.adminShell.adminDark,.modalBox,.nativeTopDialog) :is(.errorBox,.error,.dangerRow td) {
+    background:#402a31 !important;
+    color:var(--night-negative) !important;
+    border-color:#79505a !important;
+  }
+  body.abdulhadiNight :is(.adminShell.adminDark,.modalBox,.nativeTopDialog) :is(.notice,.purchaseAuditNote) {
+    background:#3a3225 !important;
+    color:var(--night-warning) !important;
+    border-color:#695738 !important;
+  }
+}
