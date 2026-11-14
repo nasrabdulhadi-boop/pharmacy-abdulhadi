@@ -724,3 +724,77 @@
 .publicEmeraldLogin .publicLoginFields .publicPrimary {min-height:46px}
 @keyframes emerald-signin-enter {from{transform:translateY(6px);opacity:.86}to{transform:none;opacity:1}}
 @media(prefers-reduced-motion:reduce) {.publicEmeraldLogin .publicLoginCard {animation:none}}
+
+.publicCapsuleGateway {
+  background:radial-gradient(ellipse at 78% 27%,#264d3d,transparent 50%),#0b2119;
+  padding-block-start:112px;
+}
+.publicCapsuleGateway .publicLoginStage {
+  width:min(900px,100%);
+}
+.gatewayLayout {
+  display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);
+  align-items:stretch;
+  width:100%;
+}
+.publicCapsuleGateway .publicLoginIdentity {
+  align-content:center;
+  min-height:340px;
+  padding:32px 20px;
+  border:1px solid #527667;
+  border-inline-end:0;
+  border-radius:0 26px 26px 0;
+  background:radial-gradient(ellipse at 50% 45%,#31614b,#143329 77%);
+}
+.publicCapsuleGateway .publicLoginIdentity img {
+  width:clamp(96px,13vw,152px);
+  height:auto;
+  aspect-ratio:1;
+  border-radius:25px;
+}
+.publicCapsuleGateway .publicLoginIdentity strong {
+  font-size:clamp(17px,2.2vw,25px);
+}
+.gatewayFormStage {position:relative;min-width:0}
+.publicCapsuleGateway .publicLoginCard {
+  min-height:100%;
+  border-radius:26px 0 0 26px;
+  box-shadow:0 16px 50px #0004;
+  animation:public-form-complete 1.72s linear both;
+}
+.publicCapsuleGateway .publicLoginFields {
+  padding:clamp(22px,5vw,52px);
+  gap:18px;
+}
+.publicCapsuleGateway .publicLoginFields h1 {
+  font-size:clamp(23px,3vw,32px);
+  margin-bottom:4px;
+}
+.publicCapsuleGateway .publicLoginFields .publicPrimary {
+  min-height:48px;
+}
+.publicCapsuleGateway .publicLoginStage .publicLoginCapsule {inset-inline:20%}
+.publicCapsuleGateway .publicLoginParticles i {
+  background:#dfbb69;
+  box-shadow:0 0 10px #dfbb69a0;
+}
+@media(max-width:640px) {
+  .publicCapsuleGateway {padding-block-start:70px}
+  .gatewayLayout {grid-template-columns:minmax(0,1fr);gap:56px}
+  .publicCapsuleGateway .publicLoginIdentity {
+    min-height:0;
+    gap:10px;
+    padding:18px;
+    border:1px solid #527667;
+    border-radius:18px;
+  }
+  .publicCapsuleGateway .publicLoginIdentity img {width:72px}
+  .publicCapsuleGateway .publicLoginCard {border-radius:18px}
+  .publicCapsuleGateway .publicLoginStage .publicLoginCapsule {margin-bottom:4px}
+  .publicCapsuleGateway .publicCapsuleHalf {height:45px}
+}
+@media(prefers-reduced-motion:reduce) {
+  .publicCapsuleGateway .publicLoginCard {animation:none}
+  .publicCapsuleGateway .gatewayLayout {row-gap:12px}
+}

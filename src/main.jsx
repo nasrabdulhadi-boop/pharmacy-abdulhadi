@@ -1709,13 +1709,15 @@ function Login(){
   const {error}=await supabase.auth.signInWithPassword({email,password});
   if(error)setErr(error.message);
  });
- return <main className="publicLogin publicEmeraldLogin" dir="rtl">
+ return <main className="publicLogin publicEmeraldLogin publicCapsuleGateway" dir="rtl">
   <a href="#home" className="publicBack">العودة للموقع <ChevronLeft size={17} aria-hidden="true"/></a>
   <div className="publicLoginStage">
+   <div className="gatewayLayout">
     <div className="publicLoginIdentity">
      <img src="/logo.png" alt={CFG.name} width="80" height="80"/>
      <strong>{CFG.name}</strong>
     </div>
+   <div className="gatewayFormStage">
    <form className="publicLoginCard" onSubmit={e=>{e.preventDefault();submitLogin()}} aria-labelledby="admin-login-title">
     <div className="publicLoginFields">
      <h1 id="admin-login-title">دخول الإدارة</h1>
@@ -1725,6 +1727,20 @@ function Login(){
      <button className="publicPrimary" type="submit" disabled={busy}><span>{busy?'جارٍ الدخول…':'الدخول إلى لوحة الإدارة'}</span><ChevronLeft size={18} aria-hidden="true"/></button>
     </div>
    </form>
+   <div className="publicLoginParticles" aria-hidden="true">
+    {Array.from({length:24},(_,i)=>{
+     const side=Math.floor(i/6), step=(i%6)/5;
+     const x=side===0?step*100:side===1?100:side===2?(1-step)*100:0;
+     const y=side===0?0:side===1?step*100:side===2?100:(1-step)*100;
+     return <i key={i} style={{'--particle-x':`${x}%`,'--particle-y':`${y}%`,'--particle-delay':`${550+(i%6)*48}ms`}}/>;
+    })}
+   </div>
+   <div className="publicLoginCapsule" aria-hidden="true">
+    <span className="publicCapsuleHalf publicCapsuleRight"><span>{CFG.name}</span></span>
+    <span className="publicCapsuleHalf publicCapsuleLeft"><img src="/logo.png" alt=""/></span>
+   </div>
+   </div>
+   </div>
 
   </div>
  </main>;
