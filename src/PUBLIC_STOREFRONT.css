@@ -1368,3 +1368,28 @@
 @media(prefers-reduced-motion:reduce) {
   .pharmacyWelcome::before,.pharmacyWelcome .pharmacyWelcomeCapsule {animation:none}
 }
+
+.pharmacyWelcomeSeal {
+  position:absolute;
+  inset:-13px;
+  border-radius:50%;
+  background:conic-gradient(from 194deg,transparent 0 9%,#e3c487aa 19%,transparent 33% 62%,#d7b6728c 73%,transparent 92%);
+  mask-image:radial-gradient(transparent 61%,#000 63% 65%,transparent 67%);
+  animation:welcome-seal .95s .34s cubic-bezier(.17,.65,.3,1) both;
+}
+.pharmacyWelcomeEmblem img {
+  outline-color:#ecd397;
+  box-shadow:0 13px 36px #03150dd0,0 0 36px #d4bc7530;
+}
+.pharmacyWelcome .pharmacyWelcomeMessage h1 span {
+  display:block;color:#efe6cf;font-size:clamp(18px,3vw,25px);font-weight:500;
+}
+.pharmacyWelcome .pharmacyWelcomeMessage h1 strong {
+  display:block;color:#ffe6aa;font-size:clamp(33px,6vw,58px);font-weight:700;
+  animation:welcome-name .57s .98s cubic-bezier(.17,.68,.28,1) both;
+}
+@keyframes welcome-seal {from{opacity:0;transform:scale(.83) rotate(-40deg)}to{opacity:1;transform:none}}
+@keyframes welcome-name {from{opacity:0;transform:translateY(9px);filter:blur(5px)}to{opacity:1;transform:none;filter:none}}
+@media(prefers-reduced-motion:reduce) {
+  .pharmacyWelcomeSeal,.pharmacyWelcome .pharmacyWelcomeMessage h1 strong {animation:none}
+}

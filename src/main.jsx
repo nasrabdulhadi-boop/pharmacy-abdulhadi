@@ -1768,11 +1768,12 @@ function AdminWelcome({owner,onContinue}){
   <div className="pharmacyWelcomeContent">
    <div className="pharmacyWelcomeEmblem" aria-hidden="true">
     <span className="pharmacyWelcomeHalo"/>
+    <span className="pharmacyWelcomeSeal"/>
     <span className="pharmacyWelcomeCapsule"/><span className="pharmacyWelcomeCapsule"/>
     <img src="/logo.png" alt="" width="108" height="108"/>
    </div>
    <div className="pharmacyWelcomeMessage" role="status">
-    <h1>{owner?'أهلاً بك، مديرنا دكتور نصر':'أهلاً بك في إدارة الصيدلية'}</h1>
+    <h1>{owner?<><span>أهلاً بك، مديرنا</span><strong>دكتور نصر</strong></>:'أهلاً بك في إدارة الصيدلية'}</h1>
    </div>
   </div>
  </main>;
