@@ -254,3 +254,37 @@
   .posCheckoutSummary .posInvoiceDiscount {grid-row:2;grid-column:1 / -1}
   .posCheckoutActions {grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, .9fr)}
 }
+
+.posV440.posClassic.posCompactStation .posStationSearch .posStationResults {
+  width:100% !important;
+  margin:6px 0 0 !important;
+  max-height:none;
+  overflow:visible !important;
+  border:0 !important;
+  border-radius:0 !important;
+  box-shadow:none !important;
+  background:transparent !important;
+}
+.posStationResults .posPopupHead {
+  background:transparent !important;
+  border:0 !important;
+  padding:4px 8px !important;
+}
+.posStationResults .posResultScroll {
+  max-height:min(36dvh, 320px);
+  overflow-y:auto;
+  overscroll-behavior-y:contain;
+  scrollbar-gutter:stable;
+  touch-action:pan-y;
+}
+.posV440.posClassic.posCompactStation .posStationResults .posPopupItem {
+  margin:0 !important;
+  border:0 !important;
+  border-bottom:1px solid var(--pos-line) !important;
+  border-radius:0 !important;
+  box-shadow:none !important;
+  background:transparent !important;
+}
+.posV440.posClassic.posCompactStation .posStationResults .posPopupItem:is(:hover,:focus-visible) {
+  background:var(--pos-highlight) !important;
+}
