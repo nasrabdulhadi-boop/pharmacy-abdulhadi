@@ -1704,6 +1704,8 @@ function Security(){const [logs,setLogs]=useState([]),[err,setErr]=useState(''),
 
 function Login(){
  const [email,setEmail]=useState(''),[password,setPassword]=useState(''),[err,setErr]=useState('');
+ const [passwordVisible,setPasswordVisible]=useState(false);
+ const [animationRun,setAnimationRun]=useState(0);
  const [submitLogin,busy]=useSingleSubmission(async()=>{
   setErr('');
   const {error}=await supabase.auth.signInWithPassword({email,password});
@@ -1718,16 +1720,18 @@ function Login(){
      <strong>{CFG.name}</strong>
     </div>
    <div className="gatewayFormStage">
+   <div className="gatewayFrame" aria-hidden="true"/>
    <form className="publicLoginCard" onSubmit={e=>{e.preventDefault();submitLogin()}} aria-labelledby="admin-login-title">
     <div className="publicLoginFields">
      <h1 id="admin-login-title">دخول الإدارة</h1>
      <label htmlFor="admin-login-email">البريد الإلكتروني<span className="publicLoginField"><Mail size={18} aria-hidden="true"/><input id="admin-login-email" type="email" dir="ltr" autoComplete="username" value={email} onChange={e=>setEmail(e.target.value)} required/></span></label>
-     <label htmlFor="admin-login-password">كلمة المرور<span className="publicLoginField"><ShieldCheck size={18} aria-hidden="true"/><input id="admin-login-password" type="password" dir="ltr" autoComplete="current-password" value={password} onChange={e=>setPassword(e.target.value)} required/></span></label>
+     <label htmlFor="admin-login-password">كلمة المرور<span className="publicLoginField"><ShieldCheck size={18} aria-hidden="true"/><input id="admin-login-password" type={passwordVisible?'text':'password'} dir="ltr" autoComplete="current-password" value={password} onChange={e=>setPassword(e.target.value)} required/><button type="button" className="gatewayPasswordToggle" aria-controls="admin-login-password" aria-pressed={passwordVisible} onClick={()=>setPasswordVisible(value=>!value)}>{passwordVisible?'إخفاء':'إظهار'}</button></span></label>
      {err&&<div className="error" role="alert">{err}</div>}
      <button className="publicPrimary" type="submit" disabled={busy}><span>{busy?'جارٍ الدخول…':'الدخول إلى لوحة الإدارة'}</span><ChevronLeft size={18} aria-hidden="true"/></button>
     </div>
    </form>
-   <div className="publicLoginParticles" aria-hidden="true">
+   <div key={animationRun} className="gatewayAnimation" aria-hidden="true">
+   <div className="publicLoginParticles">
     {Array.from({length:24},(_,i)=>{
      const side=Math.floor(i/6), step=(i%6)/5;
      const x=side===0?step*100:side===1?100:side===2?(1-step)*100:0;
@@ -1741,7 +1745,8 @@ function Login(){
    </div>
    </div>
    </div>
-
+   </div>
+   <button type="button" className="gatewayReplay" onClick={()=>setAnimationRun(value=>value+1)}><RefreshCw size={15} aria-hidden="true"/> إعادة حركة الدخول</button>
   </div>
  </main>;
 }

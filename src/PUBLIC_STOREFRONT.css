@@ -798,3 +798,59 @@
   .publicCapsuleGateway .publicLoginCard {animation:none}
   .publicCapsuleGateway .gatewayLayout {row-gap:12px}
 }
+
+/* Login-only interactive states. Replaying the capsule never remounts the form. */
+.publicCapsuleGateway .gatewayAnimation {position:absolute;inset:0;pointer-events:none}
+.publicCapsuleGateway .gatewayFrame {
+  position:absolute;
+  inset:0;
+  z-index:1;
+  border:1px solid #e5ca89;
+  border-radius:inherit;
+  box-shadow:0 0 26px #dfbb693b;
+  pointer-events:none;
+  animation:gateway-frame-reveal 1.72s linear both;
+}
+@keyframes gateway-frame-reveal {
+  0%,65% {opacity:0;clip-path:inset(0 50% 100%)}
+  90% {opacity:1;clip-path:inset(0)}
+  100% {opacity:0;clip-path:inset(0)}
+}
+.publicCapsuleGateway .publicLoginField {
+  transition:background .18s ease,border-color .18s ease,box-shadow .18s ease;
+}
+.publicCapsuleGateway .publicLoginField:focus-within {
+  background:#fffdf6;
+  border-color:#a68545;
+  outline:none;
+  box-shadow:0 0 0 3px #b9975633;
+}
+.gatewayPasswordToggle {
+  flex:none;
+  padding:5px 7px;
+  border:0;
+  border-radius:6px;
+  background:transparent;
+  color:#1b513b;
+  font-size:12px;
+  cursor:pointer;
+}
+.gatewayPasswordToggle:hover {background:#e1ecdf}
+.gatewayReplay {
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:8px 12px;
+  border:1px solid #638474;
+  border-radius:10px;
+  background:#183e30;
+  color:#fff8e7;
+  font:inherit;
+  font-size:12px;
+  cursor:pointer;
+}
+.gatewayReplay:hover {background:#265441}
+@media(prefers-reduced-motion:reduce) {
+  .publicCapsuleGateway :is(.gatewayFrame,.gatewayReplay) {display:none}
+  .publicCapsuleGateway .publicLoginField {transition:none}
+}
