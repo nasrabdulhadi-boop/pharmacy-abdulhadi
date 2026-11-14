@@ -1035,3 +1035,69 @@
 @media(max-width:640px) and (prefers-reduced-motion:reduce) {
   .publicCapsuleGateway .gatewayLayout {gap:14px}
 }
+
+.publicCapsuleGateway {
+  background:radial-gradient(ellipse at 72% 14%,#345747,transparent 46%),#0b2119;
+}
+.publicCapsuleGateway .publicLoginStage {width:min(1040px,100%)}
+.publicCapsuleGateway .gatewayLayout {gap:clamp(16px,2.5vw,34px)}
+.publicCapsuleGateway .publicLoginIdentity {
+  background:
+    radial-gradient(ellipse at 50% 22%,#386950,transparent 68%),
+    linear-gradient(160deg,#153b2b,#09291f);
+  border-color:#b59b68;
+  min-height:420px;
+  box-shadow:inset 0 0 0 7px #0d3428,0 24px 48px #04150e66;
+}
+.publicCapsuleGateway .publicLoginIdentity::after {
+  inset:16px;
+  background:radial-gradient(ellipse at center,#d1b67c20,transparent 68%);
+  border-color:#d2b37966;
+}
+.publicCapsuleGateway .publicLoginIdentity img {
+  border-radius:26px;
+  outline-offset:6px;
+  outline-color:#e3c88b;
+  box-shadow:0 12px 28px #04140d77;
+}
+.publicCapsuleGateway .publicLoginIdentity strong {
+  color:#fff5e0;
+  line-height:1.5;
+}
+.publicCapsuleGateway .publicLoginIdentity strong::after {
+  content:"";
+  display:block;
+  height:1px;
+  width:54px;
+  margin:11px auto 0;
+  background:#d2b379;
+}
+.publicCapsuleGateway .publicLoginCard {
+  background:#fcfaf3;
+  border-color:#c9ae78;
+  box-shadow:0 24px 48px #04150e66;
+}
+.publicCapsuleGateway .publicLoginFields {
+  gap:18px;
+  padding:clamp(22px,4vw,48px);
+}
+.publicCapsuleGateway .publicLoginFields h1 {
+  padding-bottom:13px;
+  color:#163e2e;
+  border-bottom:1px solid #d8c5a0;
+}
+.publicCapsuleGateway .publicLoginField {min-height:49px;border-color:#b4c6b7}
+.publicCapsuleGateway .publicLoginFields .publicPrimary {
+  min-height:51px;
+  background:linear-gradient(110deg,#103a29,#24694c);
+}
+@media(max-width:640px) {
+  .publicCapsuleGateway .gatewayLayout {gap:56px}
+  .publicCapsuleGateway .publicLoginIdentity {min-height:0;gap:9px;padding:20px 14px}
+  .publicCapsuleGateway .publicLoginIdentity::after {inset:11px}
+  .publicCapsuleGateway .publicLoginIdentity img {width:64px;border-radius:15px}
+  .publicCapsuleGateway .publicLoginIdentity strong::after {display:none}
+}
+@media(max-width:640px) and (prefers-reduced-motion:reduce) {
+  .publicCapsuleGateway .gatewayLayout {gap:14px}
+}
