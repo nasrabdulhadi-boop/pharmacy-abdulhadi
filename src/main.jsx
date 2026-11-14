@@ -16,6 +16,7 @@ import './SUPPLIER_LEDGER_PREVIEW.css';
 import './POS_INVOICE_DISCOUNT.css';
 import './POS_COMPACT.css';
 import DailyActivityCenter from './DailyActivityCenter.jsx';
+import './ADMIN_NIGHT.css';
 
 const url=import.meta.env.VITE_SUPABASE_URL; const key=import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 const supabase=url&&key?createClient(url,key):null;
