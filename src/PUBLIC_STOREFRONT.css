@@ -854,3 +854,60 @@
   .publicCapsuleGateway :is(.gatewayFrame,.gatewayReplay) {display:none}
   .publicCapsuleGateway .publicLoginField {transition:none}
 }
+
+/* Subtle light passes over the brand panel and checkout frame without moving controls. */
+.publicCapsuleGateway .publicLoginIdentity {
+  isolation:isolate;
+  overflow:hidden;
+}
+.publicCapsuleGateway .publicLoginIdentity::before {
+  content:"";
+  position:absolute;
+  z-index:-1;
+  inset:-35%;
+  background:radial-gradient(ellipse at center,#80be8e45,transparent 45%);
+  pointer-events:none;
+  transform:translate(13%,-6%);
+  transition:transform .55s ease;
+}
+.publicCapsuleGateway .publicLoginIdentity:hover::before,
+.publicCapsuleGateway .gatewayLayout:focus-within .publicLoginIdentity::before {
+  transform:translate(-10%,8%);
+}
+.publicCapsuleGateway .publicLoginIdentity img {
+  animation:gateway-brand-in .64s cubic-bezier(.19,1,.22,1) both;
+  transition:box-shadow .25s ease,transform .25s ease;
+}
+.publicCapsuleGateway .publicLoginIdentity:hover img,
+.publicCapsuleGateway .gatewayLayout:focus-within .publicLoginIdentity img {
+  box-shadow:0 0 36px #e5ca8950;
+}
+@keyframes gateway-brand-in {
+  from{opacity:0;transform:translateY(9px) scale(.96)}
+  to{opacity:1;transform:none}
+}
+.publicCapsuleGateway .gatewayFrame {
+  border-radius:26px 0 0 26px;
+}
+.publicCapsuleGateway .publicLoginCard {
+  position:relative;
+  transition:box-shadow .25s ease,border-color .25s ease;
+}
+.publicCapsuleGateway .publicLoginCard:focus-within {
+  border-color:#a58547;
+  box-shadow:0 16px 50px #0004,0 0 0 2px #d4b67555;
+}
+.publicCapsuleGateway .publicLoginFields .publicPrimary svg {transition:transform .22s ease}
+.publicCapsuleGateway .publicLoginFields .publicPrimary:not(:disabled):is(:hover,:focus-visible) svg {
+  transform:translateX(-3px);
+}
+@media(max-width:640px) {
+  .publicCapsuleGateway .gatewayFrame {border-radius:18px}
+}
+@media(prefers-reduced-motion:reduce) {
+  .publicCapsuleGateway :is(.publicLoginIdentity::before,.publicLoginIdentity img,.publicLoginCard,.publicPrimary svg) {
+    animation:none;
+    transition:none;
+  }
+  .publicCapsuleGateway .publicLoginFields .publicPrimary:not(:disabled):is(:hover,:focus-visible) svg {transform:none}
+}
