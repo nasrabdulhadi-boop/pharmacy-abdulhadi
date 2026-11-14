@@ -218,7 +218,7 @@ function Customer(){
     <div className="publicHeroActions"><a href="#products" className="publicPrimary"><Package size={20}/> تصفح المنتجات</a><button type="button" onClick={()=>setRxOpen(true)}><FileImage size={20}/> إرسال وصفة</button></div>
     <a href={CFG.maps} target="_blank" rel="noreferrer" className="publicHeroAddress"><MapPin size={18}/>{CFG.address}</a>
    </div>
-   <div className="publicHeroVisual"><img className="publicBrandMark" src="/logo.png" alt="" width="140" height="140"/><span className="publicVisualName">{CFG.name}</span><div className="publicHeroHours"><Clock size={20}/><span>ساعات العمل</span><b>{CFG.hours}</b></div></div>
+   <div className="publicHeroHours"><Clock size={20}/><span>ساعات العمل</span><b>{CFG.hours}</b></div>
   </section>
   <main className="customerNew">
    {lastOrder&&<section className="lastOrderBar"><div className="lastOrderInfo"><div><b>آخر طلب لك: {lastOrder.code}</b><span>الاسم: {lastOrder.name||lastOrder.customer_name||'—'} • الهاتف: {lastOrder.phone||lastOrder.customer_phone||'—'}</span><span>العنوان: {lastOrder.address||lastOrder.customer_address||'—'}</span><span>الحالة: <strong>{statusText[lastOrder.status]||lastOrder.status||'جديد'}</strong>{lastOrder.total!=null?` • الإجمالي: ${money(lastOrder.total)} ل.س`:''}{lastOrder.created_at?` • ${localDateTime(lastOrder.created_at)}`:''}</span></div><div className="lastOrderItems"><b>محتويات الطلب:</b>{(lastOrder.items||[]).map((i,idx)=><span key={idx}>• {i.name||i.product_name||'دواء'} × {i.qty||i.quantity}</span>)}</div></div><div className="lastOrderActions"><button onClick={reorder}><RefreshCw/> إعادة الطلب</button><button className="ghostBtn" onClick={()=>{setTrack({code:lastOrder.code,phone:lastOrder.phone});setTrackOpen(true)}}>متابعة الطلب</button></div></section>}
@@ -1703,10 +1703,6 @@ function Login(){
  return <main className="publicLogin" dir="rtl">
   <a href="#home" className="publicBack">العودة للموقع <ChevronLeft size={17}/></a>
   <div className="publicLoginStage">
-   <div className="publicMedicineBox" aria-hidden="true">
-    <div className="publicCartonLid"/>
-    <div className="publicCartonFace"><img src="/logo.png" alt=""/><span>{CFG.name}</span></div>
-   </div>
    <form onSubmit={e=>{e.preventDefault();submitLogin()}}>
     <BrandLogo/>
     <h1>تسجيل دخول الإدارة</h1>
@@ -1715,6 +1711,10 @@ function Login(){
     <button className="publicPrimary" disabled={busy}><LogIn size={18}/>{busy?'جارٍ الدخول…':'دخول'}</button>
     {err&&<div className="error" role="alert">{err}</div>}
    </form>
+   <div className="publicMedicineBox" aria-hidden="true">
+    <div className="publicCartonLid"/><div className="publicCartonSpine"/>
+    <div className="publicCartonFace"><img src="/logo.png" alt=""/><span>{CFG.name}</span></div>
+   </div>
   </div>
  </main>;
 }
