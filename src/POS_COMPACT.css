@@ -133,3 +133,60 @@
 @media (max-width: 600px) {
   .posCompactStation .posCompactTable { max-height: 48vh; }
 }
+
+/* The invoice header, product search, line items and payment share one surface. */
+.posV440.posClassic.posCompactStation .posInvoice {
+  border-radius: 18px !important;
+  box-shadow: 0 12px 36px #16392b14 !important;
+}
+.posV440.posClassic.posCompactStation .posStationHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  background: #123e32 !important;
+  color: #edf9f3 !important;
+  padding: 13px 16px !important;
+}
+.posV440.posClassic.posCompactStation .posStationHeader :is(h2,p) {color: inherit !important;margin: 0}
+.posStationTitle,.posStationIcon {display:flex;align-items:center;gap:10px}
+.posStationIcon {justify-content:center;width:38px;height:38px;border-radius:10px;background:#ffffff20}
+.posStationHeader .posInvoiceHeadActions {display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.posCompactStation .posStationSearch {
+  position: relative;
+  padding: 11px 13px 8px;
+  background: var(--pos-surface);
+  border-bottom: 1px solid var(--pos-line);
+}
+.posV440.posClassic.posCompactStation .posStationSearch .posTopBar {
+  background: transparent !important;
+  box-shadow:none !important;
+  border:0 !important;
+  padding:0 !important;
+  margin:0 0 5px !important;
+}
+.posCompactStation .posStationSearch .posDefaultsHint {margin: 5px 0 0 !important}
+.posCompactStation .posStationSearch .posSearchPopup {position:relative !important;inset:auto !important;margin-top:8px;max-height: min(45vh,360px);overflow:auto}
+.posCompactStation .posCompactTable .posEmpty {
+  display:grid;justify-items:center;gap:6px;
+  padding:21px 10px;
+  color:var(--pos-muted);
+}
+.posCompactStation .posCompactTable .posEmpty svg {
+  padding:8px;box-sizing:content-box;border-radius:12px;background:var(--pos-highlight);color:var(--pos-accent);
+}
+.posCompactStation .posStationCheckoutTitle {
+  grid-column:1 / -1;
+  font-weight:800;
+  color:var(--pos-ink);
+}
+.posCompactStation .posCompactCheckout {
+  grid-template-columns:minmax(150px, 1fr) minmax(200px, 1.4fr);
+  container-type:inline-size;
+}
+.posCompactStation .posCompactCheckout .paymentBox {display:grid;gap:6px}
+.posCompactStation .posCompactCheckout .posComplete {font-size:14px !important;min-height:38px}
+.posCompactStation .posCompactCheckout .paymentModes {margin:0}
+@media(max-width: 1100px) {
+  .posCompactStation .posCompactCheckout {grid-template-columns:minmax(0,1fr)}
+}
