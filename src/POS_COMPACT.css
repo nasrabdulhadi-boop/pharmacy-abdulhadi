@@ -1,0 +1,135 @@
+.posCompactStation {
+  --pos-surface: #fff;
+  --pos-soft: #f4f8f6;
+  --pos-line: #dbe7e0;
+  --pos-ink: #182c25;
+  --pos-muted: #50675d;
+  --pos-highlight: #e1f4e9;
+  --pos-accent: #08683e;
+}
+
+.adminDark .posCompactStation {
+  --pos-surface: #172d38;
+  --pos-soft: #1e3743;
+  --pos-line: #35505d;
+  --pos-ink: #ebf6f4;
+  --pos-muted: #bfced3;
+  --pos-highlight: #204c41;
+  --pos-accent: #b1efd2;
+}
+
+.posClassic.posCompactStation .posInvoice {
+  border: 1px solid var(--pos-line) !important;
+  border-radius: 14px !important;
+  background: var(--pos-surface) !important;
+  color: var(--pos-ink);
+  padding: 0 !important;
+}
+
+.posCompactStation .posInvoice > .cardHead {
+  padding: 12px 14px;
+  margin: 0;
+  border-bottom: 1px solid var(--pos-line);
+}
+
+.posCompactStation .posInvoice > .cardHead h2 {
+  color: var(--pos-ink);
+  font-size: 19px;
+}
+
+.posCompactStation .posCompactTable {
+  max-height: min(38vh, 420px);
+  min-height: 128px;
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+
+.posClassic.posCompactStation .invoiceTable {
+  min-width: 760px !important;
+  font-variant-numeric: tabular-nums;
+}
+
+.posClassic.posCompactStation .invoiceTable th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: var(--pos-soft) !important;
+  color: var(--pos-ink) !important;
+  white-space: normal;
+}
+
+.posClassic.posCompactStation .invoiceTable td {
+  border-bottom: 1px solid var(--pos-line);
+}
+
+.posCompactStation .invoiceTable .posProductName {
+  color: var(--pos-ink);
+  font-weight: 750;
+}
+
+.posCompactStation .posCompactCheckout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 8px 12px;
+  padding: 10px 12px;
+  border-top: 1px solid var(--pos-line);
+  background: var(--pos-soft);
+}
+
+.posCompactStation .posCompactCheckout .posTotalsBar {
+  grid-column: 1 / -1;
+  padding: 0 !important;
+  border: 0;
+}
+
+.posCompactStation .posTotalsBar > div {
+  background: var(--pos-surface);
+  border-color: var(--pos-line);
+  padding: 6px 8px;
+}
+
+.posCompactStation .posTotalsBar > div span {
+  color: var(--pos-muted);
+}
+
+.posCompactStation .posTotalsBar > div:last-child {
+  background: var(--pos-highlight);
+}
+
+.posCompactStation .posTotalsBar > div:last-child strong {
+  color: var(--pos-accent);
+  font-size: clamp(16px, 1.7vw, 24px) !important;
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+.posCompactStation .posCompactCheckout .posInvoiceDiscount,
+.posClassic.posCompactStation .posCompactCheckout .paymentBox {
+  margin: 0 !important;
+  min-width: 0;
+  padding: 8px !important;
+  color: var(--pos-ink);
+  background: var(--pos-surface) !important;
+  border: 1px solid var(--pos-line);
+  border-radius: 10px;
+}
+
+.posCompactStation .posInvoiceDiscount input,
+.posCompactStation .posInvoiceDiscount select {
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.posCompactStation .posInvoiceDiscount select { flex: 2 1 112px; }
+.posCompactStation .posInvoiceDiscount input { flex: 1 1 65px; }
+.posCompactStation .posCompactCheckout .posComplete { min-height: 42px; }
+
+@media (max-width: 1100px) {
+  .posCompactStation .posCompactCheckout { grid-template-columns: minmax(0, 1fr); }
+  .posCompactStation .posCompactTable { max-height: 42vh; }
+}
+
+@media (max-width: 600px) {
+  .posCompactStation .posCompactTable { max-height: 48vh; }
+}
