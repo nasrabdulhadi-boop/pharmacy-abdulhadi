@@ -1,3 +1,6 @@
+@font-face{font-family:"Pharmacy Arabic";src:url("/fonts/plex-arabic-400.woff2") format("woff2");font-weight:400;font-style:normal;font-display:swap;unicode-range:U+0600-06FF,U+0750-077F,U+08A0-08FF,U+200C-200F,U+FB50-FDFF,U+FE70-FEFF}
+@font-face{font-family:"Pharmacy Arabic";src:url("/fonts/plex-arabic-600.woff2") format("woff2");font-weight:600;font-style:normal;font-display:swap;unicode-range:U+0600-06FF,U+0750-077F,U+08A0-08FF,U+200C-200F,U+FB50-FDFF,U+FE70-FEFF}
+@font-face{font-family:"Pharmacy Arabic";src:url("/fonts/plex-arabic-700.woff2") format("woff2");font-weight:700;font-style:normal;font-display:swap;unicode-range:U+0600-06FF,U+0750-077F,U+08A0-08FF,U+200C-200F,U+FB50-FDFF,U+FE70-FEFF}
 .publicStorefront,.publicLogin{--forest:#123f34;--mint:#e3eee6;--paper:#f8f8f0;--ink:#183b31;--border:#d7e2d9;color:var(--ink);background:var(--paper);font-size:16px}
 .publicStorefront a,.publicLogin a{color:inherit;text-decoration:none}
 .publicWidth{width:min(1280px,calc(100% - 64px));margin-inline:auto}
@@ -591,3 +594,46 @@
 .publicLogin .publicLoginFields .publicPrimary {justify-content:space-between;min-height:45px;margin-top:2px}
 .publicLoginStage .publicCapsuleRight {background:linear-gradient(#246449,#073b27)}
 .publicLoginStage .publicCapsuleLeft {background:linear-gradient(#fffaf0,#dcca9c)}
+
+.publicStorefront,.publicLogin {
+  font-family:"Pharmacy Arabic",Tahoma,Arial,sans-serif;
+  --forest:#104d38;
+  --gold:#a17a36;
+  --gold-line:#c5a66a;
+  --ink:#183b2e;
+}
+.publicStorefront :is(button,input,select,textarea),.publicLogin :is(button,input){font-family:inherit}
+.publicStorefront .publicContact {background:#f2ead7;border-color:#d4bd88}
+.publicStorefront .publicHeader {background:#fbfaf2;border-color:#c8b585}
+.publicStorefront .publicHero {
+  background:radial-gradient(ellipse at 15% 8%,#eee4ca,transparent 58%),linear-gradient(120deg,#f9f8ee,#e0eee3);
+  border-color:#c3ad76;
+}
+.publicStorefront .publicHero h1 {font-weight:700}
+.publicStorefront .publicServiceDesk > :is(a,button) > svg:last-child {color:var(--gold)}
+.publicStorefront .publicAdminEntry {background:#f6efdf;border-color:#bba068;color:#244a37}
+.publicStorefront .publicAdminEntry:hover {background:#eee1c5;border-color:var(--gold)}
+.publicStorefront .publicAdminEntry svg:last-child {color:var(--gold)}
+.publicStorefront .publicBasket b {background:#f5e7c2;color:#264a36}
+.publicStorefront .siteFooter {background:linear-gradient(110deg,#eee6cf,#dcebdc)!important}
+.publicLogin {
+  background:radial-gradient(ellipse at 22% 15%,#e9dfbf,transparent 45%),linear-gradient(145deg,#f8f7ed,#dcece0);
+}
+.publicLoginStage {width:min(510px,100%)}
+.publicLogin .publicLoginCard {border:1px solid #bda56c;border-radius:25px}
+.publicLoginIdentity {
+  position:relative;
+  background:linear-gradient(135deg,#0c3528,#195840);
+  padding:23px 18px 20px;
+  border-bottom:2px solid #c5a66a;
+}
+.publicLoginIdentity img {background:#f9f5e8;box-shadow:0 8px 24px #061d1640}
+.publicLoginIdentity h1 {color:#fff9ea}
+.publicLoginFields {padding:21px clamp(18px,5vw,33px) 25px;gap:15px;background:#fcfaf2}
+.publicLoginField {border-color:#c0cbbc;background:#f4f7ee}
+.publicLoginField svg {color:#7d622f}
+.publicLogin .publicLoginFields .publicPrimary {
+  border-color:#2f634c;
+  background:linear-gradient(110deg,#10432f,#1a684b);
+  box-shadow:0 5px 14px #194f3926;
+}
