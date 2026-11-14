@@ -49,3 +49,107 @@
 @media(max-width:850px){.publicWidth,.publicStorefront .customerNew{width:calc(100% - 36px)}.publicHeader .publicWidth{flex-wrap:wrap;padding-block:10px}.publicHeader nav{order:3;width:100%;justify-content:center}.publicHero{gap:22px}.publicHeroHours{inset:auto 8px 8px}}
 @media(max-width:600px){.publicHero{grid-template-columns:1fr;padding-top:25px}.publicHeroVisual{aspect-ratio:4/3}.publicContact .publicWidth{justify-content:flex-start;gap:6px 16px}.publicContact a{font-size:13px}.publicHeader nav{gap:3px}.publicHeader nav a{font-size:14px}.publicHero h1{font-size:42px}.publicHeader .brandWords small{display:none}.publicHeader button{padding:9px}.publicLogin form{padding:20px}}
 @media(prefers-reduced-motion:reduce){.publicLogin :is(.publicMedicineBox,form){animation:none}}
+
+.publicStorefront {
+  background:
+    radial-gradient(ellipse at 20% 5%, #dcece1 0, transparent 42%),
+    linear-gradient(155deg, #fafaf3, #edf3eb 61%, #f8f8ef);
+}
+.publicHeader {background:#fafcf7}
+.publicHeader .publicHeaderActions {
+  display:grid;
+  grid-template-columns:auto minmax(146px,auto);
+  gap:6px 9px;
+  align-items:start;
+}
+.publicFavorite {grid-column:1;grid-row:1}
+.publicBasket {grid-column:2;grid-row:1}
+.publicStorefront .publicAdminEntry {
+  grid-column:2;
+  grid-row:2;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:7px;
+  padding:7px 10px;
+  border:1px solid #b7ccbe;
+  border-radius:9px;
+  background:#e9f2e9;
+  color:#164635;
+  font-size:13px;
+  font-weight:750;
+  transition:background .18s ease,border-color .18s ease;
+}
+.publicStorefront .publicAdminEntry:hover {background:#dbece0;border-color:#7ca58e}
+.publicAdminEntry svg:last-child {transition:transform .18s ease}
+.publicAdminEntry:hover svg:last-child {transform:translateX(-3px)}
+.publicHeroVisual {
+  isolation:isolate;
+  display:grid;
+  align-content:center;
+  justify-items:center;
+  gap:15px;
+  background:
+    repeating-linear-gradient(135deg,transparent 0 34px,#cde6d214 35px 36px,transparent 37px 52px),
+    radial-gradient(ellipse at 72% 14%,#507b62,#184738 62%,#12382d);
+  color:#f9fff7;
+  min-height:250px;
+  padding:16px 16px 75px;
+}
+.publicHeroVisual .publicBrandMark {
+  width:clamp(76px,13vw,140px);
+  height:auto;
+  aspect-ratio:1;
+  object-fit:contain;
+  background:#f9fbf5;
+  border-radius:22px;
+  padding:8px;
+}
+.publicVisualName {font-weight:800;font-size:clamp(21px,3vw,38px);text-align:center}
+.publicHeroHours {background:#123c31;border:1px solid #719483}
+.publicLoginStage {position:relative;padding-top:42px}
+.publicMedicineBox {
+  position:relative;
+  display:block;
+  padding:0;
+  background:transparent;
+  width:min(260px,78%);
+  perspective:650px;
+  animation:none;
+  z-index:1;
+}
+.publicCartonLid {
+  position:absolute;
+  inset:0 0 auto;
+  height:30px;
+  border:1px solid #8bb8a1;
+  border-radius:9px 9px 2px 2px;
+  background:linear-gradient(110deg,#80b194,#cce4d3);
+  transform-origin:top;
+  transform:rotateX(102deg);
+  animation:public-carton-lid .66s cubic-bezier(.22,.76,.26,1) both;
+}
+.publicCartonFace {
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:10px 14px;
+  background:linear-gradient(110deg,#123f34,#28654e);
+  border:1px solid #427760;
+  border-radius:8px 8px 2px 2px;
+}
+.publicLogin form {animation:login-reveal .48s .23s both}
+@keyframes public-carton-lid {from{transform:rotateX(0)}to{transform:rotateX(102deg)}}
+@media(max-width:600px) {
+  .publicHeader .publicWidth {gap:10px}
+  .publicHeader .publicHeaderActions {grid-template-columns:auto minmax(126px,auto);gap:5px}
+  .publicStorefront .publicAdminEntry {font-size:12px;padding:6px}
+  .publicHeader .brandWords b {font-size:15px}
+}
+@media(max-width:375px) {
+  .publicHeader .publicHeaderActions {width:100%;grid-template-columns:auto minmax(126px,1fr)}
+}
+@media(prefers-reduced-motion:reduce) {
+  .publicStorefront .publicAdminEntry,.publicAdminEntry svg:last-child {transition:none}
+  .publicCartonLid,.publicLogin form {animation:none}
+}
