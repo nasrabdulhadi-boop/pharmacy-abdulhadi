@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>نقطة البيع دون إنترنت · QA</title>
+<link rel="icon" href="/logo.png">
+<script type="module" src="/src/offlinePosEntry.js"></script>
+</head>
+<body>
+<main>
+ <header><h1>نقطة البيع دون إنترنت</h1><a href="/#admin">العودة إلى النظام</a></header>
+ <p>نسخة QA. جهّز جهازاً مخصصاً للصيدلية أثناء الاتصال. الرصيد المحلي تقديري، والسعر والرصيد النهائيان يُراجعان عند المزامنة.</p>
+ <div class="actions"><button id="prepare">تجهيز الدليل والرصيد</button><button id="sync">مزامنة المبيعات</button></div>
+ <p id="state" role="status"></p>
+ <p id="message" role="status"></p>
+ <section>
+  <label for="search">ابحث بالاسم أو الباركود</label>
+  <input id="search" autocomplete="off" maxlength="128">
+  <ul id="results"></ul>
+ </section>
+ <section>
+  <h2>السلة</h2><ul id="cart"></ul>
+  <p id="total"></p>
+  <button id="save">حفظ بيع نقدي على الجهاز</button>
+ </section>
+ <section>
+  <h2>المبيعات بانتظار المزامنة</h2><ul id="pending"></ul>
+ </section>
+</main>
+</body>
+</html>

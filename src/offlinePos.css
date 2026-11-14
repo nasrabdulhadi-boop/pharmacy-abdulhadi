@@ -1,0 +1,13 @@
+*{box-sizing:border-box}
+body{margin:0;background:#edf5f0;color:#133229;font:16px/1.6 system-ui,sans-serif}
+main{width:min(940px,100% - 24px);margin:22px auto}
+header,.actions,li{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+header{justify-content:space-between}
+section{background:#fff;border:1px solid #ccded4;border-radius:14px;padding:16px;margin-block:12px}
+button,input{font:inherit;border-radius:8px;padding:8px 12px}
+button{border:1px solid #126849;background:#126849;color:white;cursor:pointer}
+button:disabled{opacity:.5;cursor:default}
+input{border:1px solid #94b2a4;width:100%}
+ul{padding:0;margin:8px 0;list-style:none}
+li{padding:8px 0;border-bottom:1px solid #edf5f0;overflow-wrap:anywhere}
+#message{color:#155740;font-weight:600;overflow-wrap:anywhere}
