@@ -158,3 +158,71 @@ body.abdulhadiNight .adminShell.adminDark {
     border-color:#4b9478 !important;
   }
 }
+
+/* Match the specificity of the legacy invoice rules, including striped and hovered rows. */
+@media screen {
+  body.abdulhadiNight .adminShell.adminDark .posV440.posClassic .posInvoice table.posTable.invoiceTable :is(tbody,tbody tr,tbody td) {
+    background:var(--night-panel) !important;
+    color:var(--night-text) !important;
+    border-color:var(--night-border) !important;
+  }
+  body.abdulhadiNight .adminShell.adminDark .posV440.posClassic .posInvoice table.posTable.invoiceTable tbody tr:nth-child(even) td {
+    background:var(--night-raised) !important;
+  }
+  body.abdulhadiNight .adminShell.adminDark .posV440.posClassic .posInvoice table.posTable.invoiceTable tbody tr:hover td {
+    background:var(--night-hover) !important;
+  }
+  body.abdulhadiNight .adminShell.adminDark .posV440.posClassic .posInvoice table.posTable.invoiceTable :is(td small,.posProductName span) {
+    color:var(--night-secondary) !important;
+  }
+  body.abdulhadiNight .adminShell.adminDark .posV440.posClassic .posInvoice table.posTable.invoiceTable .posProductName {
+    color:var(--night-accent) !important;
+  }
+
+  /* The purchase editor is portaled outside the admin shell. */
+  body.abdulhadiNight dialog.nativeTopDialog.purchaseInvoiceModal :is(
+    .modalBox.wide,.purchaseInvoiceHeader,.purchaseInvoiceMain,.purchaseInvoiceSidebar,.purchaseProfessionalTable,
+    .purchaseSection,.purchaseSummaryCard,.purchaseSummaryTotal,.purchaseSummaryRows>div,.purchaseSummaryRows>div.due,
+    .purchaseDiscountCard,.purchasePaymentCard,.purchaseSupplierLinkCard,.purchaseInvoiceStickyFooter,
+    .supplierChooser,.supplierChooserTop,.purchaseAuditNote,.purchaseExpiryDialogBox
+  ) {
+    background:var(--night-panel) !important;
+    color:var(--night-text) !important;
+    border-color:var(--night-border) !important;
+  }
+  body.abdulhadiNight dialog.nativeTopDialog.purchaseInvoiceModal .purchaseProfessionalTable tbody td {
+    background:var(--night-panel) !important;
+    color:var(--night-text) !important;
+    border-color:var(--night-border) !important;
+  }
+  body.abdulhadiNight dialog.nativeTopDialog.purchaseInvoiceModal .purchaseProfessionalTable :is(thead th,tbody tr:nth-child(even) td) {
+    background:var(--night-raised) !important;
+    color:var(--night-text) !important;
+    border-color:var(--night-border) !important;
+  }
+  body.abdulhadiNight dialog.nativeTopDialog.purchaseInvoiceModal .purchaseProfessionalTable tbody tr:hover td {
+    background:var(--night-hover) !important;
+  }
+  body.abdulhadiNight dialog.nativeTopDialog.purchaseInvoiceModal :is(input:not([type="checkbox"]),select,textarea),
+  body.abdulhadiNight dialog.nativeTopDialog.purchaseInvoiceModal .purchaseProfessionalTable td:nth-child(9) input {
+    background:var(--night-raised) !important;
+    color:var(--night-text) !important;
+    border-color:var(--night-border) !important;
+  }
+  body.abdulhadiNight dialog.nativeTopDialog.purchaseInvoiceModal :is(.purchaseProductDisplay b,.purchaseSummaryTotal strong) {
+    color:var(--night-text) !important;
+  }
+  body.abdulhadiNight dialog.nativeTopDialog.purchaseInvoiceModal :is(.purchaseProductDisplay small,label) {
+    color:var(--night-secondary) !important;
+  }
+  body.abdulhadiNight :is(.adminShell.adminDark,.modalBox,.nativeTopDialog) :is(.errorBox,.error,.dangerRow td) {
+    background:#402a31 !important;
+    color:var(--night-negative) !important;
+    border-color:#79505a !important;
+  }
+  body.abdulhadiNight :is(.adminShell.adminDark,.modalBox,.nativeTopDialog) :is(.notice,.purchaseAuditNote) {
+    background:#3a3225 !important;
+    color:var(--night-warning) !important;
+    border-color:#695738 !important;
+  }
+}
