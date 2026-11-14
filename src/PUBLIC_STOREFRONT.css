@@ -672,3 +672,55 @@
   .publicLoginFields {padding:18px}
   .publicLoginStage .publicLoginCapsule {inset-inline:15%}
 }
+
+/* Emerald gateway, scoped to the administration sign-in page. */
+.publicEmeraldLogin {
+  position:relative;
+  min-height:100dvh;
+  overflow:visible;
+  padding:78px 20px 38px;
+  background:radial-gradient(ellipse at 50% 23%,#275d48,transparent 38%),linear-gradient(145deg,#0b2b21,#071d17 70%);
+  color:#f8f4e8;
+}
+.publicEmeraldLogin .publicBack {
+  padding:8px 12px;
+  border:1px solid #668675;
+  border-radius:10px;
+  color:#fff8e8;
+  font-size:13px;
+}
+.publicEmeraldLogin .publicBack:hover {background:#ffffff16}
+.publicEmeraldLogin .publicLoginStage {width:min(420px,100%);gap:24px}
+.publicEmeraldLogin .publicLoginIdentity {
+  background:none;
+  border:0;
+  padding:0;
+  gap:13px;
+  color:#fff6e4;
+}
+.publicEmeraldLogin .publicLoginIdentity img {
+  width:86px;
+  height:86px;
+  border-radius:18px;
+  outline-color:#d9bb7c;
+  box-shadow:0 0 34px #d9bb7c26;
+}
+.publicEmeraldLogin .publicLoginIdentity strong {font-size:15px}
+.publicEmeraldLogin .publicLoginCard {
+  grid-template-columns:minmax(0,1fr);
+  min-height:0;
+  border:1px solid #c5a86b;
+  border-radius:20px;
+  background:#fcfaf1;
+  box-shadow:0 24px 60px #0005;
+  animation:emerald-signin-enter .24s ease-out;
+}
+.publicEmeraldLogin .publicLoginFields {
+  background:none;
+  padding:24px clamp(17px,5vw,32px) 28px;
+}
+.publicEmeraldLogin .publicLoginFields h1 {color:#124632}
+.publicEmeraldLogin .publicLoginField {background:#f2f5eb;border-color:#9fb5a7}
+.publicEmeraldLogin .publicLoginFields .publicPrimary {min-height:46px}
+@keyframes emerald-signin-enter {from{transform:translateY(6px);opacity:.86}to{transform:none;opacity:1}}
+@media(prefers-reduced-motion:reduce) {.publicEmeraldLogin .publicLoginCard {animation:none}}
