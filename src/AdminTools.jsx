@@ -3,10 +3,15 @@ import {catalogFindings, catalogRows, catalogSample, previewCatalogImport, readC
 import {makeSetupPackage, normalizeDeviceSetup, printAdminDocument, printKinds, readDeviceSetup, readSetupPackage, saveDeviceSetup} from './adminPrintSettings.js';
 import {uiText} from './systemLocale.js';
 import './ADMIN_TOOLS.css';
+import QaOperatingTools from './QaOperatingTools.jsx';
 
 const sections = [
  ['import','الاستيراد الذكي'], ['print','قوالب الطباعة'], ['devices','إدارة الأجهزة'],
  ['cleanup','تنظيف دليل الأدوية'], ['package','حزم إعداد الصيدلية'],
+];
+const operatingSections=[
+ ['policy','سياسات التشغيل'],['corrections','مراجعة أثر العمليات'],['emergency','وضع الطوارئ'],
+ ['training','تمارين الموظفين'],['integrations','متابعة الطلبات'],['reports','تقارير المالك'],
 ];
 const label = value => uiText(value);
 const status = {create:'إضافة', update:'تحديث السعر', unchanged:'بلا تغيير'};
@@ -29,7 +34,7 @@ export default function AdminTools({client, appearance, applyAppearance, openPro
   catch {setMessage('تعذر حفظ إعدادات هذا المتصفح.');}
  };
  return <section className="adminTools">
-  <nav aria-label={label('أدوات الإدارة')}>{sections.map(([id,title]) =>
+  <nav aria-label={label('أدوات الإدارة')}>{[...sections,...operatingSections].map(([id,title]) =>
    <button type="button" key={id} className={tab===id?'primary':'secondaryAction'}
     aria-current={tab===id?'page':undefined} onClick={()=>{setTab(id);setMessage('');}}>{label(title)}</button>)}</nav>
   {tab==='import' && <CatalogImport client={client}/>}
@@ -37,6 +42,7 @@ export default function AdminTools({client, appearance, applyAppearance, openPro
   {tab==='devices' && <DeviceSettings setup={setup} save={save}/>}
   {tab==='cleanup' && <CatalogCleanup client={client} openProduct={openProduct}/>}
   {tab==='package' && <SetupPackage setup={setup} appearance={appearance} applyAppearance={applyAppearance} setSetup={setSetup}/>}
+  {operatingSections.some(([id])=>id===tab)&&<QaOperatingTools client={client} kind={tab}/>}
   {message && <p role="status">{label(message)}</p>}
  </section>;
 }
