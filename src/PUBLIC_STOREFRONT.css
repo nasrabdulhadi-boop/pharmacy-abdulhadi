@@ -1331,3 +1331,40 @@
 @media(prefers-reduced-motion:reduce) {
   .pharmacyWelcomeScenery::before,.pharmacyWelcomeHalo::after,.pharmacyWelcomeMessage {animation:none}
 }
+
+.pharmacyWelcome {--welcome-frame-inset:clamp(16px,4.2vw,66px)}
+.pharmacyWelcomeScenery {
+  inset:var(--welcome-frame-inset);
+  border-radius:clamp(20px,3vw,44px);
+  border:1px solid #d6bd813d;
+}
+.pharmacyWelcome::before {
+  content:"";
+  position:absolute;
+  inset:var(--welcome-frame-inset);
+  z-index:-1;
+  pointer-events:none;
+  border-radius:clamp(20px,3vw,44px);
+  background:
+    linear-gradient(90deg,#edd399,#b18a48) top 13px left 13px / 46px 1px no-repeat,
+    linear-gradient(#edd399,#b18a48) top 13px left 13px / 1px 46px no-repeat,
+    linear-gradient(270deg,#edd399,#b18a48) top 13px right 13px / 46px 1px no-repeat,
+    linear-gradient(#edd399,#b18a48) top 13px right 13px / 1px 46px no-repeat,
+    linear-gradient(90deg,#edd399,#b18a48) bottom 13px left 13px / 46px 1px no-repeat,
+    linear-gradient(#b18a48,#edd399) bottom 13px left 13px / 1px 46px no-repeat,
+    linear-gradient(270deg,#edd399,#b18a48) bottom 13px right 13px / 46px 1px no-repeat,
+    linear-gradient(#b18a48,#edd399) bottom 13px right 13px / 1px 46px no-repeat;
+  animation:welcome-corners .96s .18s ease both;
+}
+.pharmacyWelcomeCapsule {animation-name:welcome-split-orbit;animation-duration:1.55s}
+.pharmacyWelcomeCapsule:nth-of-type(3) {--orbit-direction:1}
+@keyframes welcome-corners {from{opacity:0;transform:scale(.94)}to{opacity:1;transform:none}}
+@keyframes welcome-split-orbit {
+  0%{opacity:0;transform:translate(0,-70px) rotate(55deg) scale(.8)}
+  24%{opacity:1}
+  58%{transform:translate(var(--pellet-x),var(--pellet-y)) rotate(calc(-90deg * var(--orbit-direction,-1)))}
+  100%{opacity:1;transform:rotate(-27deg)}
+}
+@media(prefers-reduced-motion:reduce) {
+  .pharmacyWelcome::before,.pharmacyWelcome .pharmacyWelcomeCapsule {animation:none}
+}
