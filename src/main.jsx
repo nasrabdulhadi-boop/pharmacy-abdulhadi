@@ -1702,13 +1702,13 @@ function Security(){const [logs,setLogs]=useState([]),[err,setErr]=useState(''),
  setLogs(base.map(r=>({...r,sale_invoice_number:r.entity_type==='sale'?numbers[r.entity_id]||null:null})))};const checkHealth=async()=>{setHealthBusy(true);try{const [h,i]=await Promise.all([supabase.rpc('admin_system_healthcheck'),supabase.rpc('admin_financial_integrity_check')]);if(h.error)throw h.error;if(i.error)throw i.error;setHealth(h.data);setIntegrity(i.data)}catch(e){notify(e?.message||'تعذر إتمام فحص ترابط النظام')}finally{setHealthBusy(false)}};useEffect(()=>{load().catch(console.warn)},[]);const actionLabel={complete_sale:'إتمام بيع',admin_create_batch:'إضافة دفعة',admin_create_purchase:'إضافة فاتورة شراء',admin_delete_purchase:'حذف فاتورة شراء',create_public_order:'إنشاء طلب',admin_update_order_status:'تغيير حالة طلب',admin_delete_order:'حذف طلب',admin_delete_batch:'حذف دفعة',adjust_stock:'تعديل مخزون',admin_create_supplier:'إضافة مورد',admin_update_supplier:'تعديل مورد',admin_delete_supplier:'حذف مورد',inventory_count_complete:'اعتماد جرد',admin_dispose_stock:'إتلاف مخزون',customer_return:'مرتجع من الزبون',supplier_return:'مرتجع إلى المورد',admin_update_product_price:'تعديل أسعار منتج',supplier_payment:'دفعة لمورد',supplier_payment_currency_v2:'دفعة مورد بعملة مختارة',supplier_payment_advance_v3:'دفعة مورد ورصيد مقدم',supplier_advance_applied:'استخدام رصيد مقدم',purchase_with_supplier_advance:'شراء مع رصيد المورد',debtor_payment:'تحصيل دين',cashbox_entry:'حركة صندوق',cashbox_count:'جرد درج الكاشير',admin_create_debtor:'إضافة متدين'};return <><PageHead title="الأمان والتدقيق" sub="صلاحيات الإدارة وسجل العمليات وفحص ترابط الحسابات" refresh={load} actions={<button className="secondaryAction" onClick={checkHealth} disabled={healthBusy}><Activity/> {healthBusy?'جارٍ الفحص…':'فحص ترابط النظام'}</button>}/>{health&&<div className="card securityHealthCard"><div className="cardHead"><div><h2>حالة النظام</h2><p>{health.admin?'جلسة الإدارة والصلاحيات سليمة':'تحقق من صلاحية الإدارة'}</p></div><span className={health.admin?'activePill':'mutedPill'}>{health.admin?'سليم':'يحتاج تحقق'}</span></div><div className="detailGrid"><div><b>الجداول الأساسية</b><span>{Object.values(health.tables||{}).filter(Boolean).length} / {Object.keys(health.tables||{}).length}</span></div><div><b>الأعمدة الأساسية</b><span>{Object.values(health.columns||{}).filter(Boolean).length} / {Object.keys(health.columns||{}).length}</span></div><div><b>الدوال الأساسية</b><span>{Object.values(health.functions||{}).filter(Boolean).length} / {Object.keys(health.functions||{}).length}</span></div></div>{integrity&&<div className="integrityChecksGrid">{[['مبيعات نقدية مرتبطة بالصندوق','missing_cash_sales'],['تحصيل ديون نقدي مرتبط بالصندوق','missing_cash_debtor_payments'],['دفعات موردين نقدية مرتبطة بالصندوق','missing_cash_supplier_payments'],['مرتجعات زبائن نقدية مرتبطة بالاسترداد','missing_customer_refunds'],['فواتير بيع بدون أصناف','sales_without_items'],['فواتير شراء بدون أصناف','purchases_without_items'],['دفعات موردين بدون توزيع على فاتورة','supplier_payments_without_allocations'],['مرتجعات بدون حركة مخزون','returns_without_stock_movement'],['تعارض أرصدة فواتير الموردين','purchase_balance_mismatches'],['تطابق دفعات الموردين مع الصندوق','supplier_payment_cash_mismatches'],['توزيع دفعات الموردين بالكامل','supplier_payment_allocation_mismatches'],['سلامة الدفعات المقدمة واستخدامها','supplier_advance_invalid_balances']].map(([label,key])=><div key={key}><span>{label}</span><b className={Number(integrity[key]||0)===0?'good':'bad'}>{Number(integrity[key]||0)===0?'سليم':integrity[key]}</b></div>)}</div>}</div>}
  <div className="card securityIntro"><h2>حماية النظام</h2><p>الوصول الإداري يعتمد على Supabase Auth ودور الإدارة. كل عملية مالية مهمة يجب أن ترتبط بالمخزون أو الصندوق أو الذمم وسجل التدقيق حسب نوعها.</p></div>{err&&<div className="error" style={{marginTop:12}}>{err}</div>}<div className="tableWrap"><table><thead><tr><th>العملية</th><th>نوع السجل</th><th>التاريخ والوقت</th><th>التفاصيل</th></tr></thead><tbody>{logs.map(r=><tr key={r.id}><td>{actionLabel[r.action]||r.action||'—'}{r.sale_invoice_number&&<div style={{fontWeight:700}}>فاتورة بيع رقم {r.sale_invoice_number}</div>}</td><td>{r.entity_type||'—'}</td><td>{localDateTime(r.created_at)}</td><td className="auditDetails"><button type="button" className="auditDocBtn" title="فتح تفاصيل العملية" aria-label="فتح تفاصيل العملية" onClick={(e)=>{e.stopPropagation();setSelected({...r,details:{...(r.details||{}),...(r.sale_invoice_number?{invoice_number:r.sale_invoice_number}:{})}})}}><FileText size={18}/><span>التفاصيل</span></button></td></tr>)}</tbody></table>{!logs.length&&!err&&<div className="emptyCart">لا توجد عمليات مسجلة بعد.</div>}</div>{selected&&<AuditDetailsModal log={selected} close={()=>setSelected(null)} actionLabel={actionLabel}/>}</>}
 
-function Login(){
+function Login({onSignIn}){
  const [email,setEmail]=useState(''),[password,setPassword]=useState(''),[err,setErr]=useState('');
  const [passwordVisible,setPasswordVisible]=useState(false);
  const [animationRun,setAnimationRun]=useState(0);
  const [submitLogin,busy]=useSingleSubmission(async()=>{
   setErr('');
-  const {error}=await supabase.auth.signInWithPassword({email,password});
+  const {error}=await onSignIn({email,password});
   if(error)setErr(error.message);
  });
  return <main className="publicLogin publicEmeraldLogin publicCapsuleGateway" dir="rtl">
@@ -1750,16 +1750,81 @@ function Login(){
   </div>
  </main>;
 }
-// If a session exists but is not admin, show login instead of exposing admin.
-const Root=()=>{const [s,setS]=useState(null),[checked,setChecked]=useState(false);useEffect(()=>{let alive=true;(async()=>{if(!supabase){if(alive)setChecked(true);return}const {data}=await supabase.auth.getSession();let ss=data?.session||null;if(ss){const role=ss.user?.app_metadata?.role; if(role!=='admin'&&ss.user?.email==='drnaser@pharmahadi.com'){try{const r=await supabase.auth.refreshSession();ss=r.data?.session||ss}catch{}}}if(alive){setS(ss);setChecked(true)}})();if(supabase){const {data:{subscription}}=supabase.auth.onAuthStateChange((_e,ss)=>setS(ss));return()=>{alive=false;subscription.unsubscribe()}}return()=>{alive=false}},[]);if(!checked)return <Splash/>;const admin=s?.user?.email==='drnaser@pharmahadi.com'||s?.user?.app_metadata?.role==='admin';if(admin)return <Admin onLogout={()=>supabase.auth.signOut()}/>;return <CustomerOrLogin/>};
-function CustomerOrLogin(){
+function AdminWelcome({owner,onContinue}){
+ useEffect(()=>{
+  const timer=window.setTimeout(onContinue,2600);
+  return()=>window.clearTimeout(timer);
+ },[onContinue]);
+ return <main className="publicLogin pharmacyWelcome" dir="rtl">
+  <div className="pharmacyWelcomeCard">
+   <div className="pharmacyWelcomeEmblem" aria-hidden="true">
+    <span/><span/><span/>
+    <img src="/logo.png" alt="" width="90" height="90"/>
+   </div>
+   <div role="status">
+    <h1>{owner?'أهلاً بك، مديرنا دكتور نصر':'أهلاً بك في إدارة الصيدلية'}</h1>
+    <p>جارٍ فتح لوحة الإدارة…</p>
+   </div>
+   <div className="pharmacyWelcomeProgress" aria-hidden="true"/>
+   <button type="button" className="publicPrimary" onClick={onContinue}>متابعة إلى لوحة الإدارة <ChevronLeft size={18} aria-hidden="true"/></button>
+  </div>
+ </main>;
+}
+
+const ownerEmail='drnaser@pharmahadi.com';
+const isAdminSession=session=>session?.user?.email===ownerEmail||session?.user?.app_metadata?.role==='admin';
+
+function Root(){
+ const [session,setSession]=useState(null);
+ const [checked,setChecked]=useState(false);
+ const [welcome,setWelcome]=useState(false);
+ const signingIn=useRef(false);
+ const continueToAdmin=React.useCallback(()=>setWelcome(false),[]);
+
+ useEffect(()=>{
+  let alive=true;
+  if(!supabase){setChecked(true);return;}
+  (async()=>{
+   const {data}=await supabase.auth.getSession();
+   let current=data?.session||null;
+   if(current?.user?.email===ownerEmail&&current.user.app_metadata?.role!=='admin'){
+    try{const result=await supabase.auth.refreshSession();current=result.data?.session||current}catch{}
+   }
+   if(alive){setSession(current);setChecked(true);}
+  })();
+  const {data:{subscription}}=supabase.auth.onAuthStateChange((_event,current)=>{
+   if(!signingIn.current)setSession(current);
+   if(!current)setWelcome(false);
+  });
+  return()=>{alive=false;subscription.unsubscribe()};
+ },[]);
+
+ const signIn=async credentials=>{
+  signingIn.current=true;
+  try{
+   const result=await supabase.auth.signInWithPassword(credentials);
+   if(!result.error){
+    setWelcome(isAdminSession(result.data?.session));
+    setSession(result.data?.session||null);
+   }
+   return result;
+  }finally{signingIn.current=false;}
+ };
+ if(!checked)return <Splash/>;
+ if(isAdminSession(session)){
+  if(welcome)return <AdminWelcome owner={session.user.email===ownerEmail} onContinue={continueToAdmin}/>;
+  return <Admin onLogout={()=>supabase.auth.signOut()}/>;
+ }
+ return <CustomerOrLogin onSignIn={signIn}/>;
+}
+function CustomerOrLogin({onSignIn}){
  const [login,setLogin]=useState(()=>location.hash==='#admin');
  useEffect(()=>{
   const sync=()=>{setLogin(location.hash==='#admin');if(location.hash==='#admin'||location.hash==='#home')window.scrollTo(0,0)};
   window.addEventListener('hashchange',sync);
   return()=>window.removeEventListener('hashchange',sync);
  },[]);
- return login?<Login/>:<Customer/>;
+ return login?<Login onSignIn={onSignIn}/>:<Customer/>;
 }
 createRoot(document.getElementById('root')).render(<><AppErrorBoundary><Root/></AppErrorBoundary><SmartToastHost/></>);
 
