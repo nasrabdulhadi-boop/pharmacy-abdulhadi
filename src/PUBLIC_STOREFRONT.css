@@ -490,33 +490,70 @@
   z-index:3;
   pointer-events:none;
 }
+/* Pellets travel from the capsule seam to the edge before the form appears. */
 .publicLoginParticles i {
   position:absolute;
-  inset:auto;
   left:var(--particle-x);
   top:var(--particle-y);
   width:7px;
   height:7px;
   border-radius:50%;
-  background:#3b8b67;
-  box-shadow:0 0 9px #5fbc8d;
-  offset-path:shape(from 50% -34%, curve to var(--particle-x) var(--particle-y) with 38% -12% / 62% 43%);
+  background:#bb9147;
+  box-shadow:0 0 7px #c6a06077;
+  transform:translate(-50%,-50%);
   opacity:0;
-  animation:public-pellet-land .74s var(--particle-delay) both;
+  animation:public-pellet-land .72s var(--particle-delay) both;
 }
-@supports (offset-path:shape(from 0 0, line to 100% 100%)) {
-  .publicLoginParticles i {left:0;top:0;width:8px;height:8px}
-}
-.publicLoginStage form {animation-delay:1.02s}
+.publicLoginStage form {animation:public-form-complete 1.72s linear both}
 @keyframes public-capsule-arrive {from{opacity:0;translate:0 -75px}to{opacity:1;translate:none}}
 @keyframes public-pellet-land {
-  0%{opacity:0;offset-distance:0%;transform:translateY(-35px) scale(.7)}
-  24%{opacity:1}
-  75%{opacity:1;offset-distance:100%;transform:none}
-  100%{opacity:0;offset-distance:100%;transform:scale(.6)}
+  0% {left:50%;top:-22%;opacity:0}
+  12% {opacity:1}
+  78%,100% {left:var(--particle-x);top:var(--particle-y);opacity:1}
+}
+.publicLoginParticles {animation:public-pellet-handoff 1.72s linear both}
+@keyframes public-pellet-handoff {0%,93%{opacity:1}100%{opacity:0}}
+@keyframes public-form-complete {
+  0%,92% {visibility:hidden;opacity:0}
+  93% {visibility:visible;opacity:0}
+  100% {visibility:visible;opacity:1}
 }
 @media(max-height:650px) {.publicLoginStage .publicLoginCapsule {margin-bottom:6px}.publicLoginStage .publicCapsuleHalf {height:43px}}
 @media(prefers-reduced-motion:reduce) {
   .publicLoginStage :is(.publicLoginCapsule,.publicLoginParticles) {display:none}
   .publicLoginStage form {animation:none}
 }
+
+
+/* Ivory, emerald and brushed gold sampled visually from the official mark. */
+.publicStorefront,.publicLogin {
+  --forest:#073b27;
+  --ink:#173b2d;
+  --border:#d9cdb1;
+  --paper:#f6f1e6;
+}
+.publicStorefront {
+  background:linear-gradient(160deg,#faf7ef,#f1eee2 58%,#f6f1e6) !important;
+}
+.publicStorefront .publicContact {background:#eee6d3;color:#214735}
+.publicStorefront .publicHeader {background:#fbf8ef}
+.publicStorefront .publicHero {
+  background:radial-gradient(ellipse at 18% 18%,#e9e6d2,transparent 70%),linear-gradient(120deg,#fcf9f0,#eeeadd);
+  border-color:#d5c39b;
+}
+.publicStorefront :is(.publicServiceDesk>a,.publicServiceDesk>button,.publicCatalogSearch) {
+  background:#fcf9f1;
+  color:#214735;
+  border-color:#d9cdb1;
+}
+.publicStorefront .publicServiceDesk > :is(a,button):hover {background:#efe7d4;border-color:#b89a60}
+.publicStorefront :is(.quickServices,.productArt,.serviceIcon) {background:#eae7d8!important}
+.publicStorefront :is(.quickServices button,.newProduct,.serviceCard,.offerCustomer,.promo,.lastOrderBar,.emptyProducts) {background:#fcfaf3!important}
+.publicStorefront :is(.publicHeroHours,.publicAdminEntry) {background:#eee7d5;border-color:#cbb78b;color:#234935}
+.publicStorefront .publicAdminEntry:hover {background:#e8ddc2;border-color:#b89a60}
+.publicStorefront .siteFooter {background:#e9e2ce!important}
+.publicLogin {background:radial-gradient(ellipse at 25% 15%,#eee3c8,#f7f3e9 65%);color:var(--ink)}
+.publicLogin form {background:#fcfaf2;border-color:#cbb78b}
+.publicLogin input {background:#f8f4e9;border-color:#cbb78b}
+.publicLoginStage .publicCapsuleRight {background:linear-gradient(#246449,#073b27)}
+.publicLoginStage .publicCapsuleLeft {background:linear-gradient(#fffaf0,#dcca9c)}
