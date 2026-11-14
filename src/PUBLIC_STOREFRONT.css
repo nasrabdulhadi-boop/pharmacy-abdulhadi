@@ -154,77 +154,67 @@
   .publicCartonLid,.publicLogin form {animation:none}
 }
 
-/* Deep-green public palette and a continuous background from header to footer. */
+/* A continuous light surface behind the storefront, including the footer. */
 .publicStorefront {
-  --forest:#123f34;
-  --mint:#294739;
-  --paper:#101e18;
-  --ink:#f0f6ec;
-  --border:#385446;
-  background:
-    radial-gradient(ellipse at 18% 8%,#294c39 0,transparent 40rem),
-    radial-gradient(ellipse at 82% 34%,#203d30 0,transparent 50rem),
-    linear-gradient(155deg,#111f19,#172b21 62%,#102017);
-  color:var(--ink);
+  --paper:#eff4ed;
+  --ink:#15362b;
+  --border:#cddbd0;
   min-height:100dvh;
+  background:linear-gradient(160deg,#f3f6ee 0%,#eaf1e8 46%,#edf3ea 100%) !important;
+  color:var(--ink);
 }
-.publicStorefront .publicContact {background:#101c17;color:#d5e8d9}
-.publicStorefront .publicHeader {background:#172a21;border-color:var(--border)}
-.publicStorefront :is(.publicHeader nav a,.brandWords b) {color:#f0f6ec!important}
-.publicStorefront .brandWords small {color:#b5cbbd!important}
-.publicStorefront .publicHeader .officialLogo {background:#f3f6ec;border-radius:9px}
-.publicStorefront .publicHeader button,.publicStorefront .publicAdminEntry {
-  background:#253d30;color:#e8f4e9;border-color:#4b6b57;
+.publicStorefront .publicContact {background:#e0ebe0;color:#224839;border-bottom:1px solid var(--border)}
+.publicStorefront .publicHeader {background:#f3f7ef;border-color:var(--border)}
+.publicStorefront :is(.customerNew,.contentLayout,.productsArea,.servicesSide,.newGrid,.promoRow) {
+  background:transparent !important;
 }
-.publicStorefront .publicAdminEntry:hover {background:#345441;border-color:#82aa8f}
-.publicStorefront .publicBasket {background:#356246}
 .publicStorefront .publicHero {
-  position:relative;
-  overflow:hidden;
-  isolation:isolate;
-  grid-template-columns:1fr;
-  gap:22px;
-  padding:clamp(32px,7vw,100px) clamp(20px,7vw,100px);
-  margin-block:24px;
-  border:1px solid #4a6854;
-  border-radius:25px;
-  background:
-    repeating-linear-gradient(130deg,transparent 0 62px,#b8e1bf13 63px 64px,transparent 65px 91px),
-    radial-gradient(ellipse at 9% 15%,#578064 0,transparent 57%),
-    linear-gradient(130deg,#10291d,#254835 66%,#325c45);
+  grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+  gap:clamp(18px,5vw,70px);
+  padding-block:clamp(28px,5vw,70px);
 }
-.publicStorefront .publicHero::before {
-  content:"";
-  position:absolute;
-  z-index:-1;
-  inset:0;
-  background:linear-gradient(to left,#11271de8,transparent 90%);
+.publicHeroLogo {display:block;width:84px;height:84px;object-fit:contain;margin-top:14px}
+.publicStorefront .publicHeroVisual {
+  padding:0;
+  min-height:0;
+  aspect-ratio:auto;
+  overflow:visible;
+  background:none;
+  border:0;
+  border-radius:0;
+  gap:8px;
 }
-.publicStorefront .publicHero h1 {color:#f6f4e7}
-.publicStorefront .publicHero p,.publicStorefront .publicHeroAddress {color:#dae8dc}
-.publicStorefront :is(.publicHeroActions button,.publicHeroHours) {
-  background:#243f31;
-  color:#f6fbf5;
-  border:1px solid #739480;
+.publicStorefront .publicHeroVisual .publicMedicineVisual {
+  width:100%;
+  max-height:440px;
+  height:auto;
+  object-fit:contain;
+  filter:drop-shadow(0 16px 22px #244f3720);
 }
-.publicStorefront a.publicPrimary {background:#dcf0d7;color:#153e2a;border-color:#dcf0d7}
-.publicStorefront .publicHeroHours {position:static;width:fit-content}
-.publicStorefront .quickServices {background:#1b3226!important}
+.publicStorefront .publicHeroHours {
+  position:static;
+  width:fit-content;
+  color:#315548;
+  background:#e5eee2;
+  border:1px solid var(--border);
+}
+.publicStorefront :is(.quickServices,.productArt,.serviceIcon) {background:#e1ece0!important}
 .publicStorefront :is(.quickServices button,.newProduct,.serviceCard,.offerCustomer,.promo,.lastOrderBar,.emptyProducts) {
-  background:#22392c!important;
-  color:#eff6ed!important;
-  border-color:#405e4b!important;
+  background:#f9fbf7!important;
+  border-color:var(--border)!important;
+  color:var(--ink)!important;
 }
-.publicStorefront :is(.newProduct,.serviceCard,.promo,.lastOrderBar) :is(h3,p,small,strong,b) {color:#e6f0e6!important}
-.publicStorefront :is(.sectionTitle h2,.sectionTitle span,.quickServices button b) {color:#eaf3e9!important}
-.publicStorefront :is(.productArt,.serviceIcon) {background:#304e3b!important;color:#c9e7ce!important}
-.publicStorefront :is(.searchNew,.searchNew input,.cartDrawer,.modalBox,.cartDrawer input,.modalBox input,.modalBox textarea,.cartItem,.cartBottom) {
-  background:#233a2e!important;
-  color:#eff6ed!important;
-  border-color:#597463!important;
+.publicStorefront .siteFooter {
+  background:#dce9dd!important;
+  color:var(--ink)!important;
+  border-top:1px solid var(--border);
 }
-.publicStorefront .searchNew input::placeholder {color:#c2d5c7}
-.publicStorefront .siteFooter {background:#11251a!important;border-top:1px solid #4a6655}
+.publicStorefront .siteFooter :is(a,b,small) {color:#244638!important}
+@media(max-width:600px) {
+  .publicStorefront .publicHero {grid-template-columns:1fr}
+  .publicStorefront .publicHeroVisual .publicMedicineVisual {max-height:265px}
+  .publicHeroLogo {width:64px;height:64px}
+}
 .publicStorefront :is(.newProduct,.serviceCard,.quickServices button) {transition:translate .2s ease,border-color .2s ease}
 @media(hover:hover) {
   .publicStorefront :is(.newProduct,.serviceCard,.quickServices button):hover {translate:0 -3px;border-color:#85ad90!important}
@@ -238,13 +228,13 @@
 }
 @keyframes public-scroll-reveal {from{opacity:.25;transform:translateY(18px)}to{opacity:1;transform:none}}
 
-.publicLogin {background:radial-gradient(ellipse at 25% 15%,#365b45,#152a20 58%,#101e17);color:#eef5eb}
+.publicLogin {background:radial-gradient(ellipse at 25% 15%,#dbe9dc,#f2f6ee 65%);color:#183b31}
 .publicLogin form {
-  background:#203a2b;color:#f4faf2;border-color:#587763;
+  background:#f9fbf7;color:#183b31;border-color:#c9d9cd;
   animation:public-login-unbox .65s .24s both;
 }
-.publicLogin .brandWords b,.publicLogin .brandWords small {color:#f4faf2}
-.publicLogin input {background:#142a1e;color:#f4faf2;border-color:#729380}
+.publicLogin .brandWords b,.publicLogin .brandWords small {color:#183b31}
+.publicLogin input {background:#f4f8f1;color:#183b31;border-color:#a8beb0}
 .publicLoginStage {padding-top:0}
 .publicLoginStage .publicMedicineBox {
   position:absolute;

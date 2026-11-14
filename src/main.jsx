@@ -214,11 +214,12 @@ function Customer(){
   <section className="publicHero publicWidth" id="home">
    <div className="publicHeroCopy">
     <h1>{CFG.name}</h1>
+    <img className="publicHeroLogo" src="/logo.png" alt="شعار صيدلية عبدالهادي" width="84" height="84"/>
     <p>ابحث عن دوائك، أرسل وصفتك، أو تواصل مباشرة مع الصيدلية.</p>
     <div className="publicHeroActions"><a href="#products" className="publicPrimary"><Package size={20}/> تصفح المنتجات</a><button type="button" onClick={()=>setRxOpen(true)}><FileImage size={20}/> إرسال وصفة</button></div>
     <a href={CFG.maps} target="_blank" rel="noreferrer" className="publicHeroAddress"><MapPin size={18}/>{CFG.address}</a>
    </div>
-   <div className="publicHeroHours"><Clock size={20}/><span>ساعات العمل</span><b>{CFG.hours}</b></div>
+   <div className="publicHeroVisual"><img className="publicMedicineVisual" src="/pharmacy-tablets.webp" alt="" width="840" height="660" fetchPriority="high"/><div className="publicHeroHours"><Clock size={20}/><span>ساعات العمل</span><b>{CFG.hours}</b></div></div>
   </section>
   <main className="customerNew">
    {lastOrder&&<section className="lastOrderBar"><div className="lastOrderInfo"><div><b>آخر طلب لك: {lastOrder.code}</b><span>الاسم: {lastOrder.name||lastOrder.customer_name||'—'} • الهاتف: {lastOrder.phone||lastOrder.customer_phone||'—'}</span><span>العنوان: {lastOrder.address||lastOrder.customer_address||'—'}</span><span>الحالة: <strong>{statusText[lastOrder.status]||lastOrder.status||'جديد'}</strong>{lastOrder.total!=null?` • الإجمالي: ${money(lastOrder.total)} ل.س`:''}{lastOrder.created_at?` • ${localDateTime(lastOrder.created_at)}`:''}</span></div><div className="lastOrderItems"><b>محتويات الطلب:</b>{(lastOrder.items||[]).map((i,idx)=><span key={idx}>• {i.name||i.product_name||'دواء'} × {i.qty||i.quantity}</span>)}</div></div><div className="lastOrderActions"><button onClick={reorder}><RefreshCw/> إعادة الطلب</button><button className="ghostBtn" onClick={()=>{setTrack({code:lastOrder.code,phone:lastOrder.phone});setTrackOpen(true)}}>متابعة الطلب</button></div></section>}
