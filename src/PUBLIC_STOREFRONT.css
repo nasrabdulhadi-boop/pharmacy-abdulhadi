@@ -1,6 +1,5 @@
-@font-face{font-family:"Pharmacy Arabic";src:url("/fonts/plex-arabic-400.woff2") format("woff2");font-weight:400;font-style:normal;font-display:swap;unicode-range:U+0600-06FF,U+0750-077F,U+08A0-08FF,U+200C-200F,U+FB50-FDFF,U+FE70-FEFF}
-@font-face{font-family:"Pharmacy Arabic";src:url("/fonts/plex-arabic-600.woff2") format("woff2");font-weight:600;font-style:normal;font-display:swap;unicode-range:U+0600-06FF,U+0750-077F,U+08A0-08FF,U+200C-200F,U+FB50-FDFF,U+FE70-FEFF}
-@font-face{font-family:"Pharmacy Arabic";src:url("/fonts/plex-arabic-700.woff2") format("woff2");font-weight:700;font-style:normal;font-display:swap;unicode-range:U+0600-06FF,U+0750-077F,U+08A0-08FF,U+200C-200F,U+FB50-FDFF,U+FE70-FEFF}
+@font-face{font-family:Alexandria;src:url("/fonts/alexandria-arabic.woff2") format("woff2");font-weight:100 900;font-display:swap;unicode-range:U+0600-06FF,U+0750-077F,U+08A0-08FF,U+200C-200F,U+FB50-FDFF,U+FE70-FEFF}
+@font-face{font-family:Alexandria;src:url("/fonts/alexandria-latin.woff2") format("woff2");font-weight:100 900;font-display:swap;unicode-range:U+0000-00FF,U+2000-206F}
 .publicStorefront,.publicLogin{--forest:#123f34;--mint:#e3eee6;--paper:#f8f8f0;--ink:#183b31;--border:#d7e2d9;color:var(--ink);background:var(--paper);font-size:16px}
 .publicStorefront a,.publicLogin a{color:inherit;text-decoration:none}
 .publicWidth{width:min(1280px,calc(100% - 64px));margin-inline:auto}
@@ -596,7 +595,7 @@
 .publicLoginStage .publicCapsuleLeft {background:linear-gradient(#fffaf0,#dcca9c)}
 
 .publicStorefront,.publicLogin {
-  font-family:"Pharmacy Arabic",Tahoma,Arial,sans-serif;
+  font-family:Alexandria,Tahoma,Arial,sans-serif;
   --forest:#104d38;
   --gold:#a17a36;
   --gold-line:#c5a66a;
@@ -636,4 +635,40 @@
   border-color:#2f634c;
   background:linear-gradient(110deg,#10432f,#1a684b);
   box-shadow:0 5px 14px #194f3926;
+}
+
+.publicStorefront .publicHero h1 {font-size:clamp(32px,4.6vw,64px);font-weight:650}
+.publicStorefront .publicCatalogHeader h2 {font-weight:650}
+.publicLoginStage {width:min(720px,100%)}
+.publicLogin .publicLoginCard {
+  display:grid;
+  grid-template-columns:minmax(170px,.75fr) minmax(0,1.25fr);
+  min-height:316px;
+  border:1px solid #bea775;
+  border-radius:22px;
+  background:#fbfaf2;
+}
+.publicLoginIdentity {
+  align-content:center;
+  text-align:center;
+  gap:18px;
+  padding:22px 16px;
+  border-bottom:0;
+  border-inline-end:2px solid #b99756;
+  background:radial-gradient(ellipse at 25% 14%,#28674c,#10392a 72%);
+  color:#fcf5e5;
+}
+.publicLoginIdentity strong {font-size:16px;font-weight:650}
+.publicLoginIdentity img {width:88px;height:88px;border-radius:20px}
+.publicLoginFields {align-content:center;padding:25px clamp(18px,4vw,36px);gap:15px}
+.publicLoginFields h1 {color:#124b35;font-size:24px;font-weight:650;margin:0 0 4px}
+.publicLoginFields label {font-size:13px}
+.publicLogin .publicLoginFields .publicPrimary {font-size:14px}
+.publicLoginStage .publicLoginCapsule {inset-inline:30%}
+@media(max-width:560px){
+  .publicLogin .publicLoginCard {grid-template-columns:1fr;min-height:0}
+  .publicLoginIdentity {border-inline-end:0;border-bottom:2px solid #b99756;padding:15px;gap:9px}
+  .publicLoginIdentity img {width:58px;height:58px}
+  .publicLoginFields {padding:18px}
+  .publicLoginStage .publicLoginCapsule {inset-inline:15%}
 }

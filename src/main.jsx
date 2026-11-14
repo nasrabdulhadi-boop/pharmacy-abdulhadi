@@ -1715,9 +1715,10 @@ function Login(){
    <form className="publicLoginCard" onSubmit={e=>{e.preventDefault();submitLogin()}} aria-labelledby="admin-login-title">
     <div className="publicLoginIdentity">
      <img src="/logo.png" alt={CFG.name} width="80" height="80"/>
-     <h1 id="admin-login-title">دخول الإدارة</h1>
+     <strong>{CFG.name}</strong>
     </div>
     <div className="publicLoginFields">
+     <h1 id="admin-login-title">دخول الإدارة</h1>
      <label htmlFor="admin-login-email">البريد الإلكتروني<span className="publicLoginField"><Mail size={18} aria-hidden="true"/><input id="admin-login-email" type="email" dir="ltr" autoComplete="username" value={email} onChange={e=>setEmail(e.target.value)} required/></span></label>
      <label htmlFor="admin-login-password">كلمة المرور<span className="publicLoginField"><ShieldCheck size={18} aria-hidden="true"/><input id="admin-login-password" type="password" dir="ltr" autoComplete="current-password" value={password} onChange={e=>setPassword(e.target.value)} required/></span></label>
      {err&&<div className="error" role="alert">{err}</div>}
