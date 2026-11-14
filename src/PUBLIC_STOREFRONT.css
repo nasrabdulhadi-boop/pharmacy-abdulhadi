@@ -444,3 +444,79 @@
   .publicStorefront .newGrid .addOrderBtn {width:100%;justify-content:center}
 }
 @media(prefers-reduced-motion:reduce) {.publicLogin form {animation:none}}
+
+.publicStorefront .publicHero {
+  border:1px solid #b8ccbf;
+  padding:clamp(22px,5vw,66px);
+  margin-block:clamp(14px,3vw,35px) 22px;
+  border-radius:26px;
+  background:radial-gradient(ellipse at 18% 20%,#d5e9dd 0%,transparent 60%),linear-gradient(120deg,#f7f9f2,#e2eee4);
+  box-shadow:0 12px 32px #234b3510;
+}
+.publicStorefront .publicHeroCopy {padding:0}
+.publicStorefront .publicHero h1 {font-size:clamp(33px,5vw,69px);line-height:1.15}
+.publicStorefront .publicServiceDesk {display:grid;justify-items:stretch;align-content:center;gap:9px}
+.publicServiceDesk > :is(a,button) {
+  display:grid;
+  grid-template-columns:auto minmax(0,1fr) auto;
+  align-items:center;
+  gap:12px;
+  text-align:start;
+  width:100%;
+  padding:12px 15px;
+  min-height:60px;
+  border:1px solid #b9cfc1;
+  border-radius:14px;
+  background:#f6faf5;
+  color:#214d3e;
+  font:inherit;
+  transition:background .18s ease,border-color .18s ease;
+}
+.publicServiceDesk > :is(a,button):hover {background:#e5f1e8;border-color:#82ab96}
+.publicServiceDesk > :is(a,button) span {display:grid;gap:3px}
+.publicServiceDesk small {color:#486358;font-size:12px}
+.publicServiceDesk .publicHeroHours {margin-top:3px}
+
+.publicLoginStage .publicLoginCapsule {
+  inset:auto 23% 100%;
+  margin-bottom:22px;
+  animation:public-capsule-arrive .43s cubic-bezier(.2,.82,.31,1) both;
+}
+.publicLoginStage .publicCapsuleHalf {height:58px;animation-delay:.35s;font-size:10px}
+.publicLoginStage .publicCapsuleLeft img {height:36px;width:36px}
+.publicLoginStage .publicLoginParticles {
+  position:absolute;
+  inset:0;
+  z-index:3;
+  pointer-events:none;
+}
+.publicLoginParticles i {
+  position:absolute;
+  inset:auto;
+  left:var(--particle-x);
+  top:var(--particle-y);
+  width:7px;
+  height:7px;
+  border-radius:50%;
+  background:#3b8b67;
+  box-shadow:0 0 9px #5fbc8d;
+  offset-path:shape(from 50% -34%, curve to var(--particle-x) var(--particle-y) with 38% -12% / 62% 43%);
+  opacity:0;
+  animation:public-pellet-land .74s var(--particle-delay) both;
+}
+@supports (offset-path:shape(from 0 0, line to 100% 100%)) {
+  .publicLoginParticles i {left:0;top:0;width:8px;height:8px}
+}
+.publicLoginStage form {animation-delay:1.02s}
+@keyframes public-capsule-arrive {from{opacity:0;translate:0 -75px}to{opacity:1;translate:none}}
+@keyframes public-pellet-land {
+  0%{opacity:0;offset-distance:0%;transform:translateY(-35px) scale(.7)}
+  24%{opacity:1}
+  75%{opacity:1;offset-distance:100%;transform:none}
+  100%{opacity:0;offset-distance:100%;transform:scale(.6)}
+}
+@media(max-height:650px) {.publicLoginStage .publicLoginCapsule {margin-bottom:6px}.publicLoginStage .publicCapsuleHalf {height:43px}}
+@media(prefers-reduced-motion:reduce) {
+  .publicLoginStage :is(.publicLoginCapsule,.publicLoginParticles) {display:none}
+  .publicLoginStage form {animation:none}
+}
