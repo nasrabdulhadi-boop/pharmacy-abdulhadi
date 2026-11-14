@@ -364,3 +364,83 @@
   .publicStorefront .newGrid .newProduct h3 {font-size:15px}
 }
 @media(prefers-reduced-motion:reduce) {.publicLoginCapsule {display:none}}
+
+/* Catalog and service rows share the same outer edges as the hero. */
+.publicStorefront .publicWidth,
+.publicStorefront .customerNew {
+  width:min(1520px,calc(100% - clamp(28px,5vw,88px)));
+}
+.publicStorefront::before {
+  background-size:min(72vw,760px) auto;
+  opacity:.075;
+}
+.publicStorefront .publicHero {
+  gap:clamp(16px,4vw,64px);
+  border-bottom:1px solid var(--border);
+}
+.publicStorefront .publicHero h1 {letter-spacing:normal;line-height:1.22}
+.publicCatalogHeader {
+  display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(0,1.35fr);
+  align-items:center;
+  gap:14px;
+  margin-bottom:16px;
+}
+.publicCatalogHeader h2 {margin:0;font-size:clamp(24px,3vw,33px);color:#174636}
+.publicCatalogHeader p {margin:4px 0 0;color:#456357;font-size:14px}
+.publicCatalogSearch {
+  display:flex;
+  align-items:center;
+  gap:10px;
+  min-width:0;
+  min-height:48px;
+  padding:0 12px;
+  border:1px solid #adc4b5;
+  border-radius:12px;
+  background:#f9fbf7;
+  color:#315c4b;
+}
+.publicCatalogSearch input {
+  width:100%;
+  min-width:0;
+  padding:10px 0;
+  background:transparent;
+  color:#173c2e;
+  border:0;
+  font:inherit;
+}
+.publicCatalogSearch button {border:0;background:transparent;color:#315c4b;font-size:22px;padding:0 5px}
+.publicStorefront .newGrid .newProduct {
+  position:relative;
+  min-height:178px;
+  box-shadow:0 3px 12px #183b310b!important;
+}
+.publicProductType {
+  display:flex;
+  align-items:center;
+  gap:7px;
+  width:fit-content;
+  max-width:calc(100% - 38px);
+  min-height:26px;
+  color:#365f4d;
+  font-size:12px;
+  overflow-wrap:anywhere;
+}
+.publicProductType .pillIcon {flex:0 0 20px;width:20px;height:20px}
+.publicStorefront .newGrid .newProduct h3 {margin:8px 0 4px}
+.publicStorefront .newGrid .newProduct p {margin:0 0 5px;color:#456357}
+.publicStorefront .newGrid .productBottom {border-top:1px solid var(--border);gap:6px}
+.publicStorefront .newGrid .productBottom strong {font-size:12px}
+.publicStorefront .siteFooter {padding-inline:max(14px,calc((100vw - 1520px)/2))!important}
+.publicLogin {overflow:hidden}
+.publicLoginStage .publicLoginCapsule {inset-inline:12%;filter:drop-shadow(0 13px 18px #183b312c)}
+.publicCapsuleHalf {height:84px;box-shadow:none}
+.publicCapsuleRight {color:#f7fff9;font-size:13px;font-weight:750;padding-inline:12px;text-align:center}
+.publicCapsuleLeft img {width:44px;height:44px}
+.publicLogin form {animation-delay:.34s}
+@media(max-width:600px) {
+  .publicCatalogHeader {grid-template-columns:1fr;gap:8px}
+  .publicStorefront .newGrid .productBottom {align-items:stretch}
+  .publicStorefront .newGrid .addOrderBtn {width:100%;justify-content:center}
+}
+@media(prefers-reduced-motion:reduce) {.publicLogin form {animation:none}}
