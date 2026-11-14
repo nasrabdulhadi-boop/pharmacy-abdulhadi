@@ -1435,3 +1435,49 @@
   .pharmacyWelcomeMessage {text-align:center;border-inline-start:0;padding-inline-start:0}
   .pharmacyWelcomeScenery i {inset-inline-start:50%}
 }
+
+.pharmacyWelcome {
+  background:
+    radial-gradient(ellipse at var(--welcome-light-x,70%) var(--welcome-light-y,39%),#3a83645e,transparent 42%),
+    linear-gradient(124deg,#071b15 15%,#123c2d 62%,#071811);
+}
+.pharmacyWelcomeScenery::before {animation-duration:4s}
+.pharmacyWelcomeEmblem img {animation-delay:1.08s}
+.pharmacyWelcomeHalo,.pharmacyWelcomeSeal {animation-delay:.8s}
+.pharmacyWelcomeMessage {animation-delay:1.55s}
+.pharmacyWelcome .pharmacyWelcomeMessage h1 strong {
+  animation:welcome-name .57s 1.7s cubic-bezier(.17,.68,.28,1) both;
+}
+.welcomeOpeningCapsule {
+  position:absolute;z-index:3;top:42%;left:50%;
+  display:flex;direction:ltr;width:106px;height:40px;
+  transform:translate(-50%,-50%) rotate(-24deg);
+  animation:welcome-capsule-stage 1.15s ease both;
+}
+.welcomeOpeningCapsule i {width:50%;height:100%;border:1px solid #e5c580}
+.welcomeOpeningCapsule i:first-child {
+  border-radius:40px 0 0 40px;background:linear-gradient(#fff1c5,#b58a40);
+  animation:welcome-capsule-half 1s ease both;--separation:-36px;
+}
+.welcomeOpeningCapsule i:last-child {
+  border-radius:0 40px 40px 0;background:linear-gradient(#5caa85,#14503a);
+  animation:welcome-capsule-half 1s ease both;--separation:36px;
+}
+.welcomePellets {position:absolute;inset:0;z-index:2;pointer-events:none;--radius:clamp(84px,12vw,130px)}
+.welcomePellets i {
+  position:absolute;left:50%;top:50%;width:7px;height:7px;border-radius:50%;
+  background:#f4d99a;box-shadow:0 0 12px #f6cf78;
+  animation:welcome-pellet-orbit 1.4s var(--delay) cubic-bezier(.2,.7,.3,1) both;
+}
+@keyframes welcome-capsule-stage {0%{opacity:0;translate:0 -38px}24%,61%{opacity:1;translate:none}100%{opacity:0}}
+@keyframes welcome-capsule-half {0%,42%{translate:0}100%{translate:var(--separation)}}
+@keyframes welcome-pellet-orbit {
+  from{opacity:0;transform:rotate(var(--angle)) translateX(4px)}
+  27%{opacity:1}
+  78%{opacity:1}
+  to{opacity:0;transform:rotate(calc(var(--angle) + 85deg)) translateX(var(--radius))}
+}
+@media(prefers-reduced-motion:reduce) {
+  .welcomeOpeningCapsule,.welcomePellets {display:none}
+  .pharmacyWelcome .pharmacyWelcomeMessage h1 strong {animation:none}
+}

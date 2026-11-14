@@ -1751,7 +1751,7 @@ function Login({onSignIn}){
  </main>;
 }
 function AdminWelcome({owner,onContinue}){
- const duration=3500;
+ const duration=4200;
  useEffect(()=>{
   const timer=window.setTimeout(onContinue,window.matchMedia('(prefers-reduced-motion: reduce)').matches?1000:duration);
   return()=>window.clearTimeout(timer);
@@ -1769,7 +1769,10 @@ function AdminWelcome({owner,onContinue}){
    <div className="pharmacyWelcomeEmblem" aria-hidden="true">
     <span className="pharmacyWelcomeHalo"/>
     <span className="pharmacyWelcomeSeal"/>
-    <span className="pharmacyWelcomeCapsule"/><span className="pharmacyWelcomeCapsule"/>
+    <div className="welcomeOpeningCapsule"><i/><i/></div>
+    <div className="welcomePellets">
+     {Array.from({length:12},(_,i)=><i key={i} style={{'--angle':`${i*30}deg`,'--delay':`${640+i*32}ms`}}/>)}
+    </div>
     <img src="/logo.png" alt="" width="108" height="108"/>
    </div>
    <div className="pharmacyWelcomeMessage" role="status">
