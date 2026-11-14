@@ -267,3 +267,100 @@
   .publicStorefront :is(.newProduct,.serviceCard,.offerCustomer,.quickServices button),.publicLogin form {animation:none;transition:none}
   .publicLoginStage .publicMedicineBox {display:none}
 }
+
+/* Shared full-page canvas. The watermark never intercepts controls. */
+.publicStorefront {
+  isolation:isolate;
+  position:relative;
+  background:linear-gradient(155deg,#f6f7f0,#e9f1e8 55%,#eff4eb) !important;
+}
+.publicStorefront::before {
+  content:"";
+  position:fixed;
+  inset:0;
+  z-index:-1;
+  pointer-events:none;
+  background:url('/logo.png') center / min(68vw, 660px) auto no-repeat;
+  opacity:.055;
+  mix-blend-mode:multiply;
+}
+.publicStorefront .publicHero {padding-block:clamp(26px,4vw,58px)}
+.publicStorefront .publicHeroCopy {padding-inline-start:clamp(0px,3vw,34px)}
+.publicStorefront .publicHeroVisual .publicMedicineVisual {max-height:315px}
+.publicStorefront .contentLayout {
+  display:flex !important;
+  flex-direction:column;
+  gap:24px !important;
+  min-width:0;
+}
+.publicStorefront .productsArea {width:100%;min-width:0}
+.publicStorefront .newGrid {
+  display:grid !important;
+  grid-template-columns:repeat(auto-fill,minmax(min(100%, 210px),1fr)) !important;
+  gap:14px !important;
+  align-items:stretch;
+}
+.publicStorefront .newGrid .newProduct {
+  display:flex;
+  flex-direction:column;
+  min-width:0;
+  padding:14px !important;
+}
+.publicStorefront .newGrid .productArt {height:74px;min-height:74px;margin-block-end:10px}
+.publicStorefront .newGrid .newProduct h3 {font-size:17px;line-height:1.35;overflow-wrap:anywhere}
+.publicStorefront .newGrid .newProduct .productBottom {margin-top:auto;padding-top:10px;flex-wrap:wrap}
+.publicStorefront .servicesSide {
+  display:grid !important;
+  grid-template-columns:repeat(auto-fit,minmax(min(100%, 200px),1fr));
+  align-items:stretch;
+  width:100%;
+  gap:12px;
+}
+.publicStorefront .servicesSide .serviceCard {height:auto;margin:0}
+.publicCatalogMore {display:flex;justify-content:center;padding-block:18px 4px}
+.publicStorefront .publicCatalogMore button {background:#17533d;color:#fff;border-color:#17533d}
+.publicLoginStage {isolation:isolate}
+.publicLoginCapsule {
+  position:absolute;
+  inset:0;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  align-items:center;
+  direction:rtl;
+  z-index:2;
+  pointer-events:none;
+}
+.publicCapsuleHalf {
+  height:100px;
+  display:grid;
+  place-items:center;
+  box-shadow:0 18px 34px #173e3029;
+}
+.publicCapsuleRight {
+  border-radius:0 90px 90px 0;
+  background:linear-gradient(#408368,#12412f);
+  animation:public-capsule-right .78s cubic-bezier(.33,.7,.2,1) both;
+}
+.publicCapsuleLeft {
+  border-radius:90px 0 0 90px;
+  background:linear-gradient(#fbfdf8,#c8dacd);
+  animation:public-capsule-left .78s cubic-bezier(.33,.7,.2,1) both;
+}
+.publicCapsuleLeft img {width:55px;height:55px;object-fit:contain}
+.publicLogin form {animation-delay:.18s}
+@keyframes public-capsule-right {
+  0%,18% {transform:translateX(0);opacity:1}
+  65% {opacity:1}
+  100% {transform:translateX(42%);opacity:0}
+}
+@keyframes public-capsule-left {
+  0%,18% {transform:translateX(0);opacity:1}
+  65% {opacity:1}
+  100% {transform:translateX(-42%);opacity:0}
+}
+@media(max-width:520px) {
+  .publicStorefront .newGrid {grid-template-columns:repeat(2,minmax(0,1fr)) !important;gap:8px!important}
+  .publicStorefront .newGrid .newProduct {padding:9px!important}
+  .publicStorefront .newGrid .newProduct h3 {font-size:15px}
+}
+@media(prefers-reduced-motion:reduce) {.publicLoginCapsule {display:none}}
