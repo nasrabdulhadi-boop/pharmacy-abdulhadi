@@ -1751,17 +1751,25 @@ function Login({onSignIn}){
  </main>;
 }
 function AdminWelcome({owner,onContinue}){
+ const duration=3600;
  useEffect(()=>{
-  const timer=window.setTimeout(onContinue,2600);
+  const timer=window.setTimeout(onContinue,window.matchMedia('(prefers-reduced-motion: reduce)').matches?1200:duration);
   return()=>window.clearTimeout(timer);
  },[onContinue]);
+ const moveLight=event=>{
+  if(event.pointerType!=='mouse'||window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+  const card=event.currentTarget;
+  const bounds=card.getBoundingClientRect();
+  card.style.setProperty('--welcome-x',`${event.clientX-bounds.left}px`);
+  card.style.setProperty('--welcome-y',`${event.clientY-bounds.top}px`);
+ };
  return <main className="publicLogin pharmacyWelcome" dir="rtl">
-  <div className="pharmacyWelcomeCard">
+  <div className="pharmacyWelcomeCard" onPointerMove={moveLight} style={{'--welcome-duration':`${duration}ms`}}>
    <div className="pharmacyWelcomeEmblem" aria-hidden="true">
-    <span/><span/><span/>
-    <img src="/logo.png" alt="" width="90" height="90"/>
+    <div className="pharmacyWelcomeOrbit"><i/><i/><i/></div>
+    <img src="/logo.png" alt="" width="104" height="104"/>
    </div>
-   <div role="status">
+   <div className="pharmacyWelcomeMessage" role="status">
     <h1>{owner?'أهلاً بك، مديرنا دكتور نصر':'أهلاً بك في إدارة الصيدلية'}</h1>
     <p>جارٍ فتح لوحة الإدارة…</p>
    </div>
