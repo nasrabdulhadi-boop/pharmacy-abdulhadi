@@ -1,9 +1,11 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {findCatalogMatches, hasCatalogMatchFields} from './posCatalogMatches.js';
 
-export default function PosCatalogMatches({product, supabase, money}) {
+export default function PosCatalogMatches({product, supabase, money, autoLoad=false}) {
   const [state, setState] = useState({status:'idle', matches:[]});
   const complete = hasCatalogMatchFields(product);
+
+  useEffect(() => { if (autoLoad) load(); }, [autoLoad]);
 
   async function load() {
     if (!complete || state.status === 'loading') return;
@@ -29,7 +31,7 @@ export default function PosCatalogMatches({product, supabase, money}) {
     </div>
     {complete
       ? <button type="button" className="secondaryAction" onClick={load} disabled={state.status === 'loading'}>
-          {state.status === 'loading' ? 'جارٍ البحث…' : 'عرض مطابقات الدليل'}
+          {state.status === 'loading' ? 'جارٍ البحث…' : 'عرض البدائل حسب الدليل'}
         </button>
       : <p className="muted">أكمل المادة الفعالة والتركيز والشكل الصيدلاني لعرض المطابقات.</p>}
     {state.status === 'error' && <p role="alert">تعذر تحميل المطابقات. أعد المحاولة.</p>}
@@ -39,10 +41,10 @@ export default function PosCatalogMatches({product, supabase, money}) {
       {state.matches.length ? <div className="tableWrap"><table>
         <thead><tr><th>الدواء</th><th>الباركود</th><th>الرصيد الصالح</th><th>سعر المبيع</th></tr></thead>
         <tbody>{state.matches.map(match => <tr key={match.id}>
-          <td>{match.name}</td><td>{match.barcode || '—'}</td><td>{money(match.stock)}</td>
+          <td>{match.name}</td><td>{match.barcode || '—'}</td><td>{Number(match.stock)>0 ? money(match.stock) : 'غير متوفر'}</td>
           <td>{match.sale_price_syp == null ? '—' : money(match.sale_price_syp)+' ل.س'}</td>
         </tr>)}</tbody>
-      </table></div> : <p role="status">ما ظهر صنف مطابق برصيد صالح ضمن نتائج البحث.</p>}
+      </table></div> : <p role="status">ما ظهر صنف آخر بنفس الاسم العلمي والعيار والشكل الصيدلاني ضمن نتائج البحث.</p>}
     </>}
   </section>;
 }
