@@ -1281,3 +1281,53 @@
 @media(prefers-reduced-motion:reduce) {
   .pharmacyWelcome,.pharmacyWelcome :is(.pharmacyWelcomeScenery i,.pharmacyWelcomeHalo,.pharmacyWelcomeEmblem img,.pharmacyWelcomeCapsule,.pharmacyWelcomeMessage) {animation:none}
 }
+
+/* Layered welcome lighting, scoped to the authenticated entrance. */
+.pharmacyWelcome {
+  background:
+    radial-gradient(circle at var(--welcome-light-x,50%) var(--welcome-light-y,38%),#517d5a52,transparent 36%),
+    radial-gradient(ellipse at 78% 5%,#294a39,transparent 47%),
+    linear-gradient(148deg,#061710,#123729 54%,#061711);
+}
+.pharmacyWelcomeScenery::before {
+  content:"";
+  position:absolute;
+  inset:-42%;
+  background:conic-gradient(from 125deg at 50% 55%,transparent 14%,#cbb27418 25%,transparent 38%,#5c927540 62%,transparent 77%);
+  animation:welcome-light-sweep 3.4s cubic-bezier(.15,.54,.35,1) both;
+}
+.pharmacyWelcomeScenery::after {
+  content:"";
+  position:absolute;
+  inset:0;
+  background:radial-gradient(ellipse at center,transparent 28%,#030e0a80 100%);
+}
+.pharmacyWelcomeContent {gap:clamp(20px,4vw,35px)}
+.pharmacyWelcomeEmblem {width:clamp(178px,26vw,242px);height:auto;aspect-ratio:1}
+.pharmacyWelcomeEmblem img {
+  width:clamp(99px,14vw,130px);
+  height:auto;
+  aspect-ratio:1;
+  outline:1px solid #d9bf86;
+  outline-offset:5px;
+}
+.pharmacyWelcomeHalo::after {
+  content:"";
+  position:absolute;
+  inset:-14px;
+  border:2px solid transparent;
+  border-top-color:#ead39d;
+  border-inline-start-color:#c3a05d66;
+  border-radius:50%;
+  animation:welcome-gold-arc 1.38s .18s cubic-bezier(.21,.63,.23,1) both;
+}
+.pharmacyWelcome .pharmacyWelcomeMessage h1 {
+  text-shadow:0 5px 22px #03160b9c;
+  color:#fff4db;
+}
+.pharmacyWelcomeMessage {animation-delay:.9s}
+@keyframes welcome-light-sweep {from{opacity:0;transform:rotate(-24deg) scale(.84)}45%{opacity:1}to{opacity:.75;transform:rotate(14deg) scale(1.06)}}
+@keyframes welcome-gold-arc {from{opacity:0;transform:rotate(-96deg)}45%{opacity:1}to{opacity:.85;transform:rotate(128deg)}}
+@media(prefers-reduced-motion:reduce) {
+  .pharmacyWelcomeScenery::before,.pharmacyWelcomeHalo::after,.pharmacyWelcomeMessage {animation:none}
+}
