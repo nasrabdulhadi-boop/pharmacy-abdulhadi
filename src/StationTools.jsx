@@ -1,8 +1,10 @@
+import Training from './ManagerTraining.jsx';
+import {CatalogImport,CatalogCleanup} from './CatalogTools.jsx';
 import React,{useState} from 'react';
 import {makeSetupPackage, normalizeDeviceSetup, printAdminDocument, printKinds, readDeviceSetup, readSetupPackage, saveDeviceSetup} from './adminPrintSettings.js';
 import {uiText} from './systemLocale.js';
 import './ADMIN_TOOLS.css';
-const sections=[['print','قوالب الطباعة'],['devices','إدارة الأجهزة'],['package','حزم إعداد الصيدلية']];
+const sections=[['training','تمارين الموظفين'],['operations','متابعة العمليات'],['import','الاستيراد الذكي'],['cleanup','تنظيف دليل الأدوية'],['print','قوالب الطباعة'],['devices','إدارة الأجهزة'],['package','حزم إعداد الصيدلية']];
 const label = value => uiText(value);
 function downloadFile(name, content, type) {
  const url = URL.createObjectURL(new Blob([content], {type}));
@@ -13,7 +15,7 @@ function downloadFile(name, content, type) {
  setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
-export default function StationTools({appearance, applyAppearance}) {
+export default function StationTools({client,openSection,openProduct,appearance, applyAppearance}) {
  const [tab, setTab] = useState('print');
  const [setup, setSetup] = useState(readDeviceSetup);
  const [message, setMessage] = useState('');
@@ -25,6 +27,10 @@ export default function StationTools({appearance, applyAppearance}) {
   <nav aria-label={label('أدوات الإدارة')}>{sections.map(([id,title]) =>
    <button type="button" key={id} className={tab===id?'primary':'secondaryAction'}
     aria-current={tab===id?'page':undefined} onClick={()=>{setTab(id);setMessage('');}}>{label(title)}</button>)}</nav>
+  {tab==='training'&&<Training/>}
+  {tab==='operations'&&<div className="adminToolsActions">{[['orders','طلبات الزبائن'],['dailyActivity','مركز الحركة اليومية'],['reports','التقارير والمحاسبة'],['security','الأمان والتدقيق']].map(([id,title])=><button key={id} type="button" onClick={()=>openSection(id)}>{label(title)}</button>)}</div>}
+  {tab==='import'&&<CatalogImport client={client}/>}
+  {tab==='cleanup'&&<CatalogCleanup client={client} openProduct={openProduct}/>}
   {tab==='print' && <PrintTemplates setup={setup} save={save}/>}
   {tab==='devices' && <DeviceSettings setup={setup} save={save}/>}
   {tab==='package' && <SetupPackage setup={setup} appearance={appearance} applyAppearance={applyAppearance} setSetup={setSetup}/>}

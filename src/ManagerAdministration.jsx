@@ -18,7 +18,7 @@ const sections = [
   ['preferences', 'المظهر', Sparkles],
 ];
 
-export default function ManagerAdministration({client, darkMode, setDarkMode, openAudit}) {
+export default function ManagerAdministration({client, darkMode, setDarkMode, openSection, openProduct, openAudit}) {
   const language=useSystemLanguage();
   const [section, setSection] = useState('overview');
   const [identity, setIdentity] = useState({status: 'checking'});
@@ -61,7 +61,7 @@ export default function ManagerAdministration({client, darkMode, setDarkMode, op
       {section==='profile'&&<ChangeManagerPassword client={client}/>}
       {section==='accounts'&&<ManagerMembers client={client}/>}
       {section==='backup'&&<ManagerArchive client={client}/>}
-      {section==='tools'&&<StationTools appearance={{...preferences,language}} applyAppearance={async next=>{
+      {section==='tools'&&<StationTools client={client} openSection={openSection} openProduct={openProduct} appearance={{...preferences,language}} applyAppearance={async next=>{
         await setSystemLanguage(next.language);
         if(!writeAdminPreferences(window.localStorage,next))throw Error();
         setPreferences(next);
