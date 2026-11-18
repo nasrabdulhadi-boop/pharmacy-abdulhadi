@@ -1,3 +1,4 @@
+import {uiText} from './systemLocale.js';
 import React, {useEffect, useState} from 'react';
 import {findCatalogMatches, hasCatalogMatchFields} from './posCatalogMatches.js';
 
@@ -23,28 +24,28 @@ export default function PosCatalogMatches({product, supabase, money, autoLoad=fa
     }
   }
 
-  return <section aria-label="مطابقات دليل الأدوية">
+  return <section aria-label={uiText("مطابقات دليل الأدوية")}>
     <div className="detailGrid">
-      <div><b>المادة الفعالة</b><span>{product.active_ingredient || '—'}</span></div>
-      <div><b>التركيز</b><span>{product.strength || '—'}</span></div>
-      <div><b>الشكل الصيدلاني</b><span>{product.dosage_form || '—'}</span></div>
+      <div><b>{uiText("المادة الفعالة")}</b><span>{product.active_ingredient || '—'}</span></div>
+      <div><b>{uiText("التركيز")}</b><span>{product.strength || '—'}</span></div>
+      <div><b>{uiText("الشكل الصيدلاني")}</b><span>{product.dosage_form || '—'}</span></div>
     </div>
     {complete
       ? <button type="button" className="secondaryAction" onClick={load} disabled={state.status === 'loading'}>
-          {state.status === 'loading' ? 'جارٍ البحث…' : 'عرض البدائل حسب الدليل'}
+          {state.status === 'loading' ? uiText("جارٍ البحث…") : uiText("عرض البدائل حسب الدليل")}
         </button>
-      : <p className="muted">أكمل المادة الفعالة والتركيز والشكل الصيدلاني لعرض المطابقات.</p>}
-    {state.status === 'error' && <p role="alert">تعذر تحميل المطابقات. أعد المحاولة.</p>}
+      : <p className="muted">{uiText("أكمل المادة الفعالة والتركيز والشكل الصيدلاني لعرض المطابقات.")}</p>}
+    {state.status === 'error' && <p role="alert">{uiText("تعذر تحميل المطابقات. أعد المحاولة.")}</p>}
     {state.status === 'ready' && <>
-      <p className="muted">مطابقات حسب بيانات الدليل. تحقّق من العبوة وطريق الإعطاء ونوع التحرّر والتكافؤ العلاجي قبل الاستبدال.</p>
-      {state.limited && <p className="muted">شمل البحث أول 100 نتيجة من الدليل.</p>}
+      <p className="muted">{uiText("مطابقات حسب بيانات الدليل. تحقّق من العبوة وطريق الإعطاء ونوع التحرّر والتكافؤ العلاجي قبل الاستبدال.")}</p>
+      {state.limited && <p className="muted">{uiText("شمل البحث أول 100 نتيجة من الدليل.")}</p>}
       {state.matches.length ? <div className="tableWrap"><table>
-        <thead><tr><th>الدواء</th><th>الباركود</th><th>الرصيد الصالح</th><th>سعر المبيع</th></tr></thead>
+        <thead><tr><th>{uiText("الدواء")}</th><th>{uiText("الباركود")}</th><th>{uiText("الرصيد الصالح")}</th><th>{uiText("سعر المبيع")}</th></tr></thead>
         <tbody>{state.matches.map(match => <tr key={match.id}>
-          <td>{match.name}</td><td>{match.barcode || '—'}</td><td>{Number(match.stock)>0 ? money(match.stock) : 'غير متوفر'}</td>
+          <td>{match.name}</td><td>{match.barcode || '—'}</td><td>{Number(match.stock)>0 ? money(match.stock) : uiText("غير متوفر")}</td>
           <td>{match.sale_price_syp == null ? '—' : money(match.sale_price_syp)+' ل.س'}</td>
         </tr>)}</tbody>
-      </table></div> : <p role="status">ما ظهر صنف آخر بنفس الاسم العلمي والعيار والشكل الصيدلاني ضمن نتائج البحث.</p>}
+      </table></div> : <p role="status">{uiText("ما ظهر صنف آخر بنفس الاسم العلمي والعيار والشكل الصيدلاني ضمن نتائج البحث.")}</p>}
     </>}
   </section>;
 }

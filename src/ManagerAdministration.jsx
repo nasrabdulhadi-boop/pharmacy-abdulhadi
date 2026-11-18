@@ -1,3 +1,7 @@
+import {ManagerMembers,ManagerArchive,ChangeManagerPassword} from './ManagerServices.jsx';
+import StationTools from './StationTools.jsx';
+import {SYSTEM_LANGUAGES} from './systemLanguages.js';
+import {uiText,getSystemDirection,setSystemLanguage,useSystemLanguage} from './systemLocale.js';
 import React, {useEffect, useState} from 'react';
 import {Home, Users, ShieldCheck, Sparkles} from 'lucide-react';
 import {verifiedSystemRole} from './systemAdminRoleGate.js';
@@ -8,10 +12,14 @@ import './SYSTEM_ADMIN_REBUILD_V3.css';
 const sections = [
   ['overview', 'نظرة عامة', Home],
   ['profile', 'الملف الشخصي', Users],
+  ['accounts','الأدوار والصلاحيات',Users],
+  ['backup','النسخ الاحتياطي',ShieldCheck],
+  ['tools','أدوات الإدارة',Sparkles],
   ['preferences', 'المظهر', Sparkles],
 ];
 
 export default function ManagerAdministration({client, darkMode, setDarkMode, openAudit}) {
+  const language=useSystemLanguage();
   const [section, setSection] = useState('overview');
   const [identity, setIdentity] = useState({status: 'checking'});
   const [preferences, setPreferences] = useState(() => readAdminPreferences(window.localStorage));
@@ -32,7 +40,7 @@ export default function ManagerAdministration({client, darkMode, setDarkMode, op
     return () => { active = false; };
   }, [client]);
   function changeDensity(density) {
-    const next = {...preferences, density};
+    const next = {...preferences,language,density};
     if (writeAdminPreferences(window.localStorage, next)) {
       setPreferences(next);
       setMessage('');
@@ -40,17 +48,25 @@ export default function ManagerAdministration({client, darkMode, setDarkMode, op
       setMessage('تعذّر حفظ الإعداد على هذا الجهاز.');
     }
   }
-  if (identity.status !== 'verified') return <p role="status">{identity.status === 'checking' ? 'جارٍ التحقق من حساب المدير…' : 'تعذّر التحقق من صلاحية المدير.'}</p>;
+  if (identity.status !== 'verified') return <p role="status">{identity.status === 'checking' ? uiText("جارٍ التحقق من حساب المدير…") : uiText("تعذّر التحقق من صلاحية المدير.")}</p>;
   const roleLabel = identity.role === 'system_owner' ? 'مالك النظام' : 'مدير النظام';
-  return <div className="panel systemAdminModern" dir="rtl" data-density={preferences.density}>
-    <header className="systemAdminTopbar"><div className="systemAdminBrand"><ShieldCheck/><h2>مركز إدارة النظام</h2></div></header>
-    <nav className="systemAdminTabs systemAdminTabsTop" aria-label="أقسام مركز الإدارة">{sections.map(([id, label, Icon]) =>
-      <button type="button" key={id} className={section === id ? 'primary' : ''} aria-current={section === id ? 'page' : undefined} onClick={() => setSection(id)}><Icon size={18}/>{label}</button>)}</nav>
+  return <div className="panel systemAdminModern" dir={getSystemDirection()} data-density={preferences.density}>
+    <header className="systemAdminTopbar"><div className="systemAdminBrand"><ShieldCheck/><h2>{uiText("مركز إدارة النظام")}</h2></div></header>
+    <nav className="systemAdminTabs systemAdminTabsTop" aria-label={uiText("أقسام مركز الإدارة")}>{sections.map(([id, label, Icon]) =>
+      <button type="button" key={id} className={section === id ? 'primary' : ''} aria-current={section === id ? 'page' : undefined} onClick={() => setSection(id)}><Icon size={18}/>{uiText(label)}</button>)}</nav>
     <div className="systemAdminMain" style={{padding: preferences.density === 'compact' ? 12 : 24}}>
-      <h3>{sections.find(([id]) => id === section)[1]}</h3>
-      {section === 'overview' && <section className="systemAdminOverview"><div className="systemAdminMetrics"><article className="systemAdminMetric"><span>جلسة الحساب</span><strong>مؤكدة</strong></article><article className="systemAdminMetric"><span>دور الحساب</span><strong>{roleLabel}</strong></article></div><button type="button" onClick={openAudit}>فتح الأمان والتدقيق</button></section>}
-      {section === 'profile' && <div className="adminIdentityCard"><Users/><div><span>البريد الإلكتروني</span><b dir="ltr">{identity.email}</b></div><span>{roleLabel}</span></div>}
-      {section === 'preferences' && <section className="adminPreferencesGrid"><label>مظهر النظام<select value={darkMode ? 'dark' : 'light'} onChange={e => setDarkMode(e.target.value === 'dark')}><option value="light">نهاري</option><option value="dark">ليلي</option></select></label><label>كثافة عرض المركز<select value={preferences.density} onChange={e => changeDensity(e.target.value)}><option value="comfortable">مريح</option><option value="compact">مضغوط</option></select></label>{message && <p role="status">{message}</p>}</section>}
+      <h3>{uiText(sections.find(([id]) => id === section)[1])}</h3>
+      {section === 'overview' && <section className="systemAdminOverview"><div className="systemAdminMetrics"><article className="systemAdminMetric"><span>{uiText("جلسة الحساب")}</span><strong>{uiText("مؤكدة")}</strong></article><article className="systemAdminMetric"><span>{uiText("دور الحساب")}</span><strong>{uiText(roleLabel)}</strong></article></div><button type="button" onClick={openAudit}>{uiText("فتح الأمان والتدقيق")}</button></section>}
+      {section === 'profile' && <div className="adminIdentityCard"><Users/><div><span>{uiText("البريد الإلكتروني")}</span><b dir="ltr">{identity.email}</b></div><span>{uiText(roleLabel)}</span></div>}
+      {section==='profile'&&<ChangeManagerPassword client={client}/>}
+      {section==='accounts'&&<ManagerMembers client={client}/>}
+      {section==='backup'&&<ManagerArchive client={client}/>}
+      {section==='tools'&&<StationTools appearance={{...preferences,language}} applyAppearance={async next=>{
+        await setSystemLanguage(next.language);
+        if(!writeAdminPreferences(window.localStorage,next))throw Error();
+        setPreferences(next);
+      }}/>}
+      {section === 'preferences' && <section className="adminPreferencesGrid"><label>{uiText("لغة النظام")}<select value={language} onChange={e=>setSystemLanguage(e.target.value).catch(()=>setMessage('تعذّر تحميل اللغة.'))}>{SYSTEM_LANGUAGES.map(item=><option key={item.code} value={item.code}>{item.name}</option>)}</select></label><label>{uiText("مظهر النظام")}<select value={darkMode ? 'dark' : 'light'} onChange={e => setDarkMode(e.target.value === 'dark')}><option value="light">{uiText("نهاري")}</option><option value="dark">{uiText("ليلي")}</option></select></label><label>{uiText("كثافة عرض المركز")}<select value={preferences.density} onChange={e => changeDensity(e.target.value)}><option value="comfortable">{uiText("مريح")}</option><option value="compact">{uiText("مضغوط")}</option></select></label>{message && <p role="status">{message}</p>}</section>}
     </div>
   </div>;
 }

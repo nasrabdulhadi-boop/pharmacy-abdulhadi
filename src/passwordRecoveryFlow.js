@@ -1,0 +1,29 @@
+// Read callback intent before the Auth SDK consumes the URL fragment. Never retain tokens.
+export function recoveryCallbackState(location,enabled){
+ if(!enabled||!location)return 'idle';
+ const hash=new URLSearchParams((location.hash||'').replace(/^#/,''));
+ const search=new URLSearchParams(location.search||'');
+ if(hash.has('error')||hash.has('error_code')||search.has('error')||search.has('error_code'))return 'invalid';
+ return hash.get('type')==='invite'?'pending_invite':hash.get('type')==='recovery'?'pending':'idle';
+}
+export function createRecoveryFlow(initial='idle'){
+ let invitation=initial==='pending_invite';let state=invitation?'pending':initial;const listeners=new Set();
+ const set=next=>{state=next;for(const fn of listeners)fn(state)};
+ return {getState:()=>state,isInvitation:()=>invitation,subscribe(fn){listeners.add(fn);return()=>listeners.delete(fn)},
+  onAuthEvent(event,session){if(event==='PASSWORD_RECOVERY'&&session?.user)set('ready');else if(invitation&&['pending','failed'].includes(state)&&event==='SIGNED_IN'&&session?.user?.email_confirmed_at&&session.user.app_metadata?.qa_invitation_id)set('ready');else if(event==='SIGNED_OUT'&&state==='ready')set('invalid')},
+  // Auth SDK queues PASSWORD_RECOVERY after initialization, on the next event-loop turn.
+  // getSession() finishing first is not evidence of an expired link.
+  initialized(){},timeout(){if(state==='pending')set('failed')},restart(){set('invalid')},reset(){invitation=false;set('idle')}};
+}
+export async function saveRecoveredPassword({auth,password,confirmation,enabled,recoveryState}){
+ if(!enabled||recoveryState!=='ready')return {ok:false,message:'رابط الاسترداد غير صالح. اطلب رابطاً جديداً.'};
+ if(typeof password!=='string'||password.length<12||new TextEncoder().encode(password).length>72)return {ok:false,message:'استخدم كلمة مرور لا تقل عن 12 محرفاً، واختر قيمة أقصر إذا كانت طويلة جداً.'};
+ if(password!==confirmation)return {ok:false,message:'كلمتا المرور غير متطابقتين.'};
+ try{
+  const {data:sessionData,error:sessionError}=await auth.getSession();
+  if(sessionError||!sessionData?.session)return {ok:false,message:'انتهت جلسة الاسترداد. اطلب رابطاً جديداً.'};
+  const {error}=await auth.updateUser({password});
+  if(error)return {ok:false,message:error.code==='same_password'?'اختر كلمة مرور مختلفة عن السابقة.':'تعذر حفظ كلمة المرور. تحقق من متطلبات كلمة المرور أو اطلب رابطاً جديداً.'};
+  return {ok:true,message:'تم حفظ كلمة المرور الجديدة بنجاح.'};
+ }catch{return {ok:false,message:'تعذر الاتصال بخدمة المصادقة. حاول مجدداً.'}}
+}

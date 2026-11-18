@@ -1,0 +1,12 @@
+.adminTools {display:grid;gap:16px;min-width:0}
+.adminTools nav,.adminToolsActions {display:flex;align-items:center;flex-wrap:wrap;gap:8px}
+.adminToolsPanel {display:grid;gap:12px;align-items:start;justify-items:start;min-width:0}
+.adminToolsPanel > label:not(.adminToolsCheck) {display:grid;gap:6px;width:min(100%,420px)}
+.adminToolsCheck {display:flex;align-items:center;gap:8px}
+.adminToolsCheck input,.adminToolsTable input {width:auto!important}
+.adminToolsTable {width:100%;overflow:auto;max-height:380px}
+.adminToolsTable table {min-width:660px}
+.adminToolsTable th,.adminToolsTable td {text-align:start;padding:8px}
+.adminToolsFindings {width:100%;max-height:450px;overflow:auto;padding-inline-start:24px}
+.adminToolsFindings li {padding-block:8px}
+.adminToolsFindings button {margin:5px}
