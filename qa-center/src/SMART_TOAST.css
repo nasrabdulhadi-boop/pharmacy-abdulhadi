@@ -1,0 +1,18 @@
+/* Smart Toast Notifications — isolated from accounting, forms and existing dialogs */
+.smartToastStack{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:2147483000;display:flex;flex-direction:column;gap:10px;width:min(460px,calc(100vw - 28px));pointer-events:none;direction:rtl;font-family:inherit}
+.smartToast{--toast-accent:#2563eb;--toast-tint:#eff6ff;position:relative;display:flex;align-items:flex-start;gap:11px;overflow:hidden;padding:14px 14px 17px;border-radius:13px;background:var(--toast-tint);border:1px solid var(--toast-accent);box-shadow:0 12px 32px rgba(0,0,0,.18);color:#172033;pointer-events:auto;animation:smartToastEnter .24s ease-out both;font-size:14px;line-height:1.65}
+.smartToast--success{--toast-accent:#15803d;--toast-tint:#f0fdf4}
+.smartToast--error{--toast-accent:#b91c1c;--toast-tint:#fef2f2}
+.smartToast--warning{--toast-accent:#b45309;--toast-tint:#fffbeb}
+.smartToast--info{--toast-accent:#1d4ed8;--toast-tint:#eff6ff}
+.smartToastIcon{display:grid;place-items:center;flex:none;width:25px;height:25px;border-radius:50%;background:var(--toast-accent);color:white;font-size:17px;font-weight:800}
+.smartToastMessage{flex:1;min-width:0;overflow-wrap:anywhere;white-space:pre-line;font-weight:600}
+.smartToastClose{border:0;background:transparent;color:inherit;opacity:.75;cursor:pointer;font-size:22px;line-height:1;padding:0 4px;flex:none}
+.smartToastClose:hover{opacity:1}
+.smartToastProgress{position:absolute;bottom:0;right:0;height:3px;width:100%;background:var(--toast-accent);transform-origin:right;animation:smartToastTime linear forwards}
+@keyframes smartToastEnter{from{opacity:0;transform:translateY(15px)}to{opacity:1;transform:translateY(0)}}
+@keyframes smartToastTime{from{transform:scaleX(1)}to{transform:scaleX(0)}}
+@media(max-width:600px){.smartToastStack{bottom:14px;width:calc(100vw - 24px)}.smartToast{font-size:13px;padding:12px 12px 15px}}
+@media(prefers-reduced-motion:reduce){.smartToast,.smartToastProgress{animation:none}}
+@media(prefers-color-scheme:dark){.smartToast{color:#f8fafc;background:#18202c}.smartToast--success{background:#10291c}.smartToast--error{background:#32191d}.smartToast--warning{background:#302414}.smartToast--info{background:#15243c}}
+body.dark .smartToast,body.dark-mode .smartToast,[data-theme="dark"] .smartToast{color:#f8fafc;background:#1e293b}

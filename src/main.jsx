@@ -1,8 +1,8 @@
 import {printAdminDocument, printConfiguredReport} from './adminPrintSettings.js';
 import {uiText, getSystemDirection, useSystemLanguage} from './systemLocale.js';
-import {createRecoveryFlow, recoveryCallbackState} from './passwordRecoveryFlow.js';
-import RecoveryPasswordForm from './RecoveryPasswordForm.jsx';
-import ManagerAdministration from './ManagerAdministration.jsx';
+
+
+import {PreviewRoot,previewClient,CenterToasts} from '../qa-center/src/main.jsx';
 import PosCatalogMatches from './PosCatalogMatches.jsx';
 import {purchaseAdvancePreview} from './supplierAdvanceMath.js';
 import './SUPPLIER_ADVANCES.css';
@@ -26,10 +26,8 @@ import './ADMIN_NIGHT.css';
 import './PUBLIC_STOREFRONT.css';
 
 const url=import.meta.env.VITE_SUPABASE_URL; const key=import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
-const recoveryIntent=recoveryCallbackState(window.location,true);
-const managerRecovery=createRecoveryFlow(recoveryIntent==='pending_invite'?'idle':recoveryIntent);
-const supabase=url&&key?createClient(url,key):null;
-supabase?.auth.onAuthStateChange((event,session)=>managerRecovery.onAuthEvent(event,session));
+const supabase=previewClient;
+
 async function fetchAllAdminProducts({customerVisible=null,pageSize=500}={}){
  if(!supabase) throw new Error('اتصال قاعدة البيانات غير متاح');
  const out=[]; let offset=0;
@@ -322,8 +320,9 @@ function PageHead({title,sub,refresh,actions}){
 }
 function PillIcon(){return <span className="pillIcon" aria-hidden="true"><i></i></span>}
 function SystemClock(){const [now,setNow]=useState(new Date());useEffect(()=>{const id=setInterval(()=>setNow(new Date()),1000);return()=>clearInterval(id)},[]);return <div className="systemClock">{uiText("🕒 توقيت الجهاز: ")}{localDateTime(now)}</div>}
-function Admin({onLogout}){
- const [tab,setTab]=useState('dashboard'),[mobile,setMobile]=useState(false),[focus,setFocus]=useState(null),[quickSearch,setQuickSearch]=useState('');
+function Admin({onLogout,renderCenter}){
+ useSystemLanguage();
+ const [tab,setTab]=useState('managerAdministration'),[mobile,setMobile]=useState(false),[focus,setFocus]=useState(null),[quickSearch,setQuickSearch]=useState('');
  const [darkMode,setDarkMode]=useState(()=>{try{return localStorage.getItem('abdulhadi-theme')==='dark'}catch{return false}});
  const [sideCollapsed,setSideCollapsed]=useState(()=>{try{return localStorage.getItem('abdulhadi-sidebar')==='collapsed'}catch{return false}});
  useEffect(()=>{try{localStorage.setItem('abdulhadi-theme',darkMode?'dark':'light')}catch{}document.body.classList.toggle('abdulhadiNight',darkMode);return()=>document.body.classList.remove('abdulhadiNight')},[darkMode]);
@@ -352,7 +351,7 @@ function Admin({onLogout}){
   <main className="adminMain">
    <div className="adminTopbar"><div className="topbarTitle"><div className="topbarEyebrow">{uiText("إدارة صيدلية عبدالهادي")}</div><strong>{nav.find(x=>x[0]===tab)?.[1]}</strong></div><div className="globalSearch"><Search size={17}/><input value={quickSearch} onChange={e=>setQuickSearch(e.target.value)} onKeyDown={e=>{if(e.key==='Enter')runQuickSearch()}} placeholder={uiText("ابحث في أقسام النظام…")} aria-label={uiText("بحث سريع داخل النظام")}/><kbd>Ctrl K</kbd></div><div className="topbarActions"><button type="button" className="topbarAction themeToggle" onClick={()=>setDarkMode(x=>!x)} title={darkMode?uiText("تفعيل الوضع النهاري"):uiText("تفعيل الوضع الليلي")} aria-label={darkMode?uiText("تفعيل الوضع النهاري"):uiText("تفعيل الوضع الليلي")}><span aria-hidden="true">{darkMode?'☀':'☾'}</span><span>{darkMode?uiText("نهاري"):uiText("ليلي")}</span></button><button type="button" className="topbarAction sidebarToggle" onClick={()=>setSideCollapsed(x=>!x)} title={sideCollapsed?uiText("توسيع القائمة"):uiText("طي القائمة")} aria-label={sideCollapsed?uiText("توسيع القائمة"):uiText("طي القائمة")}><Menu size={17}/></button><button type="button" className="topbarAction" onClick={()=>go('pos')} title={uiText("بيع جديد")}><ShoppingCart size={17}/><span>{uiText("بيع جديد")}</span></button><button type="button" className="topbarAction accent" onClick={()=>go('purchases')} title={uiText("فاتورة شراء جديدة")}><Plus size={17}/><span>{uiText("شراء جديد")}</span></button><div className="topbarClock"><Clock size={15}/><SystemClock/></div></div></div>
    <div className="mobileBar"><button type="button" className="mobileThemeToggle" onClick={()=>setDarkMode(x=>!x)} aria-label={darkMode?uiText("الوضع النهاري"):uiText("الوضع الليلي")}>{darkMode?'☀':'☾'}</button><button onClick={()=>setMobile(!mobile)} aria-label={uiText("فتح القائمة")}><Menu/></button><div><small>{uiText("صيدلية عبدالهادي")}</small><b>{nav.find(x=>x[0]===tab)?.[1]}</b></div></div>
-   {tab==='managerAdministration'&&<ManagerAdministration openSection={go} openProduct={row=>go('pharmacyProducts',{catalogId:row.id})} client={supabase} darkMode={darkMode} setDarkMode={setDarkMode} openAudit={()=>go('security')}/>}
+   {tab==='managerAdministration'&&renderCenter(id=>go('pharmacyProducts',{catalogId:id}))}
    {tab==='dashboard'&&<Dashboard go={go}/>} {tab==='pos'&&<POS/>}{tab==='pharmacyProducts'&&<ProductManager mode="pharmacy" catalogId={focus?.catalogId}/>}{tab==='siteProducts'&&<ProductManager mode="site"/>}{tab==='inventory'&&<Inventory focus={focus}/>}{tab==='smart'&&<SmartInventory/>}{tab==='orders'&&<Orders/>}{tab==='prescriptions'&&<Prescriptions/>}{tab==='requests'&&<Requests/>}{tab==='offers'&&<Offers/>}{tab==='dailyActivity'&&<DailyActivityCenter supabase={supabase} RefreshButton={RefreshButton}/>} {tab==='reports'&&<Reports/>}{tab==='profitCenterPreview'&&<ProfitCenterPreview/>}{tab==='cashbox'&&<Cashbox/>}{tab==='debtors'&&<Debtors/>}{tab==='purchases'&&<Purchases focus={focus} go={go}/>} {tab==='supplierDebts'&&<SupplierDebts go={go}/>}{tab==='suppliers'&&<Suppliers/>}{tab==='customers'&&<Customers/>}{tab==='returns'&&<Returns/>}{tab==='security'&&<Security/>}
   </main>
  </div>
@@ -1827,71 +1826,6 @@ function AdminWelcome({owner,onContinue}){
 const ownerEmail='drnaser@pharmahadi.com';
 const isAdminSession=session=>session?.user?.email===ownerEmail||session?.user?.app_metadata?.role==='admin';
 
-function Root(){
- useSystemLanguage();
- const recovery=React.useSyncExternalStore(managerRecovery.subscribe,managerRecovery.getState,managerRecovery.getState);
- useEffect(()=>{
-   if(recovery!=='pending')return;
-   const timer=setTimeout(()=>managerRecovery.timeout(),12000);
-   return ()=>clearTimeout(timer);
- },[recovery]);
- const finishRecovery=()=>{
-   managerRecovery.reset();window.history.replaceState(null,'',window.location.pathname+'#admin');
- };
- const [session,setSession]=useState(null);
- const [checked,setChecked]=useState(false);
- const [welcome,setWelcome]=useState(false);
- const signingIn=useRef(false);
- const continueToAdmin=React.useCallback(()=>setWelcome(false),[]);
-
- useEffect(()=>{
-  let alive=true;
-  if(!supabase){setChecked(true);return;}
-  (async()=>{
-   const {data}=await supabase.auth.getSession();
-   let current=data?.session||null;
-   if(current?.user?.email===ownerEmail&&current.user.app_metadata?.role!=='admin'){
-    try{const result=await supabase.auth.refreshSession();current=result.data?.session||current}catch{}
-   }
-   if(alive){setSession(current);setChecked(true);}
-  })();
-  const {data:{subscription}}=supabase.auth.onAuthStateChange((_event,current)=>{
-   if(!signingIn.current)setSession(current);
-   if(!current)setWelcome(false);
-  });
-  return()=>{alive=false;subscription.unsubscribe()};
- },[]);
-
- const signIn=async credentials=>{
-  signingIn.current=true;
-  try{
-   const result=await supabase.auth.signInWithPassword(credentials);
-   if(!result.error){
-    setWelcome(isAdminSession(result.data?.session));
-    setSession(result.data?.session||null);
-   }
-   return result;
-  }finally{signingIn.current=false;}
- };
- if(recovery==='ready')return <RecoveryPasswordForm auth={supabase.auth} enabled recoveryState={recovery} onDone={finishRecovery} onRestart={finishRecovery}/>;
- if(recovery==='pending')return <Splash/>;
- if(recovery==='failed'||recovery==='invalid')return <main className="login"><p role="alert">{uiText("تعذّر التحقق من رابط الاسترداد.")}</p><button onClick={finishRecovery}>{uiText("العودة إلى الدخول")}</button></main>;
- if(!checked)return <Splash/>;
- if(isAdminSession(session)){
-  if(welcome)return <AdminWelcome owner={session.user.email===ownerEmail} onContinue={continueToAdmin}/>;
-  return <Admin onLogout={()=>supabase.auth.signOut()}/>;
- }
- return <CustomerOrLogin onSignIn={signIn}/>;
-}
-function CustomerOrLogin({onSignIn}){
- const [login,setLogin]=useState(()=>location.hash==='#admin');
- useEffect(()=>{
-  const sync=()=>{setLogin(location.hash==='#admin');if(location.hash==='#admin'||location.hash==='#home')window.scrollTo(0,0)};
-  window.addEventListener('hashchange',sync);
-  return()=>window.removeEventListener('hashchange',sync);
- },[]);
- return login?<Login onSignIn={onSignIn}/>:<Customer/>;
-}
-createRoot(document.getElementById('root')).render(<><AppErrorBoundary><Root/></AppErrorBoundary><SmartToastHost/></>);
+createRoot(document.getElementById('root')).render(<><AppErrorBoundary><PreviewRoot managerShell={Admin}/></AppErrorBoundary><SmartToastHost/><CenterToasts/></>);
 
 
