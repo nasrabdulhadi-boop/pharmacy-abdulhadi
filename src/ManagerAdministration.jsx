@@ -1,4 +1,5 @@
 import {ManagerMembers,ManagerArchive,ChangeManagerPassword} from './ManagerServices.jsx';
+import BranchManagement from './BranchManagement.jsx';
 import StationTools from './StationTools.jsx';
 import {SYSTEM_LANGUAGES} from './systemLanguages.js';
 import {uiText,getSystemDirection,setSystemLanguage,useSystemLanguage} from './systemLocale.js';
@@ -13,6 +14,7 @@ const sections = [
   ['overview', 'نظرة عامة', Home],
   ['profile', 'الملف الشخصي', Users],
   ['accounts','الأدوار والصلاحيات',Users],
+  ['branches','الفروع',Home],
   ['backup','النسخ الاحتياطي',ShieldCheck],
   ['tools','أدوات الإدارة',Sparkles],
   ['preferences', 'المظهر', Sparkles],
@@ -60,6 +62,7 @@ export default function ManagerAdministration({client, darkMode, setDarkMode, op
       {section === 'profile' && <div className="adminIdentityCard"><Users/><div><span>{uiText("البريد الإلكتروني")}</span><b dir="ltr">{identity.email}</b></div><span>{uiText(roleLabel)}</span></div>}
       {section==='profile'&&<ChangeManagerPassword client={client}/>}
       {section==='accounts'&&<ManagerMembers client={client}/>}
+      {section==='branches'&&<BranchManagement client={client} ownerEmail={identity.email}/>}
       {section==='backup'&&<ManagerArchive client={client}/>}
       {section==='tools'&&<StationTools client={client} openSection={openSection} openProduct={openProduct} appearance={{...preferences,language}} applyAppearance={async next=>{
         await setSystemLanguage(next.language);
