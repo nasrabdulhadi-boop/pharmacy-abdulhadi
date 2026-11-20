@@ -1,3 +1,7 @@
+import StaffCenter from './StaffCenter.jsx';
+import ManagerRecovery from './ManagerRecovery.jsx';
+import {CenterAppearance,useCenterAppearance} from './CenterAppearance.jsx';
+import './CenterLayout.css';
 import {ManagerMembers,ManagerArchive,ChangeManagerPassword} from './ManagerServices.jsx';
 import BranchManagement from './BranchManagement.jsx';
 import StationTools from './StationTools.jsx';
@@ -10,7 +14,7 @@ import {readAdminPreferences, writeAdminPreferences} from './systemAdminPreferen
 import './SYSTEM_ADMIN_WINDOW_POLISH.css';
 import './SYSTEM_ADMIN_REBUILD_V3.css';
 
-const sections = [
+const defaultSections = [
   ['overview', 'نظرة عامة', Home],
   ['profile', 'الملف الشخصي', Users],
   ['accounts','الأدوار والصلاحيات',Users],
@@ -20,6 +24,10 @@ const sections = [
   ['preferences', 'المظهر', Sparkles],
 ];
 
+function VerifiedAppearance({identity,...props}){
+ const [appearance,save]=useCenterAppearance(identity.email);
+ return props.children(appearance,save);
+}
 export default function ManagerAdministration({client, darkMode, setDarkMode, openSection, openProduct, openAudit}) {
   const language=useSystemLanguage();
   const [section, setSection] = useState('overview');
@@ -52,16 +60,19 @@ export default function ManagerAdministration({client, darkMode, setDarkMode, op
   }
   if (identity.status !== 'verified') return <p role="status">{identity.status === 'checking' ? uiText("جارٍ التحقق من حساب المدير…") : uiText("تعذّر التحقق من صلاحية المدير.")}</p>;
   const roleLabel = identity.role === 'system_owner' ? 'مالك النظام' : 'مدير النظام';
-  return <div className="panel systemAdminModern" dir={getSystemDirection()} data-density={preferences.density}>
+  return <VerifiedAppearance identity={identity}>{(appearance,save)=>{
+    const rank=id=>{const i=appearance.order.indexOf(id);return i<0?99:i;};
+    const sections=[...defaultSections].sort((a,b)=>rank(a[0])-rank(b[0]));
+    return <div className="panel systemAdminModern centerLayout" data-font={appearance.font} data-shape={appearance.shape} dir={getSystemDirection()} data-density={preferences.density}>
     <header className="systemAdminTopbar"><div className="systemAdminBrand"><ShieldCheck/><h2>{uiText("مركز إدارة النظام")}</h2></div></header>
     <nav className="systemAdminTabs systemAdminTabsTop" aria-label={uiText("أقسام مركز الإدارة")}>{sections.map(([id, label, Icon]) =>
       <button type="button" key={id} className={section === id ? 'primary' : ''} aria-current={section === id ? 'page' : undefined} onClick={() => setSection(id)}><Icon size={18}/>{uiText(label)}</button>)}</nav>
-    <div className="systemAdminMain" style={{padding: preferences.density === 'compact' ? 12 : 24}}>
+    <div key={section} className="systemAdminMain" style={{padding: preferences.density === 'compact' ? 12 : 24}}>
       <h3>{uiText(sections.find(([id]) => id === section)[1])}</h3>
       {section === 'overview' && <section className="systemAdminOverview"><div className="systemAdminMetrics"><article className="systemAdminMetric"><span>{uiText("جلسة الحساب")}</span><strong>{uiText("مؤكدة")}</strong></article><article className="systemAdminMetric"><span>{uiText("دور الحساب")}</span><strong>{uiText(roleLabel)}</strong></article></div><button type="button" onClick={openAudit}>{uiText("فتح الأمان والتدقيق")}</button></section>}
       {section === 'profile' && <div className="adminIdentityCard"><Users/><div><span>{uiText("البريد الإلكتروني")}</span><b dir="ltr">{identity.email}</b></div><span>{uiText(roleLabel)}</span></div>}
-      {section==='profile'&&<ChangeManagerPassword client={client}/>}
-      {section==='accounts'&&<ManagerMembers client={client}/>}
+      {section==='profile'&&<><ChangeManagerPassword client={client}/><ManagerRecovery client={client} link/></>}
+      {section==='accounts'&&<><StaffCenter client={client}/><ManagerMembers client={client}/></>}
       {section==='branches'&&<BranchManagement client={client} ownerEmail={identity.email}/>}
       {section==='backup'&&<ManagerArchive client={client}/>}
       {section==='tools'&&<StationTools client={client} openSection={openSection} openProduct={openProduct} appearance={{...preferences,language}} applyAppearance={async next=>{
@@ -69,7 +80,8 @@ export default function ManagerAdministration({client, darkMode, setDarkMode, op
         if(!writeAdminPreferences(window.localStorage,next))throw Error();
         setPreferences(next);
       }}/>}
+      {section==='preferences'&&<CenterAppearance value={appearance} save={save} sections={sections}/>}
       {section === 'preferences' && <section className="adminPreferencesGrid"><label>{uiText("لغة النظام")}<select value={language} onChange={e=>setSystemLanguage(e.target.value).catch(()=>setMessage('تعذّر تحميل اللغة.'))}>{SYSTEM_LANGUAGES.map(item=><option key={item.code} value={item.code}>{item.name}</option>)}</select></label><label>{uiText("مظهر النظام")}<select value={darkMode ? 'dark' : 'light'} onChange={e => setDarkMode(e.target.value === 'dark')}><option value="light">{uiText("نهاري")}</option><option value="dark">{uiText("ليلي")}</option></select></label><label>{uiText("كثافة عرض المركز")}<select value={preferences.density} onChange={e => changeDensity(e.target.value)}><option value="comfortable">{uiText("مريح")}</option><option value="compact">{uiText("مضغوط")}</option></select></label>{message && <p role="status">{message}</p>}</section>}
     </div>
-  </div>;
+  </div>;}}</VerifiedAppearance>;
 }

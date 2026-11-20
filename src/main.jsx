@@ -1766,7 +1766,7 @@ function Login({onSignIn}){
      <h1 id="admin-login-title">{uiText("دخول الإدارة")}</h1>
      <label htmlFor="admin-login-email">{uiText("البريد الإلكتروني")}<span className="publicLoginField"><Mail size={18} aria-hidden="true"/><input id="admin-login-email" type="email" dir="ltr" autoComplete="username" value={email} onChange={e=>setEmail(e.target.value)} required/></span></label>
      <label htmlFor="admin-login-password">{uiText("كلمة المرور")}<span className="publicLoginField"><ShieldCheck size={18} aria-hidden="true"/><input id="admin-login-password" type={passwordVisible?'text':'password'} dir="ltr" autoComplete="current-password" value={password} onChange={e=>setPassword(e.target.value)} required/><button type="button" className="gatewayPasswordToggle" aria-controls="admin-login-password" aria-pressed={passwordVisible} onClick={()=>setPasswordVisible(value=>!value)}>{passwordVisible?uiText("إخفاء"):uiText("إظهار")}</button></span></label>
-     <button type="button" onClick={requestRecovery} disabled={busy||recoveryBusy}>{uiText("نسيت كلمة المرور")}</button>
+     <button type="button" onClick={requestRecovery} disabled={busy||recoveryBusy}>{uiText("نسيت كلمة المرور")}</button><a href="/?workspace=recover">استرداد بالبريد الاحتياطي</a><a href="/?workspace=staff">دخول الموظفين والدعم</a>
      {recoveryMessage&&<p role="status">{uiText(recoveryMessage)}</p>}
      {err&&<div className="error" role="alert">{err}</div>}
      <button className="publicPrimary" type="submit" disabled={busy}><span>{busy?uiText("جارٍ الدخول…"):uiText("الدخول إلى لوحة الإدارة")}</span><ChevronLeft size={18} aria-hidden="true"/></button>
