@@ -19,3 +19,58 @@
 @keyframes centerPanelIn{from{opacity:.5;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
 @media(max-width:640px){.systemAdminModern.centerLayout{padding:12px!important}.systemAdminModern.centerLayout .systemAdminTabsTop{grid-template-columns:repeat(2,minmax(0,1fr))}.centerLayout .adminPersonalCards,.centerLayout .adminPreferencesGrid{grid-template-columns:1fr!important}}
 @media(prefers-reduced-motion:reduce){.centerLayout .systemAdminMain{animation:none}}
+
+@font-face{font-family:CenterKufi;src:url('/fonts/NotoKufiArabic-Regular.woff') format('woff');font-weight:400;font-display:swap}
+@font-face{font-family:CenterKufi;src:url('/fonts/NotoKufiArabic-Bold.woff') format('woff');font-weight:600 900;font-display:swap}
+.systemAdminModern.centerLayout[data-font=kufi]{--center-font:CenterKufi,Tahoma,sans-serif}
+@font-face{font-family:CenterNaskh;src:url('/fonts/NotoNaskhArabic-Regular.woff') format('woff');font-weight:400;font-display:swap}
+@font-face{font-family:CenterNaskh;src:url('/fonts/NotoNaskhArabic-Bold.woff') format('woff');font-weight:600 900;font-display:swap}
+.systemAdminModern.centerLayout[data-font=naskh]{--center-font:CenterNaskh,Tahoma,sans-serif}
+@font-face{font-family:CenterSans;src:url('/fonts/NotoSansArabic-Regular.woff') format('woff');font-weight:400;font-display:swap}
+@font-face{font-family:CenterSans;src:url('/fonts/NotoSansArabic-Bold.woff') format('woff');font-weight:600 900;font-display:swap}
+.systemAdminModern.centerLayout[data-font=sans]{--center-font:CenterSans,Tahoma,sans-serif}
+.centerLayout .appearancePage {
+  --edge:color-mix(in srgb,currentColor 17%,transparent);
+  --wash:color-mix(in srgb,#42886c 7%,transparent);
+  display:grid;gap:clamp(16px,2.4vw,28px);padding-block:6px 14px;
+}
+.centerLayout .appearanceFields {
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,210px),1fr));
+  gap:clamp(14px,2vw,24px);margin:0;padding:0;
+}
+.centerLayout .appearanceFields label {
+  display:grid;align-content:start;gap:12px;min-width:0;margin:0;
+  padding:clamp(15px,1.8vw,24px);border:1px solid var(--edge);border-radius:18px;
+  background:linear-gradient(145deg,var(--wash),transparent);font-weight:600;
+}
+.centerLayout .appearanceFields select {
+  display:block;width:100%;box-sizing:border-box;min-height:48px;padding:8px 12px;
+  border-radius:var(--center-radius);border:1px solid var(--edge);line-height:1.65;font-size:1rem;
+}
+.centerLayout .appearanceOrderLink {
+  display:flex;align-items:center;gap:14px;width:100%;padding:18px 20px;text-align:start;
+  background:linear-gradient(115deg,#174338,#275f4d);color:#fff;border:1px solid #507f6a;
+}
+.centerLayout .appearanceOrderLink svg:first-child{color:#ead49b}
+.centerLayout .appearanceOrderLink svg:last-child{margin-inline-start:auto}
+.centerLayout .appearanceReset{justify-self:start}
+.centerLayout .appearanceHeading,.centerLayout .appearanceHeading h4,.centerLayout .appearanceOrder li {
+  display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+}
+.centerLayout .appearanceHeading{justify-content:space-between}
+.centerLayout .appearanceHeading h4{margin:0}
+.centerLayout .appearanceOrder{display:grid;gap:9px;list-style:none;margin:0;padding:0}
+.centerLayout .appearanceOrder li{background:var(--wash);border:1px solid var(--edge);padding:8px 14px;border-radius:13px}
+.centerLayout .appearanceOrder li span{margin-inline-end:auto}
+.centerLayout .appearanceOrder li button{display:grid;place-items:center;width:44px;min-height:44px;padding:0}
+.centerLayout .appearancePage :focus-visible{outline:3px solid #599c81;outline-offset:3px}
+.systemAdminModern.centerLayout .systemAdminTabsTop{gap:10px;grid-template-columns:repeat(auto-fit,minmax(min(100%,135px),1fr))}
+.systemAdminModern.centerLayout .systemAdminTabsTop button{min-height:48px;padding:9px 12px;transition:background-color .16s,color .16s,box-shadow .16s}
+.systemAdminModern.centerLayout .systemAdminTabsTop button[aria-current=page]{background:linear-gradient(120deg,#174b39,#286a50)!important;color:white!important;box-shadow:inset 0 -2px #cba86e}
+.pharmacyWelcome.startupWelcome,.pharmacyWelcome.startupWelcome .pharmacyWelcomeMessage,.pharmacyWelcome.startupWelcome .pharmacyWelcomeEmblem img{animation:none;opacity:1}
+.pharmacyWelcome.startupWelcome .startupStatus{color:#ead9b5;font-size:clamp(.96rem,2vw,1.15rem);margin-block:14px 0}
+@media screen and (prefers-reduced-motion:no-preference){
+  .centerLayout .appearancePage,.adminShell .adminMain>.mobileBar~:is(.panel,.pageHead,.card,.tableWrap,.kpiGrid){animation:sectionArrival .18s ease-out}
+  @keyframes sectionArrival{from{opacity:.65;translate:0 4px}to{opacity:1;translate:0 0}}
+}
+@media(max-width:640px){.systemAdminModern.centerLayout .systemAdminTabsTop{grid-template-columns:repeat(2,minmax(0,1fr))}}

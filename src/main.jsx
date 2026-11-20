@@ -365,12 +365,14 @@ function Admin({onLogout,staff}){
   <main className="adminMain">
    <div className="adminTopbar"><div className="topbarTitle"><div className="topbarEyebrow">{uiText("إدارة صيدلية عبدالهادي")}</div><strong>{nav.find(x=>x[0]===tab)?.[1]}</strong></div><div className="globalSearch"><Search size={17}/><input value={quickSearch} onChange={e=>setQuickSearch(e.target.value)} onKeyDown={e=>{if(e.key==='Enter')runQuickSearch()}} placeholder={uiText("ابحث في أقسام النظام…")} aria-label={uiText("بحث سريع داخل النظام")}/><kbd>Ctrl K</kbd></div><div className="topbarActions"><button type="button" className="topbarAction themeToggle" onClick={()=>setDarkMode(x=>!x)} title={darkMode?uiText("تفعيل الوضع النهاري"):uiText("تفعيل الوضع الليلي")} aria-label={darkMode?uiText("تفعيل الوضع النهاري"):uiText("تفعيل الوضع الليلي")}><span aria-hidden="true">{darkMode?'☀':'☾'}</span><span>{darkMode?uiText("نهاري"):uiText("ليلي")}</span></button><button type="button" className="topbarAction sidebarToggle" onClick={()=>setSideCollapsed(x=>!x)} title={sideCollapsed?uiText("توسيع القائمة"):uiText("طي القائمة")} aria-label={sideCollapsed?uiText("توسيع القائمة"):uiText("طي القائمة")}><Menu size={17}/></button><button type="button" className="topbarAction" onClick={()=>go('pos')} title={uiText("بيع جديد")}><ShoppingCart size={17}/><span>{uiText("بيع جديد")}</span></button><button type="button" className="topbarAction accent" onClick={()=>go('purchases')} title={uiText("فاتورة شراء جديدة")}><Plus size={17}/><span>{uiText("شراء جديد")}</span></button><div className="topbarClock"><Clock size={15}/><SystemClock/></div></div></div>
    <div className="mobileBar"><button type="button" className="mobileThemeToggle" onClick={()=>setDarkMode(x=>!x)} aria-label={darkMode?uiText("الوضع النهاري"):uiText("الوضع الليلي")}>{darkMode?'☀':'☾'}</button><button onClick={()=>setMobile(!mobile)} aria-label={uiText("فتح القائمة")}><Menu/></button><div><small>{uiText("صيدلية عبدالهادي")}</small><b>{nav.find(x=>x[0]===tab)?.[1]}</b></div></div>
+   <React.Fragment key={tab}>
    {staff&&tab==='branches'&&<StaffBranches/>}
    {staff&&tab==='admin'&&<section className="panel"><h3>إعدادات حساب العمل</h3><p>{staff.name}</p><h4>الأقسام المسموحة</h4>{nav.map(([id,label])=><p key={id}>{label}</p>)}</section>}
    {staff&&!tab&&<p>لم يمنح المدير صلاحيات أقسام لهذا الحساب.</p>}
    {staff&&tab==='diagnostics'&&<section className="panel"><h3>التشخيص التقني</h3><p>اتصال الحساب بالخادم نشط.</p></section>}
    {tab==='managerAdministration' &&<ManagerAdministration openSection={go} openProduct={row=>go('pharmacyProducts',{catalogId:row.id})} client={supabase} darkMode={darkMode} setDarkMode={setDarkMode} openAudit={()=>go('security')}/>}
    {tab==='dashboard'&&<Dashboard go={go}/>} {tab==='pos'&&<POS/>}{tab==='pharmacyProducts'&&<ProductManager mode="pharmacy" catalogId={focus?.catalogId}/>}{tab==='siteProducts'&&<ProductManager mode="site"/>}{tab==='inventory'&&<Inventory focus={focus}/>}{tab==='smart'&&<SmartInventory/>}{tab==='orders'&&<Orders/>}{tab==='prescriptions'&&<Prescriptions/>}{tab==='requests'&&<Requests/>}{tab==='offers'&&<Offers/>}{tab==='dailyActivity'&&<DailyActivityCenter supabase={supabase} RefreshButton={RefreshButton}/>} {tab==='reports'&&<Reports/>}{tab==='profitCenterPreview'&&<ProfitCenterPreview/>}{tab==='cashbox'&&<Cashbox/>}{tab==='debtors'&&<Debtors/>}{tab==='purchases'&&<Purchases focus={focus} go={go}/>} {tab==='supplierDebts'&&<SupplierDebts go={go}/>}{tab==='suppliers'&&<Suppliers/>}{tab==='customers'&&<Customers/>}{tab==='returns'&&<Returns/>}{tab==='security'&&<Security/>}
+   </React.Fragment>
   </main>
  </div>
 }
@@ -1809,9 +1811,10 @@ function Login({onSignIn}){
   </div>
  </main>;
 }
-function AdminWelcome({owner,onContinue}){
+function AdminWelcome({owner,onContinue,startup=false}){
  const duration=4200;
  useEffect(()=>{
+  if(!onContinue)return;
   const timer=window.setTimeout(onContinue,window.matchMedia('(prefers-reduced-motion: reduce)').matches?1000:duration);
   return()=>window.clearTimeout(timer);
  },[onContinue]);
@@ -1822,7 +1825,7 @@ function AdminWelcome({owner,onContinue}){
   screen.style.setProperty('--welcome-light-x',`${event.clientX-bounds.left}px`);
   screen.style.setProperty('--welcome-light-y',`${event.clientY-bounds.top}px`);
  };
- return <main className="publicLogin pharmacyWelcome" dir="rtl" onPointerMove={moveLight} style={{'--welcome-duration':`${duration}ms`}}>
+ return <main className={startup?"publicLogin pharmacyWelcome startupWelcome":"publicLogin pharmacyWelcome"} dir="rtl" onPointerMove={moveLight} style={{'--welcome-duration':`${duration}ms`}}>
   <div className="pharmacyWelcomeScenery" aria-hidden="true"><i/><i/><i/></div>
   <div className="pharmacyWelcomeContent">
    <div className="pharmacyWelcomeEmblem" aria-hidden="true">
@@ -1835,7 +1838,8 @@ function AdminWelcome({owner,onContinue}){
     <img src="/logo.png" alt="" width="108" height="108"/>
    </div>
    <div className="pharmacyWelcomeMessage" role="status">
-    <h1>{owner?<><span>{uiText("أهلاً بك، مديرنا")}</span><strong>{uiText("دكتور نصر")}</strong></>:uiText("أهلاً بك في إدارة الصيدلية")}</h1>
+    <h1>{startup?uiText("أهلاً بك في صيدلية عبدالهادي"):owner?<><span>{uiText("أهلاً بك، مديرنا")}</span><strong>{uiText("دكتور نصر")}</strong></>:uiText("أهلاً بك في إدارة الصيدلية")}</h1>
+    {startup&&<p className="startupStatus">{uiText("جاري تشغيل النظام…")}</p>}
    </div>
   </div>
  </main>;
@@ -1857,6 +1861,8 @@ function Root(){
  };
  const [session,setSession]=useState(null);
  const [checked,setChecked]=useState(false);
+ const [opening,setOpening]=useState(true);
+ useEffect(()=>{const timer=setTimeout(()=>setOpening(false),850);return()=>clearTimeout(timer);},[]);
  const [welcome,setWelcome]=useState(false);
  const signingIn=useRef(false);
  const continueToAdmin=React.useCallback(()=>setWelcome(false),[]);
@@ -1893,7 +1899,7 @@ function Root(){
  if(recovery==='ready')return <RecoveryPasswordForm auth={supabase.auth} enabled recoveryState={recovery} onDone={finishRecovery} onRestart={finishRecovery}/>;
  if(recovery==='pending')return <Splash/>;
  if(recovery==='failed'||recovery==='invalid')return <main className="login"><p role="alert">{uiText("تعذّر التحقق من رابط الاسترداد.")}</p><button onClick={finishRecovery}>{uiText("العودة إلى الدخول")}</button></main>;
- if(!checked)return <Splash/>;
+ if(!checked||(opening&&isAdminSession(session)))return <AdminWelcome startup/>;
  if(isAdminSession(session)){
   if(welcome)return <AdminWelcome owner={session.user.email===ownerEmail} onContinue={continueToAdmin}/>;
   return <Admin onLogout={()=>supabase.auth.signOut()}/>;

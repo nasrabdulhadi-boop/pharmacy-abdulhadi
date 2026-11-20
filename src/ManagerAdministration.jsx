@@ -80,8 +80,9 @@ export default function ManagerAdministration({client, darkMode, setDarkMode, op
         if(!writeAdminPreferences(window.localStorage,next))throw Error();
         setPreferences(next);
       }}/>}
-      {section==='preferences'&&<CenterAppearance value={appearance} save={save} sections={sections}/>}
-      {section === 'preferences' && <section className="adminPreferencesGrid"><label>{uiText("لغة النظام")}<select value={language} onChange={e=>setSystemLanguage(e.target.value).catch(()=>setMessage('تعذّر تحميل اللغة.'))}>{SYSTEM_LANGUAGES.map(item=><option key={item.code} value={item.code}>{item.name}</option>)}</select></label><label>{uiText("مظهر النظام")}<select value={darkMode ? 'dark' : 'light'} onChange={e => setDarkMode(e.target.value === 'dark')}><option value="light">{uiText("نهاري")}</option><option value="dark">{uiText("ليلي")}</option></select></label><label>{uiText("كثافة عرض المركز")}<select value={preferences.density} onChange={e => changeDensity(e.target.value)}><option value="comfortable">{uiText("مريح")}</option><option value="compact">{uiText("مضغوط")}</option></select></label>{message && <p role="status">{message}</p>}</section>}
+      {section==='preferences'&&<CenterAppearance value={appearance} save={save} sections={sections}>
+        <section className="appearanceFields"><label>{uiText("لغة النظام")}<select value={language} onChange={e=>setSystemLanguage(e.target.value).catch(()=>setMessage('تعذّر تحميل اللغة.'))}>{SYSTEM_LANGUAGES.map(item=><option key={item.code} value={item.code}>{item.name}</option>)}</select></label><label>{uiText("مظهر النظام")}<select value={darkMode ? 'dark' : 'light'} onChange={e => setDarkMode(e.target.value === 'dark')}><option value="light">{uiText("نهاري")}</option><option value="dark">{uiText("ليلي")}</option></select></label><label>{uiText("كثافة عرض المركز")}<select value={preferences.density} onChange={e => changeDensity(e.target.value)}><option value="comfortable">{uiText("مريح")}</option><option value="compact">{uiText("مضغوط")}</option></select></label>{message && <p role="status">{message}</p>}</section>
+      </CenterAppearance>}
     </div>
   </div>;}}</VerifiedAppearance>;
 }
