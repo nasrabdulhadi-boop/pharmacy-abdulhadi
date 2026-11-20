@@ -1,0 +1,21 @@
+@font-face{font-family:CenterPlex;src:url('/fonts/plex-arabic-400.woff2') format('woff2');font-weight:400;font-display:swap}
+@font-face{font-family:CenterPlex;src:url('/fonts/plex-arabic-600.woff2') format('woff2');font-weight:600 900;font-display:swap}
+@font-face{font-family:CenterAlex;src:url('/fonts/alexandria-arabic.woff2') format('woff2');font-weight:100 900;font-display:swap}
+.systemAdminModern.centerLayout{--center-font:CenterPlex,Tahoma,sans-serif;--center-radius:12px;width:min(100%,1120px);margin-inline:auto;box-sizing:border-box;line-height:1.7}
+.systemAdminModern.centerLayout[data-font=alexandria]{--center-font:CenterAlex,Tahoma,sans-serif}
+.systemAdminModern.centerLayout[data-shape=square]{--center-radius:5px}
+.systemAdminModern.centerLayout[data-shape=pill]{--center-radius:28px}
+.systemAdminModern.centerLayout,.systemAdminModern.centerLayout :is(h2,h3,h4,p,label,input,button,select,textarea,table,span,strong,b,summary),.staffAccountDialog{font-family:var(--center-font,CenterPlex),Tahoma,sans-serif!important;letter-spacing:normal}
+.systemAdminModern.centerLayout button{border-radius:var(--center-radius)!important;min-height:40px;white-space:normal}
+.systemAdminModern.centerLayout .systemAdminTabsTop{display:grid!important;grid-template-columns:repeat(auto-fit,minmax(122px,1fr));gap:8px;padding:12px 0;overflow:visible}
+.systemAdminModern.centerLayout .systemAdminTabsTop button{display:flex;align-items:center;justify-content:center;gap:6px;line-height:1.5;margin:0}
+.centerLayout .systemAdminMain{min-width:0;animation:centerPanelIn .2s ease-out}
+.centerLayout .permissionGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}
+.centerLayout .permissionGrid label{display:flex;align-items:center;gap:8px}
+.centerLayout .permissionGrid input[type=checkbox]{width:1.2rem;height:1.2rem}
+.centerLayout .permissionCard{min-width:min(260px,65vw);margin-block:10px}
+.centerLayout .tabOrderRow{display:flex;align-items:center;gap:8px;padding-block:5px}
+.centerLayout .tabOrderRow span{margin-inline-end:auto}
+@keyframes centerPanelIn{from{opacity:.5;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:640px){.systemAdminModern.centerLayout{padding:12px!important}.systemAdminModern.centerLayout .systemAdminTabsTop{grid-template-columns:repeat(2,minmax(0,1fr))}.centerLayout .adminPersonalCards,.centerLayout .adminPreferencesGrid{grid-template-columns:1fr!important}}
+@media(prefers-reduced-motion:reduce){.centerLayout .systemAdminMain{animation:none}}

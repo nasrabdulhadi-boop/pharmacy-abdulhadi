@@ -1,3 +1,6 @@
+import {CenterAppearance,useCenterAppearance} from './CenterAppearance.jsx';
+import RecoveryMailbox from './RecoveryMailbox.jsx';
+import './CenterLayout.css';
 import AdminTools from './AdminTools.jsx';
 import {printAdminDocument,printConfiguredReport} from './adminPrintSettings.js';
 import {uiText,uiTemplate,uiHtmlTemplate} from './systemLocale.js';
@@ -318,8 +321,16 @@ function Admin({onLogout,role='system_admin',initialTab='dashboard',branch=null}
  ];
  if(branch)navGroups.at(-1).items.push(['settings','إعدادات الواجهة',Sparkles]);
  const nav=navGroups.flatMap(g=>g.items);
- const canOpen=id=>branch?branch.canOpen(id):workspaceSectionAllowed(role,id);
- if(!branch)workspaceRedacted=!workspaceSectionAllowed(role,tab);
+ const [staffSections,setStaffSections]=useState(null);
+ useEffect(()=>{
+  if(branch||!restricted)return;
+  let active=true,serial=0;
+  const read=async()=>{const n=++serial;try{const {data,error}=await rawSupabase.rpc('qa_staff_sections');if(active&&serial===n)setStaffSections(error?[]:data);}catch{if(active&&serial===n)setStaffSections([]);}};
+  read();const timer=setInterval(read,8000);window.addEventListener('focus',read);
+  return ()=>{active=false;clearInterval(timer);window.removeEventListener('focus',read);};
+ },[branch,role,restricted]);
+ const canOpen=id=>branch?branch.canOpen(id):workspaceSectionAllowed(role,id)&&(!restricted||staffSections?.includes(id));
+ if(!branch)workspaceRedacted=!canOpen(tab);
  const runQuickSearch=()=>{const q=quickSearch.trim().toLowerCase();if(!q)return;const hit=nav.find(x=>String(x[1]).toLowerCase().includes(q)||String(x[0]).toLowerCase().includes(q));if(hit)go(hit[0])};
  useEffect(()=>{const onKey=e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='k'){e.preventDefault();document.querySelector('.globalSearch input')?.focus()}};window.addEventListener('keydown',onKey);return()=>window.removeEventListener('keydown',onKey)},[]);
  return <WorkspaceRoleContext.Provider value={role}><div className={`adminShell ${darkMode?'adminDark':''} ${sideCollapsed?'adminSideCollapsed':''}`} dir={getSystemDirection()}>
@@ -334,7 +345,7 @@ function Admin({onLogout,role='system_admin',initialTab='dashboard',branch=null}
    <div className="adminTopbar"><div className="topbarTitle"><div className="topbarEyebrow">{branch?.name||uiText("إدارة صيدلية عبدالهادي")}</div><strong>{uiText(nav.find(x=>x[0]===tab)?.[1])}</strong></div><div className="globalSearch"><Search size={17}/><input value={quickSearch} onChange={e=>setQuickSearch(e.target.value)} onKeyDown={e=>{if(e.key==='Enter')runQuickSearch()}} placeholder={uiText("ابحث في أقسام النظام…")} aria-label={uiText("بحث سريع داخل النظام")}/><kbd>Ctrl K</kbd></div><div className="topbarActions"><SystemLanguageToggle/><button type="button" className="topbarAction themeToggle" onClick={()=>setDarkMode(x=>!x)} title={darkMode?uiText('تفعيل الوضع النهاري'):uiText('تفعيل الوضع الليلي')} aria-label={darkMode?uiText('تفعيل الوضع النهاري'):uiText('تفعيل الوضع الليلي')}><span aria-hidden="true">{darkMode?'☀':'☾'}</span><span>{darkMode?uiText('نهاري'):uiText('ليلي')}</span></button><button type="button" className="topbarAction sidebarToggle" onClick={()=>setSideCollapsed(x=>!x)} title={sideCollapsed?uiText('توسيع القائمة'):uiText('طي القائمة')} aria-label={sideCollapsed?uiText('توسيع القائمة'):uiText('طي القائمة')}><Menu size={17}/></button><button type="button" className="topbarAction" onClick={()=>go('pos')} title={uiText("بيع جديد")} disabled={!canOpen('pos')}><ShoppingCart size={17}/><span>{uiText("بيع جديد")}</span></button><button type="button" className="topbarAction accent" onClick={()=>go('purchases')} title={uiText("فاتورة شراء جديدة")} disabled={!canOpen('purchases')}><Plus size={17}/><span>{uiText("شراء جديد")}</span></button><div className="topbarClock"><Clock size={15}/><SystemClock/></div></div></div>
    <div className="mobileBar"><SystemLanguageToggle/><button type="button" className="mobileThemeToggle" onClick={()=>setDarkMode(x=>!x)} aria-label={darkMode?uiText('الوضع النهاري'):uiText('الوضع الليلي')}>{darkMode?'☀':'☾'}</button><button onClick={()=>setMobile(!mobile)} aria-label={uiText("فتح القائمة")}><Menu/></button><div><small>{branch?.name||uiText("صيدلية عبدالهادي")}</small><b>{uiText(nav.find(x=>x[0]===tab)?.[1])}</b></div></div>
    {isolatedQaWorkspace&&<div className="workspaceRoleBadge"><ShieldCheck size={17}/><strong>{branch?'حساب الفرع':uiText(ROLE_NAMES[role])}</strong><span>{uiText("QA • واجهة النظام الأصلية • البيانات اصطناعية")}</span></div>}
-   {offlinePosEnabled&&tab==='pos'&&<p><a className="secondaryAction" href="/offline-pos/">{uiText('نقطة البيع دون إنترنت')}</a></p>}
+   {offlinePosEnabled&&canOpen(tab)&&tab==='pos'&&<p><a className="secondaryAction" href="/offline-pos/">{uiText('نقطة البيع دون إنترنت')}</a></p>}
    {isolatedQaWorkspace&&role==='employee'&&<QaEmployeeRequestStatus client={supabase}/>}
    <WorkspaceSectionFrame locked={!canOpen(tab)} title={uiText(nav.find(x=>x[0]===tab)?.[1])||uiText('قسم محجوب')}>{branch?(canOpen(tab)&&(tab==='dashboard'?<BranchDashboard key={branch.id} go={go} branch={branch}/>:tab==='pos'?<BranchPOS key={branch.id} branch={branch}/>:branch.render(tab))):<WorkspaceOperationSurface section={tab} restricted={restricted}>
    {tab==='dashboard'&&<Dashboard go={go} role={role}/>} {tab==='pos'&&<POS/>}{tab==='pharmacyProducts'&&<ProductManager mode="pharmacy" focus={focus}/>}{tab==='siteProducts'&&<ProductManager mode="site"/>}{tab==='inventory'&&<Inventory focus={focus}/>}{tab==='smart'&&<SmartInventory/>}{tab==='orders'&&<Orders/>}{tab==='prescriptions'&&<Prescriptions/>}{tab==='requests'&&<Requests/>}{tab==='offers'&&<Offers/>}{tab==='reports'&&<Reports/>}{tab==='profitCenterPreview'&&<ProfitCenterPreview/>}{tab==='cashbox'&&<Cashbox/>}{tab==='debtors'&&<Debtors/>}{tab==='purchases'&&<Purchases focus={focus} go={go}/>} {tab==='supplierDebts'&&<SupplierDebts go={go}/>}{tab==='suppliers'&&<Suppliers/>}{tab==='customers'&&<Customers/>}{tab==='returns'&&<Returns/>}{tab==='security'&&<Security/>}{tab==='systemCenter'&&<SystemAdministrationPreview workspaceRole={role} openProduct={id=>go('pharmacyProducts',{productId:id})} overviewPanel={role==='technical_support'?<SharedSupportDiagnostics/>:isolatedQaWorkspace?<div className="workspaceEmbedded"><QaOperationsWorkbench client={supabase} manager allowPasswordChange={authMutationPreviewEnabled} projectUrl={url} onLogout={onLogout}/></div>:null}/>}
@@ -400,11 +411,13 @@ function SystemAdministrationPreview({overviewPanel=null,workspaceRole,openProdu
  const canViewBranches=canViewSystemAdminSection(verifiedRole,'branches',isolatedQaWorkspace)&&canViewSystemAdminSection(workspaceRole,'branches',isolatedQaWorkspace);
  if(canViewBranches)sections.push(['branches',adminCenterEnglish?'Branch Management':'مركز إدارة الفروع']);
  if(toolsEnabled)sections.push(['tools','أدوات الإدارة']);
+ const [appearance,setAppearance]=useCenterAppearance(workspaceIdentity);
+ const rank=id=>{const i=appearance.order.indexOf(id);return i<0?99:i;};sections.sort((a,b)=>rank(a[0])-rank(b[0]));
  const effectiveSection=(section==='branches'?canViewBranches:canViewSystemAdminSection(verifiedRole,section))?section:'overview';
- return localizeAdminTree(<div className="panel systemAdminModern" data-section={effectiveSection} data-density={adminPrefs.density} dir={getSystemDirection()} style={{padding:adminPrefs.density==='compact'?12:24,maxWidth:1100,margin:'18px auto'}}>
+ return localizeAdminTree(<div className="panel systemAdminModern centerLayout" data-font={appearance.font} data-shape={appearance.shape} data-section={effectiveSection} data-density={adminPrefs.density} dir={getSystemDirection()} style={{padding:adminPrefs.density==='compact'?12:24,maxWidth:1100,margin:'18px auto'}}>
   <header className="systemAdminTopbar"><div className="systemAdminBrand"><span className="systemAdminBrandIcon" aria-hidden="true"><ShieldCheck size={22}/></span><h2>{uiText(adminCenterLabels.title)}</h2></div><span className="systemAdminPreviewPill">QA</span></header>
   <nav className="systemAdminTabs systemAdminTabsTop" aria-label={adminCenterEnglish?'Administration sections':uiText('أقسام مركز الإدارة')}>{sections.map(([id,label])=>{const Icon={overview:Home,profile:Users,access:ShieldCheck,backup:Download,preferences:Sparkles,branches:MapPin,tools:Settings}[id];return <button type="button" key={id} aria-current={effectiveSection===id?'page':undefined} className={effectiveSection===id?'primary':''} onClick={()=>setSection(id)}>{Icon&&<Icon size={18} aria-hidden="true"/>}<span>{uiText(label)}</span></button>})}</nav>
-  <main className="systemAdminMain"><div className="systemAdminPageIntro"><h3>{sections.find(([id])=>id===effectiveSection)?.[1]||uiText(adminCenterLabels.overview)}</h3></div>
+  <main key={effectiveSection} className="systemAdminMain"><div className="systemAdminPageIntro"><h3>{sections.find(([id])=>id===effectiveSection)?.[1]||uiText(adminCenterLabels.overview)}</h3></div>
   {effectiveSection==='branches'&&<QaBranchWorkspace client={rawSupabase} ownerEmail={sessionUser?.email}/>}
   {effectiveSection==='overview'&&<section className="systemAdminOverview" aria-label={adminCenterEnglish?'Administration overview':uiText('نظرة عامة على إدارة النظام')}>
    {restrictedPreview&&<p className="systemAdminNotice" role="status">{isSupportPreview?uiText('الدعم الفني: عرض تقني محدود فقط.'):uiText('لا يمكن عرض الأقسام الإدارية قبل التحقق من دور الحساب عبر الخادم.')}</p>}
@@ -420,7 +433,7 @@ function SystemAdministrationPreview({overviewPanel=null,workspaceRole,openProdu
   </section>}
   {!restrictedPreview&&effectiveSection==='profile'&&<section className="adminProfileLayout">
    <div className="adminIdentityCard"><span className="adminAvatar"><Users size={28}/></span><div><span>{uiText("البريد الإلكتروني")}</span><b dir="ltr">{sessionUser?.email||uiText('جاري التحقق من الحساب...')}</b></div><ShieldCheck size={22} aria-hidden="true"/></div>
-   <QaProfileDetails client={rawSupabase} projectUrl={url} previewEnabled={authMutationPreviewEnabled} user={sessionUser} language={systemLanguage}/>
+   <RecoveryMailbox client={rawSupabase} link/><QaProfileDetails client={rawSupabase} projectUrl={url} previewEnabled={authMutationPreviewEnabled} user={sessionUser} language={systemLanguage}/>
    <form className="adminSettingsCard adminPasswordCard" onSubmit={changeOwnPassword} style={{display:'grid',gap:10,maxWidth:440,marginTop:20}} autoComplete="off">
     <h4>{uiText("تغيير كلمة المرور")}</h4>
     {!authMutationPreviewEnabled&&<p role="status">{uiText("تغيير كلمة المرور معطّل في المعاينة لحماية حساب الإنتاج.")}</p>}
@@ -436,6 +449,7 @@ function SystemAdministrationPreview({overviewPanel=null,workspaceRole,openProdu
   {toolsEnabled&&effectiveSection==='tools'&&<AdminTools key={sessionUser.id} client={rawSupabase} appearance={{...adminPrefs,language:systemLanguage}}
    applyAppearance={async next=>{await setSystemLanguage(next.language);if(!writeAdminPreferences(window.localStorage,next))throw Error('preferences_unavailable');setAdminPrefs(next);}}
    openProduct={openProduct}/>}
+  {!restrictedPreview&&effectiveSection==='preferences'&&<CenterAppearance value={appearance} save={setAppearance} sections={sections}/>}
   {!restrictedPreview&&effectiveSection==='preferences'&&<section className="adminPreferencesGrid"><label style={{display:'grid',gap:6,maxWidth:320}}>{uiText("لغة النظام")}<select aria-label={uiText("لغة النظام")} value={systemLanguage} onChange={e=>changeAdminPref('language',e.target.value)}>{SYSTEM_LANGUAGES.map(item=><option key={item.code} value={item.code}>{item.name}</option>)}</select></label><label style={{display:'grid',gap:6,maxWidth:320,marginTop:14}}>{uiText("كثافة عرض مركز الإدارة")}<select aria-label={uiText("كثافة عرض مركز الإدارة")} value={adminPrefs.density} onChange={e=>changeAdminPref('density',e.target.value)}><option value="comfortable">{uiText("مريح")}</option><option value="compact">{uiText("مضغوط")}</option></select></label></section>}
  </main></div>,systemLanguage)
 }
@@ -1445,7 +1459,7 @@ function Login({initialRecovery=false,initialError='',onAuthenticated}={}){
   {uiText(message)&&<div role="status" style={{marginTop:12}}>{uiText(message)}</div>}
   {err&&<div className="error" role="alert">{uiText(err)}</div>}
   <button type="button" style={{marginTop:12}} onClick={()=>{setRecovery(x=>!x);setCodeMode(false);setRecoveryCode('');setErr('');setMessage('')}}>{recovery?uiText('العودة إلى تسجيل الدخول'):uiText('نسيت كلمة المرور؟')}</button>
- </form></div>
+ </form>{recovery&&<RecoveryMailbox client={rawSupabase}/>}</div>
 }
 // If a session exists but is not admin, show login instead of exposing admin.
 export const PreviewRoot=({managerShell:ManagerShell})=>{

@@ -86,6 +86,24 @@ function CreateBranch({ client, ownerEmail, onCreated }) {
   </form>;
 }
 
+function BranchSettings({client,branch,onSaved}) {
+  const [name,setName]=useState(branch.name),[status,setStatus]=useState(branch.status);
+  const [busy,setBusy]=useState(false),[message,setMessage]=useState('');
+  async function save(event){
+    event.preventDefault();setBusy(true);
+    try{
+      const {error}=await client.rpc('qa_branch_update',{p_branch:branch.id,p_name:name,p_status:status,p_expected_name:branch.name,p_expected_status:branch.status});
+      if(error)throw error;
+      setMessage('تم حفظ إعدادات الفرع.');onSaved();
+    }catch{setMessage('تعذّر الحفظ. حدّث بيانات الفرع وحاول مجدداً.');}finally{setBusy(false);}
+  }
+  return <form className="qaBranchDetail qaBranchForm" onSubmit={save}>
+    <h4>إعدادات الفرع</h4><label>اسم الفرع<input required minLength={2} maxLength={100} value={name} onChange={e=>setName(e.target.value)}/></label>
+    <label>حالة الفرع<select value={status} onChange={e=>setStatus(e.target.value)}>
+      <option value="active">نشط</option><option value="paused">موقوف</option><option value="archived">مؤرشف</option></select></label>
+    <button disabled={busy}>حفظ إعدادات الفرع</button><p role="status">{message}</p></form>;
+}
+
 function InviteLink({ branch }) {
   const [status, setStatus] = useState('');
   const link = branchLink(window.location.origin, branch.id);
@@ -166,7 +184,7 @@ export default function QaBranchWorkspace({ client, ownerEmail }) {
         </select></label>
         {selected && !detail && <p role="status">جارٍ تحميل تفاصيل الفرع…</p>}
         {selected && detail?.error && <p role="alert">تعذّر تحميل تفاصيل الفرع.</p>}
-        {branch && <><InviteLink key={branch.id} branch={branch}/><BranchOwnerControls key={branch.id} client={client} branchId={branch.id} onDecision={()=>refresh(value=>value+1)}/><BranchCatalogForm key={'catalog:'+branch.id} client={client} branchId={branch.id}/><BranchDetails data={detail.data} branch={branch}/></>}
+        {branch && <><BranchSettings key={branch.id+branch.status+branch.name} client={client} branch={branch} onSaved={()=>refresh(v=>v+1)}/><InviteLink key={'invite:'+branch.id} branch={branch}/><BranchOwnerControls key={branch.id} client={client} branchId={branch.id} onDecision={()=>refresh(value=>value+1)}/><BranchCatalogForm key={'catalog:'+branch.id} client={client} branchId={branch.id}/><BranchDetails data={detail.data} branch={branch}/></>}
       </>}
     </>}
   </section>;
@@ -370,8 +388,8 @@ function BranchOwnerControls({client,branchId,onDecision}) {
   return <div className="qaBranchDetail">
     <form className="qaBranchForm qaBranchCenter" onSubmit={save}>
       <h4>صلاحيات حساب الفرع</h4>
-      {configurableSections.map(item=><label className="qaBranchCheck" key={item.id}>
-        <input type="checkbox" checked={values.includes(item.id)} disabled={sections===null || busy}
+      {branchOperatorSections.map(item=><label className="qaBranchCheck" key={item.id}>
+        <input type="checkbox" checked={values.includes(item.id)} disabled={item.locked||sections===null || busy}
           onChange={event=>setDraft(event.target.checked?[...values,item.id]:values.filter(id=>id!==item.id))}/>{item.label}
       </label>)}
       <button type="submit" className="primary" disabled={sections===null || busy}>حفظ الصلاحيات</button>

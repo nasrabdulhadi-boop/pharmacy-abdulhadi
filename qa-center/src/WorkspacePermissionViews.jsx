@@ -2,7 +2,7 @@ import {uiText,uiTemplate,uiSourceTexts} from './systemLocale.js';
 import React,{useEffect,useRef} from 'react';
 import {LockKeyhole} from 'lucide-react';
 export function WorkspaceSectionFrame({locked,title,children}){
- return <><div hidden={!locked} className="workspaceRoleBadge"><LockKeyhole size={17}/><strong>{uiText(title)}{uiText(" — مقفل حسب الصلاحيات")}</strong><span className="workspaceMaskedValue" aria-label={uiText("أرقام محجوبة")}>••••</span><span>{uiText("الأرقام محجوبة والبيانات غير محمّلة لهذا الحساب")}</span></div><div inert={locked?true:undefined} className={locked?'workspaceRedacted':''} aria-label={locked?uiText(title)+uiText(' — معاينة محجوبة'):uiText(undefined)}>{children}</div></>;
+ return <><div hidden={!locked} className="workspaceRoleBadge"><LockKeyhole size={17}/><strong>{uiText(title)}{uiText(" — مقفل حسب الصلاحيات")}</strong><span className="workspaceMaskedValue" aria-label={uiText("أرقام محجوبة")}>••••</span><span>{uiText("الأرقام محجوبة والبيانات غير محمّلة لهذا الحساب")}</span></div><div inert={locked?true:undefined} className={locked?'workspaceRedacted':''} aria-label={locked?uiText(title)+uiText(' — معاينة محجوبة'):uiText(undefined)}>{locked?null:children}</div></>;
 }
 const deniedLabels={pharmacyProducts:/تعديل|حذف|إخفاء|إظهار|استعادة/,inventory:/إضافة دفعة|تعديل|حذف|إتلاف|تسوية|تعديل رصيد/,suppliers:/إضافة|تعديل|حذف|سجل المشتريات/,purchases:/إضافة مورد|مورد جديد|تعديل أسعار|ديون الموردين|حذف|تسجيل دفعة/,returns:/مرتجع.*مورد|إلى المورد/,pos:/سعر الصرف/};
 // This controls presentation only. QA RPC/RLS independently enforces every read and write.

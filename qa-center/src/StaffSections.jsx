@@ -1,0 +1,9 @@
+import React,{useEffect,useState} from 'react';
+import {workspaceSectionAllowed} from './workspaceAccess.js';
+export const sectionNames={dashboard:'لوحة التحكم',pos:'نقطة البيع',pharmacyProducts:'منتجات الصيدلية',siteProducts:'منتجات الموقع',inventory:'المخزون',smart:'المخزون الذكي',purchases:'المشتريات',suppliers:'الموردون',supplierDebts:'ديون الموردين',orders:'الطلبات',prescriptions:'الوصفات',requests:'طلبات الأدوية',customers:'العملاء',debtors:'المتدينون',offers:'العروض',cashbox:'الصندوق',returns:'المرتجعات',reports:'التقارير',profitCenterPreview:'الأرباح',systemCenter:'مركز إدارة النظام',security:'الأمان والتدقيق'};
+export function StaffSections({client,row}){
+ const [draft,setDraft]=useState(null),[message,setMessage]=useState(''),[busy,setBusy]=useState(false);
+ useEffect(()=>{let active=true;client.rpc('qa_staff_sections',{p_user:row.id}).then(({data,error})=>{if(active){if(error)setMessage('تعذّر تحميل الصلاحيات.');else setDraft(data);}});return ()=>{active=false;};},[client,row.id,row.system_role]);
+ async function save(){setBusy(true);try{const {error}=await client.rpc('qa_set_staff_sections',{p_user:row.id,p_role:row.system_role,p_sections:draft});setMessage(error?'تعذّر حفظ الصلاحيات.':'تم حفظ الصلاحيات.');}finally{setBusy(false);}}
+ return <details className="permissionCard"><summary>تخصيص صلاحيات الأقسام</summary><div className="permissionGrid">{Object.entries(sectionNames).map(([id,name])=><label key={id}><input type="checkbox" disabled={!draft||busy||!workspaceSectionAllowed(row.system_role,id)} checked={draft?.includes(id)??false} onChange={e=>setDraft(e.target.checked?[...draft,id]:draft.filter(v=>v!==id))}/>{name}</label>)}</div><button type="button" disabled={!draft||busy} onClick={save}>حفظ الصلاحيات</button><p role="status">{message}</p></details>;
+}
