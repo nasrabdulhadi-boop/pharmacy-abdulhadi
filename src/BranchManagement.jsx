@@ -387,8 +387,8 @@ function BranchOwnerControls({client,branchId,onDecision}) {
   return <div className="qaBranchDetail">
     <form className="qaBranchForm qaBranchCenter" onSubmit={save}>
       <h4>صلاحيات حساب الفرع</h4>
-      {configurableSections.map(item=><label className="qaBranchCheck" key={item.id}>
-        <input type="checkbox" checked={values.includes(item.id)} disabled={sections===null || busy}
+      {branchOperatorSections.map(item=><label className="qaBranchCheck" key={item.id}>
+        <input type="checkbox" checked={values.includes(item.id)} disabled={item.locked || sections===null || busy}
           onChange={event=>setDraft(event.target.checked?[...values,item.id]:values.filter(id=>id!==item.id))}/>{item.label}
       </label>)}
       <button type="submit" className="primary" disabled={sections===null || busy}>حفظ الصلاحيات</button>

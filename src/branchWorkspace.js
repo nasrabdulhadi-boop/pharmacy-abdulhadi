@@ -60,6 +60,7 @@ export const branchOperatorSections = [
   {id:'suppliers', label:'الموردون', kinds:[]},
   {id:'cashbox', label:'الصندوق', kinds:['deposit','withdrawal','expense']},
   {id:'settings', label:'إعدادات الواجهة', kinds:[]},
+  ...Object.entries({pharmacyProducts:'منتجات الصيدلية',siteProducts:'منتجات الموقع',smart:'المخزون الذكي',supplierDebts:'ديون الموردين',orders:'الطلبات',prescriptions:'الوصفات',requests:'طلبات الأدوية',debtors:'المتدينون',daily:'الحركة اليومية',security:'الأمان والتدقيق'}).map(([id,label])=>({id,label,locked:true})),
   {id:'customers', label:'العملاء', locked:true},
   {id:'offers', label:'العروض', locked:true},
   {id:'profit', label:'مركز الأرباح', locked:true},

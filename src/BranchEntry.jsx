@@ -4,6 +4,8 @@ import {createClient} from '@supabase/supabase-js';
 import {BranchPortal} from './BranchManagement.jsx';
 import {branchIdFromSearch,branchOperatorSections,branchMoney} from './branchWorkspace.js';
 import './style.css';
+import './REDESIGN_V6_3.css';
+import './REDESIGN_V6_3_REAL.css';
 import './BranchManagement.css';
 
 const client = createClient(import.meta.env.VITE_SUPABASE_URL,import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY);
@@ -53,11 +55,15 @@ function BranchShell({branch}) {
   const options=branchOperatorSections.filter(item=>!item.locked&&item.id!=='dashboardProfit'&&branch.canOpen(item.id));
   const [selected,setSelected]=useState('dashboard'),[revision,refresh]=useState(0);
   const current=options.find(item=>item.id===selected)??options[0];
-  return <main dir="rtl" className="panel qaBranchCenter"><header><h2>{branch.name}</h2>
-    <button onClick={()=>client.auth.signOut()}>تسجيل الخروج</button></header>
-    <nav className="qaBranchControls">{options.map(item=><button key={item.id} aria-pressed={current?.id===item.id} onClick={()=>setSelected(item.id)}>{item.label}</button>)}</nav>
+  const [mobile,setMobile]=useState(false);
+  return <div dir="rtl" className="adminShell"><aside className={mobile?'open':''}>
+    <div className="sideBrand"><img className="sideLogo" src="/logo.png" alt=""/><div><b>{branch.name}</b><span>حساب الفرع</span></div></div>
+    <nav className="navGroup">{branchOperatorSections.filter(i=>i.id!=='dashboardProfit').map(item=><button key={item.id} className={current?.id===item.id?'active':''} disabled={item.locked||!branch.canOpen(item.id)} aria-pressed={current?.id===item.id} onClick={()=>{setSelected(item.id);setMobile(false);}}>{item.label}</button>)}</nav>
+    <button onClick={()=>client.auth.signOut()}>تسجيل الخروج</button></aside>
+    <main className="adminMain"><div className="mobileBar"><button onClick={()=>setMobile(!mobile)}>الأقسام</button></div>
+    <section className="panel qaBranchCenter"><h2>{current?.label||branch.name}</h2>
     {current?.id==='pos'&&<Checkout onSaved={()=>refresh(v=>v+1)}/>}
-    <div key={current?.id+':'+revision}>{current?branch.render(current.id):'لم يمنح المدير صلاحيات تشغيل لهذا الفرع.'}</div></main>;
+    <div key={current?.id+':'+revision}>{current?branch.render(current.id):'لم يمنح المدير صلاحيات تشغيل لهذا الفرع.'}</div></section></main></div>;
 }
 function Entry() {
   const [session,setSession]=useState(undefined);
