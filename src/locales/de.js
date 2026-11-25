@@ -1980,7 +1980,7 @@ export default {
   "انتهت مهلة الاستعادة المحلية.": "Zeitlimit für die lokale Wiederherstellung erreicht.",
   "تعذرت الاستعادة المحلية.": "Lokale Wiederherstellung fehlgeschlagen.",
   "ملف النسخة أكبر من الحد المدعوم (70 MiB).": "Die Sicherungsdatei überschreitet 70 MiB.",
-  "تعذر تجهيز النسخة. تحقق من الصلاحية وعبارة التشفير وتطابقها، ثم حاول مجدداً.": "Sicherung fehlgeschlagen. Prüfen Sie Zugriff und Passphrasen."
+  "تعذر تجهيز النسخة. تحقق من الصلاحية وعبارة التشفير وتطابقها، ثم حاول مجدداً.": "Sicherung fehlgeschlagen. Prüfen Sie Zugriff und Passphrasen.",
   // Complete manager center labels.
   "نظرة عامة": "Übersicht",
   "الملف الشخصي": "Profil",
