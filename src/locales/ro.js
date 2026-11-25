@@ -1980,7 +1980,7 @@ export default {
   "انتهت مهلة الاستعادة المحلية.": "Timpul pentru recuperarea locală a expirat.",
   "تعذرت الاستعادة المحلية.": "Recuperarea locală a eșuat.",
   "ملف النسخة أكبر من الحد المدعوم (70 MiB).": "Fișierul depășește limita de 70 MiB.",
-  "تعذر تجهيز النسخة. تحقق من الصلاحية وعبارة التشفير وتطابقها، ثم حاول مجدداً.": "Copia nu a putut fi creată. Verifică accesul și parolele."
+  "تعذر تجهيز النسخة. تحقق من الصلاحية وعبارة التشفير وتطابقها، ثم حاول مجدداً.": "Copia nu a putut fi creată. Verifică accesul și parolele.",
   // Complete manager center labels.
   "نظرة عامة": "Prezentare generală",
   "الملف الشخصي": "Profil",
