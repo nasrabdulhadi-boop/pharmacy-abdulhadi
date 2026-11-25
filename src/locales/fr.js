@@ -1980,7 +1980,7 @@ export default {
   "انتهت مهلة الاستعادة المحلية.": "Le délai de récupération locale a expiré.",
   "تعذرت الاستعادة المحلية.": "La récupération locale a échoué.",
   "ملف النسخة أكبر من الحد المدعوم (70 MiB).": "Le fichier dépasse la limite de 70 Mio.",
-  "تعذر تجهيز النسخة. تحقق من الصلاحية وعبارة التشفير وتطابقها، ثم حاول مجدداً.": "La sauvegarde a échoué. Vérifiez vos droits et les phrases secrètes."
+  "تعذر تجهيز النسخة. تحقق من الصلاحية وعبارة التشفير وتطابقها، ثم حاول مجدداً.": "La sauvegarde a échoué. Vérifiez vos droits et les phrases secrètes.",
   // Complete manager center labels.
   "نظرة عامة": "Vue d’ensemble",
   "الملف الشخصي": "Profil",
