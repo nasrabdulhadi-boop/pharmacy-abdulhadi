@@ -51,63 +51,6 @@ function localizeSubtree(root){
  if(root.nodeType===1)localizeElement(root);
  root.querySelectorAll?.('*').forEach(localizeElement);
 }
-import {useSyncExternalStore} from 'react';
-import {ADMIN_PREF_KEY,readAdminPreferences,writeAdminPreferences} from './systemAdminPreferences.js';
-import {loadInterfaceLanguage,translateInterfaceText,sourceInterfaceText,sourceInterfaceTexts} from './systemLanguageCatalogs.js';
-import {normalizeSystemLanguage,systemDateLocale} from './systemLanguages.js';
-let language=readAdminPreferences(typeof window==='undefined'?null:window.localStorage).language;
-export const getSystemLanguage=()=>language;
-export const getSystemDirection=()=>language==='ar'?'rtl':'ltr';
-const listeners=new Set();let revision=0,request=0;
-const notify=()=>{revision++;for(const fn of listeners)fn();};
-export const getSystemDateLocale=()=>systemDateLocale(language);
-const subscribe=fn=>{listeners.add(fn);return()=>listeners.delete(fn);};
-const snapshot=()=>language+':'+revision;
-export const useSystemLanguage=()=>{useSyncExternalStore(subscribe,snapshot,snapshot);return language;};
-const TEXT_ATTRIBUTES=['aria-label','aria-description','title','placeholder','alt'];
-const SKIP_TRANSLATION_TAGS=new Set(['SCRIPT','STYLE','NOSCRIPT','TEXTAREA','CODE','PRE']);
-let domObserver=null;
-function translateDomText(raw){
- if(typeof raw!=='string'||!raw.trim())return raw;
- return translateInterfaceText(raw,language);
-}
-function localizeElement(element){
- if(!element||element.nodeType!==1)return;
- if(SKIP_TRANSLATION_TAGS.has(element.tagName)||element.isContentEditable)return;
- for(const attr of TEXT_ATTRIBUTES){
-  const value=element.getAttribute(attr);
-  if(value){const translated=translateDomText(value);if(translated!==value)element.setAttribute(attr,translated);}
- }
- const currentDirection=element.getAttribute('dir');
- if(currentDirection==='rtl'){
-  if(!element.dataset.systemLocaleOriginalDir)element.dataset.systemLocaleOriginalDir='rtl';
-  if(getSystemDirection()==='ltr')element.setAttribute('dir','ltr');
- }else if(element.dataset.systemLocaleOriginalDir==='rtl'&&getSystemDirection()==='rtl'){
-  element.setAttribute('dir','rtl');
- }
- if(element.style?.direction==='rtl'){
-  if(!element.dataset.systemLocaleOriginalInlineDirection)element.dataset.systemLocaleOriginalInlineDirection='rtl';
-  if(getSystemDirection()==='ltr')element.style.direction='ltr';
- }else if(element.dataset.systemLocaleOriginalInlineDirection==='rtl'&&getSystemDirection()==='rtl'){
-  element.style.direction='rtl';
- }
-}
-function localizeSubtree(root){
- if(!root||typeof document==='undefined')return;
- const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);
- let node;while((node=walker.nextNode())){
-  const parent=node.parentElement;
-  if(!parent||SKIP_TRANSLATION_TAGS.has(parent.tagName)||parent.isContentEditable)continue;
-  const translated=translateDomText(node.nodeValue);
-  if(translated!==node.nodeValue)node.nodeValue=translated;
- }
- if(root.nodeType===1)localizeElement(root);
- root.querySelectorAll?.('*').forEach(localizeElement);
-}
-function queueDomLocalization(){
- if(domQueued||typeof document==='undefined')return;domQueued=true;
- queueMicrotask(()=>{domQueued=false;localizeSubtree(document.body);});
-}
 function installDomLocalization(){
  if(typeof document==='undefined'||!document.body||domObserver)return;
  localizeSubtree(document.body);
