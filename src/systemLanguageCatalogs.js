@@ -16,10 +16,12 @@ export async function loadInterfaceLanguage(code){
 export function sourceInterfaceTexts(value){const text=typeof value==='string'?value.trim():'';return reverse.has(text)?[...reverse.get(text)]:[text];}
 export const sourceInterfaceText=value=>sourceInterfaceTexts(value)[0];
 export function translateInterfaceText(value,code='ar'){
- if(code==='ar'||typeof value!=='string')return value;
- if(/^[+-]?[\d,.\s]+\s+ل\.س$/.test(value))return value.replace(/ل\.س$/,'SYP');
- const key=value.trim(),source=sourceByEnglish.get(key)||key;
- const counted=key.match(/^([\d,.]+)(\s+)(صنف يحتاج مراجعة|صنف يحتاج مراجعة التوريد|دفعة أو صنف حسب مؤشر النظام)$/);
+ if(typeof value!=='string')return value;
+ const key=value.trim(),candidates=reverse.get(key);
+ const source=sourceByEnglish.get(key)||(candidates?[...candidates].find(candidate=>dictionaries[code]?.[candidate]===key)||[...candidates][0]:key);
+ if(code==='ar')return source!==key?value.replace(key,source):value;
+ if(/^[+-]?[\\d,.\\s]+\\s+ل\\.س$/.test(value))return value.replace(/ل\\.س$/,'SYP');
+ const counted=key.match(/^([\\d,.]+)(\\s+)(صنف يحتاج مراجعة|صنف يحتاج مراجعة التوريد|دفعة أو صنف حسب مؤشر النظام)$/);
  if(counted){const suffix=translateInterfaceText(counted[3],code);if(suffix!==counted[3])return value.replace(key,counted[1]+counted[2]+suffix);}
  const translated=dictionaries[code]?.[source]??ENGLISH_INTERFACE[source];
  return typeof translated==='string'?value.replace(key,translated):value;
