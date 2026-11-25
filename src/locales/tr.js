@@ -1980,7 +1980,7 @@ export default {
   "انتهت مهلة الاستعادة المحلية.": "Yerel kurtarma zaman aşımına uğradı.",
   "تعذرت الاستعادة المحلية.": "Yerel kurtarma başarısız oldu.",
   "ملف النسخة أكبر من الحد المدعوم (70 MiB).": "Yedek dosyası 70 MiB sınırını aşıyor.",
-  "تعذر تجهيز النسخة. تحقق من الصلاحية وعبارة التشفير وتطابقها، ثم حاول مجدداً.": "Yedek oluşturulamadı. Erişimi ve parolaları kontrol edin."
+  "تعذر تجهيز النسخة. تحقق من الصلاحية وعبارة التشفير وتطابقها، ثم حاول مجدداً.": "Yedek oluşturulamadı. Erişimi ve parolaları kontrol edin.",
   // Complete manager center labels.
   "نظرة عامة": "Genel bakış",
   "الملف الشخصي": "Profil",
