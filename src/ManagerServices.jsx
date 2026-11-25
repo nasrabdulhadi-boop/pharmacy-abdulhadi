@@ -1,4 +1,4 @@
-import {uiText} from './systemLocale.js';
+import {uiText,uiTemplate} from './systemLocale.js';
 import {createClient} from '@supabase/supabase-js';
 import React,{useEffect,useState} from 'react';
 import {encryptArchive,decryptArchive} from './managerArchive.js';
@@ -46,7 +46,7 @@ export function ManagerArchive({client}){
        setTimeout(()=>URL.revokeObjectURL(url),30000);
      }
      setPass('');setConfirmation('');
-     setMessage('تم التحقق من الملف المشفّر. عدد الجداول '+summary.tables+'، وعدد السجلات '+summary.rows+'.');
+     setMessage(uiTemplate(['تم التحقق من الملف المشفّر. عدد الجداول ','، وعدد السجلات ','.'],[summary.tables,summary.rows]));
    }catch{setMessage(file?'تعذّر فتح الملف. تحقق من الملف وعبارة التشفير.':'تعذّر إنشاء نسخة البيانات المشفّرة.');}
    finally{setBusy(false);}
  }
