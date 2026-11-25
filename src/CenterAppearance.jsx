@@ -23,8 +23,8 @@ export function CenterAppearance({value,save,sections,children}){
  if(ordering)return <section className="appearancePage">
   <header className="appearanceHeading"><h4><ListOrdered size={20}/> {uiText('ترتيب التبويبات')}</h4><button ref={backButton} onClick={()=>changePage(false)}>{uiText('العودة إلى المظهر')}</button></header>
   <ol className="appearanceOrder">{sections.map(([id,label],i)=><li key={id}><span>{uiText(label)}</span>
-   <button aria-label={'تقديم '+uiText(label)} disabled={!i} onClick={()=>move(i,-1)}><ArrowUp size={18}/></button>
-   <button aria-label={'تأخير '+uiText(label)} disabled={i===sections.length-1} onClick={()=>move(i,1)}><ArrowDown size={18}/></button></li>)}</ol>
+   <button aria-label={uiText('تقديم')+' '+uiText(label)} disabled={!i} onClick={()=>move(i,-1)}><ArrowUp size={18}/></button>
+   <button aria-label={uiText('تأخير')+' '+uiText(label)} disabled={i===sections.length-1} onClick={()=>move(i,1)}><ArrowDown size={18}/></button></li>)}</ol>
  </section>;
  return <div className="appearancePage">
   {children}
