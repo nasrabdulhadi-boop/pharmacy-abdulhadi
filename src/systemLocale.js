@@ -26,7 +26,7 @@ if(typeof window!=='undefined'){
 const localizationAttributes=['placeholder','title','aria-label','alt'];
 function localizedValue(value){
  if(typeof value!=='string'||!value.trim())return value;
- const leading=value.match(/^\\s*/)?.[0]||'',trailing=value.match(/\\s*$/)?.[0]||'';
+ const leading=value.match(/^\s*/)?.[0]||'',trailing=value.match(/\s*$/)?.[0]||'';
  const core=value.slice(leading.length,value.length-trailing.length);
  if(!core)return value;
  if(language==='ar')return leading+sourceInterfaceText(core)+trailing;
