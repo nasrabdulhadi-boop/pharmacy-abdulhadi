@@ -15,13 +15,68 @@ const applyDocument=()=>{if(typeof document!=='undefined'){document.documentElem
 export function setSystemLanguage(value){
  const next=normalizeSystemLanguage(value),version=++request;const apply=()=>{if(version!==request)return;
  if(typeof window!=='undefined'){const preferences=readAdminPreferences(window.localStorage);writeAdminPreferences(window.localStorage,{...preferences,language:next});}
- if(language!==next){language=next;notify();}applyDocument();};
+ if(language!==next){language=next;notify();}applyDocument();scheduleLocalization();};
  if(next==='ar'||next==='en'){apply();return Promise.resolve();}return loadInterfaceLanguage(next).then(apply);
 }
 if(typeof window!=='undefined'){
- const initial=language;loadInterfaceLanguage(initial).then(()=>{if(language===initial){notify();applyDocument();}}).catch(()=>{if(language===initial&&request===0){language='ar';notify();applyDocument();}});
+ const initial=language;loadInterfaceLanguage(initial).then(()=>{if(language===initial){notify();applyDocument();scheduleLocalization();}}).catch(()=>{if(language===initial&&request===0){language='ar';notify();applyDocument();scheduleLocalization();}});
  window.addEventListener('storage',event=>{if(event.key===ADMIN_PREF_KEY)setSystemLanguage(readAdminPreferences(window.localStorage).language).catch(()=>{});});
 }
+
+const localizationAttributes=['placeholder','title','aria-label','alt'];
+function localizedValue(value){
+ if(typeof value!=='string'||!value.trim())return value;
+ const leading=value.match(/^\\s*/)?.[0]||'',trailing=value.match(/\\s*$/)?.[0]||'';
+ const core=value.slice(leading.length,value.length-trailing.length);
+ if(!core)return value;
+ if(language==='ar')return leading+sourceInterfaceText(core)+trailing;
+ return leading+translateInterfaceText(core,language)+trailing;
+}
+function localizeNode(node){
+ if(!node||node.nodeType!==1)return;
+ const tag=node.tagName?.toLowerCase();
+ if(['script','style','textarea','input','select','option'].includes(tag)||node.isContentEditable)return;
+ if(node.hasAttribute('data-no-translate'))return;
+ const walker=document.createTreeWalker(node,NodeFilter.SHOW_TEXT);
+ const texts=[];while(walker.nextNode())texts.push(walker.currentNode);
+ for(const textNode of texts){
+  const parent=textNode.parentElement;if(!parent||parent.closest('script,style,textarea,input,select,[contenteditable="true"],[data-no-translate]'))continue;
+  const before=textNode.nodeValue,after=localizedValue(before);if(after!==before)textNode.nodeValue=after;
+ }
+ for(const attr of localizationAttributes){
+  if(node.hasAttribute(attr)){const before=node.getAttribute(attr),after=localizedValue(before);if(after!==before)node.setAttribute(attr,after);}
+ }
+ if(node.hasAttribute('dir')&&node.tagName.toLowerCase()!=='bdi'&&!node.closest('bdi,[data-preserve-direction]')){
+  const current=node.getAttribute('dir');if(current==='rtl'||current==='ltr')node.setAttribute('dir',getSystemDirection());
+ }
+ if(node.style?.direction==='rtl'||node.style?.direction==='ltr')node.style.direction=getSystemDirection();
+}
+let localizationObserver=null,localizationQueued=false;
+function localizeDocument(){
+ if(typeof document==='undefined'||!document.body)return;
+ localizeNode(document.body);
+}
+function scheduleLocalization(){
+ if(localizationQueued)return;localizationQueued=true;
+ queueMicrotask(()=>{localizationQueued=false;localizeDocument();});
+}
+function installGlobalLocalization(){
+ if(typeof document==='undefined'||!document.body||localizationObserver)return;
+ localizationObserver=new MutationObserver(records=>{
+  for(const record of records){
+   if(record.type==='characterData'){const before=record.target.nodeValue,after=localizedValue(before);if(after!==before)record.target.nodeValue=after;}
+   else if(record.type==='attributes')localizeNode(record.target);
+   else for(const node of record.addedNodes)if(node.nodeType===1)localizeNode(node);
+  }
+ });
+ localizationObserver.observe(document.body,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:[...localizationAttributes,'dir','style']});
+ localizeDocument();
+}
+if(typeof document!=='undefined'){
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',installGlobalLocalization,{once:true});
+ else installGlobalLocalization();
+}
+
 export const uiText=value=>translateInterfaceText(value,language);
 export function uiTemplate(parts,values){
  const key=parts.map((part,i)=>part+(i<values.length?'{'+i+'}':'')).join('');
