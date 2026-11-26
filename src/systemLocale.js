@@ -32,7 +32,7 @@ function localizedValue(value){
  if(language==='ar')return leading+sourceInterfaceText(core)+trailing;
  return leading+translateInterfaceText(core,language)+trailing;
 }
-function localizeNode(node){
+function localizeTextNode(textNode){\n if(!textNode||textNode.nodeType!==3)return;\n const parent=textNode.parentElement;if(!parent||parent.closest('script,style,textarea,input,select,[contenteditable=\"true\"],[data-no-translate]'))return;\n const before=textNode.nodeValue,after=localizedValue(before);if(after!==before)textNode.nodeValue=after;\n}\nfunction localizeNode(node){
  if(!node||node.nodeType!==1)return;
  const tag=node.tagName?.toLowerCase();
  if(['script','style','textarea','input','select','option'].includes(tag)||node.isContentEditable)return;
@@ -66,7 +66,7 @@ function installGlobalLocalization(){
   for(const record of records){
    if(record.type==='characterData'){const before=record.target.nodeValue,after=localizedValue(before);if(after!==before)record.target.nodeValue=after;}
    else if(record.type==='attributes')localizeNode(record.target);
-   else for(const node of record.addedNodes)if(node.nodeType===1)localizeNode(node);
+   else for(const node of record.addedNodes){if(node.nodeType===1)localizeNode(node);else if(node.nodeType===3)localizeTextNode(node);}
   }
  });
  localizationObserver.observe(document.body,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:[...localizationAttributes,'dir','style']});
