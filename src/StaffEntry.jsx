@@ -1,4 +1,5 @@
 import {staffClient} from './staffClient.js';
+import {getSystemDirection} from './systemLocale.js';
 import React,{useEffect,useState} from 'react';
 import {createClient} from '@supabase/supabase-js';
 import ManagerRecovery,{mailboxClient} from './ManagerRecovery.jsx';
@@ -16,12 +17,12 @@ const client=mode==='staff'?staffClient:recoveryClient;
 function Recovery(){
  const [proof,setProof]=useState(undefined);
  useEffect(()=>{if(!token){setProof(null);return;}mailboxClient().auth.getUser(token).then(({data})=>setProof(data.user?{proof:token,email:data.user.email}:null));},[]);
- return <main dir="rtl" className="panel centerLayout systemAdminModern">{proof!==undefined&&<ManagerRecovery client={client} link={mode==='mail'&&q.get('mode')==='link'} callback={proof}/>}<a href="/#admin">العودة إلى دخول المدير</a></main>;
+ return <main dir={getSystemDirection()} className="panel centerLayout systemAdminModern">{proof!==undefined&&<ManagerRecovery client={client} link={mode==='mail'&&q.get('mode')==='link'} callback={proof}/>}<a href="/#admin">العودة إلى دخول المدير</a></main>;
 }
 function StaffShell({Shell,user}){
  const [access,setAccess]=useState(null),[error,setError]=useState('');
  useEffect(()=>{let active=true;const read=()=>call(client,{action:'view'}).then(r=>{if(active){setAccess(r);setError('');}}).catch(e=>{if(active){setAccess(null);setError(e.message);}});read();const id=setInterval(read,8000);return()=>{active=false;clearInterval(id);};},[user.id]);
- if(!access)return <main dir="rtl">{error||'جارٍ تحميل الصلاحيات…'} <button onClick={()=>client.auth.signOut()}>خروج</button></main>;
+ if(!access)return <main dir={getSystemDirection()}>{error||'جارٍ تحميل الصلاحيات…'} <button onClick={()=>client.auth.signOut()}>خروج</button></main>;
  return <Shell staff={access} onLogout={()=>client.auth.signOut()}/>;
 }
 export function Staff({Shell}){
