@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import {getSystemDirection,uiText} from './systemLocale.js';
 import './BranchManagement.css';
 import { branchKinds, comparisonMetrics, branchMoney, branchNumber, branchToday, orderBranches, branchLink, readBranchDay, branchOperatorSections } from './branchWorkspace.js';
 
@@ -160,10 +161,10 @@ export default function BranchManagement({ client, ownerEmail }) {
   const detail = useDay(client, day, selected, revision);
   const branches = overview?.data?.branches ?? [];
   const branch = detail?.data?.branches.find(row => row.id === selected);
-  return <section className="qaBranchCenter" dir="rtl" aria-label="مركز إدارة الفروع">
+  return <section className="qaBranchCenter" dir={getSystemDirection()} aria-label={uiText("مركز إدارة الفروع")}>
     <p>تُحسب تقارير كل فرع من حركاته المسجّلة.</p>
-    <nav className="qaBranchControls" aria-label="أقسام إدارة الفروع">
-      {[['branches','الفروع'],['compare','مقارنة بين الفروع']].map(([id,label]) =>
+    <nav className="qaBranchControls" aria-label={uiText("أقسام إدارة الفروع")}>
+      {[['branches',uiText('الفروع')],['compare',uiText('مقارنة بين الفروع')]].map(([id,label]) =>
         <button type="button" key={id} aria-pressed={tab === id} className={tab === id ? 'primary' : ''} onClick={() => setTab(id)}>{label}</button>)}
     </nav>
     {<>
