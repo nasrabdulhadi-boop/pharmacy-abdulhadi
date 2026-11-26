@@ -32,7 +32,12 @@ function localizedValue(value){
  if(language==='ar')return leading+sourceInterfaceText(core)+trailing;
  return leading+translateInterfaceText(core,language)+trailing;
 }
-function localizeTextNode(textNode){\n if(!textNode||textNode.nodeType!==3)return;\n const parent=textNode.parentElement;if(!parent||parent.closest('script,style,textarea,input,select,[contenteditable=\"true\"],[data-no-translate]'))return;\n const before=textNode.nodeValue,after=localizedValue(before);if(after!==before)textNode.nodeValue=after;\n}\nfunction localizeNode(node){
+function localizeTextNode(textNode){
+ if(!textNode||textNode.nodeType!==3)return;
+ const parent=textNode.parentElement;if(!parent||parent.closest('script,style,textarea,input,select,[contenteditable="true"],[data-no-translate]'))return;
+ const before=textNode.nodeValue,after=localizedValue(before);if(after!==before)textNode.nodeValue=after;
+}
+function localizeNode(node){
  if(!node||node.nodeType!==1)return;
  const tag=node.tagName?.toLowerCase();
  if(['script','style','textarea','input','select','option'].includes(tag)||node.isContentEditable)return;
