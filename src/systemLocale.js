@@ -60,6 +60,7 @@ let localizationObserver=null,localizationQueued=false;
 function localizeDocument(){
  if(typeof document==='undefined'||!document.body)return;
  localizeNode(document.body);
+ document.querySelectorAll('[dir=\"rtl\"],[dir=\"ltr\"],[style*=\"direction\"]').forEach(node=>localizeNode(node));
 }
 function scheduleLocalization(){
  if(localizationQueued)return;localizationQueued=true;
@@ -71,7 +72,7 @@ function installGlobalLocalization(){
   for(const record of records){
    if(record.type==='characterData'){const before=record.target.nodeValue,after=localizedValue(before);if(after!==before)record.target.nodeValue=after;}
    else if(record.type==='attributes')localizeNode(record.target);
-   else for(const node of record.addedNodes){if(node.nodeType===1)localizeNode(node);else if(node.nodeType===3)localizeTextNode(node);}
+   else for(const node of record.addedNodes){if(node.nodeType===1){localizeNode(node);node.querySelectorAll?.('[dir=\"rtl\"],[dir=\"ltr\"],[style*=\"direction\"]').forEach(child=>localizeNode(child));}else if(node.nodeType===3)localizeTextNode(node);}
   }
  });
  localizationObserver.observe(document.body,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:[...localizationAttributes,'dir','style']});
