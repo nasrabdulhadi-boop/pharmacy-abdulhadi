@@ -24,6 +24,7 @@ if(typeof window!=='undefined'){
 }
 
 const localizationAttributes=['placeholder','title','aria-label','alt'];
+const originalTextValues=new WeakMap(),originalAttributeValues=new WeakMap();
 function localizedValue(value){
  if(typeof value!=='string'||!value.trim())return value;
  const leading=value.match(/^\\s*/)?.[0]||'',trailing=value.match(/\\s*$/)?.[0]||'';
@@ -38,12 +39,13 @@ function shouldSkipTranslation(element){
 function localizeTextNode(textNode){
  if(!textNode||textNode.nodeType!==3)return;
  const parent=textNode.parentElement;if(shouldSkipTranslation(parent))return;
- const before=textNode.nodeValue,after=localizedValue(before);if(after!==before)textNode.nodeValue=after;
+ const before=textNode.nodeValue;let record=originalTextValues.get(textNode);if(!record||record.last!==before){record={source:language==='ar'?before:sourceInterfaceText(before),last:before};originalTextValues.set(textNode,record);}
+ const after=language==='ar'?record.source:translateInterfaceText(record.source,language);if(after!==before){textNode.nodeValue=after;record.last=after;}
 }
 function localizeElement(element){
  if(!element||element.nodeType!==1||shouldSkipTranslation(element))return;
  for(const attr of localizationAttributes){
-  if(element.hasAttribute(attr)){const before=element.getAttribute(attr),after=localizedValue(before);if(after!==before)element.setAttribute(attr,after);}
+  if(element.hasAttribute(attr)){const before=element.getAttribute(attr);let records=originalAttributeValues.get(element);if(!records){records=new Map();originalAttributeValues.set(element,records);}let record=records.get(attr);if(!record||record.last!==before){record={source:language==='ar'?before:sourceInterfaceText(before),last:before};records.set(attr,record);}const after=language==='ar'?record.source:translateInterfaceText(record.source,language);if(after!==before){element.setAttribute(attr,after);record.last=after;}}
  }
  if(element.hasAttribute('dir')&&element.tagName.toLowerCase()!=='bdi'&&!element.closest('bdi,[data-preserve-direction]')){
   const current=element.getAttribute('dir');if(current==='rtl'||current==='ltr')element.setAttribute('dir',getSystemDirection());
