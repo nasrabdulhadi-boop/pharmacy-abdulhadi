@@ -1675,7 +1675,7 @@ export const SYSTEM_EN=Object.freeze({
   "انتهت مهلة الاستعادة المحلية.": "Local recovery timed out.",
   "تعذرت الاستعادة المحلية.": "Local recovery failed.",
   "ملف النسخة أكبر من الحد المدعوم (70 MiB).": "Backup file exceeds the 70 MiB limit.",
-  "تعذر تجهيز النسخة. تحقق من الصلاحية وعبارة التشفير وتطابقها، ثم حاول مجدداً.": "Could not create backup. Check access and the matching passphrases, then retry."
+  "تعذر تجهيز النسخة. تحقق من الصلاحية وعبارة التشفير وتطابقها، ثم حاول مجدداً.": "Could not create backup. Check access and the matching passphrases, then retry.",
   "الفرع": "Branch",
   "متوفر": "Available",
   "المرجع": "Reference",
