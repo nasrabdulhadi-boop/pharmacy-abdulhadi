@@ -26,41 +26,43 @@ if(typeof window!=='undefined'){
 const localizationAttributes=['placeholder','title','aria-label','alt'];
 function localizedValue(value){
  if(typeof value!=='string'||!value.trim())return value;
- const leading=value.match(/^\s*/)?.[0]||'',trailing=value.match(/\s*$/)?.[0]||'';
+ const leading=value.match(/^\\s*/)?.[0]||'',trailing=value.match(/\\s*$/)?.[0]||'';
  const core=value.slice(leading.length,value.length-trailing.length);
  if(!core)return value;
  if(language==='ar')return leading+sourceInterfaceText(core)+trailing;
  return leading+translateInterfaceText(core,language)+trailing;
 }
+function shouldSkipTranslation(element){
+ return !element||element.closest('script,style,textarea,input,[contenteditable="true"],[data-no-translate]');
+}
 function localizeTextNode(textNode){
  if(!textNode||textNode.nodeType!==3)return;
- const parent=textNode.parentElement;if(!parent||parent.closest('script,style,textarea,input,select,[contenteditable="true"],[data-no-translate]'))return;
+ const parent=textNode.parentElement;if(shouldSkipTranslation(parent))return;
  const before=textNode.nodeValue,after=localizedValue(before);if(after!==before)textNode.nodeValue=after;
 }
-function localizeNode(node){
- if(!node||node.nodeType!==1)return;
- const tag=node.tagName?.toLowerCase();
- if(['script','style','textarea','input','select','option'].includes(tag)||node.isContentEditable)return;
- if(node.hasAttribute('data-no-translate'))return;
- const walker=document.createTreeWalker(node,NodeFilter.SHOW_TEXT);
- const texts=[];while(walker.nextNode())texts.push(walker.currentNode);
- for(const textNode of texts){
-  const parent=textNode.parentElement;if(!parent||parent.closest('script,style,textarea,input,select,[contenteditable="true"],[data-no-translate]'))continue;
-  const before=textNode.nodeValue,after=localizedValue(before);if(after!==before)textNode.nodeValue=after;
- }
+function localizeElement(element){
+ if(!element||element.nodeType!==1||shouldSkipTranslation(element))return;
  for(const attr of localizationAttributes){
-  if(node.hasAttribute(attr)){const before=node.getAttribute(attr),after=localizedValue(before);if(after!==before)node.setAttribute(attr,after);}
+  if(element.hasAttribute(attr)){const before=element.getAttribute(attr),after=localizedValue(before);if(after!==before)element.setAttribute(attr,after);}
  }
- if(node.hasAttribute('dir')&&node.tagName.toLowerCase()!=='bdi'&&!node.closest('bdi,[data-preserve-direction]')){
-  const current=node.getAttribute('dir');if(current==='rtl'||current==='ltr')node.setAttribute('dir',getSystemDirection());
+ if(element.hasAttribute('dir')&&element.tagName.toLowerCase()!=='bdi'&&!element.closest('bdi,[data-preserve-direction]')){
+  const current=element.getAttribute('dir');if(current==='rtl'||current==='ltr')element.setAttribute('dir',getSystemDirection());
  }
- if(node.style?.direction==='rtl'||node.style?.direction==='ltr')node.style.direction=getSystemDirection();
+ if(element.style?.direction==='rtl'||element.style?.direction==='ltr')element.style.direction=getSystemDirection();
+ for(const child of element.childNodes){
+  if(child.nodeType===3)localizeTextNode(child);
+  else if(child.nodeType===1)localizeElement(child);
+ }
+}
+function localizeNode(node){
+ if(!node)return;
+ if(node.nodeType===3){localizeTextNode(node);return;}
+ if(node.nodeType===1)localizeElement(node);
 }
 let localizationObserver=null,localizationQueued=false;
 function localizeDocument(){
  if(typeof document==='undefined'||!document.body)return;
  localizeNode(document.body);
- document.querySelectorAll('[dir=\"rtl\"],[dir=\"ltr\"],[style*=\"direction\"]').forEach(node=>localizeNode(node));
 }
 function scheduleLocalization(){
  if(localizationQueued)return;localizationQueued=true;
@@ -70,9 +72,9 @@ function installGlobalLocalization(){
  if(typeof document==='undefined'||!document.body||localizationObserver)return;
  localizationObserver=new MutationObserver(records=>{
   for(const record of records){
-   if(record.type==='characterData'){const before=record.target.nodeValue,after=localizedValue(before);if(after!==before)record.target.nodeValue=after;}
-   else if(record.type==='attributes')localizeNode(record.target);
-   else for(const node of record.addedNodes){if(node.nodeType===1){localizeNode(node);node.querySelectorAll?.('[dir=\"rtl\"],[dir=\"ltr\"],[style*=\"direction\"]').forEach(child=>localizeNode(child));}else if(node.nodeType===3)localizeTextNode(node);}
+   if(record.type==='characterData')localizeTextNode(record.target);
+   else if(record.type==='attributes')localizeElement(record.target);
+   else for(const node of record.addedNodes)localizeNode(node);
   }
  });
  localizationObserver.observe(document.body,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:[...localizationAttributes,'dir','style']});
