@@ -553,7 +553,7 @@ function SignedInBranch({ client, branchId, userId, renderShell }) {
 }
 
 function BranchDenied({client, children}) {
-  return <main className="panel qaBranchPortal" dir="rtl">
+  return <main className="panel qaBranchPortal" dir={getSystemDirection()}>
     <p role="alert">{children}</p>
     <button type="button" onClick={() => client.auth.signOut()}>تسجيل الخروج</button>
   </main>;
@@ -587,7 +587,7 @@ function BranchOperationPanel({client,branchId,section}) {
   const [revision,refresh]=useState(0);
   const dashboard=section.id==='dashboard';
   const {current}=useOperatorData(client,branchId,day,dashboard?dashboardActivity:section,revision);
-  return <section className="panel qaBranchCenter" dir="rtl">
+  return <section className="panel qaBranchCenter" dir={getSystemDirection()}>
     <h3>{section.label}</h3>
     {dashboard?<p>حركة الفرع ضمن الأقسام المسموح لك فيها.</p>:section.id!=='pos'&&<RecordEvent client={client} branchId={branchId} kinds={section.kinds}
       onRecorded={()=>{setDay(branchToday());refresh(value=>value+1);}}/>}
@@ -603,7 +603,7 @@ function BranchOperationPanel({client,branchId,section}) {
 
 export function BranchPortal({client, branchId, user, renderShell}) {
   if (user) return <SignedInBranch key={user.id + branchId} client={client} branchId={branchId} userId={user.id} renderShell={renderShell}/>;
-  return <main className="panel qaBranchCenter qaBranchPortal" dir="rtl">
+  return <main className="panel qaBranchCenter qaBranchPortal" dir={getSystemDirection()}>
     <header className="qaBranchIntro">
       <div><h2>بوابة الفرع</h2><p>سجل تشغيل مستقل لكل فرع</p></div>
     </header>
