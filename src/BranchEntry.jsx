@@ -1,3 +1,4 @@
+import {getSystemDirection} from './systemLocale.js';
 import React, {useEffect, useRef, useState} from 'react';
 import {createRoot} from 'react-dom/client';
 import {createClient} from '@supabase/supabase-js';
@@ -44,7 +45,7 @@ function Checkout({onSaved}) {
     }catch{setMessage('تعذّر تأكيد البيع. راجع الرصيد والسعر وأعد المحاولة.');}
     finally{setBusy(false);}
   }
-  return <section className="qaBranchDetail"><h3>بيع نقدي من مخزون الفرع</h3>
+  return <section className="qaBranchDetail" dir={getSystemDirection()}><h3>بيع نقدي من مخزون الفرع</h3>
     <label>اسم الصنف أو الباركود<input value={query} onChange={e=>setQuery(e.target.value)}/></label>
     {matches.map(p=><button disabled={busy||!p.stock} key={p.id} onClick={()=>change(p,1)}>{p.name} · {branchMoney(p.sale_price)}</button>)}
     {cart.map(line=><p key={line.id}>{line.name} × {line.quantity} <button disabled={busy} onClick={()=>change(line,-1)}>إنقاص</button></p>)}

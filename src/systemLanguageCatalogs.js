@@ -18,7 +18,7 @@ export const sourceInterfaceText=value=>sourceInterfaceTexts(value)[0];
 export function translateInterfaceText(value,code='ar'){
  if(code==='ar'||typeof value!=='string')return value;
  if(/^[+-]?[\d,.\s]+\s+ل\.س$/.test(value))return value.replace(/ل\.س$/,'SYP');
- const key=value.trim(),source=sourceByEnglish.get(key)||key;
+ const key=value.trim(),source=sourceByEnglish.get(key)||reverse.get(key)?.values().next().value||key;
  const counted=key.match(/^([\d,.]+)(\s+)(صنف يحتاج مراجعة|صنف يحتاج مراجعة التوريد|دفعة أو صنف حسب مؤشر النظام)$/);
  if(counted){const suffix=translateInterfaceText(counted[3],code);if(suffix!==counted[3])return value.replace(key,counted[1]+counted[2]+suffix);}
  const translated=dictionaries[code]?.[source]??ENGLISH_INTERFACE[source];
